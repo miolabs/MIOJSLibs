@@ -1,0 +1,74 @@
+/**
+ * Created by godshadow on 14/3/16.
+ */
+
+class MIOURLRequest
+{
+    url = null;
+    httpMethod = "GET";
+    body = null;
+
+    constructor(url)
+    {
+        this.url = url;
+    }
+}
+
+class MIOURLConnection
+{
+    request = null;
+    delegate = null;
+    blockFN = null;
+
+    private xmlHttpRequest = null;
+
+    constructor()
+    {
+    }
+
+    initWithRequest(request, delegate)
+    {
+        this.request = request;
+        this.delegate = delegate;
+        this.start();
+    }
+
+    initWithRequestBlock(request, blockFN)
+    {
+        this.request = request;
+        this.blockFN = blockFN;
+        this.start();
+    }
+
+    start()
+    {
+        var instance = this;
+
+        this.xmlHttpRequest = new XMLHttpRequest();
+        this.xmlHttpRequest.onload = function(){
+
+            if(this.status == 200 && this.responseText != null)
+            {
+                // success!
+                if (instance.delegate != null)
+                    instance.delegate.connectionDidReceiveData(instance, this.responseText);
+                else if (instance.blockFN != null)
+                    instance.blockFN(false, this.responseText);
+            }
+            else
+            {
+                // something went wrong
+                if (instance.delegate != null)
+                    instance.delegate.connectionDidFail(instance);
+                else if (instance.blockFN != null)
+                    instance.blockFN(true, null);
+            }
+        };
+
+        this.xmlHttpRequest.open(this.request.httpMethod, this.request.url);
+        if (this.request.httpMethod == "POST" && this.request.body != null)
+            this.xmlHttpRequest.send(this.request.body);
+        else
+            this.xmlHttpRequest.send();
+    }
+}
