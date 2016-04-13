@@ -19,10 +19,12 @@ function MIOTableViewFromElementID(view, elementID) {
 var MIOTableViewCell = (function (_super) {
     __extends(MIOTableViewCell, _super);
     function MIOTableViewCell() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.selected = false;
         this._target = null;
         this._onClickFn = null;
+        this._row = 0;
+        this._section = 0;
     }
     MIOTableViewCell.prototype.init = function () {
         _super.prototype.init.call(this);
@@ -63,14 +65,25 @@ var MIOTableViewCell = (function (_super) {
     };
     return MIOTableViewCell;
 })(MIOView);
+var MIOTableViewSection = (function (_super) {
+    __extends(MIOTableViewSection, _super);
+    function MIOTableViewSection() {
+        _super.apply(this, arguments);
+        this.header = null;
+        this.cells = [];
+    }
+    return MIOTableViewSection;
+})(MIOObject);
 var MIOTableView = (function (_super) {
     __extends(MIOTableView, _super);
     function MIOTableView() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.dataSource = null;
         this.delegate = null;
-        this.cells = [];
-        this.selectedCellIndex = -1;
+        this.sections = [];
+        this.headerView = null;
+        this.selectedCellRow = -1;
+        this.selectedCellSection = -1;
         this.cellPrototypes = {};
     }
     MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, classname, html, css, elementID) {
@@ -82,7 +95,7 @@ var MIOTableView = (function (_super) {
         //instance creation here
         var className = item["class"];
         var cell = Object.create(window[className].prototype);
-        cell.constructor.apply(cell, new Array("World"));
+        cell.constructor.apply(cell);
         var html = item["html"];
         var css = item["css"];
         var elID = item["id"];
@@ -90,64 +103,111 @@ var MIOTableView = (function (_super) {
         cell.initWithLayer(layer);
         return cell;
     };
+    MIOTableView.prototype.setHeaderView = function (view) {
+        this.headerView = view;
+        this.addSubview(this.headerView);
+    };
     MIOTableView.prototype.reloadData = function () {
-        this.removeAllSubviews();
-        this.cells = [];
-        var rows = this.dataSource.numberOfRowsForTableView(this);
-        for (var count = 0; count < rows; count++) {
-            var cell = this.dataSource.cellAtIndexForTableView(this, count);
-            cell.addObserver(this, "selected");
-            this.cells.push(cell);
-            this.addSubview(cell);
-            cell._target = this;
-            cell._onClickFn = this.cellOnClickFn;
+        // Remove all subviews
+        for (var index = 0; index < this.sections.length; index++) {
+            var section = this.sections[index];
+            if (section.header != null)
+                section.header.removeFromSuperview();
+            for (var count = 0; count < section.cells.length; count++) {
+                var cell = section.cells[count];
+                cell.removeFromSuperview();
+            }
+        }
+        this.sections = [];
+        var sections = this.dataSource.numberOfSections(this);
+        for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
+            var section = new MIOTableViewSection();
+            this.sections.push(section);
+            var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
+            if (typeof this.dataSource.titleForHeaderInSection === "function") {
+                var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
+                var header = new MIOLabel();
+                header.init();
+                header.setHeight(22);
+                header.setText(title);
+                header.setTextRGBColor(255, 255, 255);
+                header.layer.style.left = "10px";
+                section.header = header;
+                this.addSubview(header);
+            }
+            for (var index = 0; index < rows; index++) {
+                var cell = this.dataSource.cellAtIndexPath(this, index, sectionIndex);
+                cell.addObserver(this, "selected");
+                section.cells.push(cell);
+                this.addSubview(cell);
+                cell._target = this;
+                cell._onClickFn = this.cellOnClickFn;
+                cell._row = index;
+                cell._section = sectionIndex;
+            }
         }
         this.layout();
     };
     MIOTableView.prototype.layout = function () {
         _super.prototype.layout.call(this);
+        if (this.sections == null)
+            return;
         var y = 0;
         var w = this.getWidth();
-        for (var count = 0; count < this.cells.length; count++) {
-            var h = 44;
-            if (this.delegate != null) {
-                if (typeof this.delegate.heightForRowAtIndexForTableView === "function")
-                    h = this.delegate.heightForRowAtIndexForTableView(this, count);
+        if (this.headerView != null) {
+            y += this.headerView.getHeight() + 1;
+        }
+        for (var count = 0; count < this.sections.length; count++) {
+            var section = this.sections[count];
+            if (section.header != null) {
+                section.header.setY(y);
+                y += 23;
             }
-            var cell = this.cells[count];
-            cell.setY(y);
-            cell.setWidth(w);
-            cell.setHeight(h);
-            y += h + 1;
+            for (var index = 0; index < section.cells.length; index++) {
+                var h = 44;
+                if (this.delegate != null) {
+                    if (typeof this.delegate.heightForRowAtIndexPath === "function")
+                        h = this.delegate.heightForRowAtIndexPath(this, count);
+                }
+                var cell = section.cells[index];
+                cell.setY(y);
+                cell.setWidth(w);
+                cell.setHeight(h);
+                y += h + 1;
+            }
         }
     };
     MIOTableView.prototype.cellOnClickFn = function (cell) {
-        var index = this.cells.indexOf(cell);
-        if (this.selectedCellIndex == index)
+        var index = cell._row;
+        var section = cell._section;
+        if (this.selectedCellRow == index && this.selectedCellSection == section)
             return;
-        if (this.selectedCellIndex > -1)
-            this.deselectCellAtIndex(this.selectedCellIndex);
-        this.selectedCellIndex = index;
+        if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
+            this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
+        this.selectedCellRow = index;
+        this.selectedCellSection = section;
         this._selectCell(cell);
         if (this.delegate != null) {
-            if (typeof this.delegate.didSelectCellAtIndex === "function")
-                this.delegate.didSelectCellAtIndex(index);
+            if (typeof this.delegate.didSelectCellAtIndexPath === "function")
+                this.delegate.didSelectCellAtIndexPath(this, index, section);
         }
     };
     MIOTableView.prototype._selectCell = function (cell) {
         cell.setSelected(true);
     };
-    MIOTableView.prototype.selectCellAtIndex = function (index) {
-        this.selectedCellIndex = index;
-        var cell = this.cells[index];
+    MIOTableView.prototype.selectCellAtIndexPath = function (row, section) {
+        this.selectedCellRow = row;
+        this.selectedCellSection = section;
+        var cell = this.sections[section].cells[row];
         this._selectCell(cell);
     };
     MIOTableView.prototype._deselectCell = function (cell) {
         cell.setSelected(false);
     };
-    MIOTableView.prototype.deselectCellAtIndex = function (index) {
-        this.selectedCellIndex = -1;
-        var cell = this.cells[index];
+    MIOTableView.prototype.deselectCellAtIndexPath = function (row, section) {
+        this.selectedCellRow = -1;
+        this.selectedCellSection = -1;
+        var cell = this.sections[section].cells[row];
         this._deselectCell(cell);
     };
     return MIOTableView;

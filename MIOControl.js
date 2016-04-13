@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var MIOControl = (function (_super) {
     __extends(MIOControl, _super);
     function MIOControl() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.enabled = true;
         // TODO: Make delegation of the methods above
         this.mouseOverTarget = null;

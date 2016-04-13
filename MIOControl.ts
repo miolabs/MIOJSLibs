@@ -14,11 +14,6 @@ class MIOControl extends MIOView
     mouseOutTarget = null;
     mouseOutAction = null;
 
-    constructor()
-    {
-        super();
-    }
-
     setEnabled(enabled)
     {
         this.enabled = enabled;

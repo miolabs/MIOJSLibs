@@ -2,7 +2,8 @@
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MIOView.ts" />
+    /// <reference path="MIOView.ts" />
+    /// <reference path="MIOURLConnection.ts" />
 
 function MIOViewControllerFromElementID(view, elementID)
 {
@@ -19,24 +20,30 @@ function MIOViewControllerFromElementID(view, elementID)
 
 class MIOViewController extends MIOObject
 {
+    layerID = null;
     view = null;
 
-    constructor()
+    private _onViewLoadedObject = null;
+    private _onViewLoadedTarget = null;
+    private _onViewLoadedAction = null;
+
+    private _viewLoaded = false;
+
+    childViewControllers = [];
+    navigationController = null;
+
+    constructor(layerID?)
     {
         super();
+        this.layerID = layerID;
     }
 
     init()
     {
-        this.view = new MIOView();
-        this.view.init();
-        this.loadView();
-    }
+        super.init();
 
-    initWithTagID(tagID)
-    {
-        this.view = new MIOView();
-        this.view.initWithTagID(tagID);
+        this.view = new MIOView(this.layerID);
+        this.view.init();
         this.loadView();
     }
 
@@ -46,10 +53,25 @@ class MIOViewController extends MIOObject
         this.loadView();
     }
 
-    initWithResource(htmlFile, cssFile, itemID)
+    initWithResource(url)
     {
-        this.view = MIOViewFromResource(htmlFile, cssFile, itemID);
-        this.loadView();
+        this.view = new MIOView();
+        MIOCoreDownloadFile(this, url, function(data){
+
+            var parser = new DOMParser();
+            var html = parser.parseFromString(data, "text/html");
+
+            //var styles = html.styleSheets;
+
+            //if (css != null)
+            //MIOCoreLoadStyle(css);
+
+            var layer = html.getElementById(this.layerID);
+
+            this.view.initWithLayer(layer);
+            this.loadView();
+            this.setViewLoaded(true);
+        });
     }
 
     localizeLayerIDWithKey(layerID, key)
@@ -61,18 +83,98 @@ class MIOViewController extends MIOObject
     loadView()
     {
         this.viewDidLoad();
-//		this.view.layout();
+    }
+
+    setViewLoaded(value)
+    {
+        this.willChangeValue("viewLoaded");
+        this._viewLoaded = value;
+        this.didChangeValue("viewLoaded");
+
+        if (value == true && this._onViewLoadedAction != null)
+            this._onViewLoadedAction.call(this._onViewLoadedTarget, this._onViewLoadedObject);
+    }
+
+    setOnViewLoaded(object, target, action)
+    {
+        this._onViewLoadedObject = object;
+        this._onViewLoadedTarget = target;
+        this._onViewLoadedAction = action;
+    }
+
+
+    viewLoaded()
+    {
+        return this._viewLoaded;
+    }
+
+    setOutlet(elementID)
+    {
+        var view = MIOViewFromElementID(this.view, elementID);
+        var className = view.layer.getAttribute("data-class");
+        if (className == null)
+            return view;
+
+        var c = MIOClassFromString(className);
+        c.initWithView(view);
+
+        return c;
+    }
+
+    addChildViewController(vc)
+    {
+        this.childViewControllers.push(vc);
+    }
+
+    removeChildViewController(vc)
+    {
+        var index = this.childViewControllers.indexOf(vc);
+        if (index != -1)
+            this.childViewControllers.slice(index, 1);
+
+        vc.removeFromSuperview();
+    }
+
+    presentViewController(vc)
+    {
+        this.view.addSubview(vc.view);
+
     }
 
     viewDidLoad(){}
     viewWillAppear()
     {
-        this.view.layout();
+        for (var index = 0; index < this.childViewControllers.length; index++)
+        {
+            var vc = this.childViewControllers[index];
+            vc.viewWillAppear();
+        }
     }
-    viewDidAppear(){}
+    viewDidAppear()
+    {
+        for (var index = 0; index < this.childViewControllers.length; index++)
+        {
+            var vc = this.childViewControllers[index];
+            vc.viewDidAppear();
+        }
+    }
 
-    viewWillDisappear(){}
-    viewDidDisappear(){}
+    viewWillDisappear()
+    {
+        for (var index = 0; index < this.childViewControllers.length; index++)
+        {
+            var vc = this.childViewControllers[index];
+            vc.viewWillDisappear();
+        }
+    }
+    viewDidDisappear()
+    {
+        for (var index = 0; index < this.childViewControllers.length; index++)
+        {
+            var vc = this.childViewControllers[index];
+            vc.viewDidDisappear();
+        }
+    }
 
     contentHeight()
     {

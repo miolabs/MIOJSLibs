@@ -67,21 +67,29 @@ function MIOLayerFromResource(url, css, elementID)
 
 class MIOView extends MIOObject
 {
-    tagID = null;
+    layerID = null;
     layer = null;
     subviews = [];
     hidden = false;
     alpha = 1;
+    parent = null;
 
-    constructor()
+    constructor(layerID?)
     {
         super();
+
+        this.layerID = layerID;
     }
 
     init()
     {
         this.layer = document.createElement("div");
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
+        this.layer.style.top = "0px";
+        this.layer.style.left = "0px";
+        this.layer.style.width = "100%";
+        this.layer.style.height = "100%";
     }
 
     initWithFrame(x, y, width, height)
@@ -89,21 +97,31 @@ class MIOView extends MIOObject
         this.init();
 
         this.layer.style.position = "absolute";
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.left = x + "px";
         this.layer.style.top = y + "px";
         this.layer.style.width = width + "px";
         this.layer.style.height = height + "px";
     }
 
-    initWithTagID(tagID)
-    {
-        this.tagID = tagID;
-        this.layer = document.getElementById(tagID);
-    }
-
     initWithLayer(layer)
     {
         this.layer = layer;
+
+        // Async loading / DOM model
+        if (this.parent != null)
+            this.parent.layer.appendChild(this.layer);
+
+        // Set all properties when the layer is ready
+        this.setHidden(this.hidden);
+        this.setAlpha(this.alpha);
+    }
+
+    setParent(view)
+    {
+        this.willChangeValue("parent");
+        this.parent = view;
+        this.didChangeValue("parent");
     }
 
     layout()
@@ -117,10 +135,17 @@ class MIOView extends MIOObject
 
     addSubview(view)
     {
+        view.setParent(this);
         this.subviews.push(view);
 
-        this.layer.appendChild(view.layer);
-//		view.layout();
+        if (view.layer != null)
+            this.layer.appendChild(view.layer);
+
+    }
+
+    removeFromSuperview()
+    {
+        this.parent._removeView(this);
     }
 
     _linkViewToSubview(view)
@@ -128,21 +153,14 @@ class MIOView extends MIOObject
         this.subviews.push(view);
     }
 
-    removeView(view)
+    private _removeView(view)
     {
+        var index = this.subviews.indexOf(view);
+        this.subviews.slice(index, 1);
         this.layer.removeChild(view.layer);
     }
 
-    removeViews(views)
-    {
-        for (var count = 0; count < views.length; count++)
-        {
-            var v = views[count];
-            this.removeView(v);
-        }
-    }
-
-    removeAllSubviews() {
+    private _removeAllSubviews() {
 
         var node = this.layer;
 
@@ -211,8 +229,13 @@ class MIOView extends MIOObject
         this.layer.style.opacity = alpha;
     }
 
-    setX(x)
+    setX(x, animate?, duration?)
     {
+        if (animate == true || duration > 0)
+        {
+            this.layer.style.transition = "left " + duration + "s";
+        }
+
         this.layer.style.left = x + "px";
     }
 

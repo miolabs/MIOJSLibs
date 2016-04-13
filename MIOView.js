@@ -47,32 +47,47 @@ function MIOLayerFromResource(url, css, elementID) {
 }
 var MIOView = (function (_super) {
     __extends(MIOView, _super);
-    function MIOView() {
+    function MIOView(layerID) {
         _super.call(this);
-        this.tagID = null;
+        this.layerID = null;
         this.layer = null;
         this.subviews = [];
         this.hidden = false;
         this.alpha = 1;
+        this.parent = null;
+        this.layerID = layerID;
     }
     MIOView.prototype.init = function () {
         this.layer = document.createElement("div");
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
+        this.layer.style.top = "0px";
+        this.layer.style.left = "0px";
+        this.layer.style.width = "100%";
+        this.layer.style.height = "100%";
     };
     MIOView.prototype.initWithFrame = function (x, y, width, height) {
         this.init();
         this.layer.style.position = "absolute";
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.left = x + "px";
         this.layer.style.top = y + "px";
         this.layer.style.width = width + "px";
         this.layer.style.height = height + "px";
     };
-    MIOView.prototype.initWithTagID = function (tagID) {
-        this.tagID = tagID;
-        this.layer = document.getElementById(tagID);
-    };
     MIOView.prototype.initWithLayer = function (layer) {
         this.layer = layer;
+        // Async loading / DOM model
+        if (this.parent != null)
+            this.parent.layer.appendChild(this.layer);
+        // Set all properties when the layer is ready
+        this.setHidden(this.hidden);
+        this.setAlpha(this.alpha);
+    };
+    MIOView.prototype.setParent = function (view) {
+        this.willChangeValue("parent");
+        this.parent = view;
+        this.didChangeValue("parent");
     };
     MIOView.prototype.layout = function () {
         for (var index = 0; index < this.subviews.length; index++) {
@@ -81,23 +96,23 @@ var MIOView = (function (_super) {
         }
     };
     MIOView.prototype.addSubview = function (view) {
+        view.setParent(this);
         this.subviews.push(view);
-        this.layer.appendChild(view.layer);
-        //		view.layout();
+        if (view.layer != null)
+            this.layer.appendChild(view.layer);
+    };
+    MIOView.prototype.removeFromSuperview = function () {
+        this.parent._removeView(this);
     };
     MIOView.prototype._linkViewToSubview = function (view) {
         this.subviews.push(view);
     };
-    MIOView.prototype.removeView = function (view) {
+    MIOView.prototype._removeView = function (view) {
+        var index = this.subviews.indexOf(view);
+        this.subviews.slice(index, 1);
         this.layer.removeChild(view.layer);
     };
-    MIOView.prototype.removeViews = function (views) {
-        for (var count = 0; count < views.length; count++) {
-            var v = views[count];
-            this.removeView(v);
-        }
-    };
-    MIOView.prototype.removeAllSubviews = function () {
+    MIOView.prototype._removeAllSubviews = function () {
         var node = this.layer;
         while (this.layer.hasChildNodes()) {
             if (node.hasChildNodes()) {
@@ -144,7 +159,10 @@ var MIOView = (function (_super) {
         this.alpha = alpha;
         this.layer.style.opacity = alpha;
     };
-    MIOView.prototype.setX = function (x) {
+    MIOView.prototype.setX = function (x, animate, duration) {
+        if (animate == true || duration > 0) {
+            this.layer.style.transition = "left " + duration + "s";
+        }
         this.layer.style.left = x + "px";
     };
     MIOView.prototype.getX = function () {

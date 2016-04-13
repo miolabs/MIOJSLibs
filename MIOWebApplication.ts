@@ -18,6 +18,8 @@ class MIOWebApplication
     languages = null;
     ready = false;
 
+    private downloadCoreFileCount = 0;
+
     constructor()
     {
         if (MIOWebApplication._sharedInstance)
@@ -29,9 +31,17 @@ class MIOWebApplication
         
         this.decodeParams(window.location.search);
 
-        MIONotificationCenter.defaultCenter().addObserver(this, "MIOLanguageReady", function(notification){
+        MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function(notification){
 
-            this._run();
+            this.downloadCoreFileCount++;
+        });
+
+        MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadedCoreFile", function(notification){
+
+            this.downloadCoreFileCount--;
+            if (this.downloadCoreFileCount == 0)
+                this._showViews();
+
         });
     }
 
@@ -42,20 +52,21 @@ class MIOWebApplication
 
     run()
     {
-        if (this.languages == null)
-            this._run();
-        else
-        {
-            // Check languages
-            if (this.currentLanguage == null)
-                this.currentLanguage = this.defaultLanguage;
+        // Check languages
+        if (this.currentLanguage == null)
+            this.currentLanguage = this.defaultLanguage;
 
-            if (MIOLocalizedStrings == null)
-            {
-                // Download language
-                this.downloadLanguage(this.currentLanguage);
-            }
+        if (MIOLocalizedStrings == null)
+        {
+            // Download language
+            this.downloadLanguage(this.currentLanguage, function(){
+
+                this._run();
+            });
         }
+        else
+            this._run();
+
     }
 
     private _run()
@@ -65,6 +76,13 @@ class MIOWebApplication
         this.delegate.didFinishLaunching();
         this.canvas.appendChild(this.delegate.window.layer);
 
+
+        if (this.downloadCoreFileCount == 0)
+            this._showViews();
+    }
+
+    private _showViews()
+    {
         this.delegate.window.rootViewController.viewWillAppear();
         this.delegate.window.rootViewController.viewDidAppear();
 
@@ -130,20 +148,22 @@ class MIOWebApplication
         this.defaultLanguage = key;
     }
 
-    downloadLanguage(key)
+    downloadLanguage(key, fn)
     {
         var url = this.languages[key];
+
         // Download
-        var conn = new MIOURLConnection();
+        var instance = this;
+        var conn =  new MIOURLConnection();
         conn.initWithRequestBlock(new MIOURLRequest(url), function(error, data){
 
-            if (error == false)
+            if (data != null)
             {
                 var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
                 MIOLocalizedStrings = json;
-
-                MIONotificationCenter.defaultCenter().postNotification("MIOLanguageReady", null);
             }
+
+            fn.call(instance);
         });
     }
 

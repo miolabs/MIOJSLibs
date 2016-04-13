@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOView.ts" />
+/// <reference path="MIOURLConnection.ts" />
 function MIOViewControllerFromElementID(view, elementID) {
     var v = MIOViewFromElementID(view, elementID);
     if (v == null)
@@ -18,27 +19,41 @@ function MIOViewControllerFromElementID(view, elementID) {
 }
 var MIOViewController = (function (_super) {
     __extends(MIOViewController, _super);
-    function MIOViewController() {
+    function MIOViewController(layerID) {
         _super.call(this);
+        this.layerID = null;
         this.view = null;
+        this._onViewLoadedObject = null;
+        this._onViewLoadedTarget = null;
+        this._onViewLoadedAction = null;
+        this._viewLoaded = false;
+        this.childViewControllers = [];
+        this.navigationController = null;
+        this.layerID = layerID;
     }
     MIOViewController.prototype.init = function () {
-        this.view = new MIOView();
+        _super.prototype.init.call(this);
+        this.view = new MIOView(this.layerID);
         this.view.init();
-        this.loadView();
-    };
-    MIOViewController.prototype.initWithTagID = function (tagID) {
-        this.view = new MIOView();
-        this.view.initWithTagID(tagID);
         this.loadView();
     };
     MIOViewController.prototype.initWithView = function (view) {
         this.view = view;
         this.loadView();
     };
-    MIOViewController.prototype.initWithResource = function (htmlFile, cssFile, itemID) {
-        this.view = MIOViewFromResource(htmlFile, cssFile, itemID);
-        this.loadView();
+    MIOViewController.prototype.initWithResource = function (url) {
+        this.view = new MIOView();
+        MIOCoreDownloadFile(this, url, function (data) {
+            var parser = new DOMParser();
+            var html = parser.parseFromString(data, "text/html");
+            //var styles = html.styleSheets;
+            //if (css != null)
+            //MIOCoreLoadStyle(css);
+            var layer = html.getElementById(this.layerID);
+            this.view.initWithLayer(layer);
+            this.loadView();
+            this.setViewLoaded(true);
+        });
     };
     MIOViewController.prototype.localizeLayerIDWithKey = function (layerID, key) {
         var layer = MIOLayerSearchElementByID(this.view.layer, layerID);
@@ -46,15 +61,68 @@ var MIOViewController = (function (_super) {
     };
     MIOViewController.prototype.loadView = function () {
         this.viewDidLoad();
-        //		this.view.layout();
+    };
+    MIOViewController.prototype.setViewLoaded = function (value) {
+        this.willChangeValue("viewLoaded");
+        this._viewLoaded = value;
+        this.didChangeValue("viewLoaded");
+        if (value == true && this._onViewLoadedAction != null)
+            this._onViewLoadedAction.call(this._onViewLoadedTarget, this._onViewLoadedObject);
+    };
+    MIOViewController.prototype.setOnViewLoaded = function (object, target, action) {
+        this._onViewLoadedObject = object;
+        this._onViewLoadedTarget = target;
+        this._onViewLoadedAction = action;
+    };
+    MIOViewController.prototype.viewLoaded = function () {
+        return this._viewLoaded;
+    };
+    MIOViewController.prototype.setOutlet = function (elementID) {
+        var view = MIOViewFromElementID(this.view, elementID);
+        var className = view.layer.getAttribute("data-class");
+        if (className == null)
+            return view;
+        var c = MIOClassFromString(className);
+        c.initWithView(view);
+        return c;
+    };
+    MIOViewController.prototype.addChildViewController = function (vc) {
+        this.childViewControllers.push(vc);
+    };
+    MIOViewController.prototype.removeChildViewController = function (vc) {
+        var index = this.childViewControllers.indexOf(vc);
+        if (index != -1)
+            this.childViewControllers.slice(index, 1);
+        vc.removeFromSuperview();
+    };
+    MIOViewController.prototype.presentViewController = function (vc) {
+        this.view.addSubview(vc.view);
     };
     MIOViewController.prototype.viewDidLoad = function () { };
     MIOViewController.prototype.viewWillAppear = function () {
-        this.view.layout();
+        for (var index = 0; index < this.childViewControllers.length; index++) {
+            var vc = this.childViewControllers[index];
+            vc.viewWillAppear();
+        }
     };
-    MIOViewController.prototype.viewDidAppear = function () { };
-    MIOViewController.prototype.viewWillDisappear = function () { };
-    MIOViewController.prototype.viewDidDisappear = function () { };
+    MIOViewController.prototype.viewDidAppear = function () {
+        for (var index = 0; index < this.childViewControllers.length; index++) {
+            var vc = this.childViewControllers[index];
+            vc.viewDidAppear();
+        }
+    };
+    MIOViewController.prototype.viewWillDisappear = function () {
+        for (var index = 0; index < this.childViewControllers.length; index++) {
+            var vc = this.childViewControllers[index];
+            vc.viewWillDisappear();
+        }
+    };
+    MIOViewController.prototype.viewDidDisappear = function () {
+        for (var index = 0; index < this.childViewControllers.length; index++) {
+            var vc = this.childViewControllers[index];
+            vc.viewDidDisappear();
+        }
+    };
     MIOViewController.prototype.contentHeight = function () {
         return this.view.getHeight();
     };

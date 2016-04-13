@@ -19,7 +19,7 @@ function MIOTextFieldFromElementID(view, elementID) {
 var MIOTextField = (function (_super) {
     __extends(MIOTextField, _super);
     function MIOTextField() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.placeHolder = null;
         this.inputLayer = null;
         this.textChangeTarget = null;

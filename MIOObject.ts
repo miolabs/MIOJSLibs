@@ -12,6 +12,8 @@ class MIOObject
 
     }
 
+    init() {}
+
     willChangeValue(key)
     {
         var obs = this.keyPaths[key];

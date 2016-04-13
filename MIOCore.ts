@@ -10,6 +10,9 @@
 /// <reference path="MIOWebApplication.ts" />
 /// <reference path="MIOURLConnection.ts" />
 
+/// <reference path="MIOManagedObjectContext.ts" />
+/// <reference path="MIOFetchedResultsController.ts" />
+
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOWindow.ts" />
 /// <reference path="MIOLabel.ts" />
@@ -27,7 +30,21 @@
 /// <reference path="MIOTextArea.ts" />
 
 /// <reference path="MIOViewController.ts" />
+/// <reference path="MIONavigationController.ts" />
 /// <reference path="MIOPageController.ts" />
+
+function MIOCoreDownloadFile(target, url, fn)
+{
+    MIONotificationCenter.defaultCenter().postNotification("MIODownloadingCoreFile", null);
+    var instance = this;
+    var conn =  new MIOURLConnection();
+    conn.initWithRequestBlock(new MIOURLRequest(url), function(error, data){
+
+        fn.call(target, data);
+        MIONotificationCenter.defaultCenter().postNotification("MIODownloadedCoreFile", null);
+    });
+
+}
 
 function MIOCCoreLoadTextFile(href)
 {
@@ -87,4 +104,17 @@ function MIOGetDefaultLanguage()
 {
     var string = window.location.search;
     console.log(string);
+}
+
+interface Window {
+    prototype;
+}
+
+function MIOClassFromString(className)
+{
+    //instance creation here
+    var object = Object.create(window[className].prototype);
+    object.constructor.apply(object);
+
+    return object;
 }

@@ -21,13 +21,10 @@ class MIOTableViewCell extends MIOView
 {
     selected = false;
 
-    _target = null;
-    _onClickFn = null;
-
-    constructor()
-    {
-        super();
-    }
+    private _target = null;
+    private _onClickFn = null;
+    private _row = 0;
+    private _section = 0;
 
     init()
     {
@@ -84,19 +81,24 @@ class MIOTableViewCell extends MIOView
     }
 }
 
+class MIOTableViewSection extends MIOObject
+{
+    header = null;
+    cells = [];
+}
+
 class MIOTableView extends MIOView
 {
     dataSource = null;
     delegate = null;
 
-    cells = [];
-    selectedCellIndex = -1;
-    cellPrototypes = {};
+    sections = [];
+    headerView = null;
 
-    constructor()
-    {
-        super();
-    }
+    private selectedCellRow = -1;
+    private selectedCellSection = -1;
+
+    private cellPrototypes = {};
 
     addCellPrototypeWithIdentifier(identifier, classname,  html, css, elementID)
     {
@@ -111,7 +113,7 @@ class MIOTableView extends MIOView
         //instance creation here
         var className = item["class"];
         var cell = Object.create(window[className].prototype);
-        cell.constructor.apply(cell, new Array("World"));
+        cell.constructor.apply(cell);
 
         var html = item["html"];
         var css = item["css"];
@@ -122,22 +124,63 @@ class MIOTableView extends MIOView
         return cell;
     }
 
+    setHeaderView(view)
+    {
+        this.headerView = view;
+        this.addSubview(this.headerView);
+    }
+
     reloadData()
     {
-        this.removeAllSubviews();
-        this.cells = [];
-
-        var rows = this.dataSource.numberOfRowsForTableView(this);
-
-        for (var count = 0; count < rows; count++)
+        // Remove all subviews
+        for (var index = 0; index < this.sections.length; index++)
         {
-            var cell = this.dataSource.cellAtIndexForTableView(this, count);
-            cell.addObserver(this, "selected");
-            this.cells.push(cell);
-            this.addSubview(cell);
+            var section = this.sections[index];
+            if (section.header != null)
+                section.header.removeFromSuperview();
 
-            cell._target = this;
-            cell._onClickFn = this.cellOnClickFn;
+            for (var count = 0; count < section.cells.length; count++){
+                var cell = section.cells[count];
+                cell.removeFromSuperview();
+            }
+
+        }
+
+        this.sections = [];
+
+        var sections = this.dataSource.numberOfSections(this);
+        for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++)
+        {
+            var section = new MIOTableViewSection();
+            this.sections.push(section);
+
+            var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
+
+            if (typeof this.dataSource.titleForHeaderInSection === "function")
+            {
+                var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
+                var header = new MIOLabel();
+                header.init();
+                header.setHeight(22);
+                header.setText(title);
+                header.setTextRGBColor(255, 255, 255);
+                header.layer.style.left = "10px";
+                section.header = header;
+                this.addSubview(header);
+            }
+
+            for (var index = 0; index < rows; index++)
+            {
+                var cell = this.dataSource.cellAtIndexPath(this, index, sectionIndex);
+                cell.addObserver(this, "selected");
+                section.cells.push(cell);
+                this.addSubview(cell);
+
+                cell._target = this;
+                cell._onClickFn = this.cellOnClickFn;
+                cell._row = index;
+                cell._section = sectionIndex;
+            }
         }
 
         this.layout();
@@ -147,42 +190,64 @@ class MIOTableView extends MIOView
     {
         super.layout();
 
+        if (this.sections == null)
+            return;
+
         var y = 0;
         var w = this.getWidth();
 
-        for (var count = 0; count < this.cells.length; count++)
+        if (this.headerView != null)
         {
-            var h = 44;
+            y += this.headerView.getHeight() + 1;
+        }
 
-            if (this.delegate != null) {
-                if (typeof this.delegate.heightForRowAtIndexForTableView === "function")
-                    h = this.delegate.heightForRowAtIndexForTableView(this, count);
+        for (var count = 0; count < this.sections.length; count++)
+        {
+            var section = this.sections[count];
+
+            if (section.header != null)
+            {
+                section.header.setY(y);
+                y += 23;
             }
 
-            var cell = this.cells[count];
-            cell.setY(y);
-            cell.setWidth(w);
-            cell.setHeight(h);
+            for (var index = 0; index < section.cells.length; index++) {
+                var h = 44;
 
-            y += h + 1;
+                if (this.delegate != null) {
+                    if (typeof this.delegate.heightForRowAtIndexPath === "function")
+                        h = this.delegate.heightForRowAtIndexPath(this, count);
+                }
+
+                var cell = section.cells[index];
+                cell.setY(y);
+                cell.setWidth(w);
+                cell.setHeight(h);
+
+                y += h + 1;
+            }
         }
     }
 
     cellOnClickFn(cell)
     {
-        var index = this.cells.indexOf(cell);
-        if (this.selectedCellIndex == index)
+        var index = cell._row;
+        var section = cell._section;
+
+        if (this.selectedCellRow == index && this.selectedCellSection == section)
             return;
 
-        if (this.selectedCellIndex > -1)
-            this.deselectCellAtIndex(this.selectedCellIndex);
+        if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
+            this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
 
-        this.selectedCellIndex = index;
+        this.selectedCellRow = index;
+        this.selectedCellSection = section;
+
         this._selectCell(cell);
 
         if (this.delegate != null){
-            if (typeof this.delegate.didSelectCellAtIndex === "function")
-                this.delegate.didSelectCellAtIndex(index);
+            if (typeof this.delegate.didSelectCellAtIndexPath === "function")
+                this.delegate.didSelectCellAtIndexPath(this, index, section);
         }
     }
 
@@ -191,10 +256,11 @@ class MIOTableView extends MIOView
         cell.setSelected(true);
     }
 
-    selectCellAtIndex(index)
+    selectCellAtIndexPath(row, section)
     {
-        this.selectedCellIndex = index;
-        var cell = this.cells[index];
+        this.selectedCellRow = row;
+        this.selectedCellSection = section;
+        var cell = this.sections[section].cells[row];
         this._selectCell(cell);
     }
 
@@ -203,10 +269,11 @@ class MIOTableView extends MIOView
         cell.setSelected(false);
     }
 
-    deselectCellAtIndex(index)
+    deselectCellAtIndexPath(row, section)
     {
-        this.selectedCellIndex = -1;
-        var cell = this.cells[index];
+        this.selectedCellRow = -1;
+        this.selectedCellSection = -1;
+        var cell = this.sections[section].cells[row];
         this._deselectCell(cell);
     }
 

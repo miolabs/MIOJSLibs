@@ -5,6 +5,7 @@ var MIOObject = (function () {
     function MIOObject() {
         this.keyPaths = {};
     }
+    MIOObject.prototype.init = function () { };
     MIOObject.prototype.willChangeValue = function (key) {
         var obs = this.keyPaths[key];
         if (obs != null) {

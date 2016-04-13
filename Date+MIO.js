@@ -12,3 +12,8 @@ Date.prototype.getDayString = function()
 {
     return MIODateGetStringForDay(this.getDay());
 };
+
+Date.prototype.monthDays = function(){
+    var d= new Date(this.getFullYear(), this.getMonth()+1, 0);
+    return d.getDate();
+}

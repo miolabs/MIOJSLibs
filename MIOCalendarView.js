@@ -78,7 +78,7 @@ var MIOCalendarView = (function (_super) {
         this.endDate = this.dataSource.endDateForCalendar(this);
         var currentDate = new Date(this.startDate.getTime());
         var currentMonth = -1;
-        this.removeAllSubviews();
+        this._removeAllSubviews();
         var dayIndex = 0;
         var count = 0;
         while (this.endDate >= currentDate) {

@@ -24,11 +24,6 @@ class MIOTextField extends MIOControl
     textChangeTarget = null;
     textChangeAction = null;
 
-    constructor()
-    {
-        super();
-    }
-
     init()
     {
         super.init();

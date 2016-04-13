@@ -104,7 +104,7 @@ class MIOCalendarView extends MIOView
         var currentDate = new Date(this.startDate.getTime());
         var currentMonth = -1;
 
-        this.removeAllSubviews();
+        this._removeAllSubviews();
 
         var dayIndex = 0;
         var count = 0;
