@@ -56,7 +56,7 @@ class MIOWebApplication
         if (this.currentLanguage == null)
             this.currentLanguage = this.defaultLanguage;
 
-        if (MIOLocalizedStrings == null)
+        if (MIOLocalizedStrings == null && this.currentLanguage != null)
         {
             // Download language
             this.downloadLanguage(this.currentLanguage, function(){
