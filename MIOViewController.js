@@ -37,6 +37,10 @@ var MIOViewController = (function (_super) {
         this.view.init();
         this.loadView();
     };
+    MIOViewController.prototype.initWithLayer = function (layer) {
+        this.view = new MIOView();
+        this.view.initWithLayer(layer);
+    };
     MIOViewController.prototype.initWithView = function (view) {
         this.view = view;
         this.loadView();
@@ -77,13 +81,17 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.viewLoaded = function () {
         return this._viewLoaded;
     };
-    MIOViewController.prototype.setOutlet = function (elementID) {
-        var view = MIOViewFromElementID(this.view, elementID);
-        var className = view.layer.getAttribute("data-class");
+    MIOViewController.prototype.setOutlet = function (elementID, className) {
+        var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
         if (className == null)
+            className = layer.getAttribute("data-class");
+        if (className == null) {
+            var view = new MIOView();
+            view.initWithLayer(layer);
             return view;
+        }
         var c = MIOClassFromString(className);
-        c.initWithView(view);
+        c.initWithLayer(layer);
         return c;
     };
     MIOViewController.prototype.addChildViewController = function (vc) {

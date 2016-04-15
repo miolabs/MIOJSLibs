@@ -66,6 +66,7 @@ var MIOLabel = (function (_super) {
     MIOLabel.prototype.setText = function (text) {
         this.text = text;
         this.textLayer.innerHTML = text;
+        this.textLayer.innerHTML = text == null ? "" : text;
     };
     MIOLabel.prototype.setTextAlignment = function (alignment) {
         this.layer.style.textAlign = alignment;

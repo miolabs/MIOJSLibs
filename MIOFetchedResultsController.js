@@ -12,6 +12,8 @@ var MIOFetchRequest = (function (_super) {
     function MIOFetchRequest() {
         _super.apply(this, arguments);
         this.entityName = null;
+        this.predicateKey = null;
+        this.predicateValue = null;
     }
     MIOFetchRequest.fetchRequestWithEntityName = function (name) {
         var fetch = new MIOFetchRequest();
@@ -20,6 +22,30 @@ var MIOFetchRequest = (function (_super) {
     };
     MIOFetchRequest.prototype.initWithEntityName = function (name) {
         this.entityName = name;
+    };
+    MIOFetchRequest.prototype.setPredicate = function (predicate) {
+        var key = "";
+        var value = "";
+        var isValue = false;
+        for (var index = 0; index < predicate.length; index++) {
+            var ch = predicate.charAt(index);
+            if (ch == " ") {
+                continue;
+            }
+            else if (ch == "=") {
+                var ch2 = predicate.charAt(index + 1);
+                if (ch2 == "=")
+                    isValue = true;
+            }
+            else {
+                if (isValue == true)
+                    value += ch;
+                else
+                    key += ch;
+            }
+        }
+        this.predicateKey = key;
+        this.predicateValue = value;
     };
     return MIOFetchRequest;
 })(MIOObject);
@@ -56,7 +82,7 @@ var MIOFetchedResultsController = (function (_super) {
     };
     MIOFetchedResultsController.prototype.updateContent = function (objects) {
         this.objects = objects;
-        this._filterObjects(null, null);
+        this._filterObjects();
         this._sortObjects();
         this._splitInSections();
         this._notify();
@@ -81,16 +107,12 @@ var MIOFetchedResultsController = (function (_super) {
                 this.delegate.controllerDidChangeContent(this);
         }
     };
-    MIOFetchedResultsController.prototype.setPredicate = function (key, value) {
-        this._filterObjects(key, value);
-        this._sortObjects();
-        this._splitInSections();
-        this._notify();
-    };
-    MIOFetchedResultsController.prototype._filterObjects = function (key, value) {
-        if (key == null)
+    MIOFetchedResultsController.prototype._filterObjects = function () {
+        if (this._request.predicateKey == null)
             this.resultObjects = this.objects;
         else {
+            var key = this._request.predicateKey;
+            var value = this._request.predicateValue;
             this.resultObjects = this.objects.filter(function (booking) {
                 var value1 = booking[key].toLowerCase();
                 if (value1.indexOf(value.toLowerCase()) > -1)

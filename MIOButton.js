@@ -19,10 +19,15 @@ function MIOButtonFromElementID(view, elementID) {
 var MIOButton = (function (_super) {
     __extends(MIOButton, _super);
     function MIOButton() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.target = null;
         this.action = null;
+        this.selected = false;
     }
+    MIOButton.prototype.initWithLayer = function (layer) {
+        _super.prototype.initWithLayer.call(this, layer);
+        this.layer.classList.add("button_normal");
+    };
     MIOButton.prototype.initWithAction = function (target, action) {
         _super.prototype.init.call(this);
         this.setAction(target, action);
@@ -31,13 +36,41 @@ var MIOButton = (function (_super) {
         this.target = target;
         this.action = action;
         var instance = this;
-        this.layer.onclick = function () {
-            if (instance.enabled)
-                instance.action.call(target);
+        this.layer.onmousedown = function () {
+            if (instance.enabled) {
+                instance.setSelected(true);
+            }
         };
+        this.layer.onmouseup = function () {
+            if (instance.enabled) {
+                instance.setSelected(false);
+                instance.action.call(target);
+            }
+        };
+        /*this.layer.onclick = function()
+        {
+            if (instance.enabled) {
+                if (instance.selected == false) {
+                    instance.setSelected(true);
+                    instance.action.call(target);
+                    instance.setSelected(false);
+                }
+            }
+        }*/
     };
     MIOButton.prototype.setTitle = function (title) {
         this.layer.innerHTML = title;
+    };
+    MIOButton.prototype.setSelected = function (value) {
+        if (value == true) {
+            this.layer.classList.remove("button_normal");
+            this.layer.classList.add("button_selected");
+        }
+        else {
+            this.layer.classList.remove("button_selected");
+            this.layer.classList.add("button_normal");
+        }
+        this.selected = value;
     };
     return MIOButton;
 })(MIOControl);

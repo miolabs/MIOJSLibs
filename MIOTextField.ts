@@ -63,7 +63,7 @@ class MIOTextField extends MIOControl
 
     setText(text)
     {
-        this.inputLayer.value = text;
+        this.inputLayer.value = text == null ? "" : text;
     }
 
     getText()
@@ -83,7 +83,19 @@ class MIOTextField extends MIOControl
         this.textChangeAction = action;
         var instance = this;
 
-        this.layer.onkeyup = function()
+        //this.layer.onkeyup = function()
+        //{
+        //    if (instance.enabled)
+        //        instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+        //}
+        //
+        //this.layer.onfocusout = function()
+        //{
+        //    if (instance.enabled)
+        //        instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+        //}
+
+        this.layer.oninput = function()
         {
             if (instance.enabled)
                 instance.textChangeAction.call(target, instance, instance.inputLayer.value);

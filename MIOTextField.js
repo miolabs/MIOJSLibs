@@ -52,7 +52,7 @@ var MIOTextField = (function (_super) {
         this.inputLayer.style.height = (h - 8) + "px";
     };
     MIOTextField.prototype.setText = function (text) {
-        this.inputLayer.value = text;
+        this.inputLayer.value = text == null ? "" : text;
     };
     MIOTextField.prototype.getText = function () {
         return this.inputLayer.value;
@@ -65,7 +65,18 @@ var MIOTextField = (function (_super) {
         this.textChangeTarget = target;
         this.textChangeAction = action;
         var instance = this;
-        this.layer.onkeyup = function () {
+        //this.layer.onkeyup = function()
+        //{
+        //    if (instance.enabled)
+        //        instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+        //}
+        //
+        //this.layer.onfocusout = function()
+        //{
+        //    if (instance.enabled)
+        //        instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+        //}
+        this.layer.oninput = function () {
             if (instance.enabled)
                 instance.textChangeAction.call(target, instance, instance.inputLayer.value);
         };

@@ -41,7 +41,9 @@ class MIONavigationController extends MIOViewController
         {
             newVC.viewWillAppear();
             if (oldVC != null) {
+                oldVC.viewWillDisappear();
                 oldVC.view.setAlpha(0);
+                oldVC.viewDidDisappear();
             }
             newVC.view.layout();
             newVC.viewDidAppear();
@@ -59,7 +61,9 @@ class MIONavigationController extends MIOViewController
                 newVC.viewWillAppear();
                 newVC.viewWillAppear();
                 if (oldVC != null) {
+                    oldVC.viewWillDisappear();
                     oldVC.view.setAlpha(0);
+                    oldVC.viewDidDisappear();
                 }
                 newVC.view.layout();
                 newVC.viewDidAppear();
@@ -75,13 +79,17 @@ class MIONavigationController extends MIOViewController
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
+        vc.viewWillDisappear();
         vc.view.removeFromSuperview();
+        vc.viewDidDisappear();
 
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
 
         var newVC = this.viewControllersStack[this.currentViewControllerIndex];
+        newVC.viewWillAppear();
         newVC.view.setAlpha(1);
+        newVC.viewDidAppear();
     }
 
     popToRootViewController()

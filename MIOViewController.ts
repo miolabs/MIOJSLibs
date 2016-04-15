@@ -47,6 +47,12 @@ class MIOViewController extends MIOObject
         this.loadView();
     }
 
+    initWithLayer(layer)
+    {
+        this.view = new MIOView();
+        this.view.initWithLayer(layer);
+    }
+
     initWithView(view)
     {
         this.view = view;
@@ -108,15 +114,20 @@ class MIOViewController extends MIOObject
         return this._viewLoaded;
     }
 
-    setOutlet(elementID)
+    setOutlet(elementID, className?)
     {
-        var view = MIOViewFromElementID(this.view, elementID);
-        var className = view.layer.getAttribute("data-class");
+        var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
         if (className == null)
+            className = layer.getAttribute("data-class");
+
+        if (className == null) {
+            var view = new MIOView();
+            view.initWithLayer(layer);
             return view;
+        }
 
         var c = MIOClassFromString(className);
-        c.initWithView(view);
+        c.initWithLayer(layer);
 
         return c;
     }

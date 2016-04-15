@@ -31,6 +31,23 @@ var MIONotificationCenter = (function () {
         this.notificationNames[name] = notes;
     };
     ;
+    MIONotificationCenter.prototype.removeObserver = function (obs, name) {
+        var notes = this.notificationNames[name];
+        if (notes == null)
+            return;
+        var index = -1;
+        for (var count = 0; count < notes.length; count++) {
+            var item = notes[count];
+            var obsAux = item["observer"];
+            if (obsAux === obs) {
+                index = count;
+                break;
+            }
+        }
+        if (index > -1) {
+            notes.splice(index, 1);
+        }
+    };
     MIONotificationCenter.prototype.postNotification = function (name, object) {
         var notes = this.notificationNames[name];
         if (notes == null)

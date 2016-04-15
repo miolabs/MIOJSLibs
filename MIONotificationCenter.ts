@@ -46,6 +46,31 @@ class MIONotificationCenter
         this.notificationNames[name] = notes;
     };
 
+    removeObserver(obs, name)
+    {
+        var notes = this.notificationNames[name];
+
+        if (notes == null)
+            return;
+
+        var index = -1;
+        for (var count = 0; count < notes.length; count++)
+        {
+            var item = notes[count];
+            var obsAux = item["observer"];
+
+            if (obsAux === obs) {
+                index = count;
+                break;
+            }
+        }
+
+        if (index > -1) {
+            notes.splice(index, 1);
+        }
+
+    }
+
     postNotification(name, object)
     {
         var notes = this.notificationNames[name];

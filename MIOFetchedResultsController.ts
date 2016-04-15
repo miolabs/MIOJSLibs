@@ -7,6 +7,8 @@
 class MIOFetchRequest extends MIOObject
 {
     entityName = null;
+    predicateKey = null;
+    predicateValue = null;
 
     static fetchRequestWithEntityName(name)
     {
@@ -19,6 +21,39 @@ class MIOFetchRequest extends MIOObject
     initWithEntityName(name)
     {
         this.entityName = name;
+    }
+
+    setPredicate(predicate)
+    {
+        var key = "";
+        var value = "";
+        var isValue = false;
+
+        for (var index = 0; index < predicate.length; index++)
+        {
+            var ch = predicate.charAt(index);
+
+            if (ch == " ")
+            {
+                continue;
+            }
+            else if (ch == "=")
+            {
+                var ch2 = predicate.charAt(index + 1);
+                if (ch2 == "=")
+                    isValue = true;
+            }
+            else
+            {
+                if (isValue == true)
+                    value += ch;
+                else
+                    key += ch;
+            }
+        }
+
+        this.predicateKey = key;
+        this.predicateValue = value;
     }
 }
 
@@ -60,7 +95,7 @@ class MIOFetchedResultsController extends MIOObject
     {
         this.objects = objects;
 
-        this._filterObjects(null, null);
+        this._filterObjects();
         this._sortObjects();
         this._splitInSections();
 
@@ -94,21 +129,14 @@ class MIOFetchedResultsController extends MIOObject
         }
     }
 
-    setPredicate(key, value)
+    private _filterObjects()
     {
-        this._filterObjects(key, value);
-        this._sortObjects();
-        this._splitInSections();
-
-        this._notify();
-    }
-
-    private _filterObjects(key, value)
-    {
-        if (key == null)
+        if (this._request.predicateKey == null)
             this.resultObjects = this.objects;
         else
         {
+            var key = this._request.predicateKey;
+            var value = this._request.predicateValue;
             this.resultObjects = this.objects.filter(function(booking){
 
                 var value1 = booking[key].toLowerCase();

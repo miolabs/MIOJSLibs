@@ -48,6 +48,14 @@ class MIOPopUpButton extends MIOControl
         this.layer.appendChild(this.selectLayer);
     }
 
+    setAllowMultipleSelection(value)
+    {
+        if (value == true)
+            this.selectLayer.setAttribute("multiple", "multiple");
+        else
+            this.selectLayer.removeAttribute("multiple");
+    }
+
     layout()
     {
         super.layout();

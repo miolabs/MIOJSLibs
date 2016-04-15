@@ -84,6 +84,7 @@ class MIOLabel extends MIOView
     {
         this.text = text;
         this.textLayer.innerHTML = text;
+        this.textLayer.innerHTML = text == null ? "" : text;
     }
 
     setTextAlignment(alignment)

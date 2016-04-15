@@ -35,7 +35,9 @@ var MIONavigationController = (function (_super) {
         if (newVC.viewLoaded()) {
             newVC.viewWillAppear();
             if (oldVC != null) {
+                oldVC.viewWillDisappear();
                 oldVC.view.setAlpha(0);
+                oldVC.viewDidDisappear();
             }
             newVC.view.layout();
             newVC.viewDidAppear();
@@ -50,7 +52,9 @@ var MIONavigationController = (function (_super) {
                 newVC.viewWillAppear();
                 newVC.viewWillAppear();
                 if (oldVC != null) {
+                    oldVC.viewWillDisappear();
                     oldVC.view.setAlpha(0);
+                    oldVC.viewDidDisappear();
                 }
                 newVC.view.layout();
                 newVC.viewDidAppear();
@@ -61,11 +65,15 @@ var MIONavigationController = (function (_super) {
         if (this.currentViewControllerIndex == 0)
             return;
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        vc.viewWillDisappear();
         vc.view.removeFromSuperview();
+        vc.viewDidDisappear();
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
         var newVC = this.viewControllersStack[this.currentViewControllerIndex];
+        newVC.viewWillAppear();
         newVC.view.setAlpha(1);
+        newVC.viewDidAppear();
     };
     MIONavigationController.prototype.popToRootViewController = function () {
         for (var index = this.currentViewControllerIndex; index > 0; index--) {

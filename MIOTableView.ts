@@ -23,6 +23,7 @@ class MIOTableViewCell extends MIOView
 
     private _target = null;
     private _onClickFn = null;
+    private _onDblClickFn = null;
     private _row = 0;
     private _section = 0;
 
@@ -47,6 +48,12 @@ class MIOTableViewCell extends MIOView
         {
             if (instance._onClickFn != null)
                 instance._onClickFn.call(instance._target, instance);
+        }
+
+        this.layer.ondblclick = function()
+        {
+            if (instance._onDblClickFn != null)
+                instance._onDblClickFn.call(instance._target, instance);
         }
     }
 
@@ -159,13 +166,19 @@ class MIOTableView extends MIOView
             if (typeof this.dataSource.titleForHeaderInSection === "function")
             {
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
-                var header = new MIOLabel();
+                var header = new MIOView();
                 header.init();
                 header.setHeight(22);
-                header.setText(title);
-                header.setTextRGBColor(255, 255, 255);
-                header.layer.style.left = "10px";
+                header.layer.style.background = "rgb(141, 139, 139)";
                 section.header = header;
+
+                var titleLabel = new MIOLabel();
+                titleLabel.init();
+                titleLabel.setText(title);
+                titleLabel.setTextRGBColor(255, 255, 255);
+                titleLabel.layer.style.left = "10px";
+                header.addSubview(titleLabel);
+
                 this.addSubview(header);
             }
 
@@ -178,6 +191,7 @@ class MIOTableView extends MIOView
 
                 cell._target = this;
                 cell._onClickFn = this.cellOnClickFn;
+                cell._onDblClickFn = this.cellOnDblClickFn;
                 cell._row = index;
                 cell._section = sectionIndex;
             }
@@ -249,6 +263,37 @@ class MIOTableView extends MIOView
             if (typeof this.delegate.didSelectCellAtIndexPath === "function")
                 this.delegate.didSelectCellAtIndexPath(this, index, section);
         }
+    }
+
+    cellOnDblClickFn(cell)
+    {
+        var index = cell._row;
+        var section = cell._section;
+
+        if (this.selectedCellRow == index && this.selectedCellSection == section) {
+
+            if (this.delegate != null)
+                if (typeof this.delegate.didMakeDoubleClick === "function")
+                    this.delegate.didMakeDoubleClick(this, index, section);
+            return;
+        }
+
+        if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
+            this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
+
+        this.selectedCellRow = index;
+        this.selectedCellSection = section;
+
+        this._selectCell(cell);
+
+        if (this.delegate != null){
+            if (typeof this.delegate.didSelectCellAtIndexPath === "function")
+                this.delegate.didSelectCellAtIndexPath(this, index, section);
+        }
+
+        if (this.delegate != null)
+            if (typeof this.delegate.didMakeDoubleClick === "function")
+                this.delegate.didMakeDoubleClick(this, index, section);
     }
 
     _selectCell(cell)

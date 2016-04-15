@@ -37,6 +37,12 @@ var MIOPopUpButton = (function (_super) {
         this.selectLayer.classList.add("pop_up_style");
         this.layer.appendChild(this.selectLayer);
     };
+    MIOPopUpButton.prototype.setAllowMultipleSelection = function (value) {
+        if (value == true)
+            this.selectLayer.setAttribute("multiple", "multiple");
+        else
+            this.selectLayer.removeAttribute("multiple");
+    };
     MIOPopUpButton.prototype.layout = function () {
         _super.prototype.layout.call(this);
         var w = this.getWidth();

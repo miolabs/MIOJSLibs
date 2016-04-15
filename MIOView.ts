@@ -94,8 +94,7 @@ class MIOView extends MIOObject
 
     initWithFrame(x, y, width, height)
     {
-        this.init();
-
+        this.layer = document.createElement("div");
         this.layer.style.position = "absolute";
         this.layer.setAttribute("id", this.layerID);
         this.layer.style.left = x + "px";

@@ -22,9 +22,13 @@ class MIOButton extends MIOControl
     target = null;
     action = null;
 
-    constructor()
+    selected = false;
+
+    initWithLayer(layer)
     {
-        super();
+        super.initWithLayer(layer);
+
+        this.layer.classList.add("button_normal");
     }
 
     initWithAction(target, action)
@@ -40,16 +44,51 @@ class MIOButton extends MIOControl
         this.action = action;
         var instance = this;
 
-        this.layer.onclick = function()
+        this.layer.onmousedown = function()
         {
-            if (instance.enabled)
-                instance.action.call(target);
+            if (instance.enabled) {
+                instance.setSelected(true);
+            }
         }
+
+        this.layer.onmouseup = function()
+        {
+            if (instance.enabled) {
+                instance.setSelected(false);
+                instance.action.call(target);
+            }
+        }
+
+        /*this.layer.onclick = function()
+        {
+            if (instance.enabled) {
+                if (instance.selected == false) {
+                    instance.setSelected(true);
+                    instance.action.call(target);
+                    instance.setSelected(false);
+                }
+            }
+        }*/
     }
 
     setTitle(title)
     {
         this.layer.innerHTML = title;
+    }
+
+    setSelected(value)
+    {
+        if (value == true) {
+            this.layer.classList.remove("button_normal");
+            this.layer.classList.add("button_selected");
+        }
+        else
+        {
+            this.layer.classList.remove("button_selected");
+            this.layer.classList.add("button_normal");
+        }
+
+        this.selected = value;
     }
 }
 
