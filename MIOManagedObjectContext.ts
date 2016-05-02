@@ -9,17 +9,28 @@
 class MIOEntity
 {
     private entityName = null;
-    private url = null;
+    private keyToRetreive = null;
+    private baseURL = null;
+    private getURL = null;
+    private setURL = null;
+    private httpMethod = "GET";
+    private extraParams = null;
 
     callbacks = [];
     private isDownloaded = false;
 
     objects = [];
 
-    constructor(name, url)
+    constructor(name, keyToRetreive, baseURL, getCommand, setCommand?, httpMethod?, extraParams?)
     {
         this.entityName = name;
-        this.url = url;
+        this.keyToRetreive = keyToRetreive;
+        this.baseURL = baseURL;
+        this.getURL = getCommand;
+        this.setURL = setCommand;
+        if (httpMethod != null)
+            this.httpMethod = httpMethod;
+        this.extraParams = extraParams;
     }
 
     setCallback(target, callback)
@@ -48,13 +59,17 @@ class MIOEntity
     {
         if (this.isDownloaded == false)
         {
+            var url = this.baseURL + this.getURL;
+            var request = new MIOURLRequest(url);
+            request.httpMethod = this.httpMethod;
+            if (this.httpMethod == "POST" && this.extraParams != null)
+                request.body = this.extraParams;
             var urlConnection = new MIOURLConnection();
-            var instance = this;
-            urlConnection.initWithRequestBlock(new MIOURLRequest(this.url), this, function (error, data) {
+            urlConnection.initWithRequestBlock(request, this, function (error, data) {
 
                 if (error == false) {
                     var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                    this.setObjects(json["elements"]);
+                    this.setObjects(json[this.keyToRetreive]);
                     this.checkCallbacks();
                 }
             });
@@ -116,10 +131,9 @@ class MIOManagedObjectContext extends MIOObject
 {
     entities = {};
 
-    setEntity(entityName, url)
+    setEntity(entity)
     {
-        var e = new MIOEntity(entityName, url);
-        this.entities[entityName] = e;
+        this.entities[entity.entityName] = entity;
     }
 
     executeFetch(request, target, callback)

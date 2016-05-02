@@ -10,14 +10,25 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOObject.ts" />
 /// <reference path="MIOURLConnection.ts" />
 var MIOEntity = (function () {
-    function MIOEntity(name, url) {
+    function MIOEntity(name, keyToRetreive, baseURL, getCommand, setCommand, httpMethod, extraParams) {
         this.entityName = null;
-        this.url = null;
+        this.keyToRetreive = null;
+        this.baseURL = null;
+        this.getURL = null;
+        this.setURL = null;
+        this.httpMethod = "GET";
+        this.extraParams = null;
         this.callbacks = [];
         this.isDownloaded = false;
         this.objects = [];
         this.entityName = name;
-        this.url = url;
+        this.keyToRetreive = keyToRetreive;
+        this.baseURL = baseURL;
+        this.getURL = getCommand;
+        this.setURL = setCommand;
+        if (httpMethod != null)
+            this.httpMethod = httpMethod;
+        this.extraParams = extraParams;
     }
     MIOEntity.prototype.setCallback = function (target, callback) {
         var item = { "target": target, "function": callback, "updated": false };
@@ -37,12 +48,16 @@ var MIOEntity = (function () {
     };
     MIOEntity.prototype.execute = function () {
         if (this.isDownloaded == false) {
+            var url = this.baseURL + this.getURL;
+            var request = new MIOURLRequest(url);
+            request.httpMethod = this.httpMethod;
+            if (this.httpMethod == "POST" && this.extraParams != null)
+                request.body = this.extraParams;
             var urlConnection = new MIOURLConnection();
-            var instance = this;
-            urlConnection.initWithRequestBlock(new MIOURLRequest(this.url), this, function (error, data) {
+            urlConnection.initWithRequestBlock(request, this, function (error, data) {
                 if (error == false) {
                     var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                    this.setObjects(json["elements"]);
+                    this.setObjects(json[this.keyToRetreive]);
                     this.checkCallbacks();
                 }
             });
@@ -92,9 +107,8 @@ var MIOManagedObjectContext = (function (_super) {
         _super.apply(this, arguments);
         this.entities = {};
     }
-    MIOManagedObjectContext.prototype.setEntity = function (entityName, url) {
-        var e = new MIOEntity(entityName, url);
-        this.entities[entityName] = e;
+    MIOManagedObjectContext.prototype.setEntity = function (entity) {
+        this.entities[entity.entityName] = entity;
     };
     MIOManagedObjectContext.prototype.executeFetch = function (request, target, callback) {
         var e = this.entities[request.entityName];
