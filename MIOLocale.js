@@ -16,5 +16,5 @@ var MIOLocale = (function (_super) {
         return MIOWebApplication.sharedInstance().currentLanguage;
     };
     return MIOLocale;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOLocale.js.map

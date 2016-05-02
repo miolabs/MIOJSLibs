@@ -9,7 +9,7 @@ var MIONotification = (function () {
         this.object = object;
     }
     return MIONotification;
-})();
+}());
 var MIONotificationCenter = (function () {
     function MIONotificationCenter() {
         this.notificationNames = {};
@@ -62,5 +62,5 @@ var MIONotificationCenter = (function () {
     };
     MIONotificationCenter._sharedInstance = new MIONotificationCenter();
     return MIONotificationCenter;
-})();
+}());
 //# sourceMappingURL=MIONotificationCenter.js.map

@@ -36,7 +36,7 @@ var MIOStepControlButton = (function (_super) {
         this.layer.appendChild(button_title);
     };
     return MIOStepControlButton;
-})(MIOButton);
+}(MIOButton));
 /*
  Separator class
  */
@@ -50,5 +50,5 @@ var MIOStepControlSeparator = (function (_super) {
         this.layer.setAttribute("id", "step_control_button_separator");
     };
     return MIOStepControlSeparator;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOStepControlButton.js.map

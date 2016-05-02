@@ -75,5 +75,5 @@ var MIOPageController = (function (_super) {
         }
     };
     return MIOPageController;
-})(MIOViewController);
+}(MIOViewController));
 //# sourceMappingURL=MIOPageController.js.map

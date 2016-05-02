@@ -111,5 +111,5 @@ var MIOTextField = (function (_super) {
         };
     };
     return MIOTextField;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOTextField.js.map

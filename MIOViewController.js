@@ -149,5 +149,5 @@ var MIOViewController = (function (_super) {
         return this.view.getHeight();
     };
     return MIOViewController;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOViewController.js.map

@@ -111,5 +111,5 @@ var MIOWebApplication = (function () {
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;
-})();
+}());
 //# sourceMappingURL=MIOWebApplication.js.map

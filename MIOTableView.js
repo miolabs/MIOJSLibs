@@ -69,7 +69,7 @@ var MIOTableViewCell = (function (_super) {
         }
     };
     return MIOTableViewCell;
-})(MIOView);
+}(MIOView));
 var MIOTableViewSection = (function (_super) {
     __extends(MIOTableViewSection, _super);
     function MIOTableViewSection() {
@@ -78,7 +78,7 @@ var MIOTableViewSection = (function (_super) {
         this.cells = [];
     }
     return MIOTableViewSection;
-})(MIOObject);
+}(MIOObject));
 var MIOTableView = (function (_super) {
     __extends(MIOTableView, _super);
     function MIOTableView() {
@@ -256,5 +256,5 @@ var MIOTableView = (function (_super) {
         this._deselectCell(cell);
     };
     return MIOTableView;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOTableView.js.map

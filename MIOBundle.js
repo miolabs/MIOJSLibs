@@ -26,5 +26,5 @@ var MIOBundle = (function (_super) {
         return (html.getElementById(elementID));
     };
     return MIOBundle;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOBundle.js.map

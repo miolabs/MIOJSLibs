@@ -93,5 +93,5 @@ var MIOLabel = (function (_super) {
         this.textLayer.style.fontFamily = fontFamily;
     };
     return MIOLabel;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOLabel.js.map

@@ -108,5 +108,5 @@ var MIOPopUpButton = (function (_super) {
         };
     };
     return MIOPopUpButton;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOPopUpButton.js.map

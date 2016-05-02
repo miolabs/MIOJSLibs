@@ -88,7 +88,7 @@ var MIOEntity = (function () {
         }
     };
     return MIOEntity;
-})();
+}());
 var MIOManagedObject = (function (_super) {
     __extends(MIOManagedObject, _super);
     function MIOManagedObject() {
@@ -100,7 +100,7 @@ var MIOManagedObject = (function (_super) {
         return "";
     };
     return MIOManagedObject;
-})(MIOObject);
+}(MIOObject));
 var MIOManagedObjectContext = (function (_super) {
     __extends(MIOManagedObjectContext, _super);
     function MIOManagedObjectContext() {
@@ -120,5 +120,5 @@ var MIOManagedObjectContext = (function (_super) {
         e.removeCallback(target, callback);
     };
     return MIOManagedObjectContext;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOManagedObjectContext.js.map

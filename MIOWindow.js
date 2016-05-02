@@ -28,5 +28,5 @@ var MIOWindow = (function (_super) {
         this.addSubview(vc.view);
     };
     return MIOWindow;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOWindow.js.map

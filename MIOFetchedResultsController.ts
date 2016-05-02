@@ -58,7 +58,12 @@ class MIOFetchedResultsController extends MIOObject
         this._sectionNameKeyPath = sectionNameKeyPath;
     }
 
-    setDelegate(delegate)
+    get delegate()
+    {
+        return this._delegate;
+    }
+
+    set delegate(delegate)
     {
         this._delegate = delegate;
         if (delegate == null)

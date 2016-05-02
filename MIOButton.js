@@ -71,5 +71,5 @@ var MIOButton = (function (_super) {
         this.selected = value;
     };
     return MIOButton;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOButton.js.map

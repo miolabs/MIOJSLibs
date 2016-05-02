@@ -86,5 +86,5 @@ var MIONavigationController = (function (_super) {
         this.viewControllersStack.push(this.rootViewController);
     };
     return MIONavigationController;
-})(MIOViewController);
+}(MIOViewController));
 //# sourceMappingURL=MIONavigationController.js.map

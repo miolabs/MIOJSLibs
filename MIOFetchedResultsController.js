@@ -27,7 +27,7 @@ var MIOFetchRequest = (function (_super) {
         this.predicate = predicate;
     };
     return MIOFetchRequest;
-})(MIOObject);
+}(MIOObject));
 var MIOFetchSection = (function (_super) {
     __extends(MIOFetchSection, _super);
     function MIOFetchSection() {
@@ -38,7 +38,7 @@ var MIOFetchSection = (function (_super) {
         return this.objects.length;
     };
     return MIOFetchSection;
-})(MIOObject);
+}(MIOObject));
 var MIOFetchedResultsController = (function (_super) {
     __extends(MIOFetchedResultsController, _super);
     function MIOFetchedResultsController() {
@@ -56,11 +56,18 @@ var MIOFetchedResultsController = (function (_super) {
         this._moc = managedObjectContext;
         this._sectionNameKeyPath = sectionNameKeyPath;
     };
-    MIOFetchedResultsController.prototype.setDelegate = function (delegate) {
-        this._delegate = delegate;
-        if (delegate == null)
-            this._moc.removeFetch(this._request, this, this.updateContent);
-    };
+    Object.defineProperty(MIOFetchedResultsController.prototype, "delegate", {
+        get: function () {
+            return this._delegate;
+        },
+        set: function (delegate) {
+            this._delegate = delegate;
+            if (delegate == null)
+                this._moc.removeFetch(this._request, this, this.updateContent);
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOFetchedResultsController.prototype.performFetch = function () {
         this.objects = this._moc.executeFetch(this._request, this, this.updateContent);
         this.resultObjects = null;
@@ -155,5 +162,5 @@ var MIOFetchedResultsController = (function (_super) {
         return object;
     };
     return MIOFetchedResultsController;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOFetchedResultsController.js.map
