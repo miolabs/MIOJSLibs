@@ -35,7 +35,7 @@ var MIOLabel = (function (_super) {
     };
     MIOLabel.prototype._setupLayer = function () {
         this.textLayer = document.createElement("span");
-        this.textLayer.classList.add("label_style");
+        this.textLayer.classList.add("label");
         this.layer.appendChild(this.textLayer);
     };
     MIOLabel.prototype.layout = function () {

@@ -33,9 +33,9 @@ class MIOTableViewCell extends MIOView
         this._setupLayer();
     }
 
-    initWithLayer(layer)
+    initWithLayer(layer, options?)
     {
-        super.initWithLayer(layer);
+        super.initWithLayer(layer, options);
         this._setupLayer();
     }
 
@@ -107,6 +107,27 @@ class MIOTableView extends MIOView
 
     private cellPrototypes = {};
 
+    initWithLayer(layer, options?)
+    {
+        super.initWithLayer(layer, options);
+
+        // Check if we have a header in the tableview
+        if (this.layer.childNodes.length > 0)
+        {
+            // Get the first div element. We don't support more than one element
+            var index = 0;
+            var headerLayer = this.layer.childNodes[index];
+            while(headerLayer.tagName != "DIV")
+            {
+                index++;
+                headerLayer = this.layer.childNodes[index];
+            }
+
+            this.headerView = new MIOView();
+            this.headerView.initWithLayer(headerLayer);
+        }
+    }
+
     addCellPrototypeWithIdentifier(identifier, classname,  html, css, elementID)
     {
         var item = {"html" : html, "css" : css, "id" : elementID, "class" : classname};
@@ -168,15 +189,13 @@ class MIOTableView extends MIOView
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
                 var header = new MIOView();
                 header.init();
-                header.setHeight(22);
-                header.layer.style.background = "rgb(141, 139, 139)";
+                header.layer.classList.add("tableview_header");
                 section.header = header;
 
                 var titleLabel = new MIOLabel();
                 titleLabel.init();
+                titleLabel.layer.classList.add("tableview_header_title");
                 titleLabel.setText(title);
-                titleLabel.setTextRGBColor(255, 255, 255);
-                titleLabel.layer.style.left = "10px";
                 header.addSubview(titleLabel);
 
                 this.addSubview(header);

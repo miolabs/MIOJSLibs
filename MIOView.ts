@@ -69,6 +69,7 @@ class MIOView extends MIOObject
 {
     layerID = null;
     layer = null;
+    layerOptions = null;
     subviews = [];
     hidden = false;
     alpha = 1;
@@ -103,9 +104,10 @@ class MIOView extends MIOObject
         this.layer.style.height = height + "px";
     }
 
-    initWithLayer(layer)
+    initWithLayer(layer, options?)
     {
         this.layer = layer;
+        this.layerOptions = options;
 
         // Async loading / DOM model
         if (this.parent != null)

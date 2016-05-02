@@ -19,12 +19,9 @@ class MIOURLConnection
     request = null;
     delegate = null;
     blockFN = null;
+    blockTarget = null;
 
     private xmlHttpRequest = null;
-
-    constructor()
-    {
-    }
 
     initWithRequest(request, delegate)
     {
@@ -33,10 +30,11 @@ class MIOURLConnection
         this.start();
     }
 
-    initWithRequestBlock(request, blockFN)
+    initWithRequestBlock(request, blockTarget, blockFN)
     {
         this.request = request;
         this.blockFN = blockFN;
+        this.blockTarget = blockTarget;
         this.start();
     }
 
@@ -53,7 +51,7 @@ class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidReceiveData(instance, this.responseText);
                 else if (instance.blockFN != null)
-                    instance.blockFN(false, this.responseText);
+                    instance.blockFN.call(instance.blockTarget, false, this.responseText);
             }
             else
             {
@@ -61,7 +59,7 @@ class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidFail(instance);
                 else if (instance.blockFN != null)
-                    instance.blockFN(true, null);
+                    instance.blockFN.call(instance.blockTarget, true, null);
             }
         };
 

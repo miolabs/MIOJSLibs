@@ -17,28 +17,42 @@ function MIOCheckButtonFromElementID(view, elementID)
     return button;
 }
 
-class MIOCheckButton extends MIOButton
+class MIOCheckButton extends MIOControl
 {
+    target = null;
+    action = null;
     on = false; //Off
-
-    constructor()
-    {
-        super();
-    }
 
     init()
     {
         super.init();
-//		this.layer.classList.remove("step_control_button_unselected");
-        this.layer.classList.add("check_button_state_off");
-
+        this._setupLayer();
     }
 
     initWithLayer(layer)
     {
         super.initWithLayer(layer);
+        this._setupLayer();
+    }
+
+    _setupLayer()
+    {
+        this.layer.classList.add("check_button");
         this.layer.classList.add("check_button_state_off");
-        this.setAction(this, this.toggleCheckButton);
+
+        var instance = this;
+        this.layer.onclick = function() {
+
+            if (instance.enabled) {
+                instance.toggleValue.call(instance);
+            }
+        }
+    }
+
+    setOnChangeValue(target, action)
+    {
+        this.target = target;
+        this.action = action;
     }
 
     setOn(on)
@@ -56,8 +70,11 @@ class MIOCheckButton extends MIOButton
         }
     }
 
-    toggleCheckButton()
+    toggleValue()
     {
         this.setOn(!this.on);
+
+        if (this.target != null && this.action != null)
+            this.action.call(this.target, this, this.on);
     }
 }

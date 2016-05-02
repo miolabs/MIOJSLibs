@@ -15,7 +15,7 @@ var MIOEntity = (function () {
         this.url = null;
         this.callbacks = [];
         this.isDownloaded = false;
-        this.objects = null;
+        this.objects = [];
         this.entityName = name;
         this.url = url;
     }
@@ -23,20 +23,31 @@ var MIOEntity = (function () {
         var item = { "target": target, "function": callback, "updated": false };
         this.callbacks.push(item);
     };
+    MIOEntity.prototype.removeCallback = function (target, callback) {
+        var pos = -1;
+        for (var index = 0; index < this.callbacks.length; index++) {
+            var item = this.callbacks[index];
+            if (item["target"] === target && item["function"] === callback) {
+                pos = index;
+                break;
+            }
+        }
+        if (pos > -1)
+            this.callbacks.splice(pos, 1);
+    };
     MIOEntity.prototype.execute = function () {
         if (this.isDownloaded == false) {
             var urlConnection = new MIOURLConnection();
             var instance = this;
-            urlConnection.initWithRequestBlock(new MIOURLRequest(this.url), function (error, data) {
+            urlConnection.initWithRequestBlock(new MIOURLRequest(this.url), this, function (error, data) {
                 if (error == false) {
                     var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                    instance.setObjects(json["elements"]);
-                    instance.checkCallbacks();
+                    this.setObjects(json["elements"]);
+                    this.checkCallbacks();
                 }
             });
         }
-        else
-            this.checkCallbacks();
+        return this.objects;
     };
     MIOEntity.prototype.setObjects = function (items) {
         this.objects = [];
@@ -88,7 +99,11 @@ var MIOManagedObjectContext = (function (_super) {
     MIOManagedObjectContext.prototype.executeFetch = function (request, target, callback) {
         var e = this.entities[request.entityName];
         e.setCallback(target, callback);
-        e.execute();
+        return e.execute();
+    };
+    MIOManagedObjectContext.prototype.removeFetch = function (request, target, callback) {
+        var e = this.entities[request.entityName];
+        e.removeCallback(target, callback);
     };
     return MIOManagedObjectContext;
 })(MIOObject);

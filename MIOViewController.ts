@@ -47,10 +47,10 @@ class MIOViewController extends MIOObject
         this.loadView();
     }
 
-    initWithLayer(layer)
+    initWithLayer(layer, options?)
     {
         this.view = new MIOView();
-        this.view.initWithLayer(layer);
+        this.view.initWithLayer(layer, options);
     }
 
     initWithView(view)
@@ -74,10 +74,31 @@ class MIOViewController extends MIOObject
 
             var layer = html.getElementById(this.layerID);
 
+            this.localizeSubLayers(layer.childNodes);
+
             this.view.initWithLayer(layer);
             this.loadView();
             this.setViewLoaded(true);
         });
+    }
+
+    localizeSubLayers(layers)
+    {
+        if (layers.length == 0)
+            return;
+
+        for (var index = 0; index < layers.length; index++)
+        {
+            var layer = layers[index];
+
+            if (layer.tagName != "DIV") continue;
+
+            var key = layer.getAttribute("data-localize-key");
+            if (key != null)
+                layer.innerHTML = MIOLocalizeString(key, key);
+
+            this.localizeSubLayers(layer.childNodes);
+        }
     }
 
     localizeLayerIDWithKey(layerID, key)
@@ -114,7 +135,7 @@ class MIOViewController extends MIOObject
         return this._viewLoaded;
     }
 
-    setOutlet(elementID, className?)
+    setOutlet(elementID, className?, options?)
     {
         var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
         if (className == null)
@@ -127,7 +148,7 @@ class MIOViewController extends MIOObject
         }
 
         var c = MIOClassFromString(className);
-        c.initWithLayer(layer);
+        c.initWithLayer(layer, options);
 
         return c;
     }

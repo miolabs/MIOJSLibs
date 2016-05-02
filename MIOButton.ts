@@ -24,11 +24,38 @@ class MIOButton extends MIOControl
 
     selected = false;
 
+    init()
+    {
+        super.init();
+        this._setupLayer();
+    }
+
     initWithLayer(layer)
     {
         super.initWithLayer(layer);
+        this._setupLayer();
+    }
 
-        this.layer.classList.add("button_normal");
+    _setupLayer()
+    {
+        this.layer.classList.add("button");
+
+        var instance = this;
+        this.layer.onmousedown = function()
+        {
+            if (instance.enabled) {
+                instance.setSelected(true);
+            }
+        }
+
+        this.layer.onmouseup = function()
+        {
+            if (instance.enabled) {
+                instance.setSelected(false);
+                if (instance.action != null && instance.target != null)
+                    instance.action.call(instance.target);
+            }
+        }
     }
 
     initWithAction(target, action)
@@ -42,33 +69,6 @@ class MIOButton extends MIOControl
     {
         this.target = target;
         this.action = action;
-        var instance = this;
-
-        this.layer.onmousedown = function()
-        {
-            if (instance.enabled) {
-                instance.setSelected(true);
-            }
-        }
-
-        this.layer.onmouseup = function()
-        {
-            if (instance.enabled) {
-                instance.setSelected(false);
-                instance.action.call(target);
-            }
-        }
-
-        /*this.layer.onclick = function()
-        {
-            if (instance.enabled) {
-                if (instance.selected == false) {
-                    instance.setSelected(true);
-                    instance.action.call(target);
-                    instance.setSelected(false);
-                }
-            }
-        }*/
     }
 
     setTitle(title)

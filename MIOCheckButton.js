@@ -19,18 +19,32 @@ function MIOCheckButtonFromElementID(view, elementID) {
 var MIOCheckButton = (function (_super) {
     __extends(MIOCheckButton, _super);
     function MIOCheckButton() {
-        _super.call(this);
+        _super.apply(this, arguments);
+        this.target = null;
+        this.action = null;
         this.on = false; //Off
     }
     MIOCheckButton.prototype.init = function () {
         _super.prototype.init.call(this);
-        //		this.layer.classList.remove("step_control_button_unselected");
-        this.layer.classList.add("check_button_state_off");
+        this._setupLayer();
     };
     MIOCheckButton.prototype.initWithLayer = function (layer) {
         _super.prototype.initWithLayer.call(this, layer);
+        this._setupLayer();
+    };
+    MIOCheckButton.prototype._setupLayer = function () {
+        this.layer.classList.add("check_button");
         this.layer.classList.add("check_button_state_off");
-        this.setAction(this, this.toggleCheckButton);
+        var instance = this;
+        this.layer.onclick = function () {
+            if (instance.enabled) {
+                instance.toggleValue.call(instance);
+            }
+        };
+    };
+    MIOCheckButton.prototype.setOnChangeValue = function (target, action) {
+        this.target = target;
+        this.action = action;
     };
     MIOCheckButton.prototype.setOn = function (on) {
         this.on = on;
@@ -43,9 +57,11 @@ var MIOCheckButton = (function (_super) {
             this.layer.classList.add("check_button_state_off");
         }
     };
-    MIOCheckButton.prototype.toggleCheckButton = function () {
+    MIOCheckButton.prototype.toggleValue = function () {
         this.setOn(!this.on);
+        if (this.target != null && this.action != null)
+            this.action.call(this.target, this, this.on);
     };
     return MIOCheckButton;
-})(MIOButton);
+})(MIOControl);
 //# sourceMappingURL=MIOCheckButton.js.map

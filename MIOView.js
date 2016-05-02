@@ -51,6 +51,7 @@ var MIOView = (function (_super) {
         _super.call(this);
         this.layerID = null;
         this.layer = null;
+        this.layerOptions = null;
         this.subviews = [];
         this.hidden = false;
         this.alpha = 1;
@@ -75,8 +76,9 @@ var MIOView = (function (_super) {
         this.layer.style.width = width + "px";
         this.layer.style.height = height + "px";
     };
-    MIOView.prototype.initWithLayer = function (layer) {
+    MIOView.prototype.initWithLayer = function (layer, options) {
         this.layer = layer;
+        this.layerOptions = options;
         // Async loading / DOM model
         if (this.parent != null)
             this.parent.layer.appendChild(this.layer);

@@ -20,7 +20,7 @@ function MIOStepControlFromElementID(view, elementID) {
 var MIOStepControl = (function (_super) {
     __extends(MIOStepControl, _super);
     function MIOStepControl() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.buttons = [];
         this.separators = [];
         this.selectedButtonIndex = -1;

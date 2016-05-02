@@ -16,31 +16,60 @@ function MIOTextFieldFromElementID(view, elementID) {
     view._linkViewToSubview(tf);
     return tf;
 }
+var MIOTextFieldType;
+(function (MIOTextFieldType) {
+    MIOTextFieldType[MIOTextFieldType["NormalType"] = 0] = "NormalType";
+    MIOTextFieldType[MIOTextFieldType["SearchType"] = 1] = "SearchType";
+})(MIOTextFieldType || (MIOTextFieldType = {}));
 var MIOTextField = (function (_super) {
     __extends(MIOTextField, _super);
     function MIOTextField() {
         _super.apply(this, arguments);
         this.placeHolder = null;
         this.inputLayer = null;
+        this.type = MIOTextFieldType.NormalType;
         this.textChangeTarget = null;
         this.textChangeAction = null;
+        this.enterPressTarget = null;
+        this.enterPressAction = null;
     }
     MIOTextField.prototype.init = function () {
         _super.prototype.init.call(this);
         this._setupLayer();
     };
-    MIOTextField.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
+    MIOTextField.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._setupLayer();
     };
     MIOTextField.prototype._setupLayer = function () {
-        //this.layer.contentEditable = true;
+        if (this.layerOptions == "SearchType")
+            this.type = MIOTextFieldType.SearchType;
+        if (this.type == MIOTextFieldType.SearchType)
+            this.layer.classList.add("searchfield");
+        else
+            this.layer.classList.add("textfield");
         this.inputLayer = document.createElement("input");
         this.inputLayer.setAttribute("type", "text");
         this.inputLayer.style.backgroundColor = "transparent";
         this.inputLayer.style.border = "0px";
-        this.inputLayer.classList.add("text_field_style");
+        this.inputLayer.style.width = "100%";
+        if (this.type == MIOTextFieldType.SearchType) {
+            this.inputLayer.style.marginLeft = "10px";
+            this.inputLayer.style.marginRight = "10px";
+        }
+        else {
+            this.inputLayer.style.marginLeft = "5px";
+            this.inputLayer.style.marginRight = "5px";
+        }
+        this.inputLayer.style.height = "100%";
+        this.inputLayer.style.color = "inherit";
+        this.inputLayer.style.fontSize = "inherit";
+        this.inputLayer.style.fontFamily = "inherit";
+        this.inputLayer.style.outline = "none";
         this.layer.appendChild(this.inputLayer);
+        var placeholderKey = this.layer.getAttribute("data-placeholder-localize-key");
+        if (placeholderKey != null)
+            this.inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
     };
     MIOTextField.prototype.layout = function () {
         _super.prototype.layout.call(this);
@@ -65,20 +94,20 @@ var MIOTextField = (function (_super) {
         this.textChangeTarget = target;
         this.textChangeAction = action;
         var instance = this;
-        //this.layer.onkeyup = function()
-        //{
-        //    if (instance.enabled)
-        //        instance.textChangeAction.call(target, instance, instance.inputLayer.value);
-        //}
-        //
-        //this.layer.onfocusout = function()
-        //{
-        //    if (instance.enabled)
-        //        instance.textChangeAction.call(target, instance, instance.inputLayer.value);
-        //}
         this.layer.oninput = function () {
             if (instance.enabled)
                 instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+        };
+    };
+    MIOTextField.prototype.setOnEnterPress = function (target, action) {
+        this.enterPressTarget = target;
+        this.enterPressAction = action;
+        var instance = this;
+        this.layer.onkeyup = function (e) {
+            if (instance.enabled) {
+                if (e.keyCode == 13)
+                    instance.enterPressAction.call(target, instance, instance.inputLayer.value);
+            }
         };
     };
     return MIOTextField;

@@ -45,7 +45,7 @@ class MIOLabel extends MIOView
     _setupLayer()
     {
         this.textLayer = document.createElement("span");
-        this.textLayer.classList.add("label_style");
+        this.textLayer.classList.add("label");
         this.layer.appendChild(this.textLayer);
     }
 

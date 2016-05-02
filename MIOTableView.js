@@ -31,8 +31,8 @@ var MIOTableViewCell = (function (_super) {
         _super.prototype.init.call(this);
         this._setupLayer();
     };
-    MIOTableViewCell.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
+    MIOTableViewCell.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._setupLayer();
     };
     MIOTableViewCell.prototype._setupLayer = function () {
@@ -91,6 +91,21 @@ var MIOTableView = (function (_super) {
         this.selectedCellSection = -1;
         this.cellPrototypes = {};
     }
+    MIOTableView.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
+        // Check if we have a header in the tableview
+        if (this.layer.childNodes.length > 0) {
+            // Get the first div element. We don't support more than one element
+            var index = 0;
+            var headerLayer = this.layer.childNodes[index];
+            while (headerLayer.tagName != "DIV") {
+                index++;
+                headerLayer = this.layer.childNodes[index];
+            }
+            this.headerView = new MIOView();
+            this.headerView.initWithLayer(headerLayer);
+        }
+    };
     MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, classname, html, css, elementID) {
         var item = { "html": html, "css": css, "id": elementID, "class": classname };
         this.cellPrototypes[identifier] = item;
@@ -133,14 +148,12 @@ var MIOTableView = (function (_super) {
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
                 var header = new MIOView();
                 header.init();
-                header.setHeight(22);
-                header.layer.style.background = "rgb(141, 139, 139)";
+                header.layer.classList.add("tableview_header");
                 section.header = header;
                 var titleLabel = new MIOLabel();
                 titleLabel.init();
+                titleLabel.layer.classList.add("tableview_header_title");
                 titleLabel.setText(title);
-                titleLabel.setTextRGBColor(255, 255, 255);
-                titleLabel.layer.style.left = "10px";
                 header.addSubview(titleLabel);
                 this.addSubview(header);
             }

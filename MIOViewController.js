@@ -37,9 +37,9 @@ var MIOViewController = (function (_super) {
         this.view.init();
         this.loadView();
     };
-    MIOViewController.prototype.initWithLayer = function (layer) {
+    MIOViewController.prototype.initWithLayer = function (layer, options) {
         this.view = new MIOView();
-        this.view.initWithLayer(layer);
+        this.view.initWithLayer(layer, options);
     };
     MIOViewController.prototype.initWithView = function (view) {
         this.view = view;
@@ -54,10 +54,24 @@ var MIOViewController = (function (_super) {
             //if (css != null)
             //MIOCoreLoadStyle(css);
             var layer = html.getElementById(this.layerID);
+            this.localizeSubLayers(layer.childNodes);
             this.view.initWithLayer(layer);
             this.loadView();
             this.setViewLoaded(true);
         });
+    };
+    MIOViewController.prototype.localizeSubLayers = function (layers) {
+        if (layers.length == 0)
+            return;
+        for (var index = 0; index < layers.length; index++) {
+            var layer = layers[index];
+            if (layer.tagName != "DIV")
+                continue;
+            var key = layer.getAttribute("data-localize-key");
+            if (key != null)
+                layer.innerHTML = MIOLocalizeString(key, key);
+            this.localizeSubLayers(layer.childNodes);
+        }
     };
     MIOViewController.prototype.localizeLayerIDWithKey = function (layerID, key) {
         var layer = MIOLayerSearchElementByID(this.view.layer, layerID);
@@ -81,7 +95,7 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.viewLoaded = function () {
         return this._viewLoaded;
     };
-    MIOViewController.prototype.setOutlet = function (elementID, className) {
+    MIOViewController.prototype.setOutlet = function (elementID, className, options) {
         var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
         if (className == null)
             className = layer.getAttribute("data-class");
@@ -91,7 +105,7 @@ var MIOViewController = (function (_super) {
             return view;
         }
         var c = MIOClassFromString(className);
-        c.initWithLayer(layer);
+        c.initWithLayer(layer, options);
         return c;
     };
     MIOViewController.prototype.addChildViewController = function (vc) {

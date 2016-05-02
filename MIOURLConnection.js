@@ -15,6 +15,7 @@ var MIOURLConnection = (function () {
         this.request = null;
         this.delegate = null;
         this.blockFN = null;
+        this.blockTarget = null;
         this.xmlHttpRequest = null;
     }
     MIOURLConnection.prototype.initWithRequest = function (request, delegate) {
@@ -22,9 +23,10 @@ var MIOURLConnection = (function () {
         this.delegate = delegate;
         this.start();
     };
-    MIOURLConnection.prototype.initWithRequestBlock = function (request, blockFN) {
+    MIOURLConnection.prototype.initWithRequestBlock = function (request, blockTarget, blockFN) {
         this.request = request;
         this.blockFN = blockFN;
+        this.blockTarget = blockTarget;
         this.start();
     };
     MIOURLConnection.prototype.start = function () {
@@ -36,14 +38,14 @@ var MIOURLConnection = (function () {
                 if (instance.delegate != null)
                     instance.delegate.connectionDidReceiveData(instance, this.responseText);
                 else if (instance.blockFN != null)
-                    instance.blockFN(false, this.responseText);
+                    instance.blockFN.call(instance.blockTarget, false, this.responseText);
             }
             else {
                 // something went wrong
                 if (instance.delegate != null)
                     instance.delegate.connectionDidFail(instance);
                 else if (instance.blockFN != null)
-                    instance.blockFN(true, null);
+                    instance.blockFN.call(instance.blockTarget, true, null);
             }
         };
         this.xmlHttpRequest.open(this.request.httpMethod, this.request.url);

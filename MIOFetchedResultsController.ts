@@ -3,12 +3,12 @@
  */
 
     /// <reference path="MIOObject.ts" />
+    /// <reference path="MIOPredicate.ts" />
 
 class MIOFetchRequest extends MIOObject
 {
     entityName = null;
-    predicateKey = null;
-    predicateValue = null;
+    predicate = null;
 
     static fetchRequestWithEntityName(name)
     {
@@ -25,35 +25,7 @@ class MIOFetchRequest extends MIOObject
 
     setPredicate(predicate)
     {
-        var key = "";
-        var value = "";
-        var isValue = false;
-
-        for (var index = 0; index < predicate.length; index++)
-        {
-            var ch = predicate.charAt(index);
-
-            if (ch == " ")
-            {
-                continue;
-            }
-            else if (ch == "=")
-            {
-                var ch2 = predicate.charAt(index + 1);
-                if (ch2 == "=")
-                    isValue = true;
-            }
-            else
-            {
-                if (isValue == true)
-                    value += ch;
-                else
-                    key += ch;
-            }
-        }
-
-        this.predicateKey = key;
-        this.predicateValue = value;
+        this.predicate = predicate;
     }
 }
 
@@ -69,7 +41,7 @@ class MIOFetchSection extends MIOObject
 
 class MIOFetchedResultsController extends MIOObject
 {
-    delegate = null;
+    _delegate = null;
     sections = [];
 
     resultObjects = [];
@@ -86,14 +58,27 @@ class MIOFetchedResultsController extends MIOObject
         this._sectionNameKeyPath = sectionNameKeyPath;
     }
 
+    setDelegate(delegate)
+    {
+        this._delegate = delegate;
+        if (delegate == null)
+            this._moc.removeFetch(this._request, this, this.updateContent);
+    }
+
     performFetch()
     {
-        this._moc.executeFetch(this._request, this, this.updateContent);
+        this.objects = this._moc.executeFetch(this._request, this, this.updateContent);
+        this.resultObjects = null;
+
+        this._filterObjects();
+        this._sortObjects();
+        this._splitInSections();
     }
 
     updateContent(objects)
     {
         this.objects = objects;
+        this.resultObjects = null;
 
         this._filterObjects();
         this._sortObjects();
@@ -104,43 +89,42 @@ class MIOFetchedResultsController extends MIOObject
 
     _notify()
     {
-        if (this.delegate != null)
+        if (this._delegate != null)
         {
-            if (typeof this.delegate.controllerWillChangeContent === "function")
-                this.delegate.controllerWillChangeContent(this);
+            if (typeof this._delegate.controllerWillChangeContent === "function")
+                this._delegate.controllerWillChangeContent(this);
 
             for (var sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++)
             {
-                if (typeof this.delegate.didChangeSection === "function")
-                    this.delegate.didChangeSection(this, sectionIndex, "insert");
+                if (typeof this._delegate.didChangeSection === "function")
+                    this._delegate.didChangeSection(this, sectionIndex, "insert");
 
-                if (typeof this.delegate.didChangeObject === "function") {
+                if (typeof this._delegate.didChangeObject === "function") {
                     var section = this.sections[sectionIndex];
                     var items = section.objects;
                     for (var index = 0; index < items.length; index++) {
                         var obj = items[index];
-                        this.delegate.didChangeObject(this, index, "insert", obj);
+                        this._delegate.didChangeObject(this, index, "insert", obj);
                     }
                 }
             }
 
-            if (typeof this.delegate.controllerDidChangeContent === "function")
-                this.delegate.controllerDidChangeContent(this);
+            if (typeof this._delegate.controllerDidChangeContent === "function")
+                this._delegate.controllerDidChangeContent(this);
         }
     }
 
     private _filterObjects()
     {
-        if (this._request.predicateKey == null)
+        if (this._request.predicate == null)
             this.resultObjects = this.objects;
         else
         {
-            var key = this._request.predicateKey;
-            var value = this._request.predicateValue;
+            var predicate = this._request.predicate;
             this.resultObjects = this.objects.filter(function(booking){
 
-                var value1 = booking[key].toLowerCase();
-                if (value1.indexOf(value.toLowerCase()) > -1)
+                var result = predicate.evaluateObject(booking);
+                if (result)
                     return booking;
             });
         }

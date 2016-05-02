@@ -24,17 +24,16 @@ var MIOButton = (function (_super) {
         this.action = null;
         this.selected = false;
     }
+    MIOButton.prototype.init = function () {
+        _super.prototype.init.call(this);
+        this._setupLayer();
+    };
     MIOButton.prototype.initWithLayer = function (layer) {
         _super.prototype.initWithLayer.call(this, layer);
-        this.layer.classList.add("button_normal");
+        this._setupLayer();
     };
-    MIOButton.prototype.initWithAction = function (target, action) {
-        _super.prototype.init.call(this);
-        this.setAction(target, action);
-    };
-    MIOButton.prototype.setAction = function (target, action) {
-        this.target = target;
-        this.action = action;
+    MIOButton.prototype._setupLayer = function () {
+        this.layer.classList.add("button");
         var instance = this;
         this.layer.onmousedown = function () {
             if (instance.enabled) {
@@ -44,19 +43,18 @@ var MIOButton = (function (_super) {
         this.layer.onmouseup = function () {
             if (instance.enabled) {
                 instance.setSelected(false);
-                instance.action.call(target);
+                if (instance.action != null && instance.target != null)
+                    instance.action.call(instance.target);
             }
         };
-        /*this.layer.onclick = function()
-        {
-            if (instance.enabled) {
-                if (instance.selected == false) {
-                    instance.setSelected(true);
-                    instance.action.call(target);
-                    instance.setSelected(false);
-                }
-            }
-        }*/
+    };
+    MIOButton.prototype.initWithAction = function (target, action) {
+        _super.prototype.init.call(this);
+        this.setAction(target, action);
+    };
+    MIOButton.prototype.setAction = function (target, action) {
+        this.target = target;
+        this.action = action;
     };
     MIOButton.prototype.setTitle = function (title) {
         this.layer.innerHTML = title;

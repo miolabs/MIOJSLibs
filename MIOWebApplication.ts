@@ -153,9 +153,9 @@ class MIOWebApplication
         var url = this.languages[key];
 
         // Download
-        var instance = this;
+
         var conn =  new MIOURLConnection();
-        conn.initWithRequestBlock(new MIOURLRequest(url), function(error, data){
+        conn.initWithRequestBlock(new MIOURLRequest(url), this, function(error, data){
 
             if (data != null)
             {
@@ -163,7 +163,7 @@ class MIOWebApplication
                 MIOLocalizedStrings = json;
             }
 
-            fn.call(instance);
+            fn.call(this);
         });
     }
 

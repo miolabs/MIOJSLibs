@@ -14,7 +14,7 @@ class MIOEntity
     callbacks = [];
     private isDownloaded = false;
 
-    objects = null;
+    objects = [];
 
     constructor(name, url)
     {
@@ -28,23 +28,39 @@ class MIOEntity
         this.callbacks.push(item);
     }
 
+    removeCallback(target, callback)
+    {
+        var pos = -1;
+        for (var index = 0; index < this.callbacks.length; index++)
+        {
+            var item = this.callbacks[index];
+            if (item["target"] === target && item["function"] === callback) {
+                pos = index;
+                break;
+            }
+        }
+
+        if (pos > -1)
+            this.callbacks.splice(pos, 1);
+    }
+
     execute()
     {
         if (this.isDownloaded == false)
         {
             var urlConnection = new MIOURLConnection();
             var instance = this;
-            urlConnection.initWithRequestBlock(new MIOURLRequest(this.url), function (error, data) {
+            urlConnection.initWithRequestBlock(new MIOURLRequest(this.url), this, function (error, data) {
 
                 if (error == false) {
                     var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                    instance.setObjects(json["elements"]);
-                    instance.checkCallbacks();
+                    this.setObjects(json["elements"]);
+                    this.checkCallbacks();
                 }
             });
         }
-        else
-            this.checkCallbacks();
+
+        return this.objects;
     }
 
     setObjects(items)
@@ -110,6 +126,12 @@ class MIOManagedObjectContext extends MIOObject
     {
         var e = this.entities[request.entityName];
         e.setCallback(target, callback);
-        e.execute();
+        return e.execute();
+    }
+
+    removeFetch(request, target, callback)
+    {
+        var e = this.entities[request.entityName];
+        e.removeCallback(target, callback);
     }
 }

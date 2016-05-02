@@ -100,14 +100,13 @@ var MIOWebApplication = (function () {
     MIOWebApplication.prototype.downloadLanguage = function (key, fn) {
         var url = this.languages[key];
         // Download
-        var instance = this;
         var conn = new MIOURLConnection();
-        conn.initWithRequestBlock(new MIOURLRequest(url), function (error, data) {
+        conn.initWithRequestBlock(new MIOURLRequest(url), this, function (error, data) {
             if (data != null) {
                 var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
                 MIOLocalizedStrings = json;
             }
-            fn.call(instance);
+            fn.call(this);
         });
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();

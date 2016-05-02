@@ -29,9 +29,8 @@
 /// <reference path="MIOPageController.ts" />
 function MIOCoreDownloadFile(target, url, fn) {
     MIONotificationCenter.defaultCenter().postNotification("MIODownloadingCoreFile", null);
-    var instance = this;
     var conn = new MIOURLConnection();
-    conn.initWithRequestBlock(new MIOURLRequest(url), function (error, data) {
+    conn.initWithRequestBlock(new MIOURLRequest(url), this, function (error, data) {
         fn.call(target, data);
         MIONotificationCenter.defaultCenter().postNotification("MIODownloadedCoreFile", null);
     });

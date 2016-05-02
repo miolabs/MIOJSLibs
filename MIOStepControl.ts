@@ -24,11 +24,6 @@ class MIOStepControl extends MIOView
     separators = [];
     selectedButtonIndex = -1;
 
-    constructor()
-    {
-        super();
-    }
-
     addButton(percentage, title, image)
     {
         if (this.buttons.length > 0)
