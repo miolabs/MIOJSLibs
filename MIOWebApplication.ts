@@ -3,6 +3,8 @@
  */
 
     /// <reference path="MIOCore.ts" />
+    /// <reference path="MIONotificationCenter.ts" />
+    /// <reference path="MIOURLConnection.ts" />
 
 var MIOLocalizedStrings = null;
 

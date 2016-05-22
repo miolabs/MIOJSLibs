@@ -38,5 +38,5 @@ var MIOTextArea = (function (_super) {
         this.layer.appendChild(this.textareaLayer);
     };
     return MIOTextArea;
-}(MIOControl));
+})(MIOControl);
 //# sourceMappingURL=MIOTextArea.js.map

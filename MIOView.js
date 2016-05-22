@@ -201,5 +201,5 @@ var MIOView = (function (_super) {
         this.setHeight(h);
     };
     return MIOView;
-}(MIOObject));
+})(MIOObject);
 //# sourceMappingURL=MIOView.js.map

@@ -18,5 +18,5 @@ var MIOUUID = (function () {
         return uuid;
     };
     return MIOUUID;
-}());
+})();
 //# sourceMappingURL=MIOUUID.js.map

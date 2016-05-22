@@ -2,7 +2,8 @@
  * Created by godshadow on 9/4/16.
  */
 
-    /// <reference path="MIOCore.ts" />
+    /// <reference path="MIOObject.ts" />
+    /// <reference path="MIOURLConnection.ts" />
 
 class MIOBundle extends MIOObject
 {
@@ -13,7 +14,7 @@ class MIOBundle extends MIOObject
 
     loadFromResource(url)
     {
-        var conn =  MIOURLConnection();
+        var conn = new MIOURLConnection();
         conn.initWithRequest(new MIOURLRequest(url), this);
     }
 

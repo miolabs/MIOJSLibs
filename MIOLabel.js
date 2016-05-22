@@ -20,8 +20,7 @@ var MIOLabel = (function (_super) {
     __extends(MIOLabel, _super);
     function MIOLabel() {
         _super.call(this);
-        this.text = null;
-        this.textLayer = null;
+        this._textLayer = null;
         this.autoAdjustFontSize = "none";
         this.autoAdjustFontSizeValue = 4;
     }
@@ -34,9 +33,9 @@ var MIOLabel = (function (_super) {
         this._setupLayer();
     };
     MIOLabel.prototype._setupLayer = function () {
-        this.textLayer = document.createElement("span");
-        this.textLayer.classList.add("label");
-        this.layer.appendChild(this.textLayer);
+        this._textLayer = document.createElement("span");
+        this._textLayer.classList.add("label");
+        this.layer.appendChild(this._textLayer);
     };
     MIOLabel.prototype.layout = function () {
         _super.prototype.layout.call(this);
@@ -65,33 +64,39 @@ var MIOLabel = (function (_super) {
     };
     MIOLabel.prototype.setText = function (text) {
         this.text = text;
-        this.textLayer.innerHTML = text;
-        this.textLayer.innerHTML = text == null ? "" : text;
     };
+    Object.defineProperty(MIOLabel.prototype, "text", {
+        set: function (text) {
+            this._textLayer.innerHTML = text;
+            this._textLayer.innerHTML = text == null ? "" : text;
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOLabel.prototype.setTextAlignment = function (alignment) {
         this.layer.style.textAlign = alignment;
     };
     MIOLabel.prototype.setHightlighted = function (value) {
         if (value == true) {
-            this.textLayer.classList.add("label_highlighted_color");
+            this._textLayer.classList.add("label_highlighted_color");
         }
         else {
-            this.textLayer.classList.remove("label_highlighted_color");
+            this._textLayer.classList.remove("label_highlighted_color");
         }
     };
     MIOLabel.prototype.setTextRGBColor = function (r, g, b) {
         var value = "rgb(" + r + ", " + g + ", " + b + ")";
-        this.textLayer.style.color = value;
+        this._textLayer.style.color = value;
     };
     MIOLabel.prototype.setFontSize = function (size) {
-        this.textLayer.style.fontSize = size + "px";
+        this._textLayer.style.fontSize = size + "px";
     };
     MIOLabel.prototype.setFontStyle = function (style) {
-        this.textLayer.style.fontWeight = style;
+        this._textLayer.style.fontWeight = style;
     };
     MIOLabel.prototype.setFontFamily = function (fontFamily) {
-        this.textLayer.style.fontFamily = fontFamily;
+        this._textLayer.style.fontFamily = fontFamily;
     };
     return MIOLabel;
-}(MIOView));
+})(MIOView);
 //# sourceMappingURL=MIOLabel.js.map

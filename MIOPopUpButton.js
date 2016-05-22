@@ -6,107 +6,48 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOControl.ts" />
-function MIOPopUpButtonFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var button = new MIOPopUpButton();
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-    return button;
-}
+/// <reference path="MIOButton.ts" />
+/// <reference path="MIOMenu.ts" />
 var MIOPopUpButton = (function (_super) {
     __extends(MIOPopUpButton, _super);
     function MIOPopUpButton() {
-        _super.call(this);
-        this.selectLayer = null;
-        this.target = null;
-        this.action = null;
+        _super.apply(this, arguments);
+        this.popUpMenu = null;
     }
-    MIOPopUpButton.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOPopUpButton.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
-        this._setupLayer();
-    };
-    MIOPopUpButton.prototype._setupLayer = function () {
-        this.selectLayer = document.createElement("select");
-        this.selectLayer.classList.add("pop_up_style");
-        this.layer.appendChild(this.selectLayer);
-    };
-    MIOPopUpButton.prototype.setAllowMultipleSelection = function (value) {
-        if (value == true)
-            this.selectLayer.setAttribute("multiple", "multiple");
-        else
-            this.selectLayer.removeAttribute("multiple");
+    MIOPopUpButton.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
+        // Check if we have a menu
+        if (this.layer.childNodes.length > 0) {
+            // Get the first div element. We don't support more than one element
+            var index = 0;
+            var menuLayer = this.layer.childNodes[index];
+            while (menuLayer.tagName != "DIV") {
+                index++;
+                if (index >= this.layer.childNodes.length) {
+                    menuLayer = null;
+                    break;
+                }
+                menuLayer = this.layer.childNodes[index];
+            }
+            if (menuLayer != null) {
+                var layerID = menuLayer.getAttribute("id");
+                this.popUpMenu = new MIOMenu(layerID);
+                this.popUpMenu.initWithLayer(menuLayer);
+                var x = 10;
+                var y = this.getHeight();
+                this.popUpMenu.setX(x);
+                this.popUpMenu.setY(y);
+                this._linkViewToSubview(this.popUpMenu);
+            }
+            // Set action
+            this.setAction(this, function () {
+                this.popUpMenu.toggle();
+            });
+        }
     };
     MIOPopUpButton.prototype.layout = function () {
         _super.prototype.layout.call(this);
-        var w = this.getWidth();
-        var h = this.getHeight();
-        this.selectLayer.style.marginLeft = "8px";
-        this.selectLayer.style.width = (w - 16) + "px";
-        this.selectLayer.style.marginTop = "4px";
-        this.selectLayer.style.height = (h - 8) + "px";
-        var color = this.getBackgroundColor();
-        this.selectLayer.style.backgroundColor = color;
-    };
-    MIOPopUpButton.prototype.addItem = function (text, value) {
-        var option = document.createElement("option");
-        option.innerHTML = text;
-        if (value != null)
-            option.value = value;
-        this.selectLayer.appendChild(option);
-    };
-    MIOPopUpButton.prototype.addItems = function (items) {
-        for (var count = 0; count < items.length; count++) {
-            var text = items[count];
-            this.addItem(text);
-        }
-    };
-    MIOPopUpButton.prototype.removeAllItems = function () {
-        var node = this.selectLayer;
-        while (this.selectLayer.hasChildNodes()) {
-            if (node.hasChildNodes()) {
-                node = node.lastChild; // set current node to child
-            }
-            else {
-                node = node.parentNode; // set node to parent
-                node.removeChild(node.lastChild); // remove last node
-            }
-        }
-    };
-    MIOPopUpButton.prototype.getItemAtIndex = function (index) {
-        if (this.selectLayer.childNodes.length == 0)
-            return null;
-        var option = this.selectLayer.childNodes[index];
-        return option.innerHTML;
-    };
-    MIOPopUpButton.prototype.getSelectedItem = function () {
-        return this.selectLayer.value;
-    };
-    MIOPopUpButton.prototype.getSelectedItemText = function () {
-        for (var index = 0; index < this.selectLayer.childNodes.length; index++) {
-            var option = this.selectLayer.childNodes[index];
-            if (this.selectLayer.value == option.value)
-                return option.innerHTML;
-        }
-    };
-    MIOPopUpButton.prototype.selectItem = function (item) {
-        this.selectLayer.value = item;
-    };
-    MIOPopUpButton.prototype.setOnChangeAction = function (target, action) {
-        this.target = target;
-        this.action = action;
-        var instance = this;
-        this.selectLayer.onchange = function () {
-            if (instance.enabled)
-                instance.action.call(target, instance.selectLayer.value);
-        };
     };
     return MIOPopUpButton;
-}(MIOControl));
+})(MIOButton);
 //# sourceMappingURL=MIOPopUpButton.js.map

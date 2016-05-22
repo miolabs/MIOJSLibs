@@ -6,6 +6,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/// <reference path="MIOObject.ts" />
+/// <reference path="MIOString.ts" />
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOURLConnection.ts" />
 function MIOViewControllerFromElementID(view, elementID) {
@@ -23,6 +25,7 @@ var MIOViewController = (function (_super) {
         _super.call(this);
         this.layerID = null;
         this.view = null;
+        this.parent = null;
         this._onViewLoadedObject = null;
         this._onViewLoadedTarget = null;
         this._onViewLoadedAction = null;
@@ -118,7 +121,22 @@ var MIOViewController = (function (_super) {
         vc.removeFromSuperview();
     };
     MIOViewController.prototype.presentViewController = function (vc) {
+        vc.parent = this;
+        this.viewWillDisappear();
+        vc.viewWillAppear();
         this.view.addSubview(vc.view);
+        this.viewDidDisappear();
+        vc.viewDidAppear();
+    };
+    MIOViewController.prototype.dismissViewController = function () {
+        if (this.parent != null) {
+            this.viewWillDisappear();
+            this.parent.viewWillAppear();
+            this.parent.view.removeFromSuperview();
+            this.viewDidDisappear();
+            this.parent.viewDidAppear();
+            this.parent = null;
+        }
     };
     MIOViewController.prototype.viewDidLoad = function () { };
     MIOViewController.prototype.viewWillAppear = function () {
@@ -149,5 +167,5 @@ var MIOViewController = (function (_super) {
         return this.view.getHeight();
     };
     return MIOViewController;
-}(MIOObject));
+})(MIOObject);
 //# sourceMappingURL=MIOViewController.js.map

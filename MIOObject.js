@@ -42,5 +42,5 @@ var MIOObject = (function () {
         observers.splice(index, 1);
     };
     return MIOObject;
-}());
+})();
 //# sourceMappingURL=MIOObject.js.map

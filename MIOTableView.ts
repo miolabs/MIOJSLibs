@@ -3,6 +3,7 @@
  */
 
     /// <reference path="MIOView.ts" />
+    /// <reference path="MIOLabel.ts" />
 
 function MIOTableViewFromElementID(view, elementID)
 {
@@ -195,7 +196,7 @@ class MIOTableView extends MIOView
                 var titleLabel = new MIOLabel();
                 titleLabel.init();
                 titleLabel.layer.classList.add("tableview_header_title");
-                titleLabel.setText(title);
+                titleLabel.text = title;
                 header.addSubview(titleLabel);
 
                 this.addSubview(header);

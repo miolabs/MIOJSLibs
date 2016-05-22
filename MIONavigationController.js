@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOCore.ts" />
+/// <reference path="MIOViewController.ts" />
 var MIONavigationController = (function (_super) {
     __extends(MIONavigationController, _super);
     function MIONavigationController() {
@@ -36,7 +36,7 @@ var MIONavigationController = (function (_super) {
             newVC.viewWillAppear();
             if (oldVC != null) {
                 oldVC.viewWillDisappear();
-                oldVC.view.setAlpha(0);
+                oldVC.view.setHidden(true);
                 oldVC.viewDidDisappear();
             }
             newVC.view.layout();
@@ -53,7 +53,7 @@ var MIONavigationController = (function (_super) {
                 newVC.viewWillAppear();
                 if (oldVC != null) {
                     oldVC.viewWillDisappear();
-                    oldVC.view.setAlpha(0);
+                    oldVC.view.setHidden(true);
                     oldVC.viewDidDisappear();
                 }
                 newVC.view.layout();
@@ -72,7 +72,7 @@ var MIONavigationController = (function (_super) {
         this.viewControllersStack.pop();
         var newVC = this.viewControllersStack[this.currentViewControllerIndex];
         newVC.viewWillAppear();
-        newVC.view.setAlpha(1);
+        newVC.view.setHidden(false);
         newVC.viewDidAppear();
     };
     MIONavigationController.prototype.popToRootViewController = function () {
@@ -86,5 +86,5 @@ var MIONavigationController = (function (_super) {
         this.viewControllersStack.push(this.rootViewController);
     };
     return MIONavigationController;
-}(MIOViewController));
+})(MIOViewController);
 //# sourceMappingURL=MIONavigationController.js.map

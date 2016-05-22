@@ -6,14 +6,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOCore.ts" />
+/// <reference path="MIOObject.ts" />
+/// <reference path="MIOURLConnection.ts" />
 var MIOBundle = (function (_super) {
     __extends(MIOBundle, _super);
     function MIOBundle() {
         _super.call(this);
     }
     MIOBundle.prototype.loadFromResource = function (url) {
-        var conn = MIOURLConnection();
+        var conn = new MIOURLConnection();
         conn.initWithRequest(new MIOURLRequest(url), this);
     };
     MIOBundle.prototype.connectionDidReceiveData = function (error, data) {
@@ -26,5 +27,5 @@ var MIOBundle = (function (_super) {
         return (html.getElementById(elementID));
     };
     return MIOBundle;
-}(MIOObject));
+})(MIOObject);
 //# sourceMappingURL=MIOBundle.js.map

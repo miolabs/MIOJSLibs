@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOView.ts" />
+/// <reference path="MIOLabel.ts" />
 function MIOTableViewFromElementID(view, elementID) {
     var layer = MIOLayerSearchElementByID(view.layer, elementID);
     if (layer == null)
@@ -69,7 +70,7 @@ var MIOTableViewCell = (function (_super) {
         }
     };
     return MIOTableViewCell;
-}(MIOView));
+})(MIOView);
 var MIOTableViewSection = (function (_super) {
     __extends(MIOTableViewSection, _super);
     function MIOTableViewSection() {
@@ -78,7 +79,7 @@ var MIOTableViewSection = (function (_super) {
         this.cells = [];
     }
     return MIOTableViewSection;
-}(MIOObject));
+})(MIOObject);
 var MIOTableView = (function (_super) {
     __extends(MIOTableView, _super);
     function MIOTableView() {
@@ -153,7 +154,7 @@ var MIOTableView = (function (_super) {
                 var titleLabel = new MIOLabel();
                 titleLabel.init();
                 titleLabel.layer.classList.add("tableview_header_title");
-                titleLabel.setText(title);
+                titleLabel.text = title;
                 header.addSubview(titleLabel);
                 this.addSubview(header);
             }
@@ -256,5 +257,5 @@ var MIOTableView = (function (_super) {
         this._deselectCell(cell);
     };
     return MIOTableView;
-}(MIOView));
+})(MIOView);
 //# sourceMappingURL=MIOTableView.js.map

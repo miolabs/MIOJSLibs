@@ -2,6 +2,8 @@
  * Created by godshadow on 11/3/16.
  */
 /// <reference path="MIOCore.ts" />
+/// <reference path="MIONotificationCenter.ts" />
+/// <reference path="MIOURLConnection.ts" />
 var MIOLocalizedStrings = null;
 var MIOWebApplication = (function () {
     function MIOWebApplication() {
@@ -111,5 +113,5 @@ var MIOWebApplication = (function () {
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;
-}());
+})();
 //# sourceMappingURL=MIOWebApplication.js.map

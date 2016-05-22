@@ -2,7 +2,9 @@
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MIOCore.ts" />
+/// <reference path="MIOView.ts" />
+/// <reference path="MIOControl.ts" />
+/// <reference path="MIOString.ts" />
 
 function MIOTextFieldFromElementID(view, elementID)
 {
@@ -97,10 +99,15 @@ class MIOTextField extends MIOControl
 
     setText(text)
     {
+        this.text = text;
+    }
+
+    set text(text)
+    {
         this.inputLayer.value = text == null ? "" : text;
     }
 
-    getText()
+    get text()
     {
         return this.inputLayer.value;
     }

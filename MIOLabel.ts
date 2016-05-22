@@ -20,8 +20,7 @@ function MIOLabelFromElementID(view, elementID)
 
 class MIOLabel extends MIOView
 {
-    text = null;
-    textLayer = null;
+    private _textLayer = null;
     autoAdjustFontSize = "none";
     autoAdjustFontSizeValue = 4;
 
@@ -44,9 +43,9 @@ class MIOLabel extends MIOView
 
     _setupLayer()
     {
-        this.textLayer = document.createElement("span");
-        this.textLayer.classList.add("label");
-        this.layer.appendChild(this.textLayer);
+        this._textLayer = document.createElement("span");
+        this._textLayer.classList.add("label");
+        this.layer.appendChild(this._textLayer);
     }
 
     layout()
@@ -83,8 +82,12 @@ class MIOLabel extends MIOView
     setText(text)
     {
         this.text = text;
-        this.textLayer.innerHTML = text;
-        this.textLayer.innerHTML = text == null ? "" : text;
+    }
+
+    set text(text)
+    {
+        this._textLayer.innerHTML = text;
+        this._textLayer.innerHTML = text == null ? "" : text;
     }
 
     setTextAlignment(alignment)
@@ -96,32 +99,32 @@ class MIOLabel extends MIOView
     {
         if (value == true)
         {
-            this.textLayer.classList.add("label_highlighted_color");
+            this._textLayer.classList.add("label_highlighted_color");
         }
         else
         {
-            this.textLayer.classList.remove("label_highlighted_color");
+            this._textLayer.classList.remove("label_highlighted_color");
         }
     }
 
     setTextRGBColor(r, g, b)
     {
         var value = "rgb(" + r + ", " + g + ", " + b + ")";
-        this.textLayer.style.color = value;
+        this._textLayer.style.color = value;
     }
 
     setFontSize(size)
     {
-        this.textLayer.style.fontSize = size + "px";
+        this._textLayer.style.fontSize = size + "px";
     }
 
     setFontStyle(style)
     {
-        this.textLayer.style.fontWeight = style;
+        this._textLayer.style.fontWeight = style;
     }
 
     setFontFamily(fontFamily)
     {
-        this.textLayer.style.fontFamily = fontFamily;
+        this._textLayer.style.fontFamily = fontFamily;
     }
 }

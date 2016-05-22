@@ -42,7 +42,7 @@ var MIOCalendarCell = (function (_super) {
         };
     };
     return MIOCalendarCell;
-}(MIOView));
+})(MIOView);
 var MIOCalendarView = (function (_super) {
     __extends(MIOCalendarView, _super);
     function MIOCalendarView() {
@@ -162,7 +162,7 @@ var MIOCalendarView = (function (_super) {
         }
     };
     return MIOCalendarView;
-}(MIOView));
+})(MIOView);
 function MIOCalendarGetStringFromDate(date) {
     var yyyy = date.getFullYear().toString();
     var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based

@@ -6,111 +6,15 @@
     /// <reference path="MIOObject.ts" />
     /// <reference path="MIOURLConnection.ts" />
 
-class MIOEntity
+class MIOEntityDescription extends MIOObject
 {
     private entityName = null;
-    private keyToRetreive = null;
-    private baseURL = null;
-    private getURL = null;
-    private setURL = null;
-    private httpMethod = "GET";
-    private extraParams = null;
 
-    callbacks = [];
-    private isDownloaded = false;
-
-    objects = [];
-
-    constructor(name, keyToRetreive, baseURL, getCommand, setCommand?, httpMethod?, extraParams?)
+    public static insertNewObjectForEntityForName(entityName, context)
     {
-        this.entityName = name;
-        this.keyToRetreive = keyToRetreive;
-        this.baseURL = baseURL;
-        this.getURL = getCommand;
-        this.setURL = setCommand;
-        if (httpMethod != null)
-            this.httpMethod = httpMethod;
-        this.extraParams = extraParams;
-    }
+        var object = context.insertNewObjectForEntityName(entityName);
 
-    setCallback(target, callback)
-    {
-        var item = {"target" : target, "function" : callback, "updated" : false};
-        this.callbacks.push(item);
-    }
-
-    removeCallback(target, callback)
-    {
-        var pos = -1;
-        for (var index = 0; index < this.callbacks.length; index++)
-        {
-            var item = this.callbacks[index];
-            if (item["target"] === target && item["function"] === callback) {
-                pos = index;
-                break;
-            }
-        }
-
-        if (pos > -1)
-            this.callbacks.splice(pos, 1);
-    }
-
-    execute()
-    {
-        if (this.isDownloaded == false)
-        {
-            var url = this.baseURL + this.getURL;
-            var request = new MIOURLRequest(url);
-            request.httpMethod = this.httpMethod;
-            if (this.httpMethod == "POST" && this.extraParams != null)
-                request.body = this.extraParams;
-            var urlConnection = new MIOURLConnection();
-            urlConnection.initWithRequestBlock(request, this, function (error, data) {
-
-                if (error == false) {
-                    var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                    this.setObjects(json[this.keyToRetreive]);
-                    this.checkCallbacks();
-                }
-            });
-        }
-
-        return this.objects;
-    }
-
-    setObjects(items)
-    {
-        this.objects = [];
-
-        for (var count = 0; count < items.length; count++) {
-
-            var item = items[count];
-            var obj = MIOClassFromString(this.entityName);
-            obj.initWithJSObject(item);
-
-            this.objects.push(obj);
-        }
-
-        this.isDownloaded = true;
-    }
-
-    checkCallbacks()
-    {
-        if (this.isDownloaded == false)
-            return;
-
-        for (var index = 0; index < this.callbacks.length; index++)
-        {
-            var item = this.callbacks[index];
-            var target = item["target"];
-            var callback = item["function"];
-            var updated = item["updated"];
-
-            if (updated == false)
-            {
-                callback.call(target, this.objects);
-            }
-        }
+        return object;
     }
 }
 
@@ -129,23 +33,57 @@ class MIOManagedObject extends MIOObject
 
 class MIOManagedObjectContext extends MIOObject
 {
-    entities = {};
+    objects = {};
 
-    setEntity(entity)
+    _persistentStoreCoordinator = null;
+
+    insertNewObjectForEntityName(entityName)
     {
-        this.entities[entity.entityName] = entity;
+        var obj = MIOClassFromString(entityName);
+
+        var array = this.objects[entityName];
+        if (array == null)
+        {
+            array = [];
+            this.objects[entityName] = array;
+        }
+
+        array.push(obj);
+
+        return obj;
     }
 
-    executeFetch(request, target, callback)
+    setPersistentStoreCoordinator(coordinator)
     {
-        var e = this.entities[request.entityName];
-        e.setCallback(target, callback);
-        return e.execute();
+
     }
 
-    removeFetch(request, target, callback)
+    executeFetch(request)
     {
-        var e = this.entities[request.entityName];
-        e.removeCallback(target, callback);
+        var objs = this.objects[request.entityName];
+        return objs;
     }
+}
+
+class MIOManagedObjectModel extends MIOObject
+{
+
+}
+
+class MIOPersistentStoreCoordinator extends MIOObject
+{
+    _managedObjectModel = null;
+
+    get managedObjectModel()
+    {
+        if (this._managedObjectModel != null)
+            return this._managedObjectModel;
+
+        return this._managedObjectModel;
+    }
+}
+
+class  MIOPersistentStore extends MIOObject
+{
+
 }

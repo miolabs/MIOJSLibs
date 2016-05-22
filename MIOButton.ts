@@ -30,9 +30,9 @@ class MIOButton extends MIOControl
         this._setupLayer();
     }
 
-    initWithLayer(layer)
+    initWithLayer(layer, options?)
     {
-        super.initWithLayer(layer);
+        super.initWithLayer(layer, options);
         this._setupLayer();
     }
 

@@ -66,13 +66,13 @@ class MIOFetchedResultsController extends MIOObject
     set delegate(delegate)
     {
         this._delegate = delegate;
-        if (delegate == null)
-            this._moc.removeFetch(this._request, this, this.updateContent);
+
+        // TODO: Add and remove notification observer
     }
 
     performFetch()
     {
-        this.objects = this._moc.executeFetch(this._request, this, this.updateContent);
+        this.objects = this._moc.executeFetch(this._request);
         this.resultObjects = null;
 
         this._filterObjects();

@@ -6,7 +6,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOCore.ts" />
+/// <reference path="MIOView.ts" />
+/// <reference path="MIOControl.ts" />
+/// <reference path="MIOString.ts" />
 function MIOTextFieldFromElementID(view, elementID) {
     var layer = MIOLayerSearchElementByID(view.layer, elementID);
     if (layer == null)
@@ -81,11 +83,18 @@ var MIOTextField = (function (_super) {
         this.inputLayer.style.height = (h - 8) + "px";
     };
     MIOTextField.prototype.setText = function (text) {
-        this.inputLayer.value = text == null ? "" : text;
+        this.text = text;
     };
-    MIOTextField.prototype.getText = function () {
-        return this.inputLayer.value;
-    };
+    Object.defineProperty(MIOTextField.prototype, "text", {
+        get: function () {
+            return this.inputLayer.value;
+        },
+        set: function (text) {
+            this.inputLayer.value = text == null ? "" : text;
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOTextField.prototype.setPlaceholderText = function (text) {
         this.placeHolder = text;
         this.inputLayer.setAttribute("placeholder", text);
@@ -111,5 +120,5 @@ var MIOTextField = (function (_super) {
         };
     };
     return MIOTextField;
-}(MIOControl));
+})(MIOControl);
 //# sourceMappingURL=MIOTextField.js.map

@@ -28,8 +28,8 @@ var MIOButton = (function (_super) {
         _super.prototype.init.call(this);
         this._setupLayer();
     };
-    MIOButton.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
+    MIOButton.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._setupLayer();
     };
     MIOButton.prototype._setupLayer = function () {
@@ -71,5 +71,5 @@ var MIOButton = (function (_super) {
         this.selected = value;
     };
     return MIOButton;
-}(MIOControl));
+})(MIOControl);
 //# sourceMappingURL=MIOButton.js.map

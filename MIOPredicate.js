@@ -59,7 +59,7 @@ var MIOPredicateItem = (function () {
         }
     };
     return MIOPredicateItem;
-}());
+})();
 var MIOPredicate = (function (_super) {
     __extends(MIOPredicate, _super);
     function MIOPredicate() {
@@ -163,5 +163,5 @@ var MIOPredicate = (function (_super) {
         return result;
     };
     return MIOPredicate;
-}(MIOObject));
+})(MIOObject);
 //# sourceMappingURL=MIOPredicate.js.map

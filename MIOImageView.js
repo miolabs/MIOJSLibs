@@ -40,5 +40,5 @@ var MIOImageView = (function (_super) {
         this.imageLayer.setAttribute("src", imageURL);
     };
     return MIOImageView;
-}(MIOView));
+})(MIOView);
 //# sourceMappingURL=MIOImageView.js.map

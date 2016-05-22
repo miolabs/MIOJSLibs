@@ -44,5 +44,5 @@ var MIOControl = (function (_super) {
         };
     };
     return MIOControl;
-}(MIOView));
+})(MIOView);
 //# sourceMappingURL=MIOControl.js.map

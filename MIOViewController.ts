@@ -2,6 +2,8 @@
  * Created by godshadow on 11/3/16.
  */
 
+    /// <reference path="MIOObject.ts" />
+    /// <reference path="MIOString.ts" />
     /// <reference path="MIOView.ts" />
     /// <reference path="MIOURLConnection.ts" />
 
@@ -22,6 +24,7 @@ class MIOViewController extends MIOObject
 {
     layerID = null;
     view = null;
+    parent = null;
 
     private _onViewLoadedObject = null;
     private _onViewLoadedTarget = null;
@@ -169,8 +172,26 @@ class MIOViewController extends MIOObject
 
     presentViewController(vc)
     {
+        vc.parent = this;
+        this.viewWillDisappear();
+        vc.viewWillAppear();
         this.view.addSubview(vc.view);
+        this.viewDidDisappear();
+        vc.viewDidAppear();
+    }
 
+    dismissViewController()
+    {
+        if (this.parent != null)
+        {
+            this.viewWillDisappear();
+            this.parent.viewWillAppear();
+            this.parent.view.removeFromSuperview();
+            this.viewDidDisappear();
+            this.parent.viewDidAppear();
+
+            this.parent = null;
+        }
     }
 
     viewDidLoad(){}

@@ -2,7 +2,7 @@
  * Created by godshadow on 9/4/16.
  */
 
-    /// <reference path="MIOCore.ts" />
+    /// <reference path="MIOViewController.ts" />
 
 class MIONavigationController extends MIOViewController
 {
@@ -42,7 +42,7 @@ class MIONavigationController extends MIOViewController
             newVC.viewWillAppear();
             if (oldVC != null) {
                 oldVC.viewWillDisappear();
-                oldVC.view.setAlpha(0);
+                oldVC.view.setHidden(true);
                 oldVC.viewDidDisappear();
             }
             newVC.view.layout();
@@ -62,7 +62,7 @@ class MIONavigationController extends MIOViewController
                 newVC.viewWillAppear();
                 if (oldVC != null) {
                     oldVC.viewWillDisappear();
-                    oldVC.view.setAlpha(0);
+                    oldVC.view.setHidden(true);
                     oldVC.viewDidDisappear();
                 }
                 newVC.view.layout();
@@ -88,7 +88,7 @@ class MIONavigationController extends MIOViewController
 
         var newVC = this.viewControllersStack[this.currentViewControllerIndex];
         newVC.viewWillAppear();
-        newVC.view.setAlpha(1);
+        newVC.view.setHidden(false);
         newVC.viewDidAppear();
     }
 
