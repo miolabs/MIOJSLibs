@@ -3,19 +3,7 @@
  */
 
     /// <reference path="MIOView.ts" />
-
-function MIOCalendarViewFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var calendar = new MIOCalendarView();
-    calendar.initWithLayer(layer);
-    view._linkViewToSubview(calendar);
-
-    return calendar;
-}
+    /// <reference path="MIOLabel.ts" />
 
 class MIOCalendarCell extends MIOView
 {
@@ -24,11 +12,6 @@ class MIOCalendarCell extends MIOView
     index = 0;
 
     parent = null;
-
-    constructor()
-    {
-        super();
-    }
 
     init()
     {
@@ -67,11 +50,6 @@ class MIOCalendarView extends MIOView
 
     cellPrototypes = {};
 
-    constructor()
-    {
-        super();
-    }
-
     addCellPrototypeWithIdentifier(identifier, classname,  html, css, elementID)
     {
         var item = {"html" : html, "css" : css, "id" : elementID, "class" : classname};
@@ -98,13 +76,18 @@ class MIOCalendarView extends MIOView
 
     reloadData()
     {
+        // Remove all subviews
+        while (this.subviews.length > 0)
+        {
+            var view = this.subviews[0];
+            view.removeFromSuperview();
+        }
+
         this.startDate = this.dataSource.startDateForCalendar(this);
         this.endDate = this.dataSource.endDateForCalendar(this);
 
         var currentDate = new Date(this.startDate.getTime());
         var currentMonth = -1;
-
-        this._removeAllSubviews();
 
         var dayIndex = 0;
         var count = 0;
@@ -202,7 +185,7 @@ class MIOCalendarView extends MIOView
                 v.setX(0);
                 v.setWidth(this.getWidth());
                 v.setY(y);
-                y += v.getHeight() + 9;
+                y += 30 + 9;
             }
             else
             {

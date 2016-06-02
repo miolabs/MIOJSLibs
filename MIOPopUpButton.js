@@ -45,6 +45,12 @@ var MIOPopUpButton = (function (_super) {
             });
         }
     };
+    MIOPopUpButton.prototype.setMenuAction = function (target, action) {
+        if (this.popUpMenu != null) {
+            this.popUpMenu.target = target;
+            this.popUpMenu.action = action;
+        }
+    };
     MIOPopUpButton.prototype.layout = function () {
         _super.prototype.layout.call(this);
     };

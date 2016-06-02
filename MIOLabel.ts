@@ -24,11 +24,6 @@ class MIOLabel extends MIOView
     autoAdjustFontSize = "none";
     autoAdjustFontSizeValue = 4;
 
-    constructor()
-    {
-        super();
-    }
-
     init()
     {
         super.init();

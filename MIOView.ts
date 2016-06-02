@@ -3,19 +3,8 @@
  */
 
     /// <reference path="MIOCore.ts" />
+    /// <reference path="MIOObject.ts" />
 
-function MIOViewFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var v = new MIOView();
-    v.initWithLayer(layer);
-    view._linkViewToSubview(v);
-
-    return v;
-}
 
 function MIOLayerSearchElementByID(layer, elementID)
 {
@@ -37,6 +26,27 @@ function MIOLayerSearchElementByID(layer, elementID)
     }
 
     return null;
+}
+
+function MIOLayerGetFirstElementWithTag(layer, tag)
+{
+    var foundLayer = null;
+
+    if (layer.childNodes.length > 0) {
+        var index = 0;
+        var foundLayer = layer.childNodes[index];
+        while (foundLayer.tagName != tag) {
+            index++;
+            if (index >= layer.childNodes.length) {
+                foundLayer = null;
+                break;
+            }
+
+            foundLayer = layer.childNodes[index];
+        }
+    }
+
+    return foundLayer;
 }
 
 function MIOViewFromResource(url, css, elementID)
@@ -74,6 +84,9 @@ class MIOView extends MIOObject
     hidden = false;
     alpha = 1;
     parent = null;
+    tag = null;
+
+    _needDisplay = false;
 
     constructor(layerID?)
     {
@@ -85,7 +98,8 @@ class MIOView extends MIOObject
     init()
     {
         this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
+        if (this.layerID != null)
+            this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.top = "0px";
         this.layer.style.left = "0px";
@@ -157,7 +171,7 @@ class MIOView extends MIOObject
     private _removeView(view)
     {
         var index = this.subviews.indexOf(view);
-        this.subviews.slice(index, 1);
+        this.subviews.splice(index, 1);
         this.layer.removeChild(view.layer);
     }
 

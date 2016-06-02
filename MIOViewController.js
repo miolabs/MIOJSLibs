@@ -105,10 +105,12 @@ var MIOViewController = (function (_super) {
         if (className == null) {
             var view = new MIOView();
             view.initWithLayer(layer);
+            this.view._linkViewToSubview(view);
             return view;
         }
         var c = MIOClassFromString(className);
         c.initWithLayer(layer, options);
+        this.view._linkViewToSubview(c);
         return c;
     };
     MIOViewController.prototype.addChildViewController = function (vc) {

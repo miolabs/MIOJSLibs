@@ -172,7 +172,6 @@ class MIOTableView extends MIOView
                 var cell = section.cells[count];
                 cell.removeFromSuperview();
             }
-
         }
 
         this.sections = [];

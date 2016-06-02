@@ -51,6 +51,14 @@ class MIOPopUpButton extends MIOButton
         }
     }
 
+    setMenuAction(target, action)
+    {
+        if (this.popUpMenu != null)
+        {
+            this.popUpMenu.target = target;
+            this.popUpMenu.action = action;
+        }
+    }
 
     layout()
     {

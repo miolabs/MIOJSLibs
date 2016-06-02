@@ -13,6 +13,7 @@ var MIOMenuItem = (function (_super) {
         _super.apply(this, arguments);
         this.checked = false;
         this.title = null;
+        this.parent = null;
     }
     MIOMenuItem.itemWithLayer = function (layer) {
         var layerID = layer.getAttribute("id");
@@ -24,6 +25,13 @@ var MIOMenuItem = (function (_super) {
     MIOMenuItem.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
         this.layer.classList.add("menu_item");
+        var instance = this;
+        this.layer.onclick = function () {
+            if (instance.parent != null) {
+                var index = instance.parent.items.indexOf(instance);
+                instance.parent.action.call(instance.parent.target, instance, index);
+            }
+        };
     };
     return MIOMenuItem;
 })(MIOView);
@@ -31,8 +39,10 @@ var MIOMenu = (function (_super) {
     __extends(MIOMenu, _super);
     function MIOMenu() {
         _super.apply(this, arguments);
-        this._items = [];
+        this.items = [];
         this._isVisible = false;
+        this.target = null;
+        this.action = null;
     }
     MIOMenu.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
@@ -42,6 +52,7 @@ var MIOMenu = (function (_super) {
                 var layer = this.layer.childNodes[index];
                 if (layer.tagName == "DIV") {
                     var item = MIOMenuItem.itemWithLayer(layer);
+                    item.parent = this;
                     this._linkViewToSubview(item);
                     this._addMenuItem(item);
                 }
@@ -52,7 +63,7 @@ var MIOMenu = (function (_super) {
         this.setAlpha(0);
     };
     MIOMenu.prototype._addMenuItem = function (menuItem) {
-        this._items.push(menuItem);
+        this.items.push(menuItem);
     };
     MIOMenu.prototype.addMenuItem = function (menuItem) {
     };

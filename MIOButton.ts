@@ -3,22 +3,12 @@
  */
 
     /// <reference path="MIOControl.ts" />
-
-function MIOButtonFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var button = new MIOButton();
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-
-    return button;
-}
+    /// <reference path="MIOString.ts" />
 
 class MIOButton extends MIOControl
 {
+    private _titleLayer = null;
+
     target = null;
     action = null;
 
@@ -38,6 +28,20 @@ class MIOButton extends MIOControl
 
     _setupLayer()
     {
+        // Check for title layer
+        this._titleLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
+
+        if (this._titleLayer == null) {
+            this._titleLayer = document.createElement("span");
+            this._titleLayer.style.textAlign = "center";
+        }
+
+        this.layer.appendChild(this._titleLayer);
+
+        var key = this.layer.getAttribute("data-title");
+        if (key != null)
+            this.setTitle(MIOLocalizeString(key, key));
+
         this.layer.classList.add("button");
 
         var instance = this;
@@ -73,7 +77,7 @@ class MIOButton extends MIOControl
 
     setTitle(title)
     {
-        this.layer.innerHTML = title;
+        this._titleLayer.innerHTML = title;
     }
 
     setSelected(value)

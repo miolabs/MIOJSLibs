@@ -73,6 +73,7 @@ var MIONavigationController = (function (_super) {
         var newVC = this.viewControllersStack[this.currentViewControllerIndex];
         newVC.viewWillAppear();
         newVC.view.setHidden(false);
+        newVC.view.layout();
         newVC.viewDidAppear();
     };
     MIONavigationController.prototype.popToRootViewController = function () {

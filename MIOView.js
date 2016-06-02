@@ -7,15 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOCore.ts" />
-function MIOViewFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var v = new MIOView();
-    v.initWithLayer(layer);
-    view._linkViewToSubview(v);
-    return v;
-}
+/// <reference path="MIOObject.ts" />
 function MIOLayerSearchElementByID(layer, elementID) {
     if (layer.tagName != "DIV")
         return null;
@@ -29,6 +21,22 @@ function MIOLayerSearchElementByID(layer, elementID) {
             return elementFound;
     }
     return null;
+}
+function MIOLayerGetFirstElementWithTag(layer, tag) {
+    var foundLayer = null;
+    if (layer.childNodes.length > 0) {
+        var index = 0;
+        var foundLayer = layer.childNodes[index];
+        while (foundLayer.tagName != tag) {
+            index++;
+            if (index >= layer.childNodes.length) {
+                foundLayer = null;
+                break;
+            }
+            foundLayer = layer.childNodes[index];
+        }
+    }
+    return foundLayer;
 }
 function MIOViewFromResource(url, css, elementID) {
     var view = new MIOView();
@@ -56,11 +64,14 @@ var MIOView = (function (_super) {
         this.hidden = false;
         this.alpha = 1;
         this.parent = null;
+        this.tag = null;
+        this._needDisplay = false;
         this.layerID = layerID;
     }
     MIOView.prototype.init = function () {
         this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
+        if (this.layerID != null)
+            this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.top = "0px";
         this.layer.style.left = "0px";
@@ -111,7 +122,7 @@ var MIOView = (function (_super) {
     };
     MIOView.prototype._removeView = function (view) {
         var index = this.subviews.indexOf(view);
-        this.subviews.slice(index, 1);
+        this.subviews.splice(index, 1);
         this.layer.removeChild(view.layer);
     };
     MIOView.prototype._removeAllSubviews = function () {

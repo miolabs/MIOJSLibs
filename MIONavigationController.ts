@@ -89,6 +89,7 @@ class MIONavigationController extends MIOViewController
         var newVC = this.viewControllersStack[this.currentViewControllerIndex];
         newVC.viewWillAppear();
         newVC.view.setHidden(false);
+        newVC.view.layout();
         newVC.viewDidAppear();
     }
 

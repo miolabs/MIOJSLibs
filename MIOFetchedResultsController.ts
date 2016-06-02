@@ -51,7 +51,7 @@ class MIOFetchedResultsController extends MIOObject
     private _moc = null;
     private _sectionNameKeyPath = null;
 
-    initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath)
+    initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?)
     {
         this._request = request;
         this._moc = managedObjectContext;

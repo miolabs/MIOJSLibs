@@ -9,6 +9,8 @@ class MIOMenuItem extends MIOView
     checked = false;
     title = null;
 
+    parent = null;
+
     public static itemWithLayer(layer)
     {
         var layerID = layer.getAttribute("id");
@@ -24,14 +26,26 @@ class MIOMenuItem extends MIOView
         super.initWithLayer(layer, options);
 
         this.layer.classList.add("menu_item");
+
+        var instance = this;
+        this.layer.onclick = function()
+        {
+            if (instance.parent != null) {
+                var index = instance.parent.items.indexOf(instance);
+                instance.parent.action.call(instance.parent.target, instance, index);
+            }
+        }
     }
 
 }
 
 class MIOMenu extends MIOView
 {
-    private _items = [];
+    items = [];
     private _isVisible = false;
+
+    target = null;
+    action = null;
 
     initWithLayer(layer, options?)
     {
@@ -46,6 +60,7 @@ class MIOMenu extends MIOView
                 if (layer.tagName == "DIV")
                 {
                     var item = MIOMenuItem.itemWithLayer(layer);
+                    item.parent = this;
 
                     this._linkViewToSubview(item);
                     this._addMenuItem(item);
@@ -60,7 +75,7 @@ class MIOMenu extends MIOView
 
     private _addMenuItem(menuItem)
     {
-        this._items.push(menuItem);
+        this.items.push(menuItem);
     }
 
     addMenuItem(menuItem)

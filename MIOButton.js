@@ -7,19 +7,12 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOControl.ts" />
-function MIOButtonFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var button = new MIOButton();
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-    return button;
-}
+/// <reference path="MIOString.ts" />
 var MIOButton = (function (_super) {
     __extends(MIOButton, _super);
     function MIOButton() {
         _super.apply(this, arguments);
+        this._titleLayer = null;
         this.target = null;
         this.action = null;
         this.selected = false;
@@ -33,6 +26,16 @@ var MIOButton = (function (_super) {
         this._setupLayer();
     };
     MIOButton.prototype._setupLayer = function () {
+        // Check for title layer
+        this._titleLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
+        if (this._titleLayer == null) {
+            this._titleLayer = document.createElement("span");
+            this._titleLayer.style.textAlign = "center";
+        }
+        this.layer.appendChild(this._titleLayer);
+        var key = this.layer.getAttribute("data-title");
+        if (key != null)
+            this.setTitle(MIOLocalizeString(key, key));
         this.layer.classList.add("button");
         var instance = this;
         this.layer.onmousedown = function () {
@@ -57,7 +60,7 @@ var MIOButton = (function (_super) {
         this.action = action;
     };
     MIOButton.prototype.setTitle = function (title) {
-        this.layer.innerHTML = title;
+        this._titleLayer.innerHTML = title;
     };
     MIOButton.prototype.setSelected = function (value) {
         if (value == true) {

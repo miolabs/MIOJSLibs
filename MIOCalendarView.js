@@ -7,19 +7,11 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOView.ts" />
-function MIOCalendarViewFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var calendar = new MIOCalendarView();
-    calendar.initWithLayer(layer);
-    view._linkViewToSubview(calendar);
-    return calendar;
-}
+/// <reference path="MIOLabel.ts" />
 var MIOCalendarCell = (function (_super) {
     __extends(MIOCalendarCell, _super);
     function MIOCalendarCell() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.date = null;
         this.dayIndex = 0;
         this.index = 0;
@@ -46,7 +38,7 @@ var MIOCalendarCell = (function (_super) {
 var MIOCalendarView = (function (_super) {
     __extends(MIOCalendarView, _super);
     function MIOCalendarView() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.startDate = null;
         this.endDate = null;
         this.dataSource = null;
@@ -74,11 +66,15 @@ var MIOCalendarView = (function (_super) {
         return cell;
     };
     MIOCalendarView.prototype.reloadData = function () {
+        // Remove all subviews
+        while (this.subviews.length > 0) {
+            var view = this.subviews[0];
+            view.removeFromSuperview();
+        }
         this.startDate = this.dataSource.startDateForCalendar(this);
         this.endDate = this.dataSource.endDateForCalendar(this);
         var currentDate = new Date(this.startDate.getTime());
         var currentMonth = -1;
-        this._removeAllSubviews();
         var dayIndex = 0;
         var count = 0;
         while (this.endDate >= currentDate) {
@@ -148,7 +144,7 @@ var MIOCalendarView = (function (_super) {
                 v.setX(0);
                 v.setWidth(this.getWidth());
                 v.setY(y);
-                y += v.getHeight() + 9;
+                y += 30 + 9;
             }
             else {
                 // Cell

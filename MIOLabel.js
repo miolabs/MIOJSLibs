@@ -19,7 +19,7 @@ function MIOLabelFromElementID(view, elementID) {
 var MIOLabel = (function (_super) {
     __extends(MIOLabel, _super);
     function MIOLabel() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this._textLayer = null;
         this.autoAdjustFontSize = "none";
         this.autoAdjustFontSizeValue = 4;
