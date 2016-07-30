@@ -4,75 +4,80 @@
 
     /// <reference path="MIOViewController.ts" />
 
-function MIOPageControllerFromElementID(view, elementID)
-{
-    var v = MIOViewFromElementID(view, elementID);
-    if (v == null)
-        return null;
-
-    var pc = new MIOPageController();
-    pc.initWithView(v);
-    view._linkViewToSubview(v);
-
-    return pc;
-}
-
 class MIOPageController extends MIOViewController
 {
-    autoAdjustHeight = false;
-    viewControllers = [];
     selectedViewControllerIndex = -1;
-
-    pageHeight = 0;
-
-    constructor()
-    {
-        super();
-    }
 
     addPageViewController(vc)
     {
         vc.view.setHidden(true);
-        this.viewControllers.push(vc);
 
-        // Check if it's in view hierarchy
-        var elementID = vc.view.layer.getAttribute("id");
-        var found = MIOLayerSearchElementByID(this.view.layer, elementID);
-        if (found == null)
-            this.view.addSubview(vc.view);
+        this.addChildViewController(vc);
     }
 
-    reloadData()
+    viewWillAppear()
     {
-        this.selectedViewControllerIndex = -1;
-        this.showPageAtIndex(0);
+        if (this.selectedViewControllerIndex == -1)
+        {
+            this.selectedViewControllerIndex == 0;
+            var vc = this._childViewControllers[0];
+            vc.view.setHidden(false);
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
+        }
+        else
+        {
+            var vc = this._childViewControllers[this.selectedViewControllerIndex];
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
+        }
     }
 
     showPageAtIndex(index)
     {
-        if (index >= this.viewControllers.length)
+        if (index == this.selectedViewControllerIndex)
             return;
 
+        if (index < 0)
+            return;
+
+        if (index >= this._childViewControllers.length)
+            return;
+
+        var oldVC = null;
+        var newVC = null;
+
         if (this.selectedViewControllerIndex > -1)
-        {
-            var vc = this.viewControllers[this.selectedViewControllerIndex];
-            vc.view.removeObserver(this, "height");
-            vc.view.setHidden(true);
-        }
+            oldVC = this._childViewControllers[this.selectedViewControllerIndex];
 
         this.selectedViewControllerIndex = index;
 
-        var vc = this.viewControllers[index];
+        var newVC = this._childViewControllers[index];
+        newVC.onLoadView(this, function () {
 
-        vc.view.setHidden(false);
-        if (this.autoAdjustHeight == true) {
-            vc.view.addObserver(this, "height");
-            this.setPageHeight(vc.view.getHeight());
-        }
+            if (oldVC != null)
+            {
+                oldVC.viewWillDisappear();
+                oldVC._childControllersWillDisappear();
+            }
 
-        vc.viewWillAppear();
-        this.view.layer.scrollTop = 0;
-        vc.viewDidAppear();
+            newVC.viewWillAppear();
+            newVC._childControllersWillAppear();
+
+            if (oldVC != null) oldVC.view.setHidden(true);
+            newVC.view.setHidden(false);
+
+            if (oldVC != null)
+            {
+                oldVC.viewDidDisappear();
+                oldVC._childControllersDidDisappear();
+            }
+
+            newVC.viewDidAppear();
+            newVC._childControllersDidAppear();
+        });
+
+        //this._showViewController(newVC, oldVC);
     }
 
     showNextPage()
@@ -83,21 +88,5 @@ class MIOPageController extends MIOViewController
     showPrevPage()
     {
         this.showPageAtIndex(this.selectedViewControllerIndex - 1);
-    }
-
-    setPageHeight(height)
-    {
-        this.willChangeValue("pageHeight");
-        this.pageHeight = height;
-        this.view.setHeight(height);
-        this.didChangeValue("pageHeight");
-    }
-
-    observeValueForKeyPath(keypath, type, object)
-    {
-        if (keypath == "height" && type == "did")
-        {
-            this.setPageHeight(object.getHeight());
-        }
     }
 }

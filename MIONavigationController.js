@@ -16,76 +16,99 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex = -1;
     }
     MIONavigationController.prototype.initWithRootViewController = function (vc) {
-        this.init();
+        _super.prototype.init.call(this);
+        this.setRootViewController(vc);
+    };
+    MIONavigationController.prototype.setRootViewController = function (vc) {
         this.rootViewController = vc;
+        this.view.addSubview(vc.view);
         this.viewControllersStack.push(vc);
         this.currentViewControllerIndex = 0;
         this.rootViewController.navigationController = this;
-        this._showViewController(vc);
+    };
+    MIONavigationController.prototype._loadChildControllers = function () {
+        if (this.rootViewController != null) {
+            this.rootViewController.onLoadView(this, function () {
+                this._setViewLoaded(true);
+            });
+        }
+        else
+            this._setViewLoaded(true);
+    };
+    /*_addLayerToDOM(target?, completion?)
+    {
+        super._addLayerToDOM(this, function () {
+
+            this.rootViewController._addLayerToDOM(target, completion);
+        });
+    }*/
+    MIONavigationController.prototype.viewWillAppear = function () {
+        if (this.currentViewControllerIndex < 0)
+            return;
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        vc.viewWillAppear();
+        vc._childControllersWillAppear();
+    };
+    MIONavigationController.prototype.viewDidAppear = function () {
+        if (this.currentViewControllerIndex < 0)
+            return;
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        vc.viewDidAppear();
+        vc._childControllersDidAppear();
+    };
+    MIONavigationController.prototype.viewWillDisappear = function () {
+        if (this.currentViewControllerIndex < 0)
+            return;
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        vc.viewWillDisappear();
+        vc._childControllersWillDisappear();
+    };
+    MIONavigationController.prototype.viewDidDisappear = function () {
+        if (this.currentViewControllerIndex < 0)
+            return;
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        vc.viewDidDisappear();
+        vc._childControllersDidDisappear();
     };
     MIONavigationController.prototype.pushViewController = function (vc) {
         var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
         this.viewControllersStack.push(vc);
         this.currentViewControllerIndex++;
         vc.navigationController = this;
-        this._showViewController(vc, lastVC);
-    };
-    MIONavigationController.prototype._showViewController = function (newVC, oldVC) {
-        this.view.addSubview(newVC.view);
-        if (newVC.viewLoaded()) {
-            newVC.viewWillAppear();
-            if (oldVC != null) {
-                oldVC.viewWillDisappear();
-                oldVC.view.setHidden(true);
-                oldVC.viewDidDisappear();
-            }
-            newVC.view.layout();
-            newVC.viewDidAppear();
-        }
-        else {
-            var item = { "new_vc": newVC };
-            if (oldVC != null)
-                item["old_vc"] = oldVC;
-            newVC.setOnViewLoaded(item, this, function (object) {
-                var newVC = object["new_vc"];
-                var oldVC = object["old_vc"];
-                newVC.viewWillAppear();
-                newVC.viewWillAppear();
-                if (oldVC != null) {
-                    oldVC.viewWillDisappear();
-                    oldVC.view.setHidden(true);
-                    oldVC.viewDidDisappear();
-                }
-                newVC.view.layout();
-                newVC.viewDidAppear();
-            });
-        }
+        this.view.addSubview(vc.view);
+        vc.onLoadView(this, function () {
+            lastVC.viewWillDisappear();
+            lastVC._childControllersWillDisappear();
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
+            vc.view.layout();
+            vc.viewDidAppear();
+            vc._childControllersDidAppear();
+            lastVC.viewDidDisappear();
+            lastVC._childControllersDidDisappear();
+        });
+        //this._showViewController(vc, lastVC);
     };
     MIONavigationController.prototype.popViewController = function () {
         if (this.currentViewControllerIndex == 0)
             return;
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-        vc.viewWillDisappear();
-        vc.view.removeFromSuperview();
-        vc.viewDidDisappear();
+        var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
-        var newVC = this.viewControllersStack[this.currentViewControllerIndex];
-        newVC.viewWillAppear();
-        newVC.view.setHidden(false);
-        newVC.view.layout();
-        newVC.viewDidAppear();
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        lastVC.viewWillDisappear();
+        vc.viewWillAppear();
+        vc.view.layout();
+        lastVC.view.removeFromSuperview();
+        vc.viewDidAppear();
+        lastVC.viewDidDisappear();
     };
     MIONavigationController.prototype.popToRootViewController = function () {
-        for (var index = this.currentViewControllerIndex; index > 0; index--) {
-            var vc = this.viewControllersStack[this.currentViewControllerIndex];
-            vc.view.removeFromSuperview();
+        var count = this.currentViewControllerIndex;
+        for (var index = count; index > 0; index--) {
+            this.popViewController();
         }
-        this.rootViewController.view.setAlpha(1);
-        this.currentViewControllerIndex = 0;
-        this.viewControllersStack = [];
-        this.viewControllersStack.push(this.rootViewController);
     };
     return MIONavigationController;
-})(MIOViewController);
+}(MIOViewController));
 //# sourceMappingURL=MIONavigationController.js.map

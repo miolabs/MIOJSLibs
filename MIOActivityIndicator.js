@@ -64,5 +64,5 @@ var MIOActivityIndicator = (function (_super) {
         this.layer.innerHTML = svg;
     };
     return MIOActivityIndicator;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOActivityIndicator.js.map

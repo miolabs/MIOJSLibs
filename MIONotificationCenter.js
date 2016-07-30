@@ -2,14 +2,16 @@
  * Created by godshadow on 11/3/16.
  */
 var MIONotification = (function () {
-    function MIONotification(name, object) {
+    function MIONotification(name, object, userInfo) {
         this.name = null;
         this.object = null;
+        this.userInfo = null;
         this.name = name;
         this.object = object;
+        this.userInfo = userInfo;
     }
     return MIONotification;
-})();
+}());
 var MIONotificationCenter = (function () {
     function MIONotificationCenter() {
         this.notificationNames = {};
@@ -48,11 +50,11 @@ var MIONotificationCenter = (function () {
             notes.splice(index, 1);
         }
     };
-    MIONotificationCenter.prototype.postNotification = function (name, object) {
+    MIONotificationCenter.prototype.postNotification = function (name, object, userInfo) {
         var notes = this.notificationNames[name];
         if (notes == null)
             return;
-        var n = new MIONotification(name, object);
+        var n = new MIONotification(name, object, userInfo);
         for (var count = 0; count < notes.length; count++) {
             var item = notes[count];
             var obs = item["observer"];
@@ -62,5 +64,5 @@ var MIONotificationCenter = (function () {
     };
     MIONotificationCenter._sharedInstance = new MIONotificationCenter();
     return MIONotificationCenter;
-})();
+}());
 //# sourceMappingURL=MIONotificationCenter.js.map

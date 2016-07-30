@@ -76,8 +76,7 @@ class MIOWebApplication
         this.canvas = document.body;
 
         this.delegate.didFinishLaunching();
-        this.canvas.appendChild(this.delegate.window.layer);
-
+        //this.canvas.appendChild(this.delegate.window.layer);
 
         if (this.downloadCoreFileCount == 0)
             this._showViews();
@@ -85,10 +84,13 @@ class MIOWebApplication
 
     private _showViews()
     {
-        this.delegate.window.rootViewController.viewWillAppear();
-        this.delegate.window.rootViewController.viewDidAppear();
+        this.delegate.window.rootViewController.onLoadView(this, function () {
 
-        this.ready = true;
+            this.delegate.window.rootViewController.viewWillAppear();
+            this.delegate.window.rootViewController.viewDidAppear();
+
+            this.ready = true;
+        });
     }
 
     decodeParams(string)

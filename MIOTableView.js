@@ -8,6 +8,17 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOLabel.ts" />
+var MIOTableViewCellStyle;
+(function (MIOTableViewCellStyle) {
+    MIOTableViewCellStyle[MIOTableViewCellStyle["Default"] = 0] = "Default";
+})(MIOTableViewCellStyle || (MIOTableViewCellStyle = {}));
+var MIOTableViewCellAccessoryType;
+(function (MIOTableViewCellAccessoryType) {
+    MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["None"] = 0] = "None";
+    MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["Detail"] = 1] = "Detail";
+    MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["DetailDisclosoure"] = 2] = "DetailDisclosoure";
+    MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["Checkmark"] = 3] = "Checkmark";
+})(MIOTableViewCellAccessoryType || (MIOTableViewCellAccessoryType = {}));
 function MIOTableViewFromElementID(view, elementID) {
     var layer = MIOLayerSearchElementByID(view.layer, elementID);
     if (layer == null)
@@ -20,8 +31,11 @@ function MIOTableViewFromElementID(view, elementID) {
 var MIOTableViewCell = (function (_super) {
     __extends(MIOTableViewCell, _super);
     function MIOTableViewCell() {
-        _super.apply(this, arguments);
+        _super.call(this, "tableview_cell");
         this.selected = false;
+        this.textLabel = null;
+        this.accessoryType = MIOTableViewCellAccessoryType.None;
+        this.accesoryView = null;
         this._target = null;
         this._onClickFn = null;
         this._onDblClickFn = null;
@@ -36,6 +50,19 @@ var MIOTableViewCell = (function (_super) {
         _super.prototype.initWithLayer.call(this, layer, options);
         this._setupLayer();
     };
+    MIOTableViewCell.prototype.initWithStyle = function (style) {
+        _super.prototype.init.call(this);
+        if (style == MIOTableViewCellStyle.Default) {
+            this.textLabel = new MIOLabel("tableview_cell_label");
+            this.textLabel.init();
+            this.textLabel.layer.style.left = "10px";
+            this.textLabel.layer.style.top = "10px";
+            this.textLabel.layer.style.right = "10px";
+            this.textLabel.layer.style.bottom = "10px";
+            this.addSubview(this.textLabel);
+        }
+        this._setupLayer();
+    };
     MIOTableViewCell.prototype._setupLayer = function () {
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
@@ -47,6 +74,41 @@ var MIOTableViewCell = (function (_super) {
             if (instance._onDblClickFn != null)
                 instance._onDblClickFn.call(instance._target, instance);
         };
+    };
+    MIOTableViewCell.prototype.setAccessoryType = function (type) {
+        if (type == this.accessoryType)
+            return;
+        if (this.accesoryView == null) {
+            this.textLabel.layer.style.right = "25px";
+            var layer = document.createElement("div");
+            layer.style.position = "absolute";
+            layer.style.top = "15px";
+            layer.style.right = "5px";
+            layer.style.width = "15px";
+            layer.style.height = "15px";
+            this.accesoryView = new MIOView("accessory_view");
+            this.accesoryView.initWithLayer(layer);
+            this.addSubview(this.accesoryView);
+        }
+        if (type == MIOTableViewCellAccessoryType.Checkmark) {
+            this.accesoryView.layer.classList.add("tableviewcell_accessory_checkmark");
+        }
+        else if (type == MIOTableViewCellAccessoryType.None) {
+            if (this.accessoryType == MIOTableViewCellAccessoryType.Checkmark)
+                this.accesoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
+        }
+        this.accessoryType = type;
+    };
+    MIOTableViewCell.prototype.setPaddingIndex = function (value) {
+        var offset = (value + 1) * 10;
+        this.textLabel.setX(offset);
+    };
+    MIOTableViewCell.prototype.setHeight = function (h) {
+        _super.prototype.setHeight.call(this, h);
+        var offsetY = (h - 15) / 2;
+        if (this.accesoryView != null) {
+            this.accesoryView.style.top = offsetY + "px";
+        }
     };
     MIOTableViewCell.prototype.setSelected = function (value) {
         this.willChangeValue("selected");
@@ -70,7 +132,7 @@ var MIOTableViewCell = (function (_super) {
         }
     };
     return MIOTableViewCell;
-})(MIOView);
+}(MIOView));
 var MIOTableViewSection = (function (_super) {
     __extends(MIOTableViewSection, _super);
     function MIOTableViewSection() {
@@ -79,7 +141,7 @@ var MIOTableViewSection = (function (_super) {
         this.cells = [];
     }
     return MIOTableViewSection;
-})(MIOObject);
+}(MIOObject));
 var MIOTableView = (function (_super) {
     __extends(MIOTableView, _super);
     function MIOTableView() {
@@ -143,6 +205,7 @@ var MIOTableView = (function (_super) {
         var sections = this.dataSource.numberOfSections(this);
         for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
             var section = new MIOTableViewSection();
+            section.init();
             this.sections.push(section);
             var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
             if (typeof this.dataSource.titleForHeaderInSection === "function") {
@@ -204,7 +267,14 @@ var MIOTableView = (function (_super) {
     MIOTableView.prototype.cellOnClickFn = function (cell) {
         var index = cell._row;
         var section = cell._section;
+        var canSelectCell = true;
         if (this.selectedCellRow == index && this.selectedCellSection == section)
+            return;
+        if (this.delegate != null) {
+            if (typeof this.delegate.canSelectCellAtIndexPath === "function")
+                canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
+        }
+        if (canSelectCell == false)
             return;
         if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
             this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
@@ -219,6 +289,13 @@ var MIOTableView = (function (_super) {
     MIOTableView.prototype.cellOnDblClickFn = function (cell) {
         var index = cell._row;
         var section = cell._section;
+        var canSelectCell = true;
+        if (this.delegate != null) {
+            if (typeof this.delegate.canSelectCellAtIndexPath === "function")
+                canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
+        }
+        if (canSelectCell == false)
+            return;
         if (this.selectedCellRow == index && this.selectedCellSection == section) {
             if (this.delegate != null)
                 if (typeof this.delegate.didMakeDoubleClick === "function")
@@ -237,6 +314,11 @@ var MIOTableView = (function (_super) {
         if (this.delegate != null)
             if (typeof this.delegate.didMakeDoubleClick === "function")
                 this.delegate.didMakeDoubleClick(this, index, section);
+    };
+    MIOTableView.prototype.cellAtIndexPath = function (row, section) {
+        var s = this.sections[section];
+        var c = s.cells[row];
+        return c;
     };
     MIOTableView.prototype._selectCell = function (cell) {
         cell.setSelected(true);
@@ -257,5 +339,5 @@ var MIOTableView = (function (_super) {
         this._deselectCell(cell);
     };
     return MIOTableView;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOTableView.js.map

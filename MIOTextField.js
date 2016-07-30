@@ -21,7 +21,8 @@ function MIOTextFieldFromElementID(view, elementID) {
 var MIOTextFieldType;
 (function (MIOTextFieldType) {
     MIOTextFieldType[MIOTextFieldType["NormalType"] = 0] = "NormalType";
-    MIOTextFieldType[MIOTextFieldType["SearchType"] = 1] = "SearchType";
+    MIOTextFieldType[MIOTextFieldType["PasswordType"] = 1] = "PasswordType";
+    MIOTextFieldType[MIOTextFieldType["SearchType"] = 2] = "SearchType";
 })(MIOTextFieldType || (MIOTextFieldType = {}));
 var MIOTextField = (function (_super) {
     __extends(MIOTextField, _super);
@@ -44,14 +45,26 @@ var MIOTextField = (function (_super) {
         this._setupLayer();
     };
     MIOTextField.prototype._setupLayer = function () {
-        if (this.layerOptions == "SearchType")
-            this.type = MIOTextFieldType.SearchType;
+        switch (this.layerOptions) {
+            case "SearchType":
+                this.type = MIOTextFieldType.SearchType;
+                break;
+            case "PasswordType":
+                this.type = MIOTextFieldType.PasswordType;
+                break;
+            default:
+                this.type = MIOTextFieldType.NormalType;
+                break;
+        }
         if (this.type == MIOTextFieldType.SearchType)
             this.layer.classList.add("searchfield");
         else
             this.layer.classList.add("textfield");
         this.inputLayer = document.createElement("input");
-        this.inputLayer.setAttribute("type", "text");
+        if (this.type == MIOTextFieldType.PasswordType)
+            this.inputLayer.setAttribute("type", "password");
+        else
+            this.inputLayer.setAttribute("type", "text");
         this.inputLayer.style.backgroundColor = "transparent";
         this.inputLayer.style.border = "0px";
         this.inputLayer.style.width = "100%";
@@ -120,5 +133,5 @@ var MIOTextField = (function (_super) {
         };
     };
     return MIOTextField;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOTextField.js.map

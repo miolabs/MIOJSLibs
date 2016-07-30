@@ -6,21 +6,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOCore.ts" />
-function MIOTextAreaFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var ta = new MIOTextArea();
-    ta.initWithLayer(layer);
-    view._linkViewToSubview(ta);
-    return ta;
-}
+/// <reference path="MIOControl.ts" />
 var MIOTextArea = (function (_super) {
     __extends(MIOTextArea, _super);
     function MIOTextArea() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.textareaLayer = null;
+        this.textChangeTarget = null;
+        this.textChangeAction = null;
     }
     MIOTextArea.prototype.init = function () {
         _super.prototype.init.call(this);
@@ -32,11 +25,43 @@ var MIOTextArea = (function (_super) {
     };
     MIOTextArea.prototype._setupLayer = function () {
         this.textareaLayer = document.createElement("textarea");
-        this.textareaLayer.style.width = "100%";
-        this.textareaLayer.style.height = "100%";
-        this.textareaLayer.backgroundColor = "transparent";
+        this.textareaLayer.style.width = "98%";
+        this.textareaLayer.style.height = "90%";
+        //this.textareaLayer.backgroundColor = "transparent";
+        this.textareaLayer.style.resize = "none";
+        this.textareaLayer.style.borderStyle = "none";
+        this.textareaLayer.style.borderColor = "transparent";
+        this.textareaLayer.style.outline = "none";
+        this.textareaLayer.overflow = "auto";
         this.layer.appendChild(this.textareaLayer);
     };
+    Object.defineProperty(MIOTextArea.prototype, "text", {
+        get: function () {
+            return this.textareaLayer.value;
+        },
+        set: function (text) {
+            this.textareaLayer.value = text;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    MIOTextArea.prototype.setText = function (text) {
+        this.text = text;
+    };
+    MIOTextArea.prototype.getText = function () {
+        return this.text;
+    };
+    MIOTextArea.prototype.setOnChangeText = function (target, action) {
+        this.textChangeTarget = target;
+        this.textChangeAction = action;
+        var instance = this;
+        this.layer.oninput = function () {
+            if (instance.enabled) {
+                var value = instance.textareaLayer.value;
+                instance.textChangeAction.call(target, instance, value);
+            }
+        };
+    };
     return MIOTextArea;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOTextArea.js.map

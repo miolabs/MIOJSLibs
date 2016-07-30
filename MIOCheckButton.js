@@ -63,5 +63,5 @@ var MIOCheckButton = (function (_super) {
             this.action.call(this.target, this, this.on);
     };
     return MIOCheckButton;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOCheckButton.js.map

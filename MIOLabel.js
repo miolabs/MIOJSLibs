@@ -34,6 +34,10 @@ var MIOLabel = (function (_super) {
     };
     MIOLabel.prototype._setupLayer = function () {
         this._textLayer = document.createElement("span");
+        this._textLayer.style.top = "3px";
+        this._textLayer.style.left = "3px";
+        this._textLayer.style.right = "3px";
+        this._textLayer.style.bottom = "3px";
         this._textLayer.classList.add("label");
         this.layer.appendChild(this._textLayer);
     };
@@ -98,5 +102,5 @@ var MIOLabel = (function (_super) {
         this._textLayer.style.fontFamily = fontFamily;
     };
     return MIOLabel;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOLabel.js.map

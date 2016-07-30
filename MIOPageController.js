@@ -7,55 +7,61 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOViewController.ts" />
-function MIOPageControllerFromElementID(view, elementID) {
-    var v = MIOViewFromElementID(view, elementID);
-    if (v == null)
-        return null;
-    var pc = new MIOPageController();
-    pc.initWithView(v);
-    view._linkViewToSubview(v);
-    return pc;
-}
 var MIOPageController = (function (_super) {
     __extends(MIOPageController, _super);
     function MIOPageController() {
-        _super.call(this);
-        this.autoAdjustHeight = false;
-        this.viewControllers = [];
+        _super.apply(this, arguments);
         this.selectedViewControllerIndex = -1;
-        this.pageHeight = 0;
     }
     MIOPageController.prototype.addPageViewController = function (vc) {
         vc.view.setHidden(true);
-        this.viewControllers.push(vc);
-        // Check if it's in view hierarchy
-        var elementID = vc.view.layer.getAttribute("id");
-        var found = MIOLayerSearchElementByID(this.view.layer, elementID);
-        if (found == null)
-            this.view.addSubview(vc.view);
+        this.addChildViewController(vc);
     };
-    MIOPageController.prototype.reloadData = function () {
-        this.selectedViewControllerIndex = -1;
-        this.showPageAtIndex(0);
+    MIOPageController.prototype.viewWillAppear = function () {
+        if (this.selectedViewControllerIndex == -1) {
+            this.selectedViewControllerIndex == 0;
+            var vc = this._childViewControllers[0];
+            vc.view.setHidden(false);
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
+        }
+        else {
+            var vc = this._childViewControllers[this.selectedViewControllerIndex];
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
+        }
     };
     MIOPageController.prototype.showPageAtIndex = function (index) {
-        if (index >= this.viewControllers.length)
+        if (index == this.selectedViewControllerIndex)
             return;
-        if (this.selectedViewControllerIndex > -1) {
-            var vc = this.viewControllers[this.selectedViewControllerIndex];
-            vc.view.removeObserver(this, "height");
-            vc.view.setHidden(true);
-        }
+        if (index < 0)
+            return;
+        if (index >= this._childViewControllers.length)
+            return;
+        var oldVC = null;
+        var newVC = null;
+        if (this.selectedViewControllerIndex > -1)
+            oldVC = this._childViewControllers[this.selectedViewControllerIndex];
         this.selectedViewControllerIndex = index;
-        var vc = this.viewControllers[index];
-        vc.view.setHidden(false);
-        if (this.autoAdjustHeight == true) {
-            vc.view.addObserver(this, "height");
-            this.setPageHeight(vc.view.getHeight());
-        }
-        vc.viewWillAppear();
-        this.view.layer.scrollTop = 0;
-        vc.viewDidAppear();
+        var newVC = this._childViewControllers[index];
+        newVC.onLoadView(this, function () {
+            if (oldVC != null) {
+                oldVC.viewWillDisappear();
+                oldVC._childControllersWillDisappear();
+            }
+            newVC.viewWillAppear();
+            newVC._childControllersWillAppear();
+            if (oldVC != null)
+                oldVC.view.setHidden(true);
+            newVC.view.setHidden(false);
+            if (oldVC != null) {
+                oldVC.viewDidDisappear();
+                oldVC._childControllersDidDisappear();
+            }
+            newVC.viewDidAppear();
+            newVC._childControllersDidAppear();
+        });
+        //this._showViewController(newVC, oldVC);
     };
     MIOPageController.prototype.showNextPage = function () {
         this.showPageAtIndex(this.selectedViewControllerIndex + 1);
@@ -63,17 +69,6 @@ var MIOPageController = (function (_super) {
     MIOPageController.prototype.showPrevPage = function () {
         this.showPageAtIndex(this.selectedViewControllerIndex - 1);
     };
-    MIOPageController.prototype.setPageHeight = function (height) {
-        this.willChangeValue("pageHeight");
-        this.pageHeight = height;
-        this.view.setHeight(height);
-        this.didChangeValue("pageHeight");
-    };
-    MIOPageController.prototype.observeValueForKeyPath = function (keypath, type, object) {
-        if (keypath == "height" && type == "did") {
-            this.setPageHeight(object.getHeight());
-        }
-    };
     return MIOPageController;
-})(MIOViewController);
+}(MIOViewController));
 //# sourceMappingURL=MIOPageController.js.map

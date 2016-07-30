@@ -2,30 +2,15 @@
  * Created by godshadow on 15/3/16.
  */
 
-    /// <reference path="MIOCore.ts" />
-
-function MIOTextAreaFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var ta = new MIOTextArea();
-    ta.initWithLayer(layer);
-    view._linkViewToSubview(ta);
-
-    return ta;
-}
+    /// <reference path="MIOControl.ts" />
 
 
 class MIOTextArea extends MIOControl
 {
     textareaLayer = null;
 
-    constructor()
-    {
-        super();
-    }
+    textChangeTarget = null;
+    textChangeAction = null;
 
     init()
     {
@@ -42,9 +27,49 @@ class MIOTextArea extends MIOControl
     _setupLayer()
     {
         this.textareaLayer = document.createElement("textarea");
-        this.textareaLayer.style.width = "100%";
-        this.textareaLayer.style.height = "100%";
-        this.textareaLayer.backgroundColor = "transparent";
+        this.textareaLayer.style.width = "98%";
+        this.textareaLayer.style.height = "90%";
+        //this.textareaLayer.backgroundColor = "transparent";
+        this.textareaLayer.style.resize = "none";
+        this.textareaLayer.style.borderStyle = "none";
+        this.textareaLayer.style.borderColor = "transparent";
+        this.textareaLayer.style.outline = "none";
+        this.textareaLayer.overflow = "auto";
         this.layer.appendChild(this.textareaLayer);
+    }
+
+    get text()
+    {
+        return this.textareaLayer.value;
+    }
+
+    set text(text)
+    {
+        this.textareaLayer.value = text;
+    }
+
+    setText(text)
+    {
+        this.text = text;
+    }
+
+    getText()
+    {
+        return this.text;
+    }
+
+    setOnChangeText(target, action)
+    {
+        this.textChangeTarget = target;
+        this.textChangeAction = action;
+        var instance = this;
+
+        this.layer.oninput = function()
+        {
+            if (instance.enabled) {
+                var value = instance.textareaLayer.value;
+                instance.textChangeAction.call(target, instance, value);
+            }
+        }
     }
 }

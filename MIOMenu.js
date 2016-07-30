@@ -34,7 +34,7 @@ var MIOMenuItem = (function (_super) {
         };
     };
     return MIOMenuItem;
-})(MIOView);
+}(MIOView));
 var MIOMenu = (function (_super) {
     __extends(MIOMenu, _super);
     function MIOMenu() {
@@ -86,5 +86,5 @@ var MIOMenu = (function (_super) {
             this.show();
     };
     return MIOMenu;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOMenu.js.map

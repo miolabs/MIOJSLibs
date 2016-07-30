@@ -6,11 +6,13 @@ class MIONotification
 {
     name = null;
     object = null;
+    userInfo = null;
 
-    constructor(name, object)
+    constructor(name, object, userInfo)
     {
         this.name = name;
         this.object = object;
+        this.userInfo = userInfo;
     }
 }
 
@@ -71,14 +73,14 @@ class MIONotificationCenter
 
     }
 
-    postNotification(name, object)
+    postNotification(name, object, userInfo?)
     {
         var notes = this.notificationNames[name];
 
         if (notes == null)
             return;
 
-        var n = new MIONotification(name, object);
+        var n = new MIONotification(name, object, userInfo);
 
         for (var count = 0; count < notes.length; count++)
         {

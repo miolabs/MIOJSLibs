@@ -21,6 +21,7 @@ function MIOTextFieldFromElementID(view, elementID)
 
 enum MIOTextFieldType {
     NormalType,
+    PasswordType,
     SearchType
 }
 
@@ -50,8 +51,20 @@ class MIOTextField extends MIOControl
 
     _setupLayer()
     {
-        if (this.layerOptions == "SearchType")
-            this.type = MIOTextFieldType.SearchType;
+        switch (this.layerOptions)
+        {
+            case "SearchType":
+                this.type = MIOTextFieldType.SearchType;
+                break;
+
+            case "PasswordType":
+                this.type = MIOTextFieldType.PasswordType;
+                break;
+
+            default:
+                this.type = MIOTextFieldType.NormalType;
+                break;
+        }
 
         if (this.type == MIOTextFieldType.SearchType)
             this.layer.classList.add("searchfield");
@@ -59,7 +72,11 @@ class MIOTextField extends MIOControl
             this.layer.classList.add("textfield");
 
         this.inputLayer = document.createElement("input");
-        this.inputLayer.setAttribute("type", "text");
+
+        if (this.type == MIOTextFieldType.PasswordType)
+            this.inputLayer.setAttribute("type", "password");
+        else
+            this.inputLayer.setAttribute("type", "text");
         this.inputLayer.style.backgroundColor = "transparent";
         this.inputLayer.style.border = "0px";
         this.inputLayer.style.width = "100%";

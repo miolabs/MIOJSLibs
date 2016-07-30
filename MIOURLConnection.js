@@ -9,7 +9,7 @@ var MIOURLRequest = (function () {
         this.url = url;
     }
     return MIOURLRequest;
-})();
+}());
 var MIOURLConnection = (function () {
     function MIOURLConnection() {
         this.request = null;
@@ -55,5 +55,5 @@ var MIOURLConnection = (function () {
             this.xmlHttpRequest.send();
     };
     return MIOURLConnection;
-})();
+}());
 //# sourceMappingURL=MIOURLConnection.js.map

@@ -6,10 +6,23 @@
     /// <reference path="MIOObject.ts" />
 
 
+function MIOViewFromElementID(view, elementID)
+{
+    var layer = MIOLayerSearchElementByID(view.layer, elementID);
+    if (layer == null)
+        return null;
+
+    var v = new MIOView();
+    v.initWithLayer(layer);
+    view._linkViewToSubview(v);
+
+    return v;
+}
+
 function MIOLayerSearchElementByID(layer, elementID)
 {
-    if (layer.tagName != "DIV")
-        return null;
+    if (layer.tagName != "DIV" && layer.tagName != "INPUT")
+            return null;
 
     if (layer.getAttribute("id") == elementID)
         return layer;
@@ -87,19 +100,18 @@ class MIOView extends MIOObject
     tag = null;
 
     _needDisplay = false;
+    _isLayerInDOM = false;
 
     constructor(layerID?)
     {
         super();
-
         this.layerID = layerID;
     }
 
     init()
     {
         this.layer = document.createElement("div");
-        if (this.layerID != null)
-            this.layer.setAttribute("id", this.layerID);
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.top = "0px";
         this.layer.style.left = "0px";
@@ -110,6 +122,7 @@ class MIOView extends MIOObject
     initWithFrame(x, y, width, height)
     {
         this.layer = document.createElement("div");
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.setAttribute("id", this.layerID);
         this.layer.style.left = x + "px";
@@ -122,14 +135,6 @@ class MIOView extends MIOObject
     {
         this.layer = layer;
         this.layerOptions = options;
-
-        // Async loading / DOM model
-        if (this.parent != null)
-            this.parent.layer.appendChild(this.layer);
-
-        // Set all properties when the layer is ready
-        this.setHidden(this.hidden);
-        this.setAlpha(this.alpha);
     }
 
     setParent(view)
@@ -139,13 +144,9 @@ class MIOView extends MIOObject
         this.didChangeValue("parent");
     }
 
-    layout()
+    addSubLayersFromLayer(layer)
     {
-        for(var index = 0; index < this.subviews.length; index++)
-        {
-            var v = this.subviews[index];
-            v.layout();
-        }
+        this.layer.innerHTML = layer.innerHTML;
     }
 
     addSubview(view)
@@ -153,14 +154,35 @@ class MIOView extends MIOObject
         view.setParent(this);
         this.subviews.push(view);
 
-        if (view.layer != null)
-            this.layer.appendChild(view.layer);
+        view._addLayerToDOM();
+    }
 
+    protected _addLayerToDOM()
+    {
+        if (this._isLayerInDOM == true)
+            return;
+
+        if (this.layer == null || this.parent == null)
+            return;
+
+        this.parent.layer.appendChild(this.layer);
+
+        this._isLayerInDOM = true;
     }
 
     removeFromSuperview()
     {
         this.parent._removeView(this);
+        this._isLayerInDOM = false;
+    }
+
+    _removeLayerFromDOM()
+    {
+        if (this._isLayerInDOM == false)
+            return;
+
+        this.layer.removeChild(this.layer);
+        this._isLayerInDOM = false;
     }
 
     _linkViewToSubview(view)
@@ -172,6 +194,7 @@ class MIOView extends MIOObject
     {
         var index = this.subviews.indexOf(view);
         this.subviews.splice(index, 1);
+
         this.layer.removeChild(view.layer);
     }
 
@@ -191,6 +214,21 @@ class MIOView extends MIOObject
         }
     }
 
+    layout()
+    {
+        for(var index = 0; index < this.subviews.length; index++)
+        {
+            var v = this.subviews[index];
+            if (!(v instanceof MIOView))
+            {
+                console.log("ERROR Laying out not a view");
+            }
+            else
+                v.layout();
+        }
+    }
+
+
     layerWithItemID(itemID)
     {
         return MIOLayerSearchElementByID(this.layer, itemID);
@@ -198,12 +236,16 @@ class MIOView extends MIOObject
 
     setHidden(hidden)
     {
+        this.hidden = hidden;
+
+        if (this.layer == null)
+            return;
+
         if (hidden)
             this.layer.style.display = "none";
         else
             this.layer.style.display = "inline";
 
-        this.hidden = hidden;
     }
 
     setBackgroundColor(color)

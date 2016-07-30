@@ -10,17 +10,19 @@ var __extends = (this && this.__extends) || function (d, b) {
 var MIOWindow = (function (_super) {
     __extends(MIOWindow, _super);
     function MIOWindow() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.rootViewController = null;
     }
     MIOWindow.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this.layer.setAttribute("id", "window_id");
+        this.layer = document.createElement("div");
+        this.layer.setAttribute("id", "window");
         this.layer.style.position = "absolute";
         this.layer.style.left = "0px";
         this.layer.style.top = "0px";
         this.layer.style.width = "100%";
         this.layer.style.height = "100%";
+        // Only windows
+        document.body.appendChild(this.layer);
     };
     MIOWindow.prototype.initWithRootViewController = function (vc) {
         this.init();
@@ -28,5 +30,5 @@ var MIOWindow = (function (_super) {
         this.addSubview(vc.view);
     };
     return MIOWindow;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOWindow.js.map

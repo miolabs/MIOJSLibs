@@ -8,26 +8,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /// <reference path="MIOObject.ts" />
 /// <reference path="MIOPredicate.ts" />
-var MIOFetchRequest = (function (_super) {
-    __extends(MIOFetchRequest, _super);
-    function MIOFetchRequest() {
-        _super.apply(this, arguments);
-        this.entityName = null;
-        this.predicate = null;
-    }
-    MIOFetchRequest.fetchRequestWithEntityName = function (name) {
-        var fetch = new MIOFetchRequest();
-        fetch.initWithEntityName(name);
-        return fetch;
-    };
-    MIOFetchRequest.prototype.initWithEntityName = function (name) {
-        this.entityName = name;
-    };
-    MIOFetchRequest.prototype.setPredicate = function (predicate) {
-        this.predicate = predicate;
-    };
-    return MIOFetchRequest;
-})(MIOObject);
+/// <reference path="MIONotificationCenter.ts" />
+/// <reference path="MIOManagedObjectContext.ts" />
 var MIOFetchSection = (function (_super) {
     __extends(MIOFetchSection, _super);
     function MIOFetchSection() {
@@ -38,7 +20,7 @@ var MIOFetchSection = (function (_super) {
         return this.objects.length;
     };
     return MIOFetchSection;
-})(MIOObject);
+}(MIOObject));
 var MIOFetchedResultsController = (function (_super) {
     __extends(MIOFetchedResultsController, _super);
     function MIOFetchedResultsController() {
@@ -63,6 +45,15 @@ var MIOFetchedResultsController = (function (_super) {
         set: function (delegate) {
             this._delegate = delegate;
             // TODO: Add and remove notification observer
+            if (delegate != null) {
+                MIONotificationCenter.defaultCenter().addObserver(this, "MIO" + this._request.entityName, function (notification) {
+                    var array = notification.object;
+                    this.updateContent(array);
+                });
+            }
+            else {
+                MIONotificationCenter.defaultCenter().removeObserver(this, "MIO" + this._request.entityName);
+            }
         },
         enumerable: true,
         configurable: true
@@ -70,14 +61,20 @@ var MIOFetchedResultsController = (function (_super) {
     MIOFetchedResultsController.prototype.performFetch = function () {
         this.objects = this._moc.executeFetch(this._request);
         this.resultObjects = null;
-        this._filterObjects();
-        this._sortObjects();
-        this._splitInSections();
+        if (this.objects.length == 0)
+            this.resultObjects = this.objects;
+        else {
+            this.resultObjects = this.objects;
+            //this._filterObjects();
+            this._sortObjects();
+            this._splitInSections();
+        }
     };
     MIOFetchedResultsController.prototype.updateContent = function (objects) {
-        this.objects = objects;
-        this.resultObjects = null;
-        this._filterObjects();
+        //this.objects = objects;
+        this.objects = this._moc.executeFetch(this._request);
+        this.resultObjects = this.objects;
+        //this._filterObjects();
         this._sortObjects();
         this._splitInSections();
         this._notify();
@@ -161,5 +158,5 @@ var MIOFetchedResultsController = (function (_super) {
         return object;
     };
     return MIOFetchedResultsController;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOFetchedResultsController.js.map

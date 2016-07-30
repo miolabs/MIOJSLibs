@@ -81,7 +81,7 @@ var MIOStepControl = (function (_super) {
         this.selectButtonAtIndex(this.selectedButtonIndex - 1);
     };
     return MIOStepControl;
-})(MIOView);
+}(MIOView));
 function MIOStepControlButtonSelect(step_button) {
     var layer = step_button.layer;
     var button_index = layer.childNodes[0];

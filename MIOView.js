@@ -8,8 +8,17 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /// <reference path="MIOCore.ts" />
 /// <reference path="MIOObject.ts" />
+function MIOViewFromElementID(view, elementID) {
+    var layer = MIOLayerSearchElementByID(view.layer, elementID);
+    if (layer == null)
+        return null;
+    var v = new MIOView();
+    v.initWithLayer(layer);
+    view._linkViewToSubview(v);
+    return v;
+}
 function MIOLayerSearchElementByID(layer, elementID) {
-    if (layer.tagName != "DIV")
+    if (layer.tagName != "DIV" && layer.tagName != "INPUT")
         return null;
     if (layer.getAttribute("id") == elementID)
         return layer;
@@ -66,12 +75,12 @@ var MIOView = (function (_super) {
         this.parent = null;
         this.tag = null;
         this._needDisplay = false;
+        this._isLayerInDOM = false;
         this.layerID = layerID;
     }
     MIOView.prototype.init = function () {
         this.layer = document.createElement("div");
-        if (this.layerID != null)
-            this.layer.setAttribute("id", this.layerID);
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.top = "0px";
         this.layer.style.left = "0px";
@@ -80,6 +89,7 @@ var MIOView = (function (_super) {
     };
     MIOView.prototype.initWithFrame = function (x, y, width, height) {
         this.layer = document.createElement("div");
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.setAttribute("id", this.layerID);
         this.layer.style.left = x + "px";
@@ -90,32 +100,37 @@ var MIOView = (function (_super) {
     MIOView.prototype.initWithLayer = function (layer, options) {
         this.layer = layer;
         this.layerOptions = options;
-        // Async loading / DOM model
-        if (this.parent != null)
-            this.parent.layer.appendChild(this.layer);
-        // Set all properties when the layer is ready
-        this.setHidden(this.hidden);
-        this.setAlpha(this.alpha);
     };
     MIOView.prototype.setParent = function (view) {
         this.willChangeValue("parent");
         this.parent = view;
         this.didChangeValue("parent");
     };
-    MIOView.prototype.layout = function () {
-        for (var index = 0; index < this.subviews.length; index++) {
-            var v = this.subviews[index];
-            v.layout();
-        }
+    MIOView.prototype.addSubLayersFromLayer = function (layer) {
+        this.layer.innerHTML = layer.innerHTML;
     };
     MIOView.prototype.addSubview = function (view) {
         view.setParent(this);
         this.subviews.push(view);
-        if (view.layer != null)
-            this.layer.appendChild(view.layer);
+        view._addLayerToDOM();
+    };
+    MIOView.prototype._addLayerToDOM = function () {
+        if (this._isLayerInDOM == true)
+            return;
+        if (this.layer == null || this.parent == null)
+            return;
+        this.parent.layer.appendChild(this.layer);
+        this._isLayerInDOM = true;
     };
     MIOView.prototype.removeFromSuperview = function () {
         this.parent._removeView(this);
+        this._isLayerInDOM = false;
+    };
+    MIOView.prototype._removeLayerFromDOM = function () {
+        if (this._isLayerInDOM == false)
+            return;
+        this.layer.removeChild(this.layer);
+        this._isLayerInDOM = false;
     };
     MIOView.prototype._linkViewToSubview = function (view) {
         this.subviews.push(view);
@@ -137,15 +152,27 @@ var MIOView = (function (_super) {
             }
         }
     };
+    MIOView.prototype.layout = function () {
+        for (var index = 0; index < this.subviews.length; index++) {
+            var v = this.subviews[index];
+            if (!(v instanceof MIOView)) {
+                console.log("ERROR Laying out not a view");
+            }
+            else
+                v.layout();
+        }
+    };
     MIOView.prototype.layerWithItemID = function (itemID) {
         return MIOLayerSearchElementByID(this.layer, itemID);
     };
     MIOView.prototype.setHidden = function (hidden) {
+        this.hidden = hidden;
+        if (this.layer == null)
+            return;
         if (hidden)
             this.layer.style.display = "none";
         else
             this.layer.style.display = "inline";
-        this.hidden = hidden;
     };
     MIOView.prototype.setBackgroundColor = function (color) {
         this.layer.style.backgroundColor = "#" + color;
@@ -212,5 +239,5 @@ var MIOView = (function (_super) {
         this.setHeight(h);
     };
     return MIOView;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOView.js.map

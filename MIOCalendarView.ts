@@ -86,6 +86,9 @@ class MIOCalendarView extends MIOView
         this.startDate = this.dataSource.startDateForCalendar(this);
         this.endDate = this.dataSource.endDateForCalendar(this);
 
+        if (this.startDate == null || this.endDate == null)
+            return;
+
         var currentDate = new Date(this.startDate.getTime());
         var currentMonth = -1;
 

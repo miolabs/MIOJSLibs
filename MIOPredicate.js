@@ -18,8 +18,9 @@ var MIOPredicateOperator;
 var MIOPredicateType;
 (function (MIOPredicateType) {
     MIOPredicateType[MIOPredicateType["Predicate"] = 0] = "Predicate";
-    MIOPredicateType[MIOPredicateType["AND"] = 1] = "AND";
-    MIOPredicateType[MIOPredicateType["OR"] = 2] = "OR";
+    MIOPredicateType[MIOPredicateType["Operation"] = 1] = "Operation";
+    MIOPredicateType[MIOPredicateType["AND"] = 2] = "AND";
+    MIOPredicateType[MIOPredicateType["OR"] = 3] = "OR";
 })(MIOPredicateType || (MIOPredicateType = {}));
 var MIOPredicateItem = (function () {
     function MIOPredicateItem(type) {
@@ -27,6 +28,7 @@ var MIOPredicateItem = (function () {
         this.key = null;
         this.operator = null;
         this.value = null;
+        this.predicate = null;
         this.type = type;
     }
     MIOPredicateItem.prototype.setOperator = function (operator) {
@@ -59,7 +61,7 @@ var MIOPredicateItem = (function () {
         }
     };
     return MIOPredicateItem;
-})();
+}());
 var MIOPredicate = (function (_super) {
     __extends(MIOPredicate, _super);
     function MIOPredicate() {
@@ -79,10 +81,14 @@ var MIOPredicate = (function (_super) {
         var value = "";
         var op = "";
         var stepIndex = 0; // 0 -> Token, 1 -> operator, 2 -> value
+        var lastCharIsSpace = false;
         for (var index = 0; index < format.length; index++) {
             var ch = format.charAt(index);
             if (ch == " ") {
+                if (lastCharIsSpace == true)
+                    continue;
                 stepIndex++;
+                lastCharIsSpace = true;
                 if (stepIndex == 1 && key.length > 0) {
                     if (key.toLowerCase() == "and") {
                         this.predicates.push(new MIOPredicateItem(MIOPredicateType.AND));
@@ -100,7 +106,7 @@ var MIOPredicate = (function (_super) {
                     }
                 }
                 else if (stepIndex == 3) {
-                    var p = new MIOPredicateItem(MIOPredicateType.Predicate);
+                    var p = new MIOPredicateItem(MIOPredicateType.Operation);
                     p.key = key;
                     p.setOperator(op);
                     p.value = value;
@@ -111,6 +117,23 @@ var MIOPredicate = (function (_super) {
                 }
                 if (stepIndex > 2)
                     stepIndex = 0;
+            }
+            else if (ch == "(") {
+                // Create new predicate
+                var string = "";
+                index++;
+                for (var count = index; count < format.length; count++, index++) {
+                    var ch2 = format.charAt(index);
+                    if (ch2 == ")") {
+                        var p = new MIOPredicateItem(MIOPredicateType.Predicate);
+                        p.predicate = MIOPredicate.predicateWithFormat(string);
+                        this.predicates.push(p);
+                        break;
+                    }
+                    else {
+                        string += ch2;
+                    }
+                }
             }
             else {
                 switch (stepIndex) {
@@ -124,11 +147,12 @@ var MIOPredicate = (function (_super) {
                         value += ch;
                         break;
                 }
+                lastCharIsSpace = false;
             }
         }
         // Last check
         if (key.length > 0 && value.length > 0) {
-            var p = new MIOPredicateItem(MIOPredicateType.Predicate);
+            var p = new MIOPredicateItem(MIOPredicateType.Operation);
             p.key = key;
             p.setOperator(op);
             p.value = value;
@@ -144,8 +168,12 @@ var MIOPredicate = (function (_super) {
                 op = MIOPredicateType.AND;
             else if (p.type == MIOPredicateType.OR)
                 op = MIOPredicateType.OR;
-            else if (p.type == MIOPredicateType.Predicate) {
-                var result2 = p.evaluateObject(object);
+            else {
+                var result2 = false;
+                if (p.type == MIOPredicateType.Operation)
+                    result2 = p.evaluateObject(object);
+                else if (p.type == MIOPredicateType.Predicate)
+                    result2 = p.predicate.evaluateObject(object);
                 if (op == null)
                     result = result2;
                 else if (op == MIOPredicateType.AND) {
@@ -163,5 +191,5 @@ var MIOPredicate = (function (_super) {
         return result;
     };
     return MIOPredicate;
-})(MIOObject);
+}(MIOObject));
 //# sourceMappingURL=MIOPredicate.js.map

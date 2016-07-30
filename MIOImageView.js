@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOCore.ts" />
+/// <reference path="MIOView.ts" />
 function MIOImageViewFromElementID(view, elementID) {
     var layer = MIOLayerSearchElementByID(view.layer, elementID);
     if (layer == null)
@@ -40,5 +40,5 @@ var MIOImageView = (function (_super) {
         this.imageLayer.setAttribute("src", imageURL);
     };
     return MIOImageView;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOImageView.js.map

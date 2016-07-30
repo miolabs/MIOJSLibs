@@ -12,14 +12,85 @@ class MIONavigationController extends MIOViewController
 
     initWithRootViewController(vc)
     {
-        this.init();
+        super.init();
 
+        this.setRootViewController(vc);
+    }
+
+    setRootViewController(vc)
+    {
         this.rootViewController = vc;
+        this.view.addSubview(vc.view);
+
         this.viewControllersStack.push(vc);
         this.currentViewControllerIndex = 0;
 
         this.rootViewController.navigationController = this;
-        this._showViewController(vc);
+    }
+
+    protected _loadChildControllers()
+    {
+        if (this.rootViewController != null)
+        {
+            this.rootViewController.onLoadView(this, function () {
+
+                this._setViewLoaded(true);
+            });
+        }
+        else
+            this._setViewLoaded(true);
+    }
+
+    /*_addLayerToDOM(target?, completion?)
+    {
+        super._addLayerToDOM(this, function () {
+
+            this.rootViewController._addLayerToDOM(target, completion);
+        });
+    }*/
+
+    viewWillAppear()
+    {
+        if (this.currentViewControllerIndex < 0)
+            return;
+
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+
+        vc.viewWillAppear();
+        vc._childControllersWillAppear();
+    }
+
+    viewDidAppear()
+    {
+        if (this.currentViewControllerIndex < 0)
+            return;
+
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+
+        vc.viewDidAppear();
+        vc._childControllersDidAppear();
+    }
+
+    viewWillDisappear()
+    {
+        if (this.currentViewControllerIndex < 0)
+            return;
+
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+
+        vc.viewWillDisappear();
+        vc._childControllersWillDisappear();
+    }
+
+    viewDidDisappear()
+    {
+        if (this.currentViewControllerIndex < 0)
+            return;
+
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+
+        vc.viewDidDisappear();
+        vc._childControllersDidDisappear();
     }
 
     pushViewController(vc)
@@ -30,46 +101,27 @@ class MIONavigationController extends MIOViewController
         this.currentViewControllerIndex++;
 
         vc.navigationController = this;
-        this._showViewController(vc, lastVC);
-    }
 
-    _showViewController(newVC, oldVC?)
-    {
-        this.view.addSubview(newVC.view);
+        this.view.addSubview(vc.view);
 
-        if (newVC.viewLoaded())
-        {
-            newVC.viewWillAppear();
-            if (oldVC != null) {
-                oldVC.viewWillDisappear();
-                oldVC.view.setHidden(true);
-                oldVC.viewDidDisappear();
-            }
-            newVC.view.layout();
-            newVC.viewDidAppear();
-        }
-        else
-        {
-            var item = {"new_vc" : newVC};
-            if (oldVC != null)
-                item["old_vc"] = oldVC;
-            newVC.setOnViewLoaded(item, this, function(object){
+        vc.onLoadView(this, function () {
 
-                var newVC = object["new_vc"];
-                var oldVC = object["old_vc"];
+            lastVC.viewWillDisappear();
+            lastVC._childControllersWillDisappear();
 
-                newVC.viewWillAppear();
-                newVC.viewWillAppear();
-                if (oldVC != null) {
-                    oldVC.viewWillDisappear();
-                    oldVC.view.setHidden(true);
-                    oldVC.viewDidDisappear();
-                }
-                newVC.view.layout();
-                newVC.viewDidAppear();
-            });
-        }
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
 
+            vc.view.layout();
+
+            vc.viewDidAppear();
+            vc._childControllersDidAppear();
+
+            lastVC.viewDidDisappear();
+            lastVC._childControllersDidDisappear();
+        });
+
+        //this._showViewController(vc, lastVC);
     }
 
     popViewController()
@@ -77,33 +129,27 @@ class MIONavigationController extends MIOViewController
         if (this.currentViewControllerIndex == 0)
             return;
 
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-
-        vc.viewWillDisappear();
-        vc.view.removeFromSuperview();
-        vc.viewDidDisappear();
+        var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
 
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
 
-        var newVC = this.viewControllersStack[this.currentViewControllerIndex];
-        newVC.viewWillAppear();
-        newVC.view.setHidden(false);
-        newVC.view.layout();
-        newVC.viewDidAppear();
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+
+        lastVC.viewWillDisappear();
+        vc.viewWillAppear();
+        vc.view.layout();
+        lastVC.view.removeFromSuperview();
+        vc.viewDidAppear();
+        lastVC.viewDidDisappear();
     }
 
     popToRootViewController()
     {
-        for(var index = this.currentViewControllerIndex; index > 0; index--)
+        var count = this.currentViewControllerIndex;
+        for(var index = count; index > 0; index--)
         {
-            var vc = this.viewControllersStack[this.currentViewControllerIndex];
-            vc.view.removeFromSuperview();
+            this.popViewController();
         }
-
-        this.rootViewController.view.setAlpha(1);
-        this.currentViewControllerIndex = 0;
-        this.viewControllersStack = [];
-        this.viewControllersStack.push(this.rootViewController);
     }
 }

@@ -4,30 +4,8 @@
 
     /// <reference path="MIOObject.ts" />
     /// <reference path="MIOPredicate.ts" />
-
-class MIOFetchRequest extends MIOObject
-{
-    entityName = null;
-    predicate = null;
-
-    static fetchRequestWithEntityName(name)
-    {
-        var fetch = new MIOFetchRequest();
-        fetch.initWithEntityName(name);
-
-        return fetch;
-    }
-
-    initWithEntityName(name)
-    {
-        this.entityName = name;
-    }
-
-    setPredicate(predicate)
-    {
-        this.predicate = predicate;
-    }
-}
+    /// <reference path="MIONotificationCenter.ts" />
+    /// <reference path="MIOManagedObjectContext.ts" />
 
 class MIOFetchSection extends MIOObject
 {
@@ -68,6 +46,19 @@ class MIOFetchedResultsController extends MIOObject
         this._delegate = delegate;
 
         // TODO: Add and remove notification observer
+
+        if (delegate != null)
+        {
+            MIONotificationCenter.defaultCenter().addObserver(this, "MIO" + this._request.entityName, function(notification){
+
+                var array = notification.object;
+                this.updateContent(array);
+            });
+        }
+        else
+        {
+            MIONotificationCenter.defaultCenter().removeObserver(this, "MIO" + this._request.entityName);
+        }
     }
 
     performFetch()
@@ -75,17 +66,24 @@ class MIOFetchedResultsController extends MIOObject
         this.objects = this._moc.executeFetch(this._request);
         this.resultObjects = null;
 
-        this._filterObjects();
-        this._sortObjects();
-        this._splitInSections();
+        if (this.objects.length == 0)
+            this.resultObjects = this.objects;
+        else {
+            this.resultObjects = this.objects;
+            //this._filterObjects();
+            this._sortObjects();
+            this._splitInSections();
+        }
     }
 
     updateContent(objects)
     {
-        this.objects = objects;
-        this.resultObjects = null;
+        //this.objects = objects;
 
-        this._filterObjects();
+        this.objects = this._moc.executeFetch(this._request);
+        this.resultObjects = this.objects;
+
+        //this._filterObjects();
         this._sortObjects();
         this._splitInSections();
 
@@ -148,7 +146,7 @@ class MIOFetchedResultsController extends MIOObject
                 if (a[key]== b[key])
                     return 0;
                 else if (a[key] < b[key])
-                    return -1
+                    return -1;
                 else
                     return 1;
             }

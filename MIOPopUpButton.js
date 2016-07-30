@@ -55,5 +55,5 @@ var MIOPopUpButton = (function (_super) {
         _super.prototype.layout.call(this);
     };
     return MIOPopUpButton;
-})(MIOButton);
+}(MIOButton));
 //# sourceMappingURL=MIOPopUpButton.js.map

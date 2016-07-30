@@ -16,6 +16,7 @@ enum MIOPredicateOperator
 enum MIOPredicateType
 {
     Predicate,
+    Operation,
     AND,
     OR
 }
@@ -26,6 +27,7 @@ class MIOPredicateItem
     key = null;
     operator = null;
     value = null;
+    predicate = null;
 
     constructor(type)
     {
@@ -93,6 +95,7 @@ class MIOPredicate extends MIOObject
         var op = "";
         var stepIndex = 0 // 0 -> Token, 1 -> operator, 2 -> value
 
+        var lastCharIsSpace = false;
 
         for (var index = 0; index < format.length; index++)
         {
@@ -100,7 +103,11 @@ class MIOPredicate extends MIOObject
 
             if (ch == " ")
             {
+                if (lastCharIsSpace == true)
+                    continue;
+
                 stepIndex++;
+                lastCharIsSpace = true;
 
                 if (stepIndex == 1 && key.length > 0)
                 {
@@ -121,7 +128,7 @@ class MIOPredicate extends MIOObject
                 }
                 else if (stepIndex == 3)
                 {
-                    var p = new MIOPredicateItem(MIOPredicateType.Predicate);
+                    var p = new MIOPredicateItem(MIOPredicateType.Operation);
                     p.key = key;
                     p.setOperator(op);
                     p.value = value;
@@ -133,6 +140,27 @@ class MIOPredicate extends MIOObject
 
                 if (stepIndex > 2)
                     stepIndex = 0;
+            }
+            else if (ch == "(")
+            {
+                // Create new predicate
+                var string = "";
+                index++;
+                for (var count = index; count < format.length; count++, index++)
+                {
+                    var ch2 = format.charAt(index);
+                    if (ch2 == ")")
+                    {
+                        var p = new MIOPredicateItem(MIOPredicateType.Predicate);
+                        p.predicate = MIOPredicate.predicateWithFormat(string);
+                        this.predicates.push(p);
+                        break;
+                    }
+                    else
+                    {
+                        string += ch2;
+                    }
+                }
             }
             else
             {
@@ -150,13 +178,15 @@ class MIOPredicate extends MIOObject
                         value += ch;
                         break;
                 }
+
+                lastCharIsSpace = false;
             }
         }
 
         // Last check
         if (key.length > 0 && value.length > 0)
         {
-            var p = new MIOPredicateItem(MIOPredicateType.Predicate);
+            var p = new MIOPredicateItem(MIOPredicateType.Operation);
             p.key = key;
             p.setOperator(op);
             p.value = value;
@@ -176,9 +206,13 @@ class MIOPredicate extends MIOObject
                 op = MIOPredicateType.AND;
             else if (p.type == MIOPredicateType.OR)
                 op = MIOPredicateType.OR;
-            else if (p.type == MIOPredicateType.Predicate)
+            else
             {
-                var result2 = p.evaluateObject(object);
+                var result2 = false;
+                if (p.type == MIOPredicateType.Operation)
+                    result2 = p.evaluateObject(object);
+                else if (p.type == MIOPredicateType.Predicate)
+                    result2 = p.predicate.evaluateObject(object);
 
                 if (op == null)
                     result = result2;

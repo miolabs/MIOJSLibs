@@ -5,20 +5,9 @@
     /// <reference path="MIOObject.ts" />
     /// <reference path="MIOString.ts" />
     /// <reference path="MIOView.ts" />
-    /// <reference path="MIOURLConnection.ts" />
+    /// <reference path="MIOBundle.ts" />
 
-function MIOViewControllerFromElementID(view, elementID)
-{
-    var v = MIOViewFromElementID(view, elementID);
-    if (v == null)
-        return null;
-
-    var vc = new MIOViewController();
-    vc.initWithView(v);
-    view._linkViewToSubview(v);
-
-    return vc;
-}
+declare var MIOCoreResourceParser;
 
 class MIOViewController extends MIOObject
 {
@@ -30,12 +19,13 @@ class MIOViewController extends MIOObject
     private _onViewLoadedTarget = null;
     private _onViewLoadedAction = null;
 
-    private _viewLoaded = false;
+    private _viewIsLoaded = false;
+    private _layerIsReady = false;
 
-    childViewControllers = [];
+    protected _childViewControllers = [];
     navigationController = null;
 
-    constructor(layerID?)
+    constructor(layerID)
     {
         super();
         this.layerID = layerID;
@@ -47,43 +37,105 @@ class MIOViewController extends MIOObject
 
         this.view = new MIOView(this.layerID);
         this.view.init();
-        this.loadView();
+        this._layerIsReady = true;
     }
 
     initWithLayer(layer, options?)
     {
-        this.view = new MIOView();
+        super.init();
+
+        this.view = new MIOView(this.layerID);
         this.view.initWithLayer(layer, options);
+        this._layerIsReady = true;
     }
 
     initWithView(view)
     {
+        super.init();
+
         this.view = view;
-        this.loadView();
+        this._layerIsReady = true;
     }
 
     initWithResource(url)
     {
-        this.view = new MIOView();
-        MIOCoreDownloadFile(this, url, function(data){
+        super.init();
+
+        this.view = new MIOView(this.layerID);
+        this.view.init();
+
+        var mainBundle = MIOBundle.mainBundle();
+        mainBundle.loadLayoutFromURL(url, this.layerID, this, function (layout) {
+
+            //var layer = new MIOCoreResourceParser(layout, this.layerID);
+
+            console.log(this.layerID);
 
             var parser = new DOMParser();
-            var html = parser.parseFromString(data, "text/html");
-
-            //var styles = html.styleSheets;
-
-            //if (css != null)
-            //MIOCoreLoadStyle(css);
-
-            var layer = html.getElementById(this.layerID);
+            var items = parser.parseFromString(layout, "text/html");
+            var layer = items.getElementById(this.layerID);
 
             this.localizeSubLayers(layer.childNodes);
 
-            this.view.initWithLayer(layer);
+            this.view.addSubLayersFromLayer(layer);
+
             this.loadView();
-            this.setViewLoaded(true);
+            this._loadChildControllers();
         });
     }
+
+  /*  _addLayerToDOM(target?, completion?)
+    {
+        if (target == null && completion == null)
+            return;
+
+        if (this.view.layer != null){
+
+            this.view.layout(); // Insert into DOM if it's not there
+            this.localizeSubLayers(this.view.layer.childNodes);
+            this.loadView();
+
+            if (this.childViewControllers.length > 0)
+            {
+                var max = this.childViewControllers.length;
+                this._addSubLayerToDOM(0, max, target, completion);
+            }
+            else
+            {
+                if (completion != null)
+                    completion.call(target);
+            }
+        }
+        else
+        {
+            this._targetDOM = target;
+            this._completionDOM = completion;
+            this._needToCreateDOM = true;
+        }
+    }
+
+    _addSubLayerToDOM(index, max, target, completion)
+    {
+        if (index == max)
+        {
+            if (completion != null)
+                completion.call(target);
+
+            return;
+        }
+
+        var vc = this.childViewControllers[index];
+        vc._addLayerToDOM(this, function () {
+
+            index++;
+            this._addSubLayerToDOM(index, max, target, completion);
+        });
+    }
+
+    _removeLayerFromDOM()
+    {
+        this.view._removeLayerFromDOM();
+    }*/
 
     localizeSubLayers(layers)
     {
@@ -115,32 +167,70 @@ class MIOViewController extends MIOObject
         this.viewDidLoad();
     }
 
-    setViewLoaded(value)
+    protected _loadChildControllers()
+    {
+        var count = this._childViewControllers.length;
+
+        if (count > 0)
+            this._loadChildViewController(0, count);
+        else
+            this._setViewLoaded(true);
+    }
+
+    _loadChildViewController(index, max)
+    {
+        if (index < max) {
+            var vc = this._childViewControllers[index];
+            vc.onLoadView(this, function () {
+
+                var newIndex = index + 1;
+                this._loadChildViewController(newIndex, max);
+            });
+        }
+        else
+        {
+            this._setViewLoaded(true);
+        }
+    }
+
+    protected _setViewLoaded(value)
     {
         this.willChangeValue("viewLoaded");
-        this._viewLoaded = value;
+        this._viewIsLoaded = value;
         this.didChangeValue("viewLoaded");
 
         if (value == true && this._onViewLoadedAction != null)
-            this._onViewLoadedAction.call(this._onViewLoadedTarget, this._onViewLoadedObject);
+            this._onViewLoadedAction.call(this._onViewLoadedTarget);
+
+        this._onViewLoadedTarget = null;
+        this._onViewLoadedAction = null;
     }
 
-    setOnViewLoaded(object, target, action)
+    onLoadView(target, action)
     {
-        this._onViewLoadedObject = object;
         this._onViewLoadedTarget = target;
         this._onViewLoadedAction = action;
+
+        if (this._viewIsLoaded == true)
+        {
+            action.call(target);
+        }
+        else if (this._layerIsReady == true)
+        {
+            this.loadView();
+            this._loadChildControllers();
+        }
     }
 
-
-    viewLoaded()
+    get viewIsLoaded()
     {
-        return this._viewLoaded;
+        return this._viewIsLoaded;
     }
 
     setOutlet(elementID, className?, options?)
     {
-        var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
+        //var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
+        var layer = document.getElementById(elementID);
         if (className == null)
             className = layer.getAttribute("data-class");
 
@@ -160,16 +250,57 @@ class MIOViewController extends MIOObject
 
     addChildViewController(vc)
     {
-        this.childViewControllers.push(vc);
+        vc.parent = this;
+        this.view.addSubview(vc.view);
+        this._childViewControllers.push(vc);
     }
 
     removeChildViewController(vc)
     {
-        var index = this.childViewControllers.indexOf(vc);
+        var index = this._childViewControllers.indexOf(vc);
         if (index != -1)
-            this.childViewControllers.slice(index, 1);
+            this._childViewControllers.slice(index, 1);
 
         vc.removeFromSuperview();
+    }
+
+    _showViewController(newVC, oldVC?)
+    {
+        this.view.addSubview(newVC.view);
+
+        if (newVC.viewLoaded())
+        {
+            newVC.viewWillAppear();
+            if (oldVC != null) {
+                oldVC.viewWillDisappear();
+                oldVC.view.setHidden(true);
+                oldVC.viewDidDisappear();
+            }
+            newVC.view.setHidden(false);
+            newVC.view.layout();
+            newVC.viewDidAppear();
+        }
+        else
+        {
+            var item = {"new_vc" : newVC};
+            if (oldVC != null)
+                item["old_vc"] = oldVC;
+            newVC.setOnViewLoaded(item, this, function(object){
+
+                var newVC = object["new_vc"];
+                var oldVC = object["old_vc"];
+
+                newVC.viewWillAppear();
+                if (oldVC != null) {
+                    oldVC.viewWillDisappear();
+                    oldVC.view.setHidden(true);
+                    oldVC.viewDidDisappear();
+                }
+                newVC.view.setHidden(false);
+                newVC.view.layout();
+                newVC.viewDidAppear();
+            });
+        }
     }
 
     presentViewController(vc)
@@ -197,36 +328,44 @@ class MIOViewController extends MIOObject
     }
 
     viewDidLoad(){}
-    viewWillAppear()
+
+    viewWillAppear(){}
+    protected _childControllersWillAppear()
     {
-        for (var index = 0; index < this.childViewControllers.length; index++)
+        for (var index = 0; index < this._childViewControllers.length; index++)
+
+        for (var index = 0; index < this._childViewControllers.length; index++)
         {
-            var vc = this.childViewControllers[index];
+            var vc = this._childViewControllers[index];
             vc.viewWillAppear();
         }
     }
-    viewDidAppear()
+    viewDidAppear(){}
+    protected _childControllersDidAppear()
     {
-        for (var index = 0; index < this.childViewControllers.length; index++)
+        for (var index = 0; index < this._childViewControllers.length; index++)
         {
-            var vc = this.childViewControllers[index];
+            var vc = this._childViewControllers[index];
             vc.viewDidAppear();
         }
     }
 
-    viewWillDisappear()
+    viewWillDisappear(){}
+    protected _childControllersWillDisappear()
     {
-        for (var index = 0; index < this.childViewControllers.length; index++)
+        for (var index = 0; index < this._childViewControllers.length; index++)
         {
-            var vc = this.childViewControllers[index];
+            var vc = this._childViewControllers[index];
             vc.viewWillDisappear();
         }
     }
-    viewDidDisappear()
+
+    viewDidDisappear(){}
+    protected _childControllersDidDisappear()
     {
-        for (var index = 0; index < this.childViewControllers.length; index++)
+        for (var index = 0; index < this._childViewControllers.length; index++)
         {
-            var vc = this.childViewControllers[index];
+            var vc = this._childViewControllers[index];
             vc.viewDidDisappear();
         }
     }

@@ -2,7 +2,7 @@
  * Created by godshadow on 12/3/16.
  */
 
-    /// <reference path="MIOCore.ts" />
+    /// <reference path="MIOView.ts" />
 
 function MIOImageViewFromElementID(view, elementID)
 {
@@ -16,7 +16,6 @@ function MIOImageViewFromElementID(view, elementID)
 
     return iv;
 }
-
 
 class MIOImageView extends MIOView
 {

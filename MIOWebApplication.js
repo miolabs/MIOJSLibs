@@ -49,14 +49,16 @@ var MIOWebApplication = (function () {
     MIOWebApplication.prototype._run = function () {
         this.canvas = document.body;
         this.delegate.didFinishLaunching();
-        this.canvas.appendChild(this.delegate.window.layer);
+        //this.canvas.appendChild(this.delegate.window.layer);
         if (this.downloadCoreFileCount == 0)
             this._showViews();
     };
     MIOWebApplication.prototype._showViews = function () {
-        this.delegate.window.rootViewController.viewWillAppear();
-        this.delegate.window.rootViewController.viewDidAppear();
-        this.ready = true;
+        this.delegate.window.rootViewController.onLoadView(this, function () {
+            this.delegate.window.rootViewController.viewWillAppear();
+            this.delegate.window.rootViewController.viewDidAppear();
+            this.ready = true;
+        });
     };
     MIOWebApplication.prototype.decodeParams = function (string) {
         var param = "";
@@ -113,5 +115,5 @@ var MIOWebApplication = (function () {
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;
-})();
+}());
 //# sourceMappingURL=MIOWebApplication.js.map

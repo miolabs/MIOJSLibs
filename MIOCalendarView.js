@@ -34,7 +34,7 @@ var MIOCalendarCell = (function (_super) {
         };
     };
     return MIOCalendarCell;
-})(MIOView);
+}(MIOView));
 var MIOCalendarView = (function (_super) {
     __extends(MIOCalendarView, _super);
     function MIOCalendarView() {
@@ -73,6 +73,8 @@ var MIOCalendarView = (function (_super) {
         }
         this.startDate = this.dataSource.startDateForCalendar(this);
         this.endDate = this.dataSource.endDateForCalendar(this);
+        if (this.startDate == null || this.endDate == null)
+            return;
         var currentDate = new Date(this.startDate.getTime());
         var currentMonth = -1;
         var dayIndex = 0;
@@ -158,7 +160,7 @@ var MIOCalendarView = (function (_super) {
         }
     };
     return MIOCalendarView;
-})(MIOView);
+}(MIOView));
 function MIOCalendarGetStringFromDate(date) {
     var yyyy = date.getFullYear().toString();
     var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
