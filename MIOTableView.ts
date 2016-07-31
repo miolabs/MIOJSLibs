@@ -148,7 +148,7 @@ class MIOTableViewCell extends MIOView
 
         if (this.accesoryView != null)
         {
-            this.accesoryView.style.top = offsetY + "px";
+            this.accesoryView.layer.style.top = offsetY + "px";
         }
     }
 

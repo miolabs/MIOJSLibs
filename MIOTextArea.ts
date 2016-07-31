@@ -58,6 +58,11 @@ class MIOTextArea extends MIOControl
         return this.text;
     }
 
+    setEditMode(value)
+    {
+        this.textareaLayer.disabled = !value;
+    }
+
     setOnChangeText(target, action)
     {
         this.textChangeTarget = target;

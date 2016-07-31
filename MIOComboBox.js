@@ -99,5 +99,5 @@ var MIOComboBox = (function (_super) {
         };
     };
     return MIOComboBox;
-})(MIOControl);
+}(MIOControl));
 //# sourceMappingURL=MIOComboBox.js.map

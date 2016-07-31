@@ -51,6 +51,9 @@ var MIOTextArea = (function (_super) {
     MIOTextArea.prototype.getText = function () {
         return this.text;
     };
+    MIOTextArea.prototype.setEditMode = function (value) {
+        this.textareaLayer.disabled = !value;
+    };
     MIOTextArea.prototype.setOnChangeText = function (target, action) {
         this.textChangeTarget = target;
         this.textChangeAction = action;

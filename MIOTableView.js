@@ -107,7 +107,7 @@ var MIOTableViewCell = (function (_super) {
         _super.prototype.setHeight.call(this, h);
         var offsetY = (h - 15) / 2;
         if (this.accesoryView != null) {
-            this.accesoryView.style.top = offsetY + "px";
+            this.accesoryView.layer.style.top = offsetY + "px";
         }
     };
     MIOTableViewCell.prototype.setSelected = function (value) {
