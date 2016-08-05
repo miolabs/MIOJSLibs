@@ -33,4 +33,5 @@
 /// <reference path="MIOViewController.ts" />
 /// <reference path="MIONavigationController.ts" />
 /// <reference path="MIOPageController.ts" />
+/// <reference path="MIOSplitViewController.ts" />
 

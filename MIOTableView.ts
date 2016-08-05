@@ -258,12 +258,12 @@ class MIOTableView extends MIOView
         // Remove all subviews
         for (var index = 0; index < this.sections.length; index++)
         {
-            var section = this.sections[index];
-            if (section.header != null)
-                section.header.removeFromSuperview();
+            var sectionView = this.sections[index];
+            if (sectionView.header != null)
+                sectionView.header.removeFromSuperview();
 
-            for (var count = 0; count < section.cells.length; count++){
-                var cell = section.cells[count];
+            for (var count = 0; count < sectionView.cells.length; count++){
+                var cell = sectionView.cells[count];
                 cell.removeFromSuperview();
             }
         }

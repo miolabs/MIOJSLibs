@@ -48,7 +48,30 @@ var MIOManagedObject = (function (_super) {
     function MIOManagedObject() {
         _super.apply(this, arguments);
         this.entityName = null;
+        this._trackChanges = {};
     }
+    MIOManagedObject.prototype.setValue = function (propertyName, value) {
+        var oldValue = this[propertyName];
+        if (oldValue != value)
+            this._trackChanges[propertyName] = value;
+    };
+    MIOManagedObject.prototype.getValue = function (propertyName) {
+        var value = this._trackChanges[propertyName];
+        if (value == null)
+            value = this[propertyName];
+        return value;
+    };
+    MIOManagedObject.prototype.getChanges = function () {
+        return this._trackChanges;
+    };
+    MIOManagedObject.prototype.saveChanges = function () {
+        for (var propertyName in this._trackChanges) {
+            this[propertyName] = this._trackChanges[propertyName];
+        }
+    };
+    MIOManagedObject.prototype.discardChanges = function () {
+        this._trackChanges = {};
+    };
     return MIOManagedObject;
 }(MIOObject));
 var MIOManagedObjectContext = (function (_super) {
@@ -68,6 +91,7 @@ var MIOManagedObjectContext = (function (_super) {
         return obj;
     };
     MIOManagedObjectContext.prototype.insertNewObject = function (obj) {
+        obj.saveChanges();
         var entityName = obj.entityName;
         var array = this._insertedObjects[entityName];
         if (array == null) {
@@ -77,6 +101,7 @@ var MIOManagedObjectContext = (function (_super) {
         array.push(obj);
     };
     MIOManagedObjectContext.prototype.updateObject = function (obj) {
+        obj.saveChanges();
         var entityName = obj.entityName;
         var array = this._insertedObjects[entityName];
         if (array == null) {

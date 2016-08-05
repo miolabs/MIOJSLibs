@@ -193,11 +193,11 @@ var MIOTableView = (function (_super) {
     MIOTableView.prototype.reloadData = function () {
         // Remove all subviews
         for (var index = 0; index < this.sections.length; index++) {
-            var section = this.sections[index];
-            if (section.header != null)
-                section.header.removeFromSuperview();
-            for (var count = 0; count < section.cells.length; count++) {
-                var cell = section.cells[count];
+            var sectionView = this.sections[index];
+            if (sectionView.header != null)
+                sectionView.header.removeFromSuperview();
+            for (var count = 0; count < sectionView.cells.length; count++) {
+                var cell = sectionView.cells[count];
                 cell.removeFromSuperview();
             }
         }

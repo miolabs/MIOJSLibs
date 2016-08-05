@@ -47,6 +47,42 @@ class MIOEntityDescription extends MIOObject
 class MIOManagedObject extends MIOObject
 {
     entityName = null;
+
+    private _trackChanges = {};
+
+    setValue(propertyName, value)
+    {
+        var oldValue = this[propertyName];
+        if (oldValue != value)
+            this._trackChanges[propertyName] = value;
+    }
+
+    getValue(propertyName)
+    {
+        var value = this._trackChanges[propertyName];
+        if (value == null)
+            value = this[propertyName];
+
+        return value;
+    }
+
+    getChanges()
+    {
+        return this._trackChanges;
+    }
+
+    saveChanges()
+    {
+        for (var propertyName in this._trackChanges)
+        {
+            this[propertyName] = this._trackChanges[propertyName];
+        }
+    }
+
+    discardChanges()
+    {
+        this._trackChanges = {};
+    }
 }
 
 class MIOManagedObjectContext extends MIOObject
@@ -71,6 +107,8 @@ class MIOManagedObjectContext extends MIOObject
 
     insertNewObject(obj)
     {
+        obj.saveChanges();
+
         var entityName = obj.entityName;
         var array = this._insertedObjects[entityName];
         if (array == null)
@@ -84,6 +122,8 @@ class MIOManagedObjectContext extends MIOObject
 
     updateObject(obj)
     {
+        obj.saveChanges();
+
         var entityName = obj.entityName;
         var array = this._insertedObjects[entityName];
         if (array == null)
