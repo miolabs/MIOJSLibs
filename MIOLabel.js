@@ -71,8 +71,7 @@ var MIOLabel = (function (_super) {
     };
     Object.defineProperty(MIOLabel.prototype, "text", {
         set: function (text) {
-            this._textLayer.innerHTML = text;
-            this._textLayer.innerHTML = text == null ? "" : text;
+            this._textLayer.innerHTML = text != null ? text : "";
         },
         enumerable: true,
         configurable: true

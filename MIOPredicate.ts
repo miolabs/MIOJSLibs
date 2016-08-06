@@ -56,6 +56,10 @@ class MIOPredicateItem
             return (object[this.key] == this.value);
         else if (this.operator == MIOPredicateOperator.Not)
             return (object[this.key] != this.value);
+        else if (this.operator == MIOPredicateOperator.Less)
+            return (object[this.key] < this.value);
+        else if (this.operator == MIOPredicateOperator.Greater)
+            return (this.operator > this.value);
         if (this.operator == MIOPredicateOperator.Contains)
         {
             var value = object[this.key];

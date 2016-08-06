@@ -121,7 +121,7 @@ class MIOTextField extends MIOControl
 
     set text(text)
     {
-        this.inputLayer.value = text == null ? "" : text;
+        this.inputLayer.value = text != null ? text : "";
     }
 
     get text()

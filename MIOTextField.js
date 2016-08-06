@@ -103,7 +103,7 @@ var MIOTextField = (function (_super) {
             return this.inputLayer.value;
         },
         set: function (text) {
-            this.inputLayer.value = text == null ? "" : text;
+            this.inputLayer.value = text != null ? text : "";
         },
         enumerable: true,
         configurable: true

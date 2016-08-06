@@ -44,3 +44,18 @@ function MIODateGetUTCStringForHour(date)
     return (hh[1]?hh:"0"+hh[0]) + ":" + (mm[1]?mm:"0"+mm[0]);
 }
 
+function MIODateFromString(string)
+{
+    var d = new Date(Date.parse(string));
+    return d;
+}
+
+function MIODateAddDaysToDateString(dateString, days)
+{
+    var d = MIODateFromString(dateString);
+    d.setDate(d.getDate() + parseInt(days));
+    var ds = MIODateGetString(d);
+
+    return ds;
+}
+
