@@ -4,7 +4,7 @@
 
     /// <reference path="MIOObject.ts" />
 
-enum MIOPredicateOperator
+enum MIOPredicateComparatorType
 {
     Equal,
     Less,
@@ -13,54 +13,74 @@ enum MIOPredicateOperator
     Contains
 }
 
+enum MIOPredicateOperatorType
+{
+    OR,
+    AND
+}
+
 enum MIOPredicateType
 {
     Predicate,
-    Operation,
-    AND,
-    OR
+    Item,
+    Operation
 }
 
-class MIOPredicateItem
+class MIOPredicateOperator
 {
     type = null;
-    key = null;
-    operator = null;
-    value = null;
-    predicate = null;
+
+    public static andPredicateOperatorType()
+    {
+        var op = new MIOPredicateOperator(MIOPredicateOperatorType.AND);
+        return op;
+    }
+
+    public static orPredicateOperatorType()
+    {
+        var op = new MIOPredicateOperator(MIOPredicateOperatorType.OR);
+        return op;
+    }
 
     constructor(type)
     {
         this.type = type;
     }
+}
 
-    setOperator(operator)
+class MIOPredicateItem
+{
+    key = null;
+    comparator = null;
+    value = null;
+
+    setComparator(comparator)
     {
-        if (operator == "==")
-            this.operator = MIOPredicateOperator.Equal;
-        else if (operator == ">")
-            this.operator = MIOPredicateOperator.Greater;
-        else if (operator == "<")
-            this.operator = MIOPredicateOperator.Less;
-        else if (operator == "!=")
-            this.operator = MIOPredicateOperator.Not;
-        else if (operator.toLowerCase() == "contains")
-            this.operator = MIOPredicateOperator.Contains;
+        if (comparator == "==")
+            this.comparator = MIOPredicateComparatorType.Equal;
+        else if (comparator == ">")
+            this.comparator = MIOPredicateComparatorType.Greater;
+        else if (comparator == "<")
+            this.comparator = MIOPredicateComparatorType.Less;
+        else if (comparator == "!=")
+            this.comparator = MIOPredicateComparatorType.Not;
+        else if (comparator.toLowerCase() == "contains")
+            this.comparator = MIOPredicateComparatorType.Contains;
         else
-            throw ("MIOPredicate: Invalid operator!");
+            throw ("MIOPredicate: Invalid comparator!");
     }
 
     evaluateObject(object)
     {
-        if (this.operator == MIOPredicateOperator.Equal)
+        if (this.comparator == MIOPredicateComparatorType.Equal)
             return (object[this.key] == this.value);
-        else if (this.operator == MIOPredicateOperator.Not)
+        else if (this.comparator == MIOPredicateComparatorType.Not)
             return (object[this.key] != this.value);
-        else if (this.operator == MIOPredicateOperator.Less)
+        else if (this.comparator == MIOPredicateComparatorType.Less)
             return (object[this.key] < this.value);
-        else if (this.operator == MIOPredicateOperator.Greater)
-            return (this.operator > this.value);
-        if (this.operator == MIOPredicateOperator.Contains)
+        else if (this.comparator == MIOPredicateComparatorType.Greater)
+            return (object[this.key] > this.value);
+        if (this.comparator == MIOPredicateComparatorType.Contains)
         {
             var value = object[this.key];
             if (value == null)
@@ -94,9 +114,10 @@ class MIOPredicate extends MIOObject
 
     private _parse(format)
     {
+        var token = "";
+
         var key = "";
-        var value = "";
-        var op = "";
+        var cmp = "";
         var stepIndex = 0 // 0 -> Token, 1 -> operator, 2 -> value
 
         var lastCharIsSpace = false;
@@ -110,40 +131,37 @@ class MIOPredicate extends MIOObject
                 if (lastCharIsSpace == true)
                     continue;
 
-                stepIndex++;
                 lastCharIsSpace = true;
 
-                if (stepIndex == 1 && key.length > 0)
+                if (token.toLocaleLowerCase() == "and" || token == "&&")
                 {
-                    if (key.toLowerCase() == "and") {
-                        this.predicates.push(new MIOPredicateItem(MIOPredicateType.AND));
-                        key = "";
-                        value = "";
-                        op = "";
-                        stepIndex = 0;
-                    }
-                    else if (key.toLowerCase() == "or") {
-                        this.predicates.push(new MIOPredicateItem(MIOPredicateType.OR));
-                        key = "";
-                        value = "";
-                        op = "";
-                        stepIndex = 0;
-                    }
+                    this.predicates.push(MIOPredicateOperator.andPredicateOperatorType());
                 }
-                else if (stepIndex == 3)
+                else if (token.toLocaleLowerCase() == "or" || token == "||")
                 {
-                    var p = new MIOPredicateItem(MIOPredicateType.Operation);
-                    p.key = key;
-                    p.setOperator(op);
-                    p.value = value;
-                    this.predicates.push(p);
-                    key = "";
-                    value = "";
-                    op = "";
+                    this.predicates.push(MIOPredicateOperator.orPredicateOperatorType());
                 }
+                else if (token != "")
+                {
+                    stepIndex++;
+                    if (stepIndex == 1)
+                        key = token;
+                    else if (stepIndex == 2)
+                        cmp = token;
+                    else if (stepIndex == 3)
+                    {
+                        var i = new MIOPredicateItem();
+                        i.key = key;
+                        i.setComparator(cmp);
+                        i.value = token;
+                        this.predicates.push(i);
 
-                if (stepIndex > 2)
-                    stepIndex = 0;
+                        key = "";
+                        cmp = "";
+                        stepIndex = 0;
+                    }
+                }
+                token = "";
             }
             else if (ch == "(")
             {
@@ -155,8 +173,7 @@ class MIOPredicate extends MIOObject
                     var ch2 = format.charAt(index);
                     if (ch2 == ")")
                     {
-                        var p = new MIOPredicateItem(MIOPredicateType.Predicate);
-                        p.predicate = MIOPredicate.predicateWithFormat(string);
+                        var p = MIOPredicate.predicateWithFormat(string);
                         this.predicates.push(p);
                         break;
                     }
@@ -166,70 +183,73 @@ class MIOPredicate extends MIOObject
                     }
                 }
             }
+            else if (ch == "\"")
+            {
+                index++;
+                for (var count = index; count < format.length; count++, index++)
+                {
+                    var ch2 = format.charAt(index);
+                    if (ch2 == "\"")
+                        break;
+                    else
+                        token += ch2;
+                }
+            }
             else
             {
-                switch (stepIndex)
-                {
-                    case 0:
-                        key += ch;
-                        break;
-
-                    case 1:
-                        op += ch;
-                        break;
-
-                    case 2:
-                        value += ch;
-                        break;
-                }
-
+                token += ch;
                 lastCharIsSpace = false;
             }
         }
 
         // Last check
-        if (key.length > 0 && value.length > 0)
+        if (token.length > 0)
         {
-            var p = new MIOPredicateItem(MIOPredicateType.Operation);
-            p.key = key;
-            p.setOperator(op);
-            p.value = value;
-            this.predicates.push(p);
+            var i = new MIOPredicateItem();
+            i.key = key;
+            i.setComparator(cmp);
+            i.value = token;
+            this.predicates.push(i);
         }
     }
 
     evaluateObject(object)
     {
-        var result = true;
+        var result = false;
         var op = null;
+        var lastResult = null;
 
         for (var count = 0; count < this.predicates.length; count++)
         {
-            var p = this.predicates[count];
-            if (p.type == MIOPredicateType.AND)
-                op = MIOPredicateType.AND;
-            else if (p.type == MIOPredicateType.OR)
-                op = MIOPredicateType.OR;
-            else
-            {
-                var result2 = false;
-                if (p.type == MIOPredicateType.Operation)
-                    result2 = p.evaluateObject(object);
-                else if (p.type == MIOPredicateType.Predicate)
-                    result2 = p.predicate.evaluateObject(object);
+            var o = this.predicates[count];
 
-                if (op == null)
-                    result = result2;
-                else if (op == MIOPredicateType.AND)
+            if (o instanceof MIOPredicate)
+            {
+                result = o.evaluateObject(object);
+            }
+            else if (o instanceof MIOPredicateItem)
+            {
+                result = o.evaluateObject(object);
+            }
+            else if (o instanceof MIOPredicateOperator)
+            {
+                op = o.type;
+                lastResult = result;
+                result = null;
+            }
+
+            if (op != null && result != null)
+            {
+                if (op == MIOPredicateOperatorType.AND)
                 {
-                    result = result && result2;
+                    result = result && lastResult;
                     op = null;
                     if (result == false)
                         break;
                 }
-                else if (op == MIOPredicateType.OR)
+                else if (op == MIOPredicateOperatorType.OR)
                 {
-                    result = result || result2;
+                    result = result || lastResult;
                     op = null;
                 }
             }

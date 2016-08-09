@@ -65,7 +65,6 @@ var MIOFetchedResultsController = (function (_super) {
             this.resultObjects = this.objects;
         else {
             this.resultObjects = this.objects;
-            //this._filterObjects();
             this._sortObjects();
             this._splitInSections();
         }
@@ -74,7 +73,6 @@ var MIOFetchedResultsController = (function (_super) {
         //this.objects = objects;
         this.objects = this._moc.executeFetch(this._request);
         this.resultObjects = this.objects;
-        //this._filterObjects();
         this._sortObjects();
         this._splitInSections();
         this._notify();
@@ -97,18 +95,6 @@ var MIOFetchedResultsController = (function (_super) {
             }
             if (typeof this._delegate.controllerDidChangeContent === "function")
                 this._delegate.controllerDidChangeContent(this);
-        }
-    };
-    MIOFetchedResultsController.prototype._filterObjects = function () {
-        if (this._request.predicate == null)
-            this.resultObjects = this.objects;
-        else {
-            var predicate = this._request.predicate;
-            this.resultObjects = this.objects.filter(function (booking) {
-                var result = predicate.evaluateObject(booking);
-                if (result)
-                    return booking;
-            });
         }
     };
     MIOFetchedResultsController.prototype._sortObjects = function () {
