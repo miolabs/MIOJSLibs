@@ -4,6 +4,7 @@
 /// <reference path="MIOCore.ts" />
 /// <reference path="MIONotificationCenter.ts" />
 /// <reference path="MIOURLConnection.ts" />
+/// <reference path="MIOViewController.ts" />
 var MIOLocalizedStrings = null;
 var MIOWebApplication = (function () {
     function MIOWebApplication() {
@@ -15,12 +16,16 @@ var MIOWebApplication = (function () {
         this.languages = null;
         this.ready = false;
         this.downloadCoreFileCount = 0;
+        this._sheetViewController = null;
         if (MIOWebApplication._sharedInstance) {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
         }
         MIOWebApplication._sharedInstance = this;
         this.isMobile = MIOCoreIsMobile();
         this.decodeParams(window.location.search);
+        // Add animation lib
+        // TODO: Check in a normal web if it works
+        MIOCoreLoadStyle("src/miolib/extras/animate.min.css");
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function (notification) {
             this.downloadCoreFileCount++;
         });
@@ -112,6 +117,20 @@ var MIOWebApplication = (function () {
             }
             fn.call(this);
         });
+    };
+    MIOWebApplication.prototype.beginSheetViewController = function (vc) {
+        var window = this.delegate.window;
+        this._sheetViewController = vc;
+        this._sheetViewController.presentationStyle = MIOPresentationStyle.FormSheet;
+        this._sheetViewController.presentationType = MIOPresentationType.Sheet;
+        var frame = window.rootViewController._frameWithStyleForViewController(this._sheetViewController);
+        this._sheetViewController.view.setFrame(frame);
+        window.rootViewController.addChildViewController(vc);
+        window.rootViewController.showViewController(vc, true);
+    };
+    MIOWebApplication.prototype.endSheetViewController = function () {
+        this._sheetViewController.dismissViewController(true);
+        this._sheetViewController = null;
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;

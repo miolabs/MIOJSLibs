@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOView.ts" />
+/// <reference path="MIOViewController.ts" />
 var MIOWindow = (function (_super) {
     __extends(MIOWindow, _super);
     function MIOWindow() {

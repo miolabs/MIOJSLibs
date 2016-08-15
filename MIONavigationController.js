@@ -70,26 +70,15 @@ var MIONavigationController = (function (_super) {
         vc.viewDidDisappear();
         vc._childControllersDidDisappear();
     };
-    MIONavigationController.prototype.pushViewController = function (vc) {
+    MIONavigationController.prototype.pushViewController = function (vc, animate) {
         var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
         this.viewControllersStack.push(vc);
         this.currentViewControllerIndex++;
         vc.navigationController = this;
-        this.view.addSubview(vc.view);
-        vc.onLoadView(this, function () {
-            lastVC.viewWillDisappear();
-            lastVC._childControllersWillDisappear();
-            vc.viewWillAppear();
-            vc._childControllersWillAppear();
-            vc.view.layout();
-            vc.viewDidAppear();
-            vc._childControllersDidAppear();
-            lastVC.viewDidDisappear();
-            lastVC._childControllersDidDisappear();
-        });
-        //this._showViewController(vc, lastVC);
+        vc.presentationType = MIOPresentationType.Navigation;
+        this.showViewController(vc, animate == null ? false : true);
     };
-    MIONavigationController.prototype.popViewController = function () {
+    MIONavigationController.prototype.popViewController = function (animate) {
         if (this.currentViewControllerIndex == 0)
             return;
         var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
@@ -97,11 +86,15 @@ var MIONavigationController = (function (_super) {
         this.viewControllersStack.pop();
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
         lastVC.viewWillDisappear();
+        lastVC._childControllersWillDisappear();
         vc.viewWillAppear();
+        vc._childControllersWillAppear();
         vc.view.layout();
         lastVC.view.removeFromSuperview();
         vc.viewDidAppear();
+        vc._childControllersDidAppear();
         lastVC.viewDidDisappear();
+        lastVC._childControllersDidDisappear();
     };
     MIONavigationController.prototype.popToRootViewController = function () {
         var count = this.currentViewControllerIndex;

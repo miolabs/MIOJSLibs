@@ -337,7 +337,7 @@ class MIOView extends MIOObject
         return h;
     }
 
-    setFrame(x, y, w, h)
+    setFrameComponents(x, y, w, h)
     {
         this.setX(x);
         this.setY(y);
@@ -345,5 +345,9 @@ class MIOView extends MIOObject
         this.setHeight(h);
     }
 
+    setFrame(frame)
+    {
+        this.setFrameComponents(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+    }
 }
 

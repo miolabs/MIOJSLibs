@@ -103,7 +103,7 @@ class MIOButton extends MIOControl
                 else
                     instance.setSelected(true);
             }
-        }
+        };
 
         this.layer.onmouseup = function()
         {

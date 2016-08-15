@@ -6,8 +6,33 @@
     /// <reference path="MIOString.ts" />
     /// <reference path="MIOView.ts" />
     /// <reference path="MIOBundle.ts" />
+    /// <reference path="MIOCoreTypes.ts" />
 
 declare var MIOCoreResourceParser;
+
+enum MIOPresentationStyle
+{
+    CurrentContext,
+    PartialCover,
+    PageSheet,
+    FormSheet,
+    FullScreen
+}
+
+enum MIOPresentationType
+{
+    Sheet,
+    Modal,
+    Navigation
+}
+
+enum MIOAnimationType
+{
+    BeginSheet,
+    EndSheet,
+    Push,
+    Pop
+}
 
 class MIOViewController extends MIOObject
 {
@@ -15,15 +40,19 @@ class MIOViewController extends MIOObject
     view = null;
     parent = null;
 
-    private _onViewLoadedObject = null;
     private _onViewLoadedTarget = null;
     private _onViewLoadedAction = null;
 
     private _viewIsLoaded = false;
     private _layerIsReady = false;
 
-    protected _childViewControllers = [];
+    private _childViewControllers = [];
     navigationController = null;
+
+    presentationStyle = MIOPresentationStyle.CurrentContext;
+    presentationType = MIOPresentationType.Modal;
+
+    contentSize = new MIOSize(320, 200);
 
     constructor(layerID)
     {
@@ -83,59 +112,6 @@ class MIOViewController extends MIOObject
             this._loadChildControllers();
         });
     }
-
-  /*  _addLayerToDOM(target?, completion?)
-    {
-        if (target == null && completion == null)
-            return;
-
-        if (this.view.layer != null){
-
-            this.view.layout(); // Insert into DOM if it's not there
-            this.localizeSubLayers(this.view.layer.childNodes);
-            this.loadView();
-
-            if (this.childViewControllers.length > 0)
-            {
-                var max = this.childViewControllers.length;
-                this._addSubLayerToDOM(0, max, target, completion);
-            }
-            else
-            {
-                if (completion != null)
-                    completion.call(target);
-            }
-        }
-        else
-        {
-            this._targetDOM = target;
-            this._completionDOM = completion;
-            this._needToCreateDOM = true;
-        }
-    }
-
-    _addSubLayerToDOM(index, max, target, completion)
-    {
-        if (index == max)
-        {
-            if (completion != null)
-                completion.call(target);
-
-            return;
-        }
-
-        var vc = this.childViewControllers[index];
-        vc._addLayerToDOM(this, function () {
-
-            index++;
-            this._addSubLayerToDOM(index, max, target, completion);
-        });
-    }
-
-    _removeLayerFromDOM()
-    {
-        this.view._removeLayerFromDOM();
-    }*/
 
     localizeSubLayers(layers)
     {
@@ -248,11 +224,16 @@ class MIOViewController extends MIOObject
         return c;
     }
 
+    get childViewControllers()
+    {
+        return this._childViewControllers;
+    }
+
     addChildViewController(vc)
     {
         vc.parent = this;
-        this.view.addSubview(vc.view);
         this._childViewControllers.push(vc);
+        //vc.willMoveToParentViewController(this);
     }
 
     removeChildViewController(vc)
@@ -260,72 +241,147 @@ class MIOViewController extends MIOObject
         var index = this._childViewControllers.indexOf(vc);
         if (index != -1)
             this._childViewControllers.slice(index, 1);
-
-        vc.removeFromSuperview();
     }
 
-    _showViewController(newVC, oldVC?)
+    removeFromParentViewController()
     {
-        this.view.addSubview(newVC.view);
+        this.parent.removeChildViewController(this);
+        this.parent = null;
+        this.view.removeFromSuperview();
+        //this.didMoveToParentViewController(null);
+    }
 
-        if (newVC.viewLoaded())
-        {
-            newVC.viewWillAppear();
-            if (oldVC != null) {
-                oldVC.viewWillDisappear();
-                oldVC.view.setHidden(true);
-                oldVC.viewDidDisappear();
+    willMoveToParentViewController(parent)
+    {
+
+    }
+
+    didMoveToParentViewController(parent)
+    {
+
+    }
+
+    transitionFromViewControllerToViewController(fromVC, toVC, duration, animationStyle, target, completion)
+    {
+
+
+    }
+
+    presentViewController(vc, animate)
+    {
+        vc.presentationType = MIOPresentationType.Modal;
+
+        var frame = this._frameWithStyleForViewController(vc);
+        vc.view.setFrame(frame);
+
+        this.addChildViewController(vc);
+        this.showViewController(vc, true);
+    }
+
+    showViewController(vc, animate)
+    {
+        this.view.addSubview(vc.view);
+
+        vc.onLoadView(this, function () {
+
+            if (vc.presentationStyle != MIOPresentationStyle.PartialCover)
+            {
+                this.viewWillDisappear();
+                this._childControllersWillDisappear();
             }
-            newVC.view.setHidden(false);
-            newVC.view.layout();
-            newVC.viewDidAppear();
+
+            vc.viewWillAppear();
+            vc._childControllersWillAppear();
+
+            vc.view.layout();
+
+            if (animate)
+            {
+                var newVC = vc;
+                var oldVC = this;
+
+                newVC.view.layer.style.animationDuration = "0.25s";
+                newVC._addAnimationClassesForType(newVC.presentationType, false);
+                newVC.view.layer.addEventListener("animationend", function(e) {
+
+                    newVC._removeAnimationClassesForType(newVC.presentationType, false);
+                    //vc.view.layer.removeEventListener("animationend");
+
+                    newVC.viewDidAppear();
+                    newVC._childControllersDidAppear();
+
+                    if (newVC.presentationStyle != MIOPresentationStyle.PartialCover)
+                    {
+                        oldVC.viewDidDisappear();
+                        oldVC._childControllersDidDisappear();
+                    }
+                });
+            }
+            else
+            {
+                vc.viewDidAppear();
+                vc._childControllersDidAppear();
+
+                if (vc.presentationStyle != MIOPresentationStyle.PartialCover)
+                {
+                    this.viewDidDisappear();
+                    this._childControllersDidDisappear();
+                }
+            }
+        });
+    }
+
+    dismissViewController(animate)
+    {
+        if (this.presentationStyle != MIOPresentationStyle.PartialCover)
+        {
+            this.parent.viewWillAppear();
+            this.parent._childControllersWillAppear();
+            this.parent.view.layout();
+        }
+
+        this.viewWillDisappear();
+        this._childControllersWillDisappear();
+
+        if (animate)
+        {
+            var newVC = this.parent;
+            var oldVC = this;
+
+            oldVC.view.layer.style.animationDuration = "0.25s";
+            oldVC._addAnimationClassesForType(newVC.presentationType, true);
+            oldVC.view.layer.addEventListener("animationend", function(e) {
+
+                oldVC._removeAnimationClassesForType(oldVC.presentationType, true);
+                //vc.view.layer.removeEventListener("animationend");
+
+                oldVC.viewDidDisappear();
+                oldVC._childControllersDidDisappear();
+
+                if (oldVC.presentationStyle != MIOPresentationStyle.PartialCover)
+                {
+                    newVC.viewDidAppear();
+                    newVC._childControllersDidAppear();
+                }
+
+                oldVC.removeFromParentViewController();
+            });
         }
         else
         {
-            var item = {"new_vc" : newVC};
-            if (oldVC != null)
-                item["old_vc"] = oldVC;
-            newVC.setOnViewLoaded(item, this, function(object){
-
-                var newVC = object["new_vc"];
-                var oldVC = object["old_vc"];
-
-                newVC.viewWillAppear();
-                if (oldVC != null) {
-                    oldVC.viewWillDisappear();
-                    oldVC.view.setHidden(true);
-                    oldVC.viewDidDisappear();
-                }
-                newVC.view.setHidden(false);
-                newVC.view.layout();
-                newVC.viewDidAppear();
-            });
-        }
-    }
-
-    presentViewController(vc)
-    {
-        vc.parent = this;
-        this.viewWillDisappear();
-        vc.viewWillAppear();
-        this.view.addSubview(vc.view);
-        this.viewDidDisappear();
-        vc.viewDidAppear();
-    }
-
-    dismissViewController()
-    {
-        if (this.parent != null)
-        {
-            this.viewWillDisappear();
-            this.parent.viewWillAppear();
-            this.parent.view.removeFromSuperview();
             this.viewDidDisappear();
-            this.parent.viewDidAppear();
+            this._childControllersDidDisappear();
 
-            this.parent = null;
+            if (this.presentationStyle != MIOPresentationStyle.PartialCover)
+            {
+                this.parent.viewDidAppear();
+                this.parent._childControllersDidAppear();
+            }
+
+            this.removeFromParentViewController();
         }
     }
+
 
     viewDidLoad(){}
 
@@ -373,6 +429,99 @@ class MIOViewController extends MIOObject
     contentHeight()
     {
         return this.view.getHeight();
+    }
+
+    // ANIMATION TYPES
+    private _classListForAnimationType(type)
+    {
+        var array = [];
+        array.push("animated");
+
+        switch (type)
+        {
+            case MIOAnimationType.BeginSheet:
+                array.push("slideInDown");
+                break;
+
+            case MIOAnimationType.EndSheet:
+                array.push("slideOutUp");
+                break;
+
+            case MIOAnimationType.Push:
+                array.push("slideInRight");
+                break;
+
+            case MIOAnimationType.Pop:
+                array.push("slideOutLeft");
+                break;
+        }
+
+        return array;
+    }
+
+    private _animationClassesForPresentationType(type, reverse)
+    {
+        var clasess = null;
+
+        switch (type)
+        {
+            case MIOPresentationType.Sheet:
+                clasess = this._classListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
+                break;
+
+            case MIOPresentationType.Modal:
+                clasess = this._classListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
+                break;
+
+            case MIOPresentationType.Navigation:
+                clasess = this._classListForAnimationType(reverse == false ? MIOAnimationType.Push : MIOAnimationType.Pop);
+                break;
+        }
+
+        return clasess;
+    }
+
+    private _addAnimationClassesForType(type, reverse)
+    {
+        var classes = this._animationClassesForPresentationType(type, reverse);
+        for (var index = 0; index < classes.length; index++)
+            this.view.layer.classList.add(classes[index]);
+    }
+
+    private _removeAnimationClassesForType(type, reverse)
+    {
+        var classes = this._animationClassesForPresentationType(type, reverse);
+        for (var index = 0; index < classes.length; index++)
+            this.view.layer.classList.remove(classes[index]);
+    }
+
+    _frameWithStyleForViewController(vc)
+    {
+        var w = 0;
+        var h = 0;
+        var x = 0;
+        var y = 0;
+
+        if (vc.presentationStyle == MIOPresentationStyle.PageSheet)
+        {
+            w = vc.contentSize.width;
+            h = vc.contentSize.height;
+            x = (this.view.getWidth() - w) / 2;
+            y = 0;
+        }
+        else if (vc.presentationStyle == MIOPresentationStyle.FormSheet)
+        {
+            w = this.view.getWidth() * 0.75; // 75% of the view
+            h = this.view.getHeight() * 0.90; // 90% of the view
+            x = (this.view.getWidth() - w) / 2;
+            y = (this.view.getHeight() - h) / 2;
+        }
+        else
+        {
+            w = this.view.getWidth();
+            h = this.view.getHeight();
+        }
+        return MIOFrame.frameWithRect(x, y, w, h);
     }
 }
 

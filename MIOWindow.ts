@@ -3,6 +3,7 @@
  */
 
     /// <reference path="MIOView.ts" />
+    /// <reference path="MIOViewController.ts" />
 
 class MIOWindow extends MIOView
 {

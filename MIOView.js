@@ -232,11 +232,14 @@ var MIOView = (function (_super) {
         var h = this.layer.clientHeight;
         return h;
     };
-    MIOView.prototype.setFrame = function (x, y, w, h) {
+    MIOView.prototype.setFrameComponents = function (x, y, w, h) {
         this.setX(x);
         this.setY(y);
         this.setWidth(w);
         this.setHeight(h);
+    };
+    MIOView.prototype.setFrame = function (frame) {
+        this.setFrameComponents(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
     };
     return MIOView;
 }(MIOObject));

@@ -5,6 +5,7 @@
     /// <reference path="MIOCore.ts" />
     /// <reference path="MIONotificationCenter.ts" />
     /// <reference path="MIOURLConnection.ts" />
+    /// <reference path="MIOViewController.ts" />
 
 var MIOLocalizedStrings = null;
 
@@ -22,6 +23,8 @@ class MIOWebApplication
 
     private downloadCoreFileCount = 0;
 
+    private _sheetViewController = null;
+
     constructor()
     {
         if (MIOWebApplication._sharedInstance)
@@ -33,6 +36,10 @@ class MIOWebApplication
         
         this.decodeParams(window.location.search);
 
+        // Add animation lib
+        // TODO: Check in a normal web if it works
+        MIOCoreLoadStyle("src/miolib/extras/animate.min.css");
+
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function(notification){
 
             this.downloadCoreFileCount++;
@@ -43,7 +50,6 @@ class MIOWebApplication
             this.downloadCoreFileCount--;
             if (this.downloadCoreFileCount == 0)
                 this._showViews();
-
         });
     }
 
@@ -171,4 +177,24 @@ class MIOWebApplication
         });
     }
 
+    beginSheetViewController(vc)
+    {
+        var window = this.delegate.window;
+
+        this._sheetViewController = vc;
+        this._sheetViewController.presentationStyle = MIOPresentationStyle.FormSheet;
+        this._sheetViewController.presentationType = MIOPresentationType.Sheet;
+
+        var frame = window.rootViewController._frameWithStyleForViewController(this._sheetViewController);
+        this._sheetViewController.view.setFrame(frame);
+
+        window.rootViewController.addChildViewController(vc);
+        window.rootViewController.showViewController(vc, true);
+    }
+
+    endSheetViewController()
+    {
+        this._sheetViewController.dismissViewController(true);
+        this._sheetViewController = null;
+    }
 }
