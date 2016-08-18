@@ -25,23 +25,20 @@ var MIONavigationController = (function (_super) {
         this.viewControllersStack.push(vc);
         this.currentViewControllerIndex = 0;
         this.rootViewController.navigationController = this;
+        this.addChildViewController(vc);
     };
-    MIONavigationController.prototype._loadChildControllers = function () {
-        if (this.rootViewController != null) {
-            this.rootViewController.onLoadView(this, function () {
-                this._setViewLoaded(true);
-            });
-        }
-        else
-            this._setViewLoaded(true);
-    };
-    /*_addLayerToDOM(target?, completion?)
-    {
-        super._addLayerToDOM(this, function () {
-
-            this.rootViewController._addLayerToDOM(target, completion);
-        });
-    }*/
+    // protected _loadChildControllers()
+    // {
+    //     if (this.rootViewController != null)
+    //     {
+    //         this.rootViewController.onLoadView(this, function () {
+    //
+    //             this._setViewLoaded(true);
+    //         });
+    //     }
+    //     else
+    //         this._setViewLoaded(true);
+    // }
     MIONavigationController.prototype.viewWillAppear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
@@ -76,31 +73,35 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex++;
         vc.navigationController = this;
         vc.presentationType = MIOPresentationType.Navigation;
-        this.showViewController(vc, animate == null ? false : true);
+        this.view.addSubview(vc.view);
+        this.addChildViewController(vc);
+        this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Push);
     };
     MIONavigationController.prototype.popViewController = function (animate) {
         if (this.currentViewControllerIndex == 0)
             return;
-        var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-        lastVC.viewWillDisappear();
-        lastVC._childControllersWillDisappear();
-        vc.viewWillAppear();
-        vc._childControllersWillAppear();
-        vc.view.layout();
-        lastVC.view.removeFromSuperview();
-        vc.viewDidAppear();
-        vc._childControllersDidAppear();
-        lastVC.viewDidDisappear();
-        lastVC._childControllersDidDisappear();
+        var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
+        this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Pop, this, function () {
+            vc.view.removeFromSuperview();
+            this.removeChildViewController(vc);
+        });
     };
     MIONavigationController.prototype.popToRootViewController = function () {
-        var count = this.currentViewControllerIndex;
-        for (var index = count; index > 0; index--) {
-            this.popViewController();
+        var currentVC = this.viewControllersStack.pop();
+        for (var index = this.currentViewControllerIndex - 1; index > 0; index--) {
+            var vc = this.viewControllersStack.pop();
+            vc.view.removeFromSuperview();
+            this.removeChildViewController(vc);
         }
+        this.currentViewControllerIndex = 0;
+        var rootVC = this.viewControllersStack[0];
+        this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
+            currentVC.view.removeFromSuperview();
+            this.removeChildViewController(currentVC);
+        });
     };
     return MIONavigationController;
 }(MIOViewController));

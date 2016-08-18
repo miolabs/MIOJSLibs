@@ -2,6 +2,7 @@
  * Created by godshadow on 11/3/16.
  */
 
+    /// <reference path="MIOCoreTypes.ts" />
     /// <reference path="MIOView.ts" />
     /// <reference path="MIOLabel.ts" />
 
@@ -198,7 +199,7 @@ class MIOCalendarView extends MIOView
                 {
                     y += w + 9;
                 }
-                v.setFrame(x, y, w, w);
+                v.setFrame(MIOFrame.frameWithRect(x, y, w, w);
                 lastDayIndex = v.dayIndex;
             }
         }

@@ -17,12 +17,12 @@ class MIOSplitViewController extends MIOViewController
     {
         super.init();
 
-        this._masterView = new MIOView("split_mater_view");
+        this._masterView = new MIOView(MIOViewGetNextLayerID("split_mater_view"));
         this._masterView.init();
         this._masterView.layer.style.width = "320px";
         this.view.addSubview(this._masterView);
 
-        this._detailView = new MIOView("split_detail_view");
+        this._detailView = new MIOView(MIOViewGetNextLayerID("split_detail_view"));
         this._detailView.init();
         this._detailView.layer.style.left = "321px";
         this._detailView.layer.style.width = "auto";
@@ -34,7 +34,7 @@ class MIOSplitViewController extends MIOViewController
     {
         vc.parent = this;
         this._masterView.addSubview(vc.view);
-        this._childViewControllers.push(vc);
+        this.childViewControllers.push(vc);
 
         this._masterViewController = vc;
     }
@@ -43,7 +43,7 @@ class MIOSplitViewController extends MIOViewController
     {
         vc.parent = this;
         this._detailView.addSubview(vc.view);
-        this._childViewControllers.push(vc);
+        this.childViewControllers.push(vc);
 
         this._detailViewController = vc;
     }
@@ -52,7 +52,7 @@ class MIOSplitViewController extends MIOViewController
     {
         vc.parent = this;
         this._detailView.addSubview(vc.view);
-        this._childViewControllers.push(vc);
+        this.childViewControllers.push(vc);
 
         this._emptyDetailViewController = vc;
     }

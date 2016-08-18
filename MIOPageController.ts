@@ -10,74 +10,60 @@ class MIOPageController extends MIOViewController
 
     addPageViewController(vc)
     {
-        vc.view.setHidden(true);
-
+        this.view.addSubview(vc.view);
         this.addChildViewController(vc);
+
+        if (this.selectedViewControllerIndex == -1)
+            this.selectedViewControllerIndex = 0;
+        else
+            vc.view.setHidden(true);
+    }
+
+    protected _loadChildControllers()
+    {
+        if (this.selectedViewControllerIndex > -1)
+        {
+            var vc = this.childViewControllers[this.selectedViewControllerIndex];
+            vc.onLoadView(this, function () {
+
+                this._setViewLoaded(true);
+            });
+        }
+        else
+            this._setViewLoaded(true);
     }
 
     viewWillAppear()
     {
-        if (this.selectedViewControllerIndex == -1)
-        {
-            this.selectedViewControllerIndex == 0;
-            var vc = this._childViewControllers[0];
-            vc.view.setHidden(false);
-            vc.viewWillAppear();
-            vc._childControllersWillAppear();
-        }
-        else
-        {
-            var vc = this._childViewControllers[this.selectedViewControllerIndex];
-            vc.viewWillAppear();
-            vc._childControllersWillAppear();
-        }
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewWillAppear();
+        vc._childControllersWillAppear();
     }
 
     showPageAtIndex(index)
     {
+        if (this.selectedViewControllerIndex == -1)
+            return;
+
         if (index == this.selectedViewControllerIndex)
             return;
 
         if (index < 0)
             return;
 
-        if (index >= this._childViewControllers.length)
+        if (index >= this.childViewControllers.length)
             return;
 
-        var oldVC = null;
-        var newVC = null;
-
-        if (this.selectedViewControllerIndex > -1)
-            oldVC = this._childViewControllers[this.selectedViewControllerIndex];
+        var oldVC = this.childViewControllers[this.selectedViewControllerIndex];
+        var newVC = this.childViewControllers[index];
 
         this.selectedViewControllerIndex = index;
 
-        var newVC = this._childViewControllers[index];
-        newVC.onLoadView(this, function () {
+        newVC.view.setHidden(false);
+        this.transitionFromViewControllerToViewController(oldVC, newVC, 0, MIOAnimationType.None, this, function () {
 
-            if (oldVC != null)
-            {
-                oldVC.viewWillDisappear();
-                oldVC._childControllersWillDisappear();
-            }
-
-            newVC.viewWillAppear();
-            newVC._childControllersWillAppear();
-
-            if (oldVC != null) oldVC.view.setHidden(true);
-            newVC.view.setHidden(false);
-
-            if (oldVC != null)
-            {
-                oldVC.viewDidDisappear();
-                oldVC._childControllersDidDisappear();
-            }
-
-            newVC.viewDidAppear();
-            newVC._childControllersDidAppear();
+            oldVC.view.setHidden(true);
         });
-
-        //this._showViewController(newVC, oldVC);
     }
 
     showNextPage()

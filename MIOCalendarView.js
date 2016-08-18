@@ -6,6 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/// <reference path="MIOCoreTypes.ts" />
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOLabel.ts" />
 var MIOCalendarCell = (function (_super) {
@@ -154,7 +155,7 @@ var MIOCalendarView = (function (_super) {
                 if (v.dayIndex == 0) {
                     y += w + 9;
                 }
-                v.setFrame(x, y, w, w);
+                v.setFrame(MIOFrame.frameWithRect(x, y, w, w));
                 lastDayIndex = v.dayIndex;
             }
         }

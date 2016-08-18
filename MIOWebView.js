@@ -11,18 +11,26 @@ var MIOWebView = (function (_super) {
     __extends(MIOWebView, _super);
     function MIOWebView() {
         _super.apply(this, arguments);
+        this._iframeLayer = null;
     }
     MIOWebView.prototype.init = function () {
-        this.layer = document.createElement("iframe");
-        this.layer.setAttribute("id", this.layerID);
-        this.layer.style.position = "absolute";
-        this.layer.style.top = "0px";
-        this.layer.style.left = "0px";
-        this.layer.style.width = "100%";
-        this.layer.style.height = "100%";
+        _super.prototype.init.call(this);
+        this._setupLayer();
+    };
+    MIOWebView.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
+        this._setupLayer();
+    };
+    MIOWebView.prototype._setupLayer = function () {
+        this._iframeLayer = document.createElement("iframe");
+        this._iframeLayer.setAttribute("scrolling", "auto");
+        this._iframeLayer.setAttribute("frameborder", "0");
+        this.layer.appendChild(this._iframeLayer);
     };
     MIOWebView.prototype.setURL = function (url) {
-        this.layer.setAttribute("src", url);
+        this._iframeLayer.setAttribute("src", url);
+        this._iframeLayer.setAttribute("width", "100%");
+        this._iframeLayer.setAttribute("height", "100%");
     };
     return MIOWebView;
 }(MIOView));

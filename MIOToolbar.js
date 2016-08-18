@@ -18,7 +18,7 @@ var MIOToolbarButton = (function (_super) {
         return tb;
     };
     return MIOToolbarButton;
-})(MIOButton);
+}(MIOButton));
 var MIOToolbar = (function (_super) {
     __extends(MIOToolbar, _super);
     function MIOToolbar() {
@@ -51,5 +51,5 @@ var MIOToolbar = (function (_super) {
         this.buttons.push(button);
     };
     return MIOToolbar;
-})(MIOView);
+}(MIOView));
 //# sourceMappingURL=MIOToolbar.js.map

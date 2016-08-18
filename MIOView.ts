@@ -5,6 +5,23 @@
     /// <reference path="MIOCore.ts" />
     /// <reference path="MIOObject.ts" />
 
+var _MIOViewNextLayerID = 0;
+
+function MIOViewGetNextLayerID(prefix?)
+{
+    var layerID = null;
+    if (prefix == null)
+    {
+        _MIOViewNextLayerID++;
+        layerID = _MIOViewNextLayerID;
+    }
+    else
+    {
+        layerID = prefix + "_" + _MIOViewNextLayerID;
+    }
+
+    return layerID;
+}
 
 function MIOViewFromElementID(view, elementID)
 {
@@ -105,7 +122,11 @@ class MIOView extends MIOObject
     constructor(layerID?)
     {
         super();
-        this.layerID = layerID;
+        if (layerID != null)
+            this.layerID = layerID;
+        else
+            this.layerID = MIOViewGetNextLayerID();
+
     }
 
     init()
@@ -119,17 +140,17 @@ class MIOView extends MIOObject
         this.layer.style.height = "100%";
     }
 
-    initWithFrame(x, y, width, height)
-    {
-        this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
-        this.layer.style.position = "absolute";
-        this.layer.setAttribute("id", this.layerID);
-        this.layer.style.left = x + "px";
-        this.layer.style.top = y + "px";
-        this.layer.style.width = width + "px";
-        this.layer.style.height = height + "px";
-    }
+    // initWithFrame(x, y, width, height)
+    // {
+    //     this.layer = document.createElement("div");
+    //     this.layer.setAttribute("id", this.layerID);
+    //     this.layer.style.position = "absolute";
+    //     this.layer.setAttribute("id", this.layerID);
+    //     this.layer.style.left = x + "px";
+    //     this.layer.style.top = y + "px";
+    //     this.layer.style.width = width + "px";
+    //     this.layer.style.height = height + "px";
+    // }
 
     initWithLayer(layer, options?)
     {

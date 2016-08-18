@@ -121,14 +121,20 @@ var MIOWebApplication = (function () {
     MIOWebApplication.prototype.beginSheetViewController = function (vc) {
         var window = this.delegate.window;
         this._sheetViewController = vc;
-        this._sheetViewController.presentationStyle = MIOPresentationStyle.FormSheet;
+        this._sheetViewController.presentationStyle = MIOPresentationStyle.PageSheet;
         this._sheetViewController.presentationType = MIOPresentationType.Sheet;
-        var frame = window.rootViewController._frameWithStyleForViewController(this._sheetViewController);
+        var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
         this._sheetViewController.view.setFrame(frame);
+        this._sheetViewController.view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
+        this._sheetViewController.view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
+        this._sheetViewController.view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
         window.rootViewController.addChildViewController(vc);
+        window.rootViewController.view.addSubview(vc.view);
         window.rootViewController.showViewController(vc, true);
     };
     MIOWebApplication.prototype.endSheetViewController = function () {
+        var window = this.delegate.window;
+        window.rootViewController.removeChildViewController(this._sheetViewController);
         this._sheetViewController.dismissViewController(true);
         this._sheetViewController = null;
     };

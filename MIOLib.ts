@@ -20,6 +20,7 @@
 /// <reference path="MIOCalendarView.ts" />
 /// <reference path="MIOImageView.ts" />
 /// <reference path="MIOActivityIndicator.ts" />
+/// <reference path="MIOWebView.ts" />
 
 /// <reference path="MIOControl.ts" />
 /// <reference path="MIOButton.ts" />

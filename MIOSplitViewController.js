@@ -19,11 +19,11 @@ var MIOSplitViewController = (function (_super) {
     }
     MIOSplitViewController.prototype.init = function () {
         _super.prototype.init.call(this);
-        this._masterView = new MIOView("split_mater_view");
+        this._masterView = new MIOView(MIOViewGetNextLayerID("split_mater_view"));
         this._masterView.init();
         this._masterView.layer.style.width = "320px";
         this.view.addSubview(this._masterView);
-        this._detailView = new MIOView("split_detail_view");
+        this._detailView = new MIOView(MIOViewGetNextLayerID("split_detail_view"));
         this._detailView.init();
         this._detailView.layer.style.left = "321px";
         this._detailView.layer.style.width = "auto";
@@ -33,19 +33,19 @@ var MIOSplitViewController = (function (_super) {
     MIOSplitViewController.prototype.setMasterViewController = function (vc) {
         vc.parent = this;
         this._masterView.addSubview(vc.view);
-        this._childViewControllers.push(vc);
+        this.childViewControllers.push(vc);
         this._masterViewController = vc;
     };
     MIOSplitViewController.prototype.setDetailViewController = function (vc) {
         vc.parent = this;
         this._detailView.addSubview(vc.view);
-        this._childViewControllers.push(vc);
+        this.childViewControllers.push(vc);
         this._detailViewController = vc;
     };
     MIOSplitViewController.prototype.setEmptyDetailViewController = function (vc) {
         vc.parent = this;
         this._detailView.addSubview(vc.view);
-        this._childViewControllers.push(vc);
+        this.childViewControllers.push(vc);
         this._emptyDetailViewController = vc;
     };
     return MIOSplitViewController;

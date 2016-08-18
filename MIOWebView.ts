@@ -6,19 +6,33 @@
 
 class MIOWebView extends MIOView
 {
+    private _iframeLayer = null;
+
     init()
     {
-        this.layer = document.createElement("iframe");
-        this.layer.setAttribute("id", this.layerID);
-        this.layer.style.position = "absolute";
-        this.layer.style.top = "0px";
-        this.layer.style.left = "0px";
-        this.layer.style.width = "100%";
-        this.layer.style.height = "100%";
+        super.init();
+        this._setupLayer();
     }
+
+    initWithLayer(layer, options?)
+    {
+        super.initWithLayer(layer, options);
+        this._setupLayer();
+    }
+
+    private _setupLayer()
+    {
+        this._iframeLayer = document.createElement("iframe");
+        this._iframeLayer.setAttribute("scrolling", "auto");
+        this._iframeLayer.setAttribute("frameborder", "0");
+        this.layer.appendChild(this._iframeLayer);
+    }
+
 
     setURL(url)
     {
-        this.layer.setAttribute("src", url);
+        this._iframeLayer.setAttribute("src", url);
+        this._iframeLayer.setAttribute("width", "100%");
+        this._iframeLayer.setAttribute("height", "100%");
     }
 }
