@@ -17,6 +17,8 @@ var MIOWebApplication = (function () {
         this.ready = false;
         this.downloadCoreFileCount = 0;
         this._sheetViewController = null;
+        this._popUpMenuView = null;
+        this._popUpMenu = null;
         if (MIOWebApplication._sharedInstance) {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
         }
@@ -137,6 +139,30 @@ var MIOWebApplication = (function () {
         window.rootViewController.removeChildViewController(this._sheetViewController);
         this._sheetViewController.dismissViewController(true);
         this._sheetViewController = null;
+    };
+    MIOWebApplication.prototype.showMenuFromView = function (view, menu) {
+        if (this._popUpMenuView == null) {
+            this._popUpMenuView = new MIOView("popup_menu_context");
+            this._popUpMenuView.init();
+            this._popUpMenuView.layer.style.zIndex = 100;
+            this._popUpMenuView.setBackgroundRGBColor(255, 255, 255);
+            this.delegate.window.addSubview(this._popUpMenuView);
+        }
+        this._popUpMenu = menu;
+        this._popUpMenuView.setHidden(false);
+        this._popUpMenuView.addSubview(menu);
+        var x = view.getX();
+        var y = view.getY() + view.getHeight();
+        var w = menu.getWidth();
+        var h = menu.getHeight();
+        this._popUpMenuView.setX(x);
+        this._popUpMenuView.setY(y);
+        this._popUpMenuView.setWidth(w);
+        this._popUpMenuView.layer.style.height = h;
+    };
+    MIOWebApplication.prototype.hideMenu = function () {
+        this._popUpMenu.removeFromSuperview();
+        this._popUpMenuView.setHidden(true);
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;

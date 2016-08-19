@@ -11,6 +11,13 @@ class MIOMenuItem extends MIOView
 
     parent = null;
 
+    private _titleLayer = null;
+
+    constructor(layerID?)
+    {
+        super(layerID == null ? MIOViewGetNextLayerID("mio_menu_item") : layerID);
+    }
+
     public static itemWithLayer(layer)
     {
         var layerID = layer.getAttribute("id");
@@ -37,15 +44,48 @@ class MIOMenuItem extends MIOView
         }
     }
 
+    public static itemWithTitle(title)
+    {
+        var mi = new MIOMenuItem();
+        mi.initWithTitle(title);
+
+        return mi;
+    }
+
+    initWithTitle(title)
+    {
+        this.layer = document.createElement("li");
+
+        this._titleLayer = document.createElement("span");
+        this._titleLayer.classList.add("menu_item");
+        this._titleLayer.innerHTML = title;
+        this.layer.appendChild(this._titleLayer);
+
+        this.title = title;
+    }
 }
 
 class MIOMenu extends MIOView
 {
     items = [];
     private _isVisible = false;
+    private _updateWidth = true;
 
     target = null;
     action = null;
+
+    constructor(layerID?)
+    {
+        super(layerID == null ? MIOViewGetNextLayerID("mio_menu") : layerID);
+    }
+
+    init()
+    {
+        this.layer = document.createElement("ul");
+        //this.layer.classList.add("menu");
+        //this.layer.style.zIndex = 100;
+        //this.setHidden(true);
+    }
 
     initWithLayer(layer, options?)
     {
@@ -80,7 +120,9 @@ class MIOMenu extends MIOView
 
     addMenuItem(menuItem)
     {
-
+        this.items.push(menuItem);
+        this.layer.appendChild(menuItem.layer);
+        this._updateWidth = true;
     }
 
     removeMenuItem(menuItem)
@@ -91,15 +133,14 @@ class MIOMenu extends MIOView
     show()
     {
         this._isVisible = true;
-        this.layer.style.zIndex = 100;
-        this.setAlpha(1, true, 0.25);
+        this.setHidden(false);
+        this.layout();
     }
 
     hide()
     {
         this._isVisible = false;
-        this.layer.style.zIndex = "auto";
-        this.setAlpha(0, true, 0.25);
+        this.setHidden(true);
     }
 
     toggle()
@@ -108,5 +149,23 @@ class MIOMenu extends MIOView
             this.hide();
         else
             this.show();
+    }
+
+    layout()
+    {
+        if (this._isVisible == false)
+            return;
+
+        if (this._updateWidth == true)
+        {
+            var maxWidth = 0;
+            for(var index = 0; index < this.items.length; index++)
+            {
+                var item = this.items[index];
+                var w = item.getWidth();
+                if (w > maxWidth)
+                    maxWidth = w;
+            }
+        }
     }
 }

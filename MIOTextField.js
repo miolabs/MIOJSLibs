@@ -82,7 +82,7 @@ var MIOTextField = (function (_super) {
         this.inputLayer.style.fontFamily = "inherit";
         this.inputLayer.style.outline = "none";
         this.layer.appendChild(this.inputLayer);
-        var placeholderKey = this.layer.getAttribute("data-placeholder-localize-key");
+        var placeholderKey = this.layer.getAttribute("data-placeholder");
         if (placeholderKey != null)
             this.inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
     };

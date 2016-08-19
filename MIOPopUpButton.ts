@@ -2,12 +2,13 @@
  * Created by godshadow on 12/3/16.
  */
 
+    /// <reference path="MIOWebApplication.ts" />
     /// <reference path="MIOButton.ts" />
     /// <reference path="MIOMenu.ts" />
 
 class MIOPopUpButton extends MIOButton
 {
-    popUpMenu = null;
+    private _menu = null;
 
     initWithLayer(layer, options?)
     {
@@ -32,40 +33,45 @@ class MIOPopUpButton extends MIOButton
 
             if (menuLayer != null) {
                 var layerID = menuLayer.getAttribute("id");
-                this.popUpMenu = new MIOMenu(layerID);
-                this.popUpMenu.initWithLayer(menuLayer);
+                this._menu = new MIOMenu(layerID);
+                this._menu.initWithLayer(menuLayer);
 
                 var x = 10;
                 var y = this.getHeight();
-                this.popUpMenu.setX(x);
-                this.popUpMenu.setY(y);
+                this._menu.setX(x);
+                this._menu.setY(y);
 
-                this._linkViewToSubview(this.popUpMenu);
+                this._linkViewToSubview(this._menu);
             }
 
             // Set action
             this.setAction(this, function(){
 
-                this.popUpMenu.toggle();
+                MIOWebApplication.sharedInstance().showMenuFromView(this, this._menu);
+                //this._menu.toggle();
             });
         }
     }
 
     setMenuAction(target, action)
     {
-        if (this.popUpMenu != null)
+        if (this._menu != null)
         {
-            this.popUpMenu.target = target;
-            this.popUpMenu.action = action;
+            this._menu.target = target;
+            this._menu.action = action;
         }
     }
 
-    layout()
+    addMenuItemWithTitle(title)
     {
-        super.layout();
+        if (this._menu == null)
+        {
+            this._menu = new MIOMenu();
+            this._menu.init();
+            this.addSubview(this._menu);
+        }
 
+        this._menu.addMenuItem(MIOMenuItem.itemWithTitle(title));
     }
-
-
 }
 

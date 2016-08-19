@@ -6,13 +6,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/// <reference path="MIOWebApplication.ts" />
 /// <reference path="MIOButton.ts" />
 /// <reference path="MIOMenu.ts" />
 var MIOPopUpButton = (function (_super) {
     __extends(MIOPopUpButton, _super);
     function MIOPopUpButton() {
         _super.apply(this, arguments);
-        this.popUpMenu = null;
+        this._menu = null;
     }
     MIOPopUpButton.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
@@ -31,28 +32,34 @@ var MIOPopUpButton = (function (_super) {
             }
             if (menuLayer != null) {
                 var layerID = menuLayer.getAttribute("id");
-                this.popUpMenu = new MIOMenu(layerID);
-                this.popUpMenu.initWithLayer(menuLayer);
+                this._menu = new MIOMenu(layerID);
+                this._menu.initWithLayer(menuLayer);
                 var x = 10;
                 var y = this.getHeight();
-                this.popUpMenu.setX(x);
-                this.popUpMenu.setY(y);
-                this._linkViewToSubview(this.popUpMenu);
+                this._menu.setX(x);
+                this._menu.setY(y);
+                this._linkViewToSubview(this._menu);
             }
             // Set action
             this.setAction(this, function () {
-                this.popUpMenu.toggle();
+                MIOWebApplication.sharedInstance().showMenuFromView(this, this._menu);
+                //this._menu.toggle();
             });
         }
     };
     MIOPopUpButton.prototype.setMenuAction = function (target, action) {
-        if (this.popUpMenu != null) {
-            this.popUpMenu.target = target;
-            this.popUpMenu.action = action;
+        if (this._menu != null) {
+            this._menu.target = target;
+            this._menu.action = action;
         }
     };
-    MIOPopUpButton.prototype.layout = function () {
-        _super.prototype.layout.call(this);
+    MIOPopUpButton.prototype.addMenuItemWithTitle = function (title) {
+        if (this._menu == null) {
+            this._menu = new MIOMenu();
+            this._menu.init();
+            this.addSubview(this._menu);
+        }
+        this._menu.addMenuItem(MIOMenuItem.itemWithTitle(title));
     };
     return MIOPopUpButton;
 }(MIOButton));

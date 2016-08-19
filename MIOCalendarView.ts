@@ -199,7 +199,7 @@ class MIOCalendarView extends MIOView
                 {
                     y += w + 9;
                 }
-                v.setFrame(MIOFrame.frameWithRect(x, y, w, w);
+                v.setFrame(MIOFrame.frameWithRect(x, y, w, w));
                 lastDayIndex = v.dayIndex;
             }
         }

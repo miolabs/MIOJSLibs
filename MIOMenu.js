@@ -9,11 +9,12 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOView.ts" />
 var MIOMenuItem = (function (_super) {
     __extends(MIOMenuItem, _super);
-    function MIOMenuItem() {
-        _super.apply(this, arguments);
+    function MIOMenuItem(layerID) {
+        _super.call(this, layerID == null ? MIOViewGetNextLayerID("mio_menu_item") : layerID);
         this.checked = false;
         this.title = null;
         this.parent = null;
+        this._titleLayer = null;
     }
     MIOMenuItem.itemWithLayer = function (layer) {
         var layerID = layer.getAttribute("id");
@@ -33,17 +34,37 @@ var MIOMenuItem = (function (_super) {
             }
         };
     };
+    MIOMenuItem.itemWithTitle = function (title) {
+        var mi = new MIOMenuItem();
+        mi.initWithTitle(title);
+        return mi;
+    };
+    MIOMenuItem.prototype.initWithTitle = function (title) {
+        this.layer = document.createElement("li");
+        this._titleLayer = document.createElement("span");
+        this._titleLayer.classList.add("menu_item");
+        this._titleLayer.innerHTML = title;
+        this.layer.appendChild(this._titleLayer);
+        this.title = title;
+    };
     return MIOMenuItem;
 }(MIOView));
 var MIOMenu = (function (_super) {
     __extends(MIOMenu, _super);
-    function MIOMenu() {
-        _super.apply(this, arguments);
+    function MIOMenu(layerID) {
+        _super.call(this, layerID == null ? MIOViewGetNextLayerID("mio_menu") : layerID);
         this.items = [];
         this._isVisible = false;
+        this._updateWidth = true;
         this.target = null;
         this.action = null;
     }
+    MIOMenu.prototype.init = function () {
+        this.layer = document.createElement("ul");
+        //this.layer.classList.add("menu");
+        //this.layer.style.zIndex = 100;
+        //this.setHidden(true);
+    };
     MIOMenu.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
         // Check if we have a menu
@@ -66,24 +87,39 @@ var MIOMenu = (function (_super) {
         this.items.push(menuItem);
     };
     MIOMenu.prototype.addMenuItem = function (menuItem) {
+        this.items.push(menuItem);
+        this.layer.appendChild(menuItem.layer);
+        this._updateWidth = true;
     };
     MIOMenu.prototype.removeMenuItem = function (menuItem) {
     };
     MIOMenu.prototype.show = function () {
         this._isVisible = true;
-        this.layer.style.zIndex = 100;
-        this.setAlpha(1, true, 0.25);
+        this.setHidden(false);
+        this.layout();
     };
     MIOMenu.prototype.hide = function () {
         this._isVisible = false;
-        this.layer.style.zIndex = "auto";
-        this.setAlpha(0, true, 0.25);
+        this.setHidden(true);
     };
     MIOMenu.prototype.toggle = function () {
         if (this._isVisible)
             this.hide();
         else
             this.show();
+    };
+    MIOMenu.prototype.layout = function () {
+        if (this._isVisible == false)
+            return;
+        if (this._updateWidth == true) {
+            var maxWidth = 0;
+            for (var index = 0; index < this.items.length; index++) {
+                var item = this.items[index];
+                var w = item.getWidth();
+                if (w > maxWidth)
+                    maxWidth = w;
+            }
+        }
     };
     return MIOMenu;
 }(MIOView));

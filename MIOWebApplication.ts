@@ -24,6 +24,8 @@ class MIOWebApplication
     private downloadCoreFileCount = 0;
 
     private _sheetViewController = null;
+    private _popUpMenuView = null;
+    private _popUpMenu = null;
 
     constructor()
     {
@@ -203,5 +205,37 @@ class MIOWebApplication
         window.rootViewController.removeChildViewController(this._sheetViewController);
         this._sheetViewController.dismissViewController(true);
         this._sheetViewController = null;
+    }
+
+    showMenuFromView(view, menu)
+    {
+        if (this._popUpMenuView == null) {
+            this._popUpMenuView = new MIOView("popup_menu_context");
+            this._popUpMenuView.init();
+            this._popUpMenuView.layer.style.zIndex = 100;
+            this._popUpMenuView.setBackgroundRGBColor(255, 255, 255);
+            this.delegate.window.addSubview(this._popUpMenuView);
+        }
+
+        this._popUpMenu = menu;
+
+        this._popUpMenuView.setHidden(false);
+        this._popUpMenuView.addSubview(menu);
+
+        var x = view.getX();
+        var y = view.getY() + view.getHeight();
+        var w = menu.getWidth();
+        var h = menu.getHeight();
+
+        this._popUpMenuView.setX(x);
+        this._popUpMenuView.setY(y);
+        this._popUpMenuView.setWidth(w);
+        this._popUpMenuView.layer.style.height = h;
+    }
+
+    hideMenu()
+    {
+        this._popUpMenu.removeFromSuperview();
+        this._popUpMenuView.setHidden(true);
     }
 }
