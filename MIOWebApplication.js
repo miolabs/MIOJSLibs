@@ -17,8 +17,10 @@ var MIOWebApplication = (function () {
         this.ready = false;
         this.downloadCoreFileCount = 0;
         this._sheetViewController = null;
-        this._popUpMenuView = null;
+        this._sheetSize = null;
+        //private _popUpMenuView = null;
         this._popUpMenu = null;
+        this._popUpMenuControl = null;
         if (MIOWebApplication._sharedInstance) {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
         }
@@ -133,36 +135,54 @@ var MIOWebApplication = (function () {
         window.rootViewController.addChildViewController(vc);
         window.rootViewController.view.addSubview(vc.view);
         window.rootViewController.showViewController(vc, true);
+        this._sheetViewController.addObserver(this, "contentSize");
     };
     MIOWebApplication.prototype.endSheetViewController = function () {
         var window = this.delegate.window;
+        this._sheetViewController.removeObserver(this, "contentSize");
         window.rootViewController.removeChildViewController(this._sheetViewController);
         this._sheetViewController.dismissViewController(true);
         this._sheetViewController = null;
     };
-    MIOWebApplication.prototype.showMenuFromView = function (view, menu) {
-        if (this._popUpMenuView == null) {
-            this._popUpMenuView = new MIOView("popup_menu_context");
-            this._popUpMenuView.init();
-            this._popUpMenuView.layer.style.zIndex = 100;
-            this._popUpMenuView.setBackgroundRGBColor(255, 255, 255);
-            this.delegate.window.addSubview(this._popUpMenuView);
+    MIOWebApplication.prototype.observeValueForKeyPath = function (key, type, object) {
+        if (type == "will") {
+            this._sheetSize = this._sheetViewController.contentSize;
         }
+        else if (type == "did") {
+            var newSize = this._sheetViewController.contentSize;
+            if (!newSize.isEqualTo(this._sheetSize)) {
+                // Animate the frame
+                this._sheetViewController.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+                var window = this.delegate.window;
+                var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
+                this._sheetViewController.view.setFrame(frame);
+            }
+        }
+    };
+    MIOWebApplication.prototype.showMenuFromControl = function (control, menu) {
+        if (menu === this._popUpMenu)
+            this._popUpMenu.hide();
+        this._popUpMenuControl = control;
         this._popUpMenu = menu;
-        this._popUpMenuView.setHidden(false);
-        this._popUpMenuView.addSubview(menu);
-        var x = view.getX();
-        var y = view.getY() + view.getHeight();
-        var w = menu.getWidth();
-        var h = menu.getHeight();
-        this._popUpMenuView.setX(x);
-        this._popUpMenuView.setY(y);
-        this._popUpMenuView.setWidth(w);
-        this._popUpMenuView.layer.style.height = h;
+        this.delegate.window.addSubview(this._popUpMenu);
+        var x = control.layer.getBoundingClientRect().left;
+        var y = control.layer.getBoundingClientRect().top + control.layer.getBoundingClientRect().height;
+        this._popUpMenu.setX(x);
+        this._popUpMenu.setY(y);
+        this._popUpMenu.layout();
     };
     MIOWebApplication.prototype.hideMenu = function () {
-        this._popUpMenu.removeFromSuperview();
-        this._popUpMenuView.setHidden(true);
+        if (this._popUpMenu != null) {
+            this._popUpMenu.removeFromSuperview();
+            this._popUpMenu = null;
+        }
+    };
+    MIOWebApplication.prototype.clickEvent = function (e) {
+        if (this._popUpMenu == null)
+            return;
+        var t = e.target;
+        if (this._popUpMenuControl.layer != t)
+            this._popUpMenu.hide();
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;

@@ -28,20 +28,8 @@ class MIONavigationController extends MIOViewController
         this.rootViewController.navigationController = this;
 
         this.addChildViewController(vc);
+        this.contentSize = vc.contentSize;
     }
-
-    // protected _loadChildControllers()
-    // {
-    //     if (this.rootViewController != null)
-    //     {
-    //         this.rootViewController.onLoadView(this, function () {
-    //
-    //             this._setViewLoaded(true);
-    //         });
-    //     }
-    //     else
-    //         this._setViewLoaded(true);
-    // }
 
     viewWillAppear()
     {
@@ -99,6 +87,9 @@ class MIONavigationController extends MIOViewController
 
         this.view.addSubview(vc.view);
         this.addChildViewController(vc);
+
+        this.contentSize = vc.contentSize;
+
         this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Push);
     }
 
@@ -113,6 +104,8 @@ class MIONavigationController extends MIOViewController
         this.viewControllersStack.pop();
 
         var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
+
+        this.contentSize = lastVC.contentSize;
 
         this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Pop, this, function () {
 
@@ -135,11 +128,22 @@ class MIONavigationController extends MIOViewController
         this.currentViewControllerIndex = 0;
         var rootVC = this.viewControllersStack[0];
 
+        this.contentSize = rootVC.contentSize;
+
         this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
 
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
         });
-
     }
+
+    // get contentSize()
+    // {
+    //     if (this.currentViewControllerIndex < 0)
+    //         return new MIOSize(320, 200);
+    //
+    //     var vc = this.viewControllersStack[this.currentViewControllerIndex];
+    //
+    //     return vc.contentSize;
+    // }
 }

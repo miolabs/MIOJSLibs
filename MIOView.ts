@@ -237,6 +237,9 @@ class MIOView extends MIOObject
 
     layout()
     {
+        if (this.hidden == true)
+            return;
+
         for(var index = 0; index < this.subviews.length; index++)
         {
             var v = this.subviews[index];

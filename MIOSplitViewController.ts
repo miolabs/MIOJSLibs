@@ -8,7 +8,6 @@ class MIOSplitViewController extends MIOViewController
 {
     private _masterViewController = null;
     private _detailViewController = null;
-    private _emptyDetailViewController = null;
 
     private _masterView = null;
     private _detailView = null;
@@ -48,13 +47,9 @@ class MIOSplitViewController extends MIOViewController
         this._detailViewController = vc;
     }
 
-    setEmptyDetailViewController(vc)
+    showDetailViewController(vc)
     {
-        vc.parent = this;
-        this._detailView.addSubview(vc.view);
-        this.childViewControllers.push(vc);
 
-        this._emptyDetailViewController = vc;
     }
 }
 

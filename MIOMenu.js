@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOView.ts" />
+/// <reference path="MIOWebApplication.ts" />
 var MIOMenuItem = (function (_super) {
     __extends(MIOMenuItem, _super);
     function MIOMenuItem(layerID) {
@@ -40,12 +41,39 @@ var MIOMenuItem = (function (_super) {
         return mi;
     };
     MIOMenuItem.prototype.initWithTitle = function (title) {
-        this.layer = document.createElement("li");
+        this.init();
+        this._setupLayer();
+        this.layer.style.width = "100%";
+        this.layer.style.height = "";
         this._titleLayer = document.createElement("span");
         this._titleLayer.classList.add("menu_item");
+        this._titleLayer.style.color = "inherit";
         this._titleLayer.innerHTML = title;
         this.layer.appendChild(this._titleLayer);
         this.title = title;
+    };
+    MIOMenuItem.prototype._setupLayer = function () {
+        var instance = this;
+        this.layer.onmouseenter = function () {
+            instance.layer.classList.add("menu_item_on_hover");
+        };
+        this.layer.onmouseleave = function () {
+            instance.layer.classList.remove("menu_item_on_hover");
+        };
+        this.layer.onclick = function () {
+            if (instance.parent != null) {
+                instance.layer.classList.remove("menu_item_on_hover");
+                var index = instance.parent.items.indexOf(instance);
+                instance.parent.action.call(instance.parent.target, instance, index);
+            }
+        };
+    };
+    MIOMenuItem.prototype.getWidth = function () {
+        //return this.layer.style.innerWidth;
+        return this._titleLayer.getBoundingClientRect().width;
+    };
+    MIOMenuItem.prototype.getHeight = function () {
+        return this.layer.getBoundingClientRect().height;
     };
     return MIOMenuItem;
 }(MIOView));
@@ -58,12 +86,11 @@ var MIOMenu = (function (_super) {
         this._updateWidth = true;
         this.target = null;
         this.action = null;
+        this._menuLayer = null;
     }
     MIOMenu.prototype.init = function () {
-        this.layer = document.createElement("ul");
-        //this.layer.classList.add("menu");
-        //this.layer.style.zIndex = 100;
-        //this.setHidden(true);
+        _super.prototype.init.call(this);
+        this._setupLayer();
     };
     MIOMenu.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
@@ -79,47 +106,55 @@ var MIOMenu = (function (_super) {
                 }
             }
         }
+        this._setupLayer();
+        this.setAlpha(0);
+    };
+    MIOMenu.prototype._setupLayer = function () {
         this.layer.classList.add("menu");
         this.layer.style.zIndex = 100;
-        this.setAlpha(0);
     };
     MIOMenu.prototype._addMenuItem = function (menuItem) {
         this.items.push(menuItem);
     };
     MIOMenu.prototype.addMenuItem = function (menuItem) {
         this.items.push(menuItem);
-        this.layer.appendChild(menuItem.layer);
+        this.addSubview(menuItem);
         this._updateWidth = true;
     };
     MIOMenu.prototype.removeMenuItem = function (menuItem) {
+        //TODO: Implement this!!!
     };
-    MIOMenu.prototype.show = function () {
+    MIOMenu.prototype.showFromControl = function (control) {
         this._isVisible = true;
-        this.setHidden(false);
-        this.layout();
+        MIOWebApplication.sharedInstance().showMenuFromControl(control, this);
     };
     MIOMenu.prototype.hide = function () {
         this._isVisible = false;
-        this.setHidden(true);
+        MIOWebApplication.sharedInstance().hideMenu();
     };
-    MIOMenu.prototype.toggle = function () {
-        if (this._isVisible)
-            this.hide();
-        else
-            this.show();
-    };
+    Object.defineProperty(MIOMenu.prototype, "isVisible", {
+        get: function () {
+            return this._isVisible;
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOMenu.prototype.layout = function () {
-        if (this._isVisible == false)
-            return;
         if (this._updateWidth == true) {
-            var maxWidth = 0;
+            var width = 0;
+            var y = 5;
             for (var index = 0; index < this.items.length; index++) {
                 var item = this.items[index];
+                item.setX(0);
+                item.setY(y);
                 var w = item.getWidth();
-                if (w > maxWidth)
-                    maxWidth = w;
+                if (w > width)
+                    width = w;
+                y += item.getHeight();
             }
         }
+        this.setWidth(width + 10);
+        this.setHeight(y + 5);
     };
     return MIOMenu;
 }(MIOView));

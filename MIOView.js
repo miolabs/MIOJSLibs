@@ -169,6 +169,8 @@ var MIOView = (function (_super) {
         }
     };
     MIOView.prototype.layout = function () {
+        if (this.hidden == true)
+            return;
         for (var index = 0; index < this.subviews.length; index++) {
             var v = this.subviews[index];
             if (!(v instanceof MIOView)) {

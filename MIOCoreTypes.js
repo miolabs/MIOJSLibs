@@ -25,6 +25,12 @@ var MIOSize = (function () {
         var s = new MIOSize(0, 0);
         return s;
     };
+    MIOSize.prototype.isEqualTo = function (size) {
+        if (this.width == size.width
+            && this.height == size.height)
+            return true;
+        return false;
+    };
     return MIOSize;
 }());
 var MIOFrame = (function () {

@@ -36,6 +36,15 @@ class MIOSize
         this.width = w;
         this.height = h;
     }
+
+    isEqualTo(size)
+    {
+        if (this.width == size.width
+            && this.height == size.height)
+            return true;
+
+        return false;
+    }
 }
 
 class MIOFrame

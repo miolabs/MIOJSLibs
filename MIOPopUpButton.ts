@@ -9,6 +9,7 @@
 class MIOPopUpButton extends MIOButton
 {
     private _menu = null;
+    private _isVisible = false;
 
     initWithLayer(layer, options?)
     {
@@ -47,8 +48,13 @@ class MIOPopUpButton extends MIOButton
             // Set action
             this.setAction(this, function(){
 
-                MIOWebApplication.sharedInstance().showMenuFromView(this, this._menu);
-                //this._menu.toggle();
+                if (this._menu.isVisible == false) {
+                    this._menu.showFromControl(this);
+                }
+                else
+                {
+                    this._menu.hide();
+                }
             });
         }
     }
@@ -68,7 +74,6 @@ class MIOPopUpButton extends MIOButton
         {
             this._menu = new MIOMenu();
             this._menu.init();
-            this.addSubview(this._menu);
         }
 
         this._menu.addMenuItem(MIOMenuItem.itemWithTitle(title));

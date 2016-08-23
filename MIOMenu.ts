@@ -3,6 +3,7 @@
  */
 
     /// <reference path="MIOView.ts" />
+/// <reference path="MIOWebApplication.ts" />
 
 class MIOMenuItem extends MIOView
 {
@@ -54,14 +55,52 @@ class MIOMenuItem extends MIOView
 
     initWithTitle(title)
     {
-        this.layer = document.createElement("li");
+        this.init();
+        this._setupLayer();
+
+        this.layer.style.width = "100%";
+        this.layer.style.height = "";
 
         this._titleLayer = document.createElement("span");
         this._titleLayer.classList.add("menu_item");
+        this._titleLayer.style.color = "inherit";
         this._titleLayer.innerHTML = title;
         this.layer.appendChild(this._titleLayer);
 
         this.title = title;
+    }
+
+    _setupLayer()
+    {
+        var instance = this;
+        this.layer.onmouseenter = function () {
+            instance.layer.classList.add("menu_item_on_hover");
+        };
+
+        this.layer.onmouseleave = function () {
+            instance.layer.classList.remove("menu_item_on_hover");
+        };
+
+        this.layer.onclick = function()
+        {
+            if (instance.parent != null) {
+                instance.layer.classList.remove("menu_item_on_hover");
+                var index = instance.parent.items.indexOf(instance);
+                instance.parent.action.call(instance.parent.target, instance, index);
+            }
+        }
+
+    }
+
+    getWidth()
+    {
+        //return this.layer.style.innerWidth;
+        return this._titleLayer.getBoundingClientRect().width;
+    }
+
+    getHeight()
+    {
+        return this.layer.getBoundingClientRect().height;
     }
 }
 
@@ -74,6 +113,8 @@ class MIOMenu extends MIOView
     target = null;
     action = null;
 
+    private _menuLayer = null;
+
     constructor(layerID?)
     {
         super(layerID == null ? MIOViewGetNextLayerID("mio_menu") : layerID);
@@ -81,10 +122,8 @@ class MIOMenu extends MIOView
 
     init()
     {
-        this.layer = document.createElement("ul");
-        //this.layer.classList.add("menu");
-        //this.layer.style.zIndex = 100;
-        //this.setHidden(true);
+        super.init();
+        this._setupLayer();
     }
 
     initWithLayer(layer, options?)
@@ -108,9 +147,14 @@ class MIOMenu extends MIOView
             }
         }
 
+        this._setupLayer();
+        this.setAlpha(0);
+    }
+
+    _setupLayer()
+    {
         this.layer.classList.add("menu");
         this.layer.style.zIndex = 100;
-        this.setAlpha(0);
     }
 
     private _addMenuItem(menuItem)
@@ -121,51 +165,53 @@ class MIOMenu extends MIOView
     addMenuItem(menuItem)
     {
         this.items.push(menuItem);
-        this.layer.appendChild(menuItem.layer);
+        this.addSubview(menuItem);
         this._updateWidth = true;
     }
 
     removeMenuItem(menuItem)
     {
-
+        //TODO: Implement this!!!
     }
 
-    show()
+    showFromControl(control)
     {
         this._isVisible = true;
-        this.setHidden(false);
-        this.layout();
+        MIOWebApplication.sharedInstance().showMenuFromControl(control, this);
     }
 
     hide()
     {
         this._isVisible = false;
-        this.setHidden(true);
+        MIOWebApplication.sharedInstance().hideMenu();
     }
 
-    toggle()
+    get isVisible()
     {
-        if (this._isVisible)
-            this.hide();
-        else
-            this.show();
+        return this._isVisible;
     }
 
     layout()
     {
-        if (this._isVisible == false)
-            return;
-
         if (this._updateWidth == true)
         {
-            var maxWidth = 0;
+            var width = 0;
+            var y = 5;
             for(var index = 0; index < this.items.length; index++)
             {
                 var item = this.items[index];
+                item.setX(0);
+                item.setY(y);
+
                 var w = item.getWidth();
-                if (w > maxWidth)
-                    maxWidth = w;
+                if (w > width)
+                    width = w;
+                y += item.getHeight();
+
             }
         }
+
+        this.setWidth(width + 10);
+        this.setHeight(y + 5);
     }
 }

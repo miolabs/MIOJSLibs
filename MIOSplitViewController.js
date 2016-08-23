@@ -13,7 +13,6 @@ var MIOSplitViewController = (function (_super) {
         _super.apply(this, arguments);
         this._masterViewController = null;
         this._detailViewController = null;
-        this._emptyDetailViewController = null;
         this._masterView = null;
         this._detailView = null;
     }
@@ -42,11 +41,7 @@ var MIOSplitViewController = (function (_super) {
         this.childViewControllers.push(vc);
         this._detailViewController = vc;
     };
-    MIOSplitViewController.prototype.setEmptyDetailViewController = function (vc) {
-        vc.parent = this;
-        this._detailView.addSubview(vc.view);
-        this.childViewControllers.push(vc);
-        this._emptyDetailViewController = vc;
+    MIOSplitViewController.prototype.showDetailViewController = function (vc) {
     };
     return MIOSplitViewController;
 }(MIOViewController));

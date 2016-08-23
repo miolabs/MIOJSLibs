@@ -14,6 +14,7 @@ var MIOPopUpButton = (function (_super) {
     function MIOPopUpButton() {
         _super.apply(this, arguments);
         this._menu = null;
+        this._isVisible = false;
     }
     MIOPopUpButton.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
@@ -42,8 +43,12 @@ var MIOPopUpButton = (function (_super) {
             }
             // Set action
             this.setAction(this, function () {
-                MIOWebApplication.sharedInstance().showMenuFromView(this, this._menu);
-                //this._menu.toggle();
+                if (this._menu.isVisible == false) {
+                    this._menu.showFromControl(this);
+                }
+                else {
+                    this._menu.hide();
+                }
             });
         }
     };
@@ -57,7 +62,6 @@ var MIOPopUpButton = (function (_super) {
         if (this._menu == null) {
             this._menu = new MIOMenu();
             this._menu.init();
-            this.addSubview(this._menu);
         }
         this._menu.addMenuItem(MIOMenuItem.itemWithTitle(title));
     };

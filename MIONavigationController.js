@@ -26,19 +26,8 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex = 0;
         this.rootViewController.navigationController = this;
         this.addChildViewController(vc);
+        this.contentSize = vc.contentSize;
     };
-    // protected _loadChildControllers()
-    // {
-    //     if (this.rootViewController != null)
-    //     {
-    //         this.rootViewController.onLoadView(this, function () {
-    //
-    //             this._setViewLoaded(true);
-    //         });
-    //     }
-    //     else
-    //         this._setViewLoaded(true);
-    // }
     MIONavigationController.prototype.viewWillAppear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
@@ -75,6 +64,7 @@ var MIONavigationController = (function (_super) {
         vc.presentationType = MIOPresentationType.Navigation;
         this.view.addSubview(vc.view);
         this.addChildViewController(vc);
+        this.contentSize = vc.contentSize;
         this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Push);
     };
     MIONavigationController.prototype.popViewController = function (animate) {
@@ -84,6 +74,7 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
         var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
+        this.contentSize = lastVC.contentSize;
         this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Pop, this, function () {
             vc.view.removeFromSuperview();
             this.removeChildViewController(vc);
@@ -98,6 +89,7 @@ var MIONavigationController = (function (_super) {
         }
         this.currentViewControllerIndex = 0;
         var rootVC = this.viewControllersStack[0];
+        this.contentSize = rootVC.contentSize;
         this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);

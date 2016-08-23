@@ -27,7 +27,7 @@ var MIOViewController = (function (_super) {
         this.navigationController = null;
         this.presentationStyle = MIOPresentationStyle.CurrentContext;
         this.presentationType = MIOPresentationType.Modal;
-        this.contentSize = new MIOSize(320, 200);
+        this._contentSize = new MIOSize(320, 200);
         this.layerID = layerID;
     }
     MIOViewController.prototype.init = function () {
@@ -345,6 +345,18 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.contentHeight = function () {
         return this.view.getHeight();
     };
+    Object.defineProperty(MIOViewController.prototype, "contentSize", {
+        get: function () {
+            return this._contentSize;
+        },
+        set: function (size) {
+            this.willChangeValue("contentSize");
+            this._contentSize = size;
+            this.didChangeValue("contentSize");
+        },
+        enumerable: true,
+        configurable: true
+    });
     return MIOViewController;
 }(MIOObject));
 //# sourceMappingURL=MIOViewController.js.map
