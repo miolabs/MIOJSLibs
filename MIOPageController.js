@@ -36,6 +36,21 @@ var MIOPageController = (function (_super) {
         vc.viewWillAppear();
         vc._childControllersWillAppear();
     };
+    MIOPageController.prototype.viewDidAppear = function () {
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewDidAppear();
+        vc._childControllersDidAppear();
+    };
+    MIOPageController.prototype.viewWillDisappear = function () {
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewWillDisappear();
+        vc._childControllersWillDisappear();
+    };
+    MIOPageController.prototype.viewDidDisappear = function () {
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewDidDisappear();
+        vc._childControllersDidDisappear();
+    };
     MIOPageController.prototype.showPageAtIndex = function (index) {
         if (this.selectedViewControllerIndex == -1)
             return;

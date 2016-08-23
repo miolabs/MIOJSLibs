@@ -40,6 +40,27 @@ class MIOPageController extends MIOViewController
         vc._childControllersWillAppear();
     }
 
+    viewDidAppear()
+    {
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewDidAppear();
+        vc._childControllersDidAppear();
+    }
+
+    viewWillDisappear()
+    {
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewWillDisappear();
+        vc._childControllersWillDisappear();
+    }
+
+    viewDidDisappear()
+    {
+        var vc = this.childViewControllers[this.selectedViewControllerIndex];
+        vc.viewDidDisappear();
+        vc._childControllersDidDisappear();
+    }
+
     showPageAtIndex(index)
     {
         if (this.selectedViewControllerIndex == -1)
