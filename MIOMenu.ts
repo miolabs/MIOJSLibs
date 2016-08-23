@@ -19,7 +19,7 @@ class MIOMenuItem extends MIOView
         super(layerID == null ? MIOViewGetNextLayerID("mio_menu_item") : layerID);
     }
 
-    public static itemWithLayer(layer)
+/*    public static itemWithLayer(layer)
     {
         var layerID = layer.getAttribute("id");
         var mi = new MIOMenuItem(layerID);
@@ -43,7 +43,7 @@ class MIOMenuItem extends MIOView
                 instance.parent.action.call(instance.parent.target, instance, index);
             }
         }
-    }
+    }*/
 
     public static itemWithTitle(title)
     {
@@ -126,7 +126,7 @@ class MIOMenu extends MIOView
         this._setupLayer();
     }
 
-    initWithLayer(layer, options?)
+  /*  initWithLayer(layer, options?)
     {
         super.initWithLayer(layer, options);
 
@@ -149,7 +149,7 @@ class MIOMenu extends MIOView
 
         this._setupLayer();
         this.setAlpha(0);
-    }
+    }*/
 
     _setupLayer()
     {

@@ -264,8 +264,15 @@ class MIOWebApplication
         if (this._popUpMenu == null)
             return;
 
-        var t = e.target;
-        if (this._popUpMenuControl.layer != t)
-            this._popUpMenu.hide();
+        var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
+        console.log(controlRect.left + " - " + controlRect.right);
+        console.log(controlRect.top + " - " + controlRect.bottom);
+        console.log(e.clientX + ", " + e.clientY);
+
+        if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
+            && (e.clientY > controlRect.top && e.clientY < controlRect.bottom))
+                return;
+
+        this._popUpMenu.hide();
     }
 }

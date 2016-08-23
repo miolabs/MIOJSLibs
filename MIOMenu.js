@@ -17,24 +17,31 @@ var MIOMenuItem = (function (_super) {
         this.parent = null;
         this._titleLayer = null;
     }
-    MIOMenuItem.itemWithLayer = function (layer) {
-        var layerID = layer.getAttribute("id");
-        var mi = new MIOMenuItem(layerID);
-        mi.initWithLayer(layer);
-        mi.title = layer.innerHTML;
-        return mi;
-    };
-    MIOMenuItem.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        this.layer.classList.add("menu_item");
-        var instance = this;
-        this.layer.onclick = function () {
-            if (instance.parent != null) {
-                var index = instance.parent.items.indexOf(instance);
-                instance.parent.action.call(instance.parent.target, instance, index);
+    /*    public static itemWithLayer(layer)
+        {
+            var layerID = layer.getAttribute("id");
+            var mi = new MIOMenuItem(layerID);
+            mi.initWithLayer(layer);
+            mi.title = layer.innerHTML;
+    
+            return mi;
+        }
+    
+        initWithLayer(layer, options?)
+        {
+            super.initWithLayer(layer, options);
+    
+            this.layer.classList.add("menu_item");
+    
+            var instance = this;
+            this.layer.onclick = function()
+            {
+                if (instance.parent != null) {
+                    var index = instance.parent.items.indexOf(instance);
+                    instance.parent.action.call(instance.parent.target, instance, index);
+                }
             }
-        };
-    };
+        }*/
     MIOMenuItem.itemWithTitle = function (title) {
         var mi = new MIOMenuItem();
         mi.initWithTitle(title);
@@ -92,23 +99,30 @@ var MIOMenu = (function (_super) {
         _super.prototype.init.call(this);
         this._setupLayer();
     };
-    MIOMenu.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        // Check if we have a menu
-        if (this.layer.childNodes.length > 0) {
-            for (var index = 0; index < this.layer.childNodes.length; index++) {
-                var layer = this.layer.childNodes[index];
-                if (layer.tagName == "DIV") {
-                    var item = MIOMenuItem.itemWithLayer(layer);
-                    item.parent = this;
-                    this._linkViewToSubview(item);
-                    this._addMenuItem(item);
-                }
-            }
-        }
-        this._setupLayer();
-        this.setAlpha(0);
-    };
+    /*  initWithLayer(layer, options?)
+      {
+          super.initWithLayer(layer, options);
+  
+          // Check if we have a menu
+          if (this.layer.childNodes.length > 0)
+          {
+              for (var index = 0; index < this.layer.childNodes.length; index++)
+              {
+                  var layer = this.layer.childNodes[index];
+                  if (layer.tagName == "DIV")
+                  {
+                      var item = MIOMenuItem.itemWithLayer(layer);
+                      item.parent = this;
+  
+                      this._linkViewToSubview(item);
+                      this._addMenuItem(item);
+                  }
+              }
+          }
+  
+          this._setupLayer();
+          this.setAlpha(0);
+      }*/
     MIOMenu.prototype._setupLayer = function () {
         this.layer.classList.add("menu");
         this.layer.style.zIndex = 100;
