@@ -2,7 +2,7 @@
  * Created by godshadow on 25/07/16.
  */
 
-importScripts("MIOResourceParser.js");
+importScripts("MIOHTMLParser.js");
 
 var _languageStrings = null;
 
@@ -57,7 +57,8 @@ function parseHTML(data, layerID)
     }
     else
     {
-        self.postMessage(data);
+        var result = MIOHTMLParser(data, layerID);
+        self.postMessage(result);
     }
 }
 

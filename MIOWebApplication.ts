@@ -35,14 +35,11 @@ class MIOWebApplication
         {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
         }
+
         MIOWebApplication._sharedInstance = this;
         this.isMobile = MIOCoreIsMobile();
         
         this.decodeParams(window.location.search);
-
-        // Add animation lib
-        // TODO: Check in a normal web if it works
-        MIOCoreLoadStyle("src/miolib/extras/animate.min.css");
 
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function(notification){
 
@@ -259,8 +256,17 @@ class MIOWebApplication
         }
     }
 
-    clickEvent(e)
+    forwardResizeEvent(e)
     {
+        if (this.ready == true)
+            this.delegate.window.layout();
+    }
+
+    forwardClickEvent(e)
+    {
+        if (this.ready == false)
+            return;
+
         if (this._popUpMenu == null)
             return;
 

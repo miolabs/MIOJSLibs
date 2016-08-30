@@ -27,9 +27,6 @@ var MIOWebApplication = (function () {
         MIOWebApplication._sharedInstance = this;
         this.isMobile = MIOCoreIsMobile();
         this.decodeParams(window.location.search);
-        // Add animation lib
-        // TODO: Check in a normal web if it works
-        MIOCoreLoadStyle("src/miolib/extras/animate.min.css");
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function (notification) {
             this.downloadCoreFileCount++;
         });
@@ -177,7 +174,13 @@ var MIOWebApplication = (function () {
             this._popUpMenu = null;
         }
     };
-    MIOWebApplication.prototype.clickEvent = function (e) {
+    MIOWebApplication.prototype.forwardResizeEvent = function (e) {
+        if (this.ready == true)
+            this.delegate.window.layout();
+    };
+    MIOWebApplication.prototype.forwardClickEvent = function (e) {
+        if (this.ready == false)
+            return;
         if (this._popUpMenu == null)
             return;
         var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();

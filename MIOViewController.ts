@@ -9,16 +9,21 @@
     /// <reference path="MIOCoreTypes.ts" />
     /// <reference path="MIOViewController+Animation.ts" />
 
-declare var MIOCoreResourceParser;
+declare var MIOHTMLParser;
 
 class MIOViewController extends MIOObject
 {
     layerID = null;
+    prefixID = null;
+
     view = null;
     parent = null;
 
     private _onViewLoadedTarget = null;
     private _onViewLoadedAction = null;
+
+    private _onLoadLayerTarget = null;
+    private _onLoadLayerAction = null;
 
     private _viewIsLoaded = false;
     private _layerIsReady = false;
@@ -31,10 +36,11 @@ class MIOViewController extends MIOObject
 
     private _contentSize = new MIOSize(320, 200);
 
-    constructor(layerID)
+    constructor(layerID, prefixID?)
     {
         super();
         this.layerID = layerID;
+        this.prefixID = prefixID;
     }
 
     init()
@@ -71,14 +77,20 @@ class MIOViewController extends MIOObject
         this.view.init();
 
         var mainBundle = MIOBundle.mainBundle();
-        mainBundle.loadLayoutFromURL(url, this.layerID, this, function (layout) {
+        mainBundle.loadLayoutFromURL(url, this.layerID, this, function (data) {
 
             //var layer = new MIOCoreResourceParser(layout, this.layerID);
-
             console.log(this.layerID);
 
-            var parser = new DOMParser();
-            var items = parser.parseFromString(layout, "text/html");
+            //var result = MIOHTMLParser(layout, this.layerID);
+            var result = data;
+            var cssFiles = result.styles;
+            var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
+            for (var index = 0; index < cssFiles.length; index++)
+                MIOCoreLoadStyle(baseURL + cssFiles[index]);
+
+            var domParser = new DOMParser();
+            var items = domParser.parseFromString(result.layout, "text/html");
             var layer = items.getElementById(this.layerID);
 
             this.localizeSubLayers(layer.childNodes);
@@ -121,6 +133,14 @@ class MIOViewController extends MIOObject
     _didLayerDownloaded()
     {
         this._layerIsReady = true;
+
+        if (this._onLoadLayerTarget != null && this._onViewLoadedAction != null)
+        {
+            this._onLoadLayerAction.call(this._onLoadLayerTarget);
+            this._onLoadLayerTarget = null;
+            this._onLoadLayerAction = null;
+        }
+
         if (this._onViewLoadedAction != null && this._onViewLoadedTarget != null)
         {
             this.loadView();
@@ -183,7 +203,19 @@ class MIOViewController extends MIOObject
             this.viewDidLoad();
             this._loadChildControllers();
         }
+    }
 
+    onLoadLayer(target, action)
+    {
+        if (this._layerIsReady == true)
+        {
+            action.call(target);
+        }
+        else
+        {
+            this._onLoadLayerTarget = action;
+            this._onLoadLayerAction= target;
+        }
     }
 
     get viewIsLoaded()
