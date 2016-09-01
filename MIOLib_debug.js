@@ -6,43 +6,46 @@ var _MIOLibLoadedTarget = null;
 var _MIOLibLoadedCompletion = null;
 var _MIOLibFileIndex = 0;
 var _MIOLibFiles = [
-    "MIOCore.js",
-    "MIOCoreTypes.js",
-    "MIOObject.js",
-    "MIOString.js",
-    "MIODate.js",
-    "Date+MIO.js",
-    "MIOUUID.js",
-    "MIONotificationCenter.js",
-    "MIOWebApplication.js",
-    "MIOURLConnection.js",
-    "MIOBundle.js",
-    "MIOPredicate.js",
-    "MIOManagedObjectContext.js",
-    "MIOFetchedResultsController.js",
-    "MIOView.js",
-    "MIOWindow.js",
-    "MIOLabel.js",
-    "MIOTableView.js",
-    "MIOCalendarView.js",
-    "MIOImageView.js",
-    "MIOMenu.js",
-    "MIOActivityIndicator.js",
-    "MIOWebView.js",
-    "MIOControl.js",
-    "MIOButton.js",
-    "MIOComboBox.js",
-    "MIOPopUpButton.js",
-    "MIOCheckButton.js",
-    "MIOTextField.js",
-    "MIOTextArea.js",
-    "MIOTabBar.js",
-    "MIOViewController.js",
-    "MIOViewController+Animation.js",
-    "MIONavigationController.js",
-    "MIOPageController.js",
-    "MIOSplitViewController.js",
-    "extras/MIOHTMLParser.js"
+    "MIOCore",
+    "MIOCoreTypes",
+    "MIOObject",
+    "MIOString",
+    "MIODate",
+    "Date+MIO",
+    "MIOUUID",
+    "MIONotificationCenter",
+    "MIOWebApplication",
+    "MIOURLConnection",
+    "MIOBundle",
+    "MIOPredicate",
+    "MIOManagedObjectContext",
+    "MIOFetchedResultsController",
+    "MIOView",
+    "MIOScrollView",
+    "MIOWindow",
+    "MIOLabel",
+    "MIOTableView",
+    "MIOCalendarView",
+    "MIOImageView",
+    "MIOMenu",
+    "MIOActivityIndicator",
+    "MIOWebView",
+    "MIOControl",
+    "MIOButton",
+    "MIOComboBox",
+    "MIOPopUpButton",
+    "MIOCheckButton",
+    "MIOSegmentedControl",
+    "MIOTextField",
+    "MIOTextArea",
+    "MIOTabBar",
+    "MIOPageControl",
+    "MIOViewController",
+    "MIOViewController+Animation",
+    "MIONavigationController",
+    "MIOPageController",
+    "MIOSplitViewController",
+    "extras/MIOHTMLParser"
 ];
 function MIOLibDownloadScript(url, target, completion) {
     var xhr = new XMLHttpRequest();
@@ -57,6 +60,13 @@ function MIOLibDownloadScript(url, target, completion) {
     };
     xhr.open("GET", url);
     xhr.send();
+}
+function MIOLibLoadStyle(url) {
+    var ss = document.createElement("link");
+    ss.type = "text/css";
+    ss.rel = "stylesheet";
+    ss.href = url;
+    document.getElementsByTagName("head")[0].appendChild(ss);
 }
 function MIOLibLoadScript(url, callback) {
     // Adding the script tag to the head as suggested before
@@ -85,9 +95,9 @@ function MIOLibLoadScriptCallback() {
     }
 }
 function MIOLibDownloadNextFile() {
-    console.log("Downloading " + _MIOLibFileIndex);
     var file = _MIOLibFiles[_MIOLibFileIndex];
-    var url = "src/miolib/" + file;
+    var url = "src/miolib/" + file + ".js";
+    console.log("Downloading " + url + " (" + _MIOLibFileIndex + ")");
     MIOLibLoadScript(url, MIOLibLoadScriptCallback);
 }
 function MIOLibOnLoaded(target, completion) {
@@ -97,6 +107,7 @@ function MIOLibOnLoaded(target, completion) {
     else {
         _MIOLibLoadedTarget = target;
         _MIOLibLoadedCompletion = completion;
+        MIOLibLoadStyle("src/miolib/extras/animate.min.css");
         MIOLibDownloadNextFile();
     }
 }

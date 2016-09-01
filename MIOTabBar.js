@@ -66,6 +66,7 @@ var MIOTabBar = (function (_super) {
     }
     MIOTabBar.prototype.initWithLayer = function (layer) {
         _super.prototype.initWithLayer.call(this, layer);
+        // TODO: change to buttons
         // Check for tab items
         for (var index = 0; index < layer.childNodes.length; index++) {
             var tabItemLayer = layer.childNodes[index];

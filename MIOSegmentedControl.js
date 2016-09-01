@@ -13,6 +13,7 @@ var MIOSegmentedControl = (function (_super) {
     function MIOSegmentedControl() {
         _super.apply(this, arguments);
         this.segmentedItems = [];
+        this.selectedSegmentedIndex = -1;
     }
     MIOSegmentedControl.prototype.initWithLayer = function (layer) {
         _super.prototype.initWithLayer.call(this, layer);
@@ -20,14 +21,36 @@ var MIOSegmentedControl = (function (_super) {
         for (var index = 0; index < layer.childNodes.length; index++) {
             var itemLayer = layer.childNodes[index];
             if (itemLayer.tagName == "DIV") {
+                if (itemLayer.getAttribute("data-class") != "MIOButton")
+                    continue;
                 var si = new MIOButton();
-                si.initWithLayer(itemLayer, MIOButton.type);
+                si.initWithLayer(itemLayer);
+                si.type = MIOButtonType.PushIn;
                 this._addSegmentedItem(si);
             }
+        }
+        if (this.segmentedItems.length > 0) {
+            var item = this.segmentedItems[0];
+            item.setSelected(true);
+            this.selectedSegmentedIndex = 0;
         }
     };
     MIOSegmentedControl.prototype._addSegmentedItem = function (item) {
         this.segmentedItems.push(item);
+        item.setAction(this, this._didClickSegmentedButton);
+    };
+    MIOSegmentedControl.prototype._didClickSegmentedButton = function (button) {
+        var index = this.segmentedItems.indexOf(button);
+        this.selectSegmentedAtIndex(index);
+    };
+    MIOSegmentedControl.prototype.selectSegmentedAtIndex = function (index) {
+        if (this.selectedSegmentedIndex == index)
+            return;
+        if (this.selectedSegmentedIndex > -1) {
+            var lastItem = this.segmentedItems[this.selectedSegmentedIndex];
+            lastItem.setSelected(false);
+        }
+        this.selectedSegmentedIndex = index;
     };
     return MIOSegmentedControl;
 }(MIOView));

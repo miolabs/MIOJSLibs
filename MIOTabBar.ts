@@ -53,7 +53,7 @@ class MIOTabBarItem extends MIOView
             this._titleLayer.classList.add(this._titleStatusStyle + "_on");
         }
         else {
-            this._imageLayer.classList.remove(this._imageStatusStyle + "_on")
+            this._imageLayer.classList.remove(this._imageStatusStyle + "_on");
             this._imageLayer.classList.add(this._imageStatusStyle + "_off");
             this._titleLayer.classList.remove(this._titleStatusStyle + "_on");
             this._titleLayer.classList.add(this._titleStatusStyle + "_off");
@@ -71,6 +71,8 @@ class MIOTabBar extends MIOView
     initWithLayer(layer)
     {
         super.initWithLayer(layer);
+
+        // TODO: change to buttons
 
         // Check for tab items
         for (var index = 0; index < layer.childNodes.length; index++)

@@ -33,13 +33,15 @@ var MIOLabel = (function (_super) {
         this._setupLayer();
     };
     MIOLabel.prototype._setupLayer = function () {
-        this._textLayer = document.createElement("span");
-        this._textLayer.style.top = "3px";
-        this._textLayer.style.left = "3px";
-        this._textLayer.style.right = "3px";
-        this._textLayer.style.bottom = "3px";
-        this._textLayer.classList.add("label");
-        this.layer.appendChild(this._textLayer);
+        this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
+        if (this._textLayer == null) {
+            this._textLayer = document.createElement("span");
+            this._textLayer.style.top = "3px";
+            this._textLayer.style.left = "3px";
+            this._textLayer.style.right = "3px";
+            this._textLayer.style.bottom = "3px";
+            this.layer.appendChild(this._textLayer);
+        }
     };
     MIOLabel.prototype.layout = function () {
         _super.prototype.layout.call(this);

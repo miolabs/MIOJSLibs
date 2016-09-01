@@ -8,6 +8,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOLabel.ts" />
+/// <reference path="MIOBundle.ts" />
 var MIOTableViewCellStyle;
 (function (MIOTableViewCellStyle) {
     MIOTableViewCellStyle[MIOTableViewCellStyle["Default"] = 0] = "Default";
@@ -31,7 +32,7 @@ function MIOTableViewFromElementID(view, elementID) {
 var MIOTableViewCell = (function (_super) {
     __extends(MIOTableViewCell, _super);
     function MIOTableViewCell() {
-        _super.call(this, "tableview_cell");
+        _super.call(this, MIOViewGetNextLayerID("tableview_cell"));
         this.selected = false;
         this.textLabel = null;
         this.accessoryType = MIOTableViewCellAccessoryType.None;
@@ -53,7 +54,7 @@ var MIOTableViewCell = (function (_super) {
     MIOTableViewCell.prototype.initWithStyle = function (style) {
         _super.prototype.init.call(this);
         if (style == MIOTableViewCellStyle.Default) {
-            this.textLabel = new MIOLabel("tableview_cell_label");
+            this.textLabel = new MIOLabel(MIOViewGetNextLayerID("tableview_cell_label"));
             this.textLabel.init();
             this.textLabel.layer.style.left = "10px";
             this.textLabel.layer.style.top = "10px";
@@ -75,6 +76,7 @@ var MIOTableViewCell = (function (_super) {
                 instance._onDblClickFn.call(instance._target, instance);
         };
     };
+    MIOTableViewCell.prototype.awakeFromHTML = function () { };
     MIOTableViewCell.prototype.setAccessoryType = function (type) {
         if (type == this.accessoryType)
             return;
@@ -169,9 +171,36 @@ var MIOTableView = (function (_super) {
             this.headerView.initWithLayer(headerLayer);
         }
     };
-    MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, classname, html, css, elementID) {
-        var item = { "html": html, "css": css, "id": elementID, "class": classname };
+    MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, elementID, url, classname) {
+        var item = {};
+        item["url"] = url;
+        item["id"] = elementID;
+        if (classname != null)
+            item["class"] = classname;
         this.cellPrototypes[identifier] = item;
+        var mainBundle = MIOBundle.mainBundle();
+        mainBundle.loadLayoutFromURL(url, elementID, this, function (data) {
+            var result = data;
+            var cssFiles = result.styles;
+            var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
+            for (var index = 0; index < cssFiles.length; index++)
+                MIOCoreLoadStyle(baseURL + cssFiles[index]);
+            var domParser = new DOMParser();
+            var items = domParser.parseFromString(result.layout, "text/html");
+            var layer = items.getElementById(elementID);
+            //cell.localizeSubLayers(layer.childNodes);
+            item["layer"] = layer;
+            this.cellPrototypes[identifier] = item;
+            var cells = item["cells"];
+            if (cells != null) {
+                for (var index = 0; index < cells.length; index++) {
+                    var cell = cells[index];
+                    cell.addSubLayersFromLayer(layer);
+                    cell.awakeFromHTML();
+                }
+            }
+            delete item["cells"];
+        });
     };
     MIOTableView.prototype.cellWithIdentifier = function (identifier) {
         var item = this.cellPrototypes[identifier];
@@ -179,11 +208,20 @@ var MIOTableView = (function (_super) {
         var className = item["class"];
         var cell = Object.create(window[className].prototype);
         cell.constructor.apply(cell);
-        var html = item["html"];
-        var css = item["css"];
-        var elID = item["id"];
-        var layer = MIOLayerFromResource(html, css, elID);
-        cell.initWithLayer(layer);
+        cell.init();
+        var layer = item["layer"];
+        if (layer != null) {
+            cell.addSubLayersFromLayer(layer);
+            cell.awakeFromHTML();
+        }
+        else {
+            var cells = item["cells"];
+            if (cells == null) {
+                cells = [];
+                item["cells"] = cells;
+            }
+            cells.push(cell);
+        }
         return cell;
     };
     MIOTableView.prototype.setHeaderView = function (view) {
@@ -258,7 +296,7 @@ var MIOTableView = (function (_super) {
                 }
                 var cell = section.cells[index];
                 cell.setY(y);
-                cell.setWidth(w);
+                //cell.setWidth(w);
                 cell.setHeight(h);
                 y += h + 1;
             }

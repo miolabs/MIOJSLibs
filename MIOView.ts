@@ -126,7 +126,6 @@ class MIOView extends MIOObject
             this.layerID = layerID;
         else
             this.layerID = MIOViewGetNextLayerID();
-
     }
 
     init()

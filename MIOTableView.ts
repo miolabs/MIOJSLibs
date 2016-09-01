@@ -2,8 +2,9 @@
  * Created by godshadow on 22/3/16.
  */
 
-    /// <reference path="MIOView.ts" />
-    /// <reference path="MIOLabel.ts" />
+/// <reference path="MIOView.ts" />
+/// <reference path="MIOLabel.ts" />
+/// <reference path="MIOBundle.ts" />
 
 enum MIOTableViewCellStyle {
 
@@ -48,7 +49,7 @@ class MIOTableViewCell extends MIOView
 
     constructor()
     {
-        super("tableview_cell");
+        super(MIOViewGetNextLayerID("tableview_cell"));
     }
 
     init()
@@ -68,7 +69,7 @@ class MIOTableViewCell extends MIOView
         super.init();
 
         if (style == MIOTableViewCellStyle.Default) {
-            this.textLabel = new MIOLabel("tableview_cell_label");
+            this.textLabel = new MIOLabel(MIOViewGetNextLayerID("tableview_cell_label"));
             this.textLabel.init();
             this.textLabel.layer.style.left = "10px";
             this.textLabel.layer.style.top = "10px";
@@ -98,6 +99,8 @@ class MIOTableViewCell extends MIOView
                 instance._onDblClickFn.call(instance._target, instance);
         };
     }
+
+    awakeFromHTML() {}
 
     setAccessoryType(type)
     {
@@ -223,10 +226,46 @@ class MIOTableView extends MIOView
         }
     }
 
-    addCellPrototypeWithIdentifier(identifier, classname,  html, css, elementID)
-    {
-        var item = {"html" : html, "css" : css, "id" : elementID, "class" : classname};
+    addCellPrototypeWithIdentifier(identifier, elementID, url, classname?) {
+
+        var item = {};
+
+        item["url"] = url;
+        item["id"] = elementID;
+        if (classname != null)
+            item["class"] = classname;
+
         this.cellPrototypes[identifier] = item;
+        var mainBundle = MIOBundle.mainBundle();
+        mainBundle.loadLayoutFromURL(url, elementID, this, function (data) {
+
+            var result = data;
+            var cssFiles = result.styles;
+            var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
+            for (var index = 0; index < cssFiles.length; index++)
+                MIOCoreLoadStyle(baseURL + cssFiles[index]);
+
+            var domParser = new DOMParser();
+            var items = domParser.parseFromString(result.layout, "text/html");
+            var layer = items.getElementById(elementID);
+
+            //cell.localizeSubLayers(layer.childNodes);
+
+            item["layer"] = layer;
+            this.cellPrototypes[identifier] = item;
+
+            var cells = item["cells"];
+            if (cells != null)
+            {
+                for (var index = 0; index < cells.length; index++)
+                {
+                    var cell = cells[index];
+                    cell.addSubLayersFromLayer(layer);
+                    cell.awakeFromHTML();
+                }
+            }
+            delete item["cells"];
+        });
     }
 
     cellWithIdentifier(identifier)
@@ -238,11 +277,20 @@ class MIOTableView extends MIOView
         var cell = Object.create(window[className].prototype);
         cell.constructor.apply(cell);
 
-        var html = item["html"];
-        var css = item["css"];
-        var elID = item["id"];
-        var layer = MIOLayerFromResource(html, css, elID);
-        cell.initWithLayer(layer);
+        cell.init();
+        var layer = item["layer"];
+        if (layer != null) {
+            cell.addSubLayersFromLayer(layer);
+            cell.awakeFromHTML();
+        }
+        else {
+            var cells = item["cells"];
+            if (cells == null) {
+                cells = [];
+                item["cells"] = cells;
+            }
+            cells.push(cell);
+        }
 
         return cell;
     }
@@ -349,7 +397,7 @@ class MIOTableView extends MIOView
 
                 var cell = section.cells[index];
                 cell.setY(y);
-                cell.setWidth(w);
+                //cell.setWidth(w);
                 cell.setHeight(h);
 
                 y += h + 1;

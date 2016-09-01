@@ -2,7 +2,7 @@
  * Created by godshadow on 11/3/16.
  */
 
-    /// <reference path="MIOViewController.ts" />
+/// <reference path="MIOViewController.ts" />
 
 class MIOPageController extends MIOViewController
 {

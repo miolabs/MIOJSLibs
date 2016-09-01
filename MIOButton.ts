@@ -20,27 +20,26 @@ function MIOButtonFromElementID(view, elementID)
 
 enum MIOButtonType
 {
-    PushPop,
-    Push,
-    TabBar
+    MomentaryPushIn,
+    PushOnPushOff,
+    PushIn
 }
 
 class MIOButton extends MIOControl
 {
+    private _statusStyle = null;
+
+    private _titleStatusStyle = null;
     private _titleLayer = null;
+
+    private _imageStatusStyle = null;
     private _imageLayer = null;
-
-    private _titleSelectedStyles = null;
-    private _titleNormalStyles = null;
-
-    private _imageNormalStyles = null;
-    private _imageSelectedStyles = null;
 
     target = null;
     action = null;
 
-    selected = null;
-    type = MIOButtonType.PushPop;
+    private _selected = false;
+    type = MIOButtonType.MomentaryPushIn;
 
     init()
     {
@@ -57,49 +56,41 @@ class MIOButton extends MIOControl
     _setupLayer()
     {
         var type = this.layer.getAttribute("data-type");
-        if (type == "Push")
-            this.type = MIOButtonType.Push;
-        else if (type == "PushPop")
-            this.type = MIOButtonType.PushPop;
-        else if (type == "TabBar")
-            this.type = MIOButtonType.TabBar;
+        if (type == "MomentaryPushIn")
+            this.type = MIOButtonType.MomentaryPushIn;
+        else if (type == "PushOnPushOff")
+            this.type = MIOButtonType.PushOnPushOff;
+
+        this._statusStyle = this.layer.getAttribute("data-status-style");
 
         // Check for title layer
         this._titleLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
 
-        if (this._titleLayer == null) {
-            this._titleLayer = document.createElement("span");
-            this._titleLayer.style.textAlign = "center";
-            this.layer.appendChild(this._titleLayer);
-        }
+        if (this._titleLayer != null)
+            this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style");
 
-        var key = this.layer.getAttribute("data-title");
-        if (key != null)
-            this.setTitle(MIOLocalizeString(key, key));
+         var key = this.layer.getAttribute("data-title");
+         if (key != null)
+             this.setTitle(MIOLocalizeString(key, key));
 
-        this._titleNormalStyles = this._titleLayer.getAttribute("class");
-        this._titleSelectedStyles = this._titleLayer.getAttribute("data-selected-styles");
-
-        this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "IMG");
+        // Check for img layer
+        this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "DIV");
 
         if (this._imageLayer != null) {
-            this._imageNormalStyles = this._imageLayer.getAttribute("data-status-normal-style");
-            this._imageSelectedStyles = this._imageLayer.getAttribute("data-status-selected-style");
+            this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style");
         }
 
         // Check for status
         var status = this.layer.getAttribute("data-status");
         if (status == "selected")
             this.setSelected(true);
-        else
-            this.setSelected(false);
 
         var instance = this;
         this.layer.onmousedown = function()
         {
             if (instance.enabled) {
-                if (instance.type == MIOButtonType.Push)
-                    instance.setSelected(!instance.selected);
+                if (instance.type == MIOButtonType.PushOnPushOff)
+                    instance.setSelected(!instance._selected);
                 else
                     instance.setSelected(true);
             }
@@ -108,10 +99,11 @@ class MIOButton extends MIOControl
         this.layer.onmouseup = function()
         {
             if (instance.enabled) {
-                if (instance.type == MIOButtonType.PushPop)
+                if (instance.type == MIOButtonType.MomentaryPushIn)
                     instance.setSelected(false);
+
                 if (instance.action != null && instance.target != null)
-                    instance.action.call(instance.target);
+                    instance.action.call(instance.target, instance);
             }
         }
     }
@@ -136,45 +128,56 @@ class MIOButton extends MIOControl
 
     setSelected(value)
     {
-        if (this.selected == value)
+        if (this._selected == value)
             return;
 
         if (value == true) {
-
-            if (this.type != MIOButtonType.TabBar)
+            if (this._statusStyle != null)
             {
-                this.layer.classList.remove("button_normal");
-                this.layer.classList.add("button_selected");
+                this.layer.classList.remove(this._statusStyle + "_off");
+                this.layer.classList.add(this._statusStyle + "_on");
             }
 
-            this._titleLayer.classList.remove(this._titleNormalStyles);
-            this._titleLayer.classList.add(this._titleSelectedStyles);
-
-            if (this._imageLayer != null)
+            if (this._imageLayer != null && this._imageStatusStyle != null)
             {
-                this._imageLayer.classList.remove(this._imageNormalStyles);
-                this._imageLayer.classList.add(this._imageSelectedStyles);
+                this._imageLayer.classList.remove(this._imageStatusStyle + "_off");
+                this._imageLayer.classList.add(this._imageStatusStyle + "_on");
             }
+
+            if (this._titleLayer != null && this._titleStatusStyle != null)
+            {
+                this._titleLayer.classList.remove(this._titleStatusStyle + "_off");
+                this._titleLayer.classList.add(this._titleStatusStyle + "_on");
+            }
+
+            if (this._statusStyle == null && this._titleStatusStyle == null && this._imageStatusStyle == null)
+                this.setAlpha(0.35);
         }
         else
         {
-            if (this.type != MIOButtonType.TabBar)
+            if (this._statusStyle != null)
             {
-                this.layer.classList.remove("button_selected");
-                this.layer.classList.add("button_normal");
+                this.layer.classList.remove(this._statusStyle + "_on");
+                this.layer.classList.add(this._statusStyle + "_off");
             }
 
-            this._titleLayer.classList.remove(this._titleSelectedStyles);
-            this._titleLayer.classList.add(this._titleNormalStyles);
-
-            if (this._imageLayer != null)
+            if (this._imageLayer != null && this._imageStatusStyle != null)
             {
-                this._imageLayer.classList.remove(this._imageSelectedStyles);
-                this._imageLayer.classList.add(this._imageNormalStyles);
+                this._imageLayer.classList.remove(this._imageStatusStyle + "_on");
+                this._imageLayer.classList.add(this._imageStatusStyle + "_off");
             }
+
+            if (this._titleLayer != null && this._titleStatusStyle != null)
+            {
+                this._titleLayer.classList.remove(this._titleStatusStyle + "_on");
+                this._titleLayer.classList.add(this._titleStatusStyle + "_off");
+            }
+
+            if (this._statusStyle == null && this._titleStatusStyle == null && this._imageStatusStyle == null)
+                this.setAlpha(1);
         }
 
-        this.selected = value;
+        this._selected = value;
     }
 }
 
