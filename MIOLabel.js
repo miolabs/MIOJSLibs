@@ -40,6 +40,8 @@ var MIOLabel = (function (_super) {
             this._textLayer.style.left = "3px";
             this._textLayer.style.right = "3px";
             this._textLayer.style.bottom = "3px";
+            //this._textLayer.style.font = "inherit";
+            //this._textLayer.style.fontSize = "inherit";
             this.layer.appendChild(this._textLayer);
         }
     };

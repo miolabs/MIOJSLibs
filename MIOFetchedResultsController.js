@@ -65,7 +65,6 @@ var MIOFetchedResultsController = (function (_super) {
             this.resultObjects = this.objects;
         else {
             this.resultObjects = this.objects;
-            this._sortObjects();
             this._splitInSections();
         }
     };
@@ -73,7 +72,6 @@ var MIOFetchedResultsController = (function (_super) {
         //this.objects = objects;
         this.objects = this._moc.executeFetch(this._request);
         this.resultObjects = this.objects;
-        this._sortObjects();
         this._splitInSections();
         this._notify();
     };
@@ -96,25 +94,6 @@ var MIOFetchedResultsController = (function (_super) {
             if (typeof this._delegate.controllerDidChangeContent === "function")
                 this._delegate.controllerDidChangeContent(this);
         }
-    };
-    MIOFetchedResultsController.prototype._sortObjects = function () {
-        if (this._sectionNameKeyPath == null)
-            return;
-        var key = this._sectionNameKeyPath;
-        this.resultObjects = this.resultObjects.sort(function (a, b) {
-            if (a[key] == b[key]) {
-                if (a[key] == b[key])
-                    return 0;
-                else if (a[key] < b[key])
-                    return -1;
-                else
-                    return 1;
-            }
-            else if (a[key] < b[key])
-                return -1;
-            else
-                return 1;
-        });
     };
     MIOFetchedResultsController.prototype._splitInSections = function () {
         this.sections = [];

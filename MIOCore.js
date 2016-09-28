@@ -28,7 +28,10 @@ function MIOCoreLoadStyle(url) {
     ss.href = url;
     document.getElementsByTagName("head")[0].appendChild(ss);
 }
+var _mc_force_mobile = false;
 function MIOCoreIsMobile() {
+    if (_mc_force_mobile == true)
+        return true;
     ///<summary>Detecting whether the browser is a mobile browser or desktop browser</summary>
     ///<returns>A boolean value indicating whether the browser is a mobile browser or not</returns>
     /*if (sessionStorage .desktop) // desktop storage

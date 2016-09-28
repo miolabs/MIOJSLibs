@@ -7,11 +7,13 @@
     /// <reference path="MIOURLConnection.ts" />
     /// <reference path="MIONotificationCenter.ts" />
     /// <reference path="MIOPredicate.ts" />
+    /// <reference path="MIOSortDescriptor.ts" />
 
 class MIOFetchRequest extends MIOObject
 {
     entityName = null;
     predicate = null;
+    sortDescriptors = null;
 
     static fetchRequestWithEntityName(name)
     {
@@ -24,11 +26,6 @@ class MIOFetchRequest extends MIOObject
     initWithEntityName(name)
     {
         this.entityName = name;
-    }
-
-    setPredicate(predicate)
-    {
-        this.predicate = predicate;
     }
 }
 
@@ -150,9 +147,10 @@ class MIOManagedObjectContext extends MIOObject
     executeFetch(request)
     {
         var objs = this._objects[request.entityName];
-        var resultObjs = this._filterObjects(objs, request.predicate);
+        objs = this._filterObjects(objs, request.predicate);
+        objs = this._sortObjects(objs, request.sortDescriptors);
 
-        return resultObjs;
+        return objs;
     }
 
     private _filterObjects(objs, predicate)
@@ -175,6 +173,46 @@ class MIOManagedObjectContext extends MIOObject
         }
 
         return resultObjects;
+    }
+
+    private _sortObjects(objs, sortDescriptors)
+    {
+        if (sortDescriptors == null)
+            return objs;
+
+        var instance = this;
+        var resultObjects = objs.sort(function(a, b){
+
+            return instance._sortObjects2(a, b, sortDescriptors, 0);
+        });
+
+        return resultObjects;
+    }
+
+    private _sortObjects2(a, b, sortDescriptors, index)
+    {
+        if (index >= sortDescriptors.length)
+            return 0;
+
+        var sd = sortDescriptors[index];
+        var key = sd.key;
+
+        if (a[key] == b[key]) {
+
+            if (a[key]== b[key])
+            {
+                return this._sortObjects2(a, b, sortDescriptors, ++index);
+            }
+            else if (a[key] < b[key])
+                return -1;
+            else
+                return 1;
+        }
+        else if (a[key] < b[key])
+            return -1;
+        else
+            return 1;
+
     }
 
     saveContext()

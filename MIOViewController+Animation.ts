@@ -2,6 +2,7 @@
  * Created by godshadow on 17/08/16.
  */
 
+/// <reference path="MIOCore.ts" />
 /// <reference path="MIOCoreTypes.ts" />
 
 enum MIOPresentationStyle
@@ -32,7 +33,9 @@ enum MIOAnimationType
     FadeOut,
     LightSpeedIn,
     LightSpeedOut,
-    Hinge
+    Hinge,
+    SlideInUp,
+    SlideOutDown
 }
 
 // ANIMATION TYPES
@@ -74,6 +77,14 @@ function ClassListForAnimationType(type)
         case MIOAnimationType.Hinge:
             array.push("hinge");
             break;
+
+        case MIOAnimationType.SlideInUp:
+            array.push("slideInUp");
+            break;
+
+        case MIOAnimationType.SlideOutDown:
+            array.push("slideOutDown");
+            break;
     }
 
     return array;
@@ -90,7 +101,10 @@ function AnimationClassesForPresentationType(type, reverse)
             break;
 
         case MIOPresentationType.Modal:
-            clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
+            if (MIOCoreIsMobile())
+                clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
+            else
+                clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
             break;
 
         case MIOPresentationType.Navigation:

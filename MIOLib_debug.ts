@@ -21,6 +21,7 @@ var _MIOLibFiles = [
     "MIOURLConnection",
     "MIOBundle",
     "MIOPredicate",
+    "MIOSortDescriptor",
     "MIOManagedObjectContext",
     "MIOFetchedResultsController",
     "MIOView",

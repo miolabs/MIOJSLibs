@@ -70,7 +70,6 @@ class MIOFetchedResultsController extends MIOObject
             this.resultObjects = this.objects;
         else {
             this.resultObjects = this.objects;
-            this._sortObjects();
             this._splitInSections();
         }
     }
@@ -82,13 +81,12 @@ class MIOFetchedResultsController extends MIOObject
         this.objects = this._moc.executeFetch(this._request);
         this.resultObjects = this.objects;
 
-        this._sortObjects();
         this._splitInSections();
 
         this._notify();
     }
 
-    _notify()
+    private _notify()
     {
         if (this._delegate != null)
         {
@@ -113,31 +111,6 @@ class MIOFetchedResultsController extends MIOObject
             if (typeof this._delegate.controllerDidChangeContent === "function")
                 this._delegate.controllerDidChangeContent(this);
         }
-    }
-
-    private _sortObjects()
-    {
-        if (this._sectionNameKeyPath == null)
-            return;
-
-        var key = this._sectionNameKeyPath;
-        this.resultObjects = this.resultObjects.sort(function(a, b){
-
-            if (a[key] == b[key]) {
-
-                if (a[key]== b[key])
-                    return 0;
-                else if (a[key] < b[key])
-                    return -1;
-                else
-                    return 1;
-            }
-            else if (a[key] < b[key])
-                return -1;
-            else
-                return 1;
-        });
-
     }
 
     private _splitInSections()

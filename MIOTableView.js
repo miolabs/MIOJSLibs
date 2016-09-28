@@ -292,7 +292,7 @@ var MIOTableView = (function (_super) {
                 var h = 44;
                 if (this.delegate != null) {
                     if (typeof this.delegate.heightForRowAtIndexPath === "function")
-                        h = this.delegate.heightForRowAtIndexPath(this, count);
+                        h = this.delegate.heightForRowAtIndexPath(this, index, section);
                 }
                 var cell = section.cells[index];
                 cell.setY(y);

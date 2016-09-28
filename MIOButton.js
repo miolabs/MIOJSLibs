@@ -54,6 +54,10 @@ var MIOButton = (function (_super) {
         this._statusStyle = this.layer.getAttribute("data-status-style");
         // Check for title layer
         this._titleLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
+        if (this._titleLayer == null) {
+            this._titleLayer = document.createElement("span");
+            this.layer.appendChild(this._titleLayer);
+        }
         if (this._titleLayer != null)
             this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style");
         var key = this.layer.getAttribute("data-title");

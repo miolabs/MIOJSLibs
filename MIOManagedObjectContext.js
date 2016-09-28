@@ -11,12 +11,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOURLConnection.ts" />
 /// <reference path="MIONotificationCenter.ts" />
 /// <reference path="MIOPredicate.ts" />
+/// <reference path="MIOSortDescriptor.ts" />
 var MIOFetchRequest = (function (_super) {
     __extends(MIOFetchRequest, _super);
     function MIOFetchRequest() {
         _super.apply(this, arguments);
         this.entityName = null;
         this.predicate = null;
+        this.sortDescriptors = null;
     }
     MIOFetchRequest.fetchRequestWithEntityName = function (name) {
         var fetch = new MIOFetchRequest();
@@ -25,9 +27,6 @@ var MIOFetchRequest = (function (_super) {
     };
     MIOFetchRequest.prototype.initWithEntityName = function (name) {
         this.entityName = name;
-    };
-    MIOFetchRequest.prototype.setPredicate = function (predicate) {
-        this.predicate = predicate;
     };
     return MIOFetchRequest;
 }(MIOObject));
@@ -122,8 +121,9 @@ var MIOManagedObjectContext = (function (_super) {
     };
     MIOManagedObjectContext.prototype.executeFetch = function (request) {
         var objs = this._objects[request.entityName];
-        var resultObjs = this._filterObjects(objs, request.predicate);
-        return resultObjs;
+        objs = this._filterObjects(objs, request.predicate);
+        objs = this._sortObjects(objs, request.sortDescriptors);
+        return objs;
     };
     MIOManagedObjectContext.prototype._filterObjects = function (objs, predicate) {
         if (objs == null)
@@ -139,6 +139,34 @@ var MIOManagedObjectContext = (function (_super) {
             });
         }
         return resultObjects;
+    };
+    MIOManagedObjectContext.prototype._sortObjects = function (objs, sortDescriptors) {
+        if (sortDescriptors == null)
+            return objs;
+        var instance = this;
+        var resultObjects = objs.sort(function (a, b) {
+            return instance._sortObjects2(a, b, sortDescriptors, 0);
+        });
+        return resultObjects;
+    };
+    MIOManagedObjectContext.prototype._sortObjects2 = function (a, b, sortDescriptors, index) {
+        if (index >= sortDescriptors.length)
+            return 0;
+        var sd = sortDescriptors[index];
+        var key = sd.key;
+        if (a[key] == b[key]) {
+            if (a[key] == b[key]) {
+                return this._sortObjects2(a, b, sortDescriptors, ++index);
+            }
+            else if (a[key] < b[key])
+                return -1;
+            else
+                return 1;
+        }
+        else if (a[key] < b[key])
+            return -1;
+        else
+            return 1;
     };
     MIOManagedObjectContext.prototype.saveContext = function () {
         // Inserted objects

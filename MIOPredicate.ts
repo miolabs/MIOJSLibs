@@ -2,7 +2,7 @@
  * Created by godshadow on 1/5/16.
  */
 
-    /// <reference path="MIOObject.ts" />
+/// <reference path="MIOObject.ts" />
 
 enum MIOPredicateComparatorType
 {

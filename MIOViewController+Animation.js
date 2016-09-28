@@ -1,6 +1,7 @@
 /**
  * Created by godshadow on 17/08/16.
  */
+/// <reference path="MIOCore.ts" />
 /// <reference path="MIOCoreTypes.ts" />
 var MIOPresentationStyle;
 (function (MIOPresentationStyle) {
@@ -29,6 +30,8 @@ var MIOAnimationType;
     MIOAnimationType[MIOAnimationType["LightSpeedIn"] = 9] = "LightSpeedIn";
     MIOAnimationType[MIOAnimationType["LightSpeedOut"] = 10] = "LightSpeedOut";
     MIOAnimationType[MIOAnimationType["Hinge"] = 11] = "Hinge";
+    MIOAnimationType[MIOAnimationType["SlideInUp"] = 12] = "SlideInUp";
+    MIOAnimationType[MIOAnimationType["SlideOutDown"] = 13] = "SlideOutDown";
 })(MIOAnimationType || (MIOAnimationType = {}));
 // ANIMATION TYPES
 function ClassListForAnimationType(type) {
@@ -59,6 +62,12 @@ function ClassListForAnimationType(type) {
         case MIOAnimationType.Hinge:
             array.push("hinge");
             break;
+        case MIOAnimationType.SlideInUp:
+            array.push("slideInUp");
+            break;
+        case MIOAnimationType.SlideOutDown:
+            array.push("slideOutDown");
+            break;
     }
     return array;
 }
@@ -69,7 +78,10 @@ function AnimationClassesForPresentationType(type, reverse) {
             clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
             break;
         case MIOPresentationType.Modal:
-            clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
+            if (MIOCoreIsMobile())
+                clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
+            else
+                clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
             break;
         case MIOPresentationType.Navigation:
             clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.Push : MIOAnimationType.Pop);

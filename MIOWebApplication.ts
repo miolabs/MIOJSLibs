@@ -37,9 +37,9 @@ class MIOWebApplication
         }
 
         MIOWebApplication._sharedInstance = this;
-        this.isMobile = MIOCoreIsMobile();
         
         this.decodeParams(window.location.search);
+        this.isMobile = MIOCoreIsMobile();
 
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function(notification){
 
@@ -143,6 +143,11 @@ class MIOWebApplication
         if (param == "lang" || param == "language")
         {
             this.currentLanguage = value;
+        }
+        else if (param == "forceMobile")
+        {
+            if (value == "true")
+                _mc_force_mobile = true;
         }
     }
 

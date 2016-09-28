@@ -7,10 +7,16 @@ class MIOURLRequest
     url = null;
     httpMethod = "GET";
     body = null;
+    headers = [];
 
     constructor(url)
     {
         this.url = url;
+    }
+
+    setHeaderField(field, value)
+    {
+        this.headers.push({"Field" : field, "Value" : value});
     }
 }
 
@@ -40,9 +46,9 @@ class MIOURLConnection
 
     start()
     {
-        var instance = this;
-
         this.xmlHttpRequest = new XMLHttpRequest();
+
+        var instance = this;
         this.xmlHttpRequest.onload = function(){
 
             if(this.status == 200 && this.responseText != null)
@@ -51,7 +57,7 @@ class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidReceiveData(instance, this.responseText);
                 else if (instance.blockFN != null)
-                    instance.blockFN.call(instance.blockTarget, false, this.responseText);
+                    instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
             }
             else
             {
@@ -59,11 +65,19 @@ class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidFail(instance);
                 else if (instance.blockFN != null)
-                    instance.blockFN.call(instance.blockTarget, true, null);
+                    instance.blockFN.call(instance.blockTarget, this.status, null);
             }
         };
 
         this.xmlHttpRequest.open(this.request.httpMethod, this.request.url);
+
+        // Add headers
+        for (var count = 0; count < this.request.headers.length; count++)
+        {
+            var item = this.request.headers[count];
+            this.xmlHttpRequest.setRequestHeader(item["Field"], item["Value"]);
+        }
+
         if (this.request.httpMethod == "POST" && this.request.body != null)
             this.xmlHttpRequest.send(this.request.body);
         else

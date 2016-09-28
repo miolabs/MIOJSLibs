@@ -25,8 +25,8 @@ var MIOWebApplication = (function () {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
         }
         MIOWebApplication._sharedInstance = this;
-        this.isMobile = MIOCoreIsMobile();
         this.decodeParams(window.location.search);
+        this.isMobile = MIOCoreIsMobile();
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function (notification) {
             this.downloadCoreFileCount++;
         });
@@ -97,6 +97,10 @@ var MIOWebApplication = (function () {
     MIOWebApplication.prototype.evaluateParam = function (param, value) {
         if (param == "lang" || param == "language") {
             this.currentLanguage = value;
+        }
+        else if (param == "forceMobile") {
+            if (value == "true")
+                _mc_force_mobile = true;
         }
     };
     MIOWebApplication.prototype.setLanguageURL = function (key, url) {
