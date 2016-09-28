@@ -2,10 +2,10 @@
  * Created by godshadow on 29/08/16.
  */
 
-/// <reference path="MIOView.ts" />
+/// <reference path="MIOControl.ts" />
 /// <reference path="MIOButton.ts" />
 
-class MIOSegmentedControl extends MIOView
+class MIOSegmentedControl extends MIOControl
 {
     segmentedItems = [];
     selectedSegmentedIndex = -1;
@@ -48,6 +48,15 @@ class MIOSegmentedControl extends MIOView
     {
         var index = this.segmentedItems.indexOf(button);
         this.selectSegmentedAtIndex(index);
+
+        if (this.mouseOutTarget != null)
+            this.mouseOutAction.call(this.mouseOutTarget, index);
+    }
+
+    setAction(target, action)
+    {
+        this.mouseOutTarget = target;
+        this.mouseOutAction = action;
     }
 
     selectSegmentedAtIndex(index)

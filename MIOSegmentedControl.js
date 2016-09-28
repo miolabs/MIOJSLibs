@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOView.ts" />
+/// <reference path="MIOControl.ts" />
 /// <reference path="MIOButton.ts" />
 var MIOSegmentedControl = (function (_super) {
     __extends(MIOSegmentedControl, _super);
@@ -42,6 +42,12 @@ var MIOSegmentedControl = (function (_super) {
     MIOSegmentedControl.prototype._didClickSegmentedButton = function (button) {
         var index = this.segmentedItems.indexOf(button);
         this.selectSegmentedAtIndex(index);
+        if (this.mouseOutTarget != null)
+            this.mouseOutAction.call(this.mouseOutTarget, index);
+    };
+    MIOSegmentedControl.prototype.setAction = function (target, action) {
+        this.mouseOutTarget = target;
+        this.mouseOutAction = action;
     };
     MIOSegmentedControl.prototype.selectSegmentedAtIndex = function (index) {
         if (this.selectedSegmentedIndex == index)
@@ -53,5 +59,5 @@ var MIOSegmentedControl = (function (_super) {
         this.selectedSegmentedIndex = index;
     };
     return MIOSegmentedControl;
-}(MIOView));
+}(MIOControl));
 //# sourceMappingURL=MIOSegmentedControl.js.map
