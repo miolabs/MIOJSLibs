@@ -2,6 +2,7 @@
  * Created by godshadow on 20/5/16.
  */
 /// <reference path="MIOObject.ts" />
+/// <reference path="MIOUserDefaults.ts" />
 /// <reference path="MIOString.ts" />
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />

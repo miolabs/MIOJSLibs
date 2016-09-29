@@ -9,6 +9,7 @@ var _MIOLibFiles = [
     "MIOCore",
     "MIOCoreTypes",
     "MIOObject",
+    "MIOUserDefaults",
     "MIOString",
     "MIODate",
     "Date+MIO",

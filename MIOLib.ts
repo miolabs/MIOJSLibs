@@ -3,6 +3,9 @@
  */
 
 /// <reference path="MIOObject.ts" />
+
+/// <reference path="MIOUserDefaults.ts" />
+
 /// <reference path="MIOString.ts" />
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />

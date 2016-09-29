@@ -2,7 +2,7 @@
  * Created by godshadow on 22/5/16.
  */
 
-    /// <reference path="MIOButton.ts" />
+/// <reference path="MIOButton.ts" />
 
 class MIOToolbarButton extends MIOButton
 {
