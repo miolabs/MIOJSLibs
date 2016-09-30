@@ -46,6 +46,9 @@ class MIOTextField extends MIOControl
     initWithLayer(layer, options?)
     {
         super.initWithLayer(layer, options);
+
+        this.inputLayer = MIOLayerGetFirstElementWithTag(layer, "INPUT");
+
         this._setupLayer();
     }
 
@@ -71,30 +74,29 @@ class MIOTextField extends MIOControl
         else
             this.layer.classList.add("textfield");
 
-        this.inputLayer = document.createElement("input");
+        if (this.inputLayer == null)
+        {
+            this.inputLayer = document.createElement("input");
+            this.layer.appendChild(this.inputLayer);
+        }
 
-        if (this.type == MIOTextFieldType.PasswordType)
-            this.inputLayer.setAttribute("type", "password");
-        else
-            this.inputLayer.setAttribute("type", "text");
-        this.inputLayer.style.backgroundColor = "transparent";
-        this.inputLayer.style.border = "0px";
-        this.inputLayer.style.width = "100%";
         if (this.type == MIOTextFieldType.SearchType) {
             this.inputLayer.style.marginLeft = "10px";
             this.inputLayer.style.marginRight = "10px";
         }
-        else
-        {
+        else {
             this.inputLayer.style.marginLeft = "5px";
             this.inputLayer.style.marginRight = "5px";
         }
+
+        this.inputLayer.style.border = "0px";
+        this.inputLayer.style.backgroundColor = "transparent";
+        this.inputLayer.style.width = "100%";
         this.inputLayer.style.height = "100%";
         this.inputLayer.style.color = "inherit";
         this.inputLayer.style.fontSize = "inherit";
         this.inputLayer.style.fontFamily = "inherit";
         this.inputLayer.style.outline = "none";
-        this.layer.appendChild(this.inputLayer);
 
         var placeholderKey = this.layer.getAttribute("data-placeholder");
         if (placeholderKey != null)
