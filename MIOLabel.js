@@ -33,6 +33,9 @@ var MIOLabel = (function (_super) {
         this._setupLayer();
     };
     MIOLabel.prototype._setupLayer = function () {
+        //TODO: search for a span element, not reset the content
+        // Reset content
+        this.layer.innerHTML = "";
         this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
         if (this._textLayer == null) {
             this._textLayer = document.createElement("span");

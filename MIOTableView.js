@@ -158,18 +158,39 @@ var MIOTableView = (function (_super) {
     }
     MIOTableView.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
-        // Check if we have a header in the tableview
+        // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
-            // Get the first div element. We don't support more than one element
-            var index = 0;
-            var headerLayer = this.layer.childNodes[index];
-            while (headerLayer.tagName != "DIV") {
-                index++;
-                headerLayer = this.layer.childNodes[index];
+            for (var index = 0; index < this.layer.childNodes.length; index++) {
+                var subLayer = this.layer.childNodes[index];
+                if (subLayer.tagName != "DIV")
+                    continue;
+                if (subLayer.getAttribute("data-cell-identifier") != null) {
+                    this._addCellPrototypeWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
+                else if (subLayer.getAttribute("data-cell-header") != null) {
+                    this._addHeaderWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
+                else if (subLayer.getAttribute("data-cell-footer") != null) {
+                    this._addFooterWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
             }
-            this.headerView = new MIOView();
-            this.headerView.initWithLayer(headerLayer);
         }
+    };
+    MIOTableView.prototype._addHeaderWithLayer = function (subLayer) {
+        this.headerView = new MIOView();
+        this.headerView.initWithLayer(subLayer);
+    };
+    MIOTableView.prototype._addFooterWithLayer = function (subLayer) {
+        //TODO
+    };
+    MIOTableView.prototype._addCellPrototypeWithLayer = function (subLayer) {
+        var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
+        var cellClassname = subLayer.getAttribute("data-class");
+        var item = { "class": cellClassname, "layer": subLayer };
+        this.cellPrototypes[cellIdentifier] = item;
     };
     MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, elementID, url, classname) {
         var item = {};
@@ -211,6 +232,7 @@ var MIOTableView = (function (_super) {
         cell.init();
         var layer = item["layer"];
         if (layer != null) {
+            layer.style.display = "";
             cell.addSubLayersFromLayer(layer);
             cell.awakeFromHTML();
         }

@@ -209,21 +209,52 @@ class MIOTableView extends MIOView
     {
         super.initWithLayer(layer, options);
 
-        // Check if we have a header in the tableview
+        // Check if we have prototypes
         if (this.layer.childNodes.length > 0)
         {
-            // Get the first div element. We don't support more than one element
-            var index = 0;
-            var headerLayer = this.layer.childNodes[index];
-            while(headerLayer.tagName != "DIV")
+            for(var index = 0; index < this.layer.childNodes.length; index++)
             {
-                index++;
-                headerLayer = this.layer.childNodes[index];
-            }
+                var subLayer = this.layer.childNodes[index];
 
-            this.headerView = new MIOView();
-            this.headerView.initWithLayer(headerLayer);
+                if (subLayer.tagName != "DIV")
+                    continue;
+
+                if (subLayer.getAttribute("data-cell-identifier") != null) {
+                    this._addCellPrototypeWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
+                else if (subLayer.getAttribute("data-cell-header") != null)
+                {
+                    this._addHeaderWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
+                else if (subLayer.getAttribute("data-cell-footer") != null)
+                {
+                    this._addFooterWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
+            }
         }
+    }
+
+    private _addHeaderWithLayer(subLayer)
+    {
+        this.headerView = new MIOView();
+        this.headerView.initWithLayer(subLayer);
+    }
+
+    private _addFooterWithLayer(subLayer)
+    {
+        //TODO
+    }
+
+    private _addCellPrototypeWithLayer(subLayer)
+    {
+        var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
+        var cellClassname = subLayer.getAttribute("data-class");
+
+        var item = {"class" : cellClassname, "layer" : subLayer};
+        this.cellPrototypes[cellIdentifier] = item;
     }
 
     addCellPrototypeWithIdentifier(identifier, elementID, url, classname?) {
@@ -280,6 +311,7 @@ class MIOTableView extends MIOView
         cell.init();
         var layer = item["layer"];
         if (layer != null) {
+            layer.style.display = "";
             cell.addSubLayersFromLayer(layer);
             cell.awakeFromHTML();
         }

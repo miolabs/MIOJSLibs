@@ -38,6 +38,10 @@ class MIOLabel extends MIOView
 
     _setupLayer()
     {
+        //TODO: search for a span element, not reset the content
+        // Reset content
+        this.layer.innerHTML = "";
+
         this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
         if (this._textLayer == null)
         {
