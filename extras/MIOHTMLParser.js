@@ -89,7 +89,7 @@ function MIOHTMLParser(string, layerID)
                     {
                         case 1:
                             tag = token;
-                            console.log("<" + tag + ">");
+                            //console.log("<" + tag + ">");
                             stepIndex = 2;
                             if (tag == "link")
                             {
@@ -100,7 +100,7 @@ function MIOHTMLParser(string, layerID)
 
                         case 3:
                             value = token;
-                            console.log("<" + tag + " " + attribute + "=" + value + ">");
+                            //console.log("<" + tag + " " + attribute + "=" + value + ">");
                             stepIndex = 2;
                             if (currentStyle != null)
                             {
@@ -146,7 +146,7 @@ function MIOHTMLParser(string, layerID)
                 switch (stepIndex) {
                     case 1:
                         tag = token;
-                        console.log("<" + tag + ">");
+                        //console.log("<" + tag + ">");
                         stepIndex = 2;
                         if (tag == "link")
                         {
@@ -157,12 +157,12 @@ function MIOHTMLParser(string, layerID)
 
                     case 2:
                         attribute = token;
-                        console.log("<" + tag + " " + attribute + ">");
+                        //console.log("<" + tag + " " + attribute + ">");
                         break;
 
                     case 3:
                         value = token;
-                        console.log("<" + tag + " " + attribute + "=" + value + ">");
+                        //console.log("<" + tag + " " + attribute + "=" + value + ">");
                         stepIndex = 2;
                         if (attribute == "id" && value == layerID)
                         {
@@ -200,6 +200,8 @@ function MIOHTMLParser(string, layerID)
                 styleFiles.push(s["href"]);
         }
     }
+
+    console.log(styleFiles);
 
     return {
         styles: styleFiles,

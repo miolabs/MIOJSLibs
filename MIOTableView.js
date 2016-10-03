@@ -152,6 +152,7 @@ var MIOTableView = (function (_super) {
         this.delegate = null;
         this.sections = [];
         this.headerView = null;
+        this.footerView = null;
         this.selectedCellRow = -1;
         this.selectedCellSection = -1;
         this.cellPrototypes = {};
@@ -170,11 +171,9 @@ var MIOTableView = (function (_super) {
                 }
                 else if (subLayer.getAttribute("data-cell-header") != null) {
                     this._addHeaderWithLayer(subLayer);
-                    subLayer.style.display = "none";
                 }
                 else if (subLayer.getAttribute("data-cell-footer") != null) {
                     this._addFooterWithLayer(subLayer);
-                    subLayer.style.display = "none";
                 }
             }
         }
@@ -184,7 +183,8 @@ var MIOTableView = (function (_super) {
         this.headerView.initWithLayer(subLayer);
     };
     MIOTableView.prototype._addFooterWithLayer = function (subLayer) {
-        //TODO
+        this.footerView = new MIOView();
+        this.footerView.initWithLayer(subLayer);
     };
     MIOTableView.prototype._addCellPrototypeWithLayer = function (subLayer) {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
@@ -216,7 +216,7 @@ var MIOTableView = (function (_super) {
             if (cells != null) {
                 for (var index = 0; index < cells.length; index++) {
                     var cell = cells[index];
-                    cell.addSubLayersFromLayer(layer);
+                    cell.addSubLayersFromLayer(layer.cloneNode(true));
                     cell.awakeFromHTML();
                 }
             }
@@ -232,8 +232,9 @@ var MIOTableView = (function (_super) {
         cell.init();
         var layer = item["layer"];
         if (layer != null) {
-            layer.style.display = "";
-            cell.addSubLayersFromLayer(layer);
+            var newLayer = layer.cloneNode(true);
+            newLayer.style.display = "";
+            cell.addSubLayersFromLayer(newLayer);
             cell.awakeFromHTML();
         }
         else {
@@ -322,6 +323,9 @@ var MIOTableView = (function (_super) {
                 cell.setHeight(h);
                 y += h + 1;
             }
+        }
+        if (this.footerView != null) {
+            this.footerView.setY(y);
         }
     };
     MIOTableView.prototype.cellOnClickFn = function (cell) {

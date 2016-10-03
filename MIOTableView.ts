@@ -199,6 +199,7 @@ class MIOTableView extends MIOView
 
     sections = [];
     headerView = null;
+    footerView = null;
 
     private selectedCellRow = -1;
     private selectedCellSection = -1;
@@ -226,12 +227,10 @@ class MIOTableView extends MIOView
                 else if (subLayer.getAttribute("data-cell-header") != null)
                 {
                     this._addHeaderWithLayer(subLayer);
-                    subLayer.style.display = "none";
                 }
                 else if (subLayer.getAttribute("data-cell-footer") != null)
                 {
                     this._addFooterWithLayer(subLayer);
-                    subLayer.style.display = "none";
                 }
             }
         }
@@ -245,7 +244,8 @@ class MIOTableView extends MIOView
 
     private _addFooterWithLayer(subLayer)
     {
-        //TODO
+        this.footerView = new MIOView();
+        this.footerView.initWithLayer(subLayer);
     }
 
     private _addCellPrototypeWithLayer(subLayer)
@@ -291,7 +291,7 @@ class MIOTableView extends MIOView
                 for (var index = 0; index < cells.length; index++)
                 {
                     var cell = cells[index];
-                    cell.addSubLayersFromLayer(layer);
+                    cell.addSubLayersFromLayer(layer.cloneNode(true));
                     cell.awakeFromHTML();
                 }
             }
@@ -311,8 +311,9 @@ class MIOTableView extends MIOView
         cell.init();
         var layer = item["layer"];
         if (layer != null) {
-            layer.style.display = "";
-            cell.addSubLayersFromLayer(layer);
+            var newLayer = layer.cloneNode(true);
+            newLayer.style.display = "";
+            cell.addSubLayersFromLayer(newLayer);
             cell.awakeFromHTML();
         }
         else {
@@ -434,6 +435,11 @@ class MIOTableView extends MIOView
 
                 y += h + 1;
             }
+        }
+
+        if (this.footerView != null)
+        {
+            this.footerView.setY(y);
         }
     }
 
