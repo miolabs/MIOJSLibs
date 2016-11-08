@@ -104,30 +104,65 @@ func AppendLibFile(atPath path: String, filename: String)
     }
 }
 
+func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
+{
+    do{
+        
+        let data = try String.init(contentsOfFile: sp, encoding: .utf8)
+        let lines = data.components(separatedBy: "\n")
+        
+        var dstString = ""
+        var index = 0
+        while index < lines.count {
+            
+            let l = lines[index]
+            if (l != ("//# sourceMappingURL=\(fn).map")){
+                dstString.append(lines[index] + "\n")
+            }
+            index += 1
+        }
+        
+        let fd : Data? = dstString.data(using: .utf8)
+        try fd?.write(to: URL.init(fileURLWithPath: dp))
+    }
+    catch{
+        print("Cann't open file")
+    }
+
+}
+
 func ScanFolder(atPath path:String, dstPath dst:String)
 {
     do{
         print("Path: \(path)")
         let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
-        for item in directoryContents
-        {
+        for item in directoryContents{
+            
             let item_path = path + "/" + item;
             var isDir : ObjCBool = false
             FileManager.default.fileExists(atPath: item_path, isDirectory: &isDir)
-            if (isDir.boolValue)
-            {
+            if (isDir.boolValue){
+                
                 let newDir = dst + "/" + item;
                 if (release == false){
                     try FileManager.default.createDirectory(atPath: newDir, withIntermediateDirectories: true, attributes: nil);
                 }
                 ScanFolder(atPath: path + "/" + item, dstPath: newDir);
             }
-            else if (item.hasSuffix(".js") || item.hasSuffix(".css") || item.hasSuffix(".html")){
+            else if ((item.hasSuffix(".ts") || item.hasSuffix(".js.map") || item == ".DS_Store") == false){
                 
                 if (release == false){
+                    
                     print("Coping: \(item)");
                     let dst_path = dst + "/" + item;
-                    try FileManager.default.copyItem(atPath: item_path, toPath: dst_path);
+                    
+                    if (item.hasSuffix(".js")){
+                        CopyFile(filename: item, fromPath: item_path, toPath: dst_path)
+                    }
+                    else{
+                        try FileManager.default.copyItem(atPath: item_path, toPath: dst_path);
+                    }
+                    
                 }
                 else{
                     print("Appending: \(item)");
