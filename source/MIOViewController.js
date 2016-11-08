@@ -31,6 +31,7 @@ var MIOViewController = (function (_super) {
         this.presentationStyle = MIOPresentationStyle.CurrentContext;
         this.presentationType = MIOPresentationType.Modal;
         this._contentSize = new MIOSize(320, 200);
+        this._preferredContentSize = new MIOSize(320, 200);
         this.layerID = layerID;
         this.prefixID = prefixID;
     }
@@ -464,6 +465,13 @@ var MIOViewController = (function (_super) {
             this.willChangeValue("contentSize");
             this._contentSize = size;
             this.didChangeValue("contentSize");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MIOViewController.prototype, "preferredContentSize", {
+        get: function () {
+            return this._preferredContentSize;
         },
         enumerable: true,
         configurable: true

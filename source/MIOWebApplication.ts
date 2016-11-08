@@ -2,6 +2,8 @@
  * Created by godshadow on 11/3/16.
  */
 
+    /// <reference path="MIOLib_debug.ts" />
+
     /// <reference path="MIOCore.ts" />
     /// <reference path="MIONotificationCenter.ts" />
     /// <reference path="MIOURLConnection.ts" />
@@ -37,9 +39,8 @@ class MIOWebApplication
         }
 
         MIOWebApplication._sharedInstance = this;
-        
-        this.decodeParams(window.location.search);
-        this.isMobile = MIOCoreIsMobile();
+
+        this._decodeParams();
 
         MIONotificationCenter.defaultCenter().addObserver(this, "MIODownloadingCoreFile", function(notification){
 
@@ -57,6 +58,17 @@ class MIOWebApplication
     public static sharedInstance():MIOWebApplication
     {
         return MIOWebApplication._sharedInstance;
+    }
+
+    private _decodeParams()
+    {
+        MIOLibDecodeParams(window.location.search, this, function (param, value){
+
+            if (param == "lang" || param == "language")
+            {
+                this.currentLanguage = value;
+            }
+        });
     }
 
     run()
@@ -98,57 +110,6 @@ class MIOWebApplication
 
             this.ready = true;
         });
-    }
-
-    decodeParams(string)
-    {
-        var param = "";
-        var value = "";
-        var isParam = false;
-
-        for (var index = 0; index < string.length; index++)
-        {
-            var ch = string.charAt(index);
-
-            if (ch == "?")
-            {
-                isParam = true;
-            }
-            else if (ch == "&")
-            {
-                // new param
-                this.evaluateParam(param, value);
-                isParam = true;
-                param = "";
-                value = "";
-            }
-            else if (ch == "=")
-            {
-                isParam = false;
-            }
-            else
-            {
-                if (isParam == true)
-                    param += ch;
-                else
-                    value += ch;
-            }
-        }
-
-        this.evaluateParam(param, value);
-    }
-
-    evaluateParam(param, value)
-    {
-        if (param == "lang" || param == "language")
-        {
-            this.currentLanguage = value;
-        }
-        else if (param == "forceMobile")
-        {
-            if (value == "true")
-                _mc_force_mobile = true;
-        }
     }
 
     setLanguageURL(key, url)
@@ -201,11 +162,14 @@ class MIOWebApplication
         window.rootViewController.view.addSubview(vc.view);
         window.rootViewController.showViewController(vc, true);
 
+        this._sheetSize = vc.contentSize;
         this._sheetViewController.addObserver(this, "contentSize");
     }
 
     endSheetViewController()
     {
+        if (this._sheetViewController == null) return;
+
         var window = this.delegate.window;
 
         this._sheetViewController.removeObserver(this, "contentSize");

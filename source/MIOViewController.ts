@@ -34,7 +34,8 @@ class MIOViewController extends MIOObject
     presentationStyle = MIOPresentationStyle.CurrentContext;
     presentationType = MIOPresentationType.Modal;
 
-    private _contentSize = new MIOSize(320, 200);
+    protected _contentSize = new MIOSize(320, 200);
+    protected _preferredContentSize = new MIOSize(320, 200);
 
     constructor(layerID, prefixID?)
     {
@@ -582,16 +583,22 @@ class MIOViewController extends MIOObject
         return this.view.getHeight();
     }
 
-    public get contentSize()
-    {
-        return this._contentSize;
-    }
-
     public set contentSize(size)
     {
         this.willChangeValue("contentSize");
         this._contentSize = size;
         this.didChangeValue("contentSize");
     }
+
+    public get contentSize()
+    {
+        return this._contentSize;
+    }
+
+    public get preferredContentSize()
+    {
+        return this._preferredContentSize;
+    }
+
 }
 

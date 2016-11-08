@@ -61,6 +61,7 @@ var MIOBundle = (function () {
         this._isDownloadResource = true;
         var item = this._layoutQueue[0];
         // Send only the information need
+        console.log("Download resource: " + item["URL"]);
         var msg = { "CMD": "DownloadResource", "URL": item["URL"], "LayerID": item["LayerID"] };
         this._layoutWorker.postMessage(msg);
     };

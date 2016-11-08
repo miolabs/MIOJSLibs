@@ -88,7 +88,7 @@ class MIONavigationController extends MIOViewController
         this.view.addSubview(vc.view);
         this.addChildViewController(vc);
 
-        this.contentSize = vc.contentSize;
+        this.contentSize = vc.preferredContentSize;
 
         this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Push);
     }
@@ -105,7 +105,7 @@ class MIONavigationController extends MIOViewController
 
         var toVC = this.viewControllersStack[this.currentViewControllerIndex];
 
-        this.contentSize = toVC.contentSize;
+        this.contentSize = toVC.preferredContentSize;
 
         this.transitionFromViewControllerToViewController(fromVC, toVC, 0.25, MIOAnimationType.Pop, this, function () {
 
@@ -128,7 +128,7 @@ class MIONavigationController extends MIOViewController
         this.currentViewControllerIndex = 0;
         var rootVC = this.viewControllersStack[0];
 
-        this.contentSize = rootVC.contentSize;
+        this.contentSize = rootVC.preferredContentSize;
 
         this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
 
@@ -146,4 +146,14 @@ class MIONavigationController extends MIOViewController
     //
     //     return vc.contentSize;
     // }
+
+    public get preferredContentSize()
+    {
+        if (this.currentViewControllerIndex < 0)
+            return this._preferredContentSize;
+
+        var vc = this.viewControllersStack[this.currentViewControllerIndex];
+
+        return vc.preferredContentSize;
+    }
 }

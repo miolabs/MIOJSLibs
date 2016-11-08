@@ -64,7 +64,7 @@ var MIONavigationController = (function (_super) {
         vc.presentationType = MIOPresentationType.Navigation;
         this.view.addSubview(vc.view);
         this.addChildViewController(vc);
-        this.contentSize = vc.contentSize;
+        this.contentSize = vc.preferredContentSize;
         this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Push);
     };
     MIONavigationController.prototype.popViewController = function (animate) {
@@ -74,7 +74,7 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
         var toVC = this.viewControllersStack[this.currentViewControllerIndex];
-        this.contentSize = toVC.contentSize;
+        this.contentSize = toVC.preferredContentSize;
         this.transitionFromViewControllerToViewController(fromVC, toVC, 0.25, MIOAnimationType.Pop, this, function () {
             fromVC.view.removeFromSuperview();
             this.removeChildViewController(fromVC);
@@ -89,12 +89,31 @@ var MIONavigationController = (function (_super) {
         }
         this.currentViewControllerIndex = 0;
         var rootVC = this.viewControllersStack[0];
-        this.contentSize = rootVC.contentSize;
+        this.contentSize = rootVC.preferredContentSize;
         this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
         });
     };
+    Object.defineProperty(MIONavigationController.prototype, "preferredContentSize", {
+        // get contentSize()
+        // {
+        //     if (this.currentViewControllerIndex < 0)
+        //         return new MIOSize(320, 200);
+        //
+        //     var vc = this.viewControllersStack[this.currentViewControllerIndex];
+        //
+        //     return vc.contentSize;
+        // }
+        get: function () {
+            if (this.currentViewControllerIndex < 0)
+                return this._preferredContentSize;
+            var vc = this.viewControllersStack[this.currentViewControllerIndex];
+            return vc.preferredContentSize;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return MIONavigationController;
 }(MIOViewController));
 //# sourceMappingURL=MIONavigationController.js.map

@@ -78,7 +78,7 @@ function AnimationTypeForViewController(vc, reverse) {
             type = (reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
             break;
         case MIOPresentationType.Modal:
-            if (MIOCoreIsMobile())
+            if (MIOLibIsMobile())
                 type = (reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
             else
                 type = (reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
@@ -96,7 +96,7 @@ function AnimationClassesForPresentationType(type, reverse) {
             clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
             break;
         case MIOPresentationType.Modal:
-            if (MIOCoreIsMobile())
+            if (MIOLibIsMobile())
                 clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
             else
                 clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
@@ -129,8 +129,8 @@ function FrameWithStyleForViewControllerInView(view, vc) {
     var x = 0;
     var y = 0;
     if (vc.presentationStyle == MIOPresentationStyle.PageSheet) {
-        w = vc.contentSize.width;
-        h = vc.contentSize.height;
+        w = vc.preferredContentSize.width;
+        h = vc.preferredContentSize.height;
         x = (view.getWidth() - w) / 2;
         y = 0;
     }
@@ -144,6 +144,7 @@ function FrameWithStyleForViewControllerInView(view, vc) {
         w = view.getWidth();
         h = view.getHeight();
     }
+    vc.contentSize = new MIOSize(w, h);
     return MIOFrame.frameWithRect(x, y, w, h);
 }
 //# sourceMappingURL=MIOViewController+Animation.js.map

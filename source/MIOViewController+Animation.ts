@@ -101,7 +101,7 @@ function AnimationTypeForViewController(vc, reverse)
             break;
 
         case MIOPresentationType.Modal:
-            if (MIOCoreIsMobile())
+            if (MIOLibIsMobile())
                 type = (reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
             else
                 type = (reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
@@ -126,7 +126,7 @@ function AnimationClassesForPresentationType(type, reverse)
             break;
 
         case MIOPresentationType.Modal:
-            if (MIOCoreIsMobile())
+            if (MIOLibIsMobile())
                 clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
             else
                 clasess = ClassListForAnimationType(reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
@@ -173,8 +173,8 @@ function FrameWithStyleForViewControllerInView(view, vc)
 
     if (vc.presentationStyle == MIOPresentationStyle.PageSheet)
     {
-        w = vc.contentSize.width;
-        h = vc.contentSize.height;
+        w = vc.preferredContentSize.width;
+        h = vc.preferredContentSize.height;
         x = (view.getWidth() - w) / 2;
         y = 0;
     }
@@ -191,5 +191,6 @@ function FrameWithStyleForViewControllerInView(view, vc)
         h = view.getHeight();
     }
 
+    vc.contentSize = new MIOSize(w, h);
     return MIOFrame.frameWithRect(x, y, w, h);
 }

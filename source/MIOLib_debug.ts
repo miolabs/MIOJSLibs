@@ -147,8 +147,23 @@ function MIOLibDownloadAppFile(file)
     console.log("Added file to download: " + file);
 }
 
+var _mc_force_mobile = false;
+
+function MIOLibCheckParams() {
+    MIOLibDecodeParams(window.location.search, this, function (param, value) {
+
+        // Only for test
+        if (param == "forceMobile")
+            _mc_force_mobile = value == "true" ? true : false;
+    });
+}
+
+
 function MIOLibIsMobile()
 {
+    if (_mc_force_mobile == true)
+        return true;
+
     ///<summary>Detecting whether the browser is a mobile browser or desktop browser</summary>
     ///<returns>A boolean value indicating whether the browser is a mobile browser or not</returns>
 
@@ -165,3 +180,46 @@ function MIOLibIsMobile()
     return false;
 }
 
+function MIOLibDecodeParams(string, target?, completion?)
+{
+    var param = "";
+    var value = "";
+    var isParam = false;
+
+    for (var index = 0; index < string.length; index++)
+    {
+        var ch = string.charAt(index);
+
+        if (ch == "?")
+        {
+            isParam = true;
+        }
+        else if (ch == "&")
+        {
+            // new param
+            MIOLibEvaluateParam(param, value, target, completion);
+            isParam = true;
+            param = "";
+            value = "";
+        }
+        else if (ch == "=")
+        {
+            isParam = false;
+        }
+        else
+        {
+            if (isParam == true)
+                param += ch;
+            else
+                value += ch;
+        }
+    }
+
+    MIOLibEvaluateParam(param, value, target, completion);
+}
+
+function MIOLibEvaluateParam(param, value, target, completion)
+{
+    if (target != null && completion != null)
+        completion.call(target, param, value);
+}
