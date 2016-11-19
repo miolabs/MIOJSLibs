@@ -11,7 +11,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOBundle.ts" />
 /// <reference path="MIOCoreTypes.ts" />
-/// <reference path="MIOViewController+Animation.ts" />
+/// <reference path="MIOViewController_Animation.ts" />
+/// <reference path="MIOViewController_PopoverPresentationController.ts" />
 var MIOViewController = (function (_super) {
     __extends(MIOViewController, _super);
     function MIOViewController(layerID, prefixID) {
@@ -28,6 +29,7 @@ var MIOViewController = (function (_super) {
         this._layerIsReady = false;
         this._childViewControllers = [];
         this.navigationController = null;
+        this._popoverPresentationController = null;
         this.presentationStyle = MIOPresentationStyle.CurrentContext;
         this.presentationType = MIOPresentationType.Modal;
         this._contentSize = new MIOSize(320, 200);
@@ -71,7 +73,8 @@ var MIOViewController = (function (_super) {
             var items = domParser.parseFromString(result.layout, "text/html");
             var layer = items.getElementById(this.layerID);
             this.localizeSubLayers(layer.childNodes);
-            this.view.addSubLayersFromLayer(layer);
+            this.view.addSubLayer(layer);
+            this.view.awakeFromHTML();
             this._didLayerDownloaded();
         });
     };
@@ -179,6 +182,8 @@ var MIOViewController = (function (_super) {
         var c = MIOClassFromString(className);
         c.initWithLayer(layer, options);
         this.view._linkViewToSubview(c);
+        if (c instanceof MIOView)
+            c.awakeFromHTML();
         if (c instanceof MIOViewController)
             this.addChildViewController(c);
         return c;
@@ -211,10 +216,15 @@ var MIOViewController = (function (_super) {
     // }
     MIOViewController.prototype.presentViewController = function (vc, animate) {
         vc.presentationType = MIOPresentationType.Modal;
-        this.addChildViewController(vc);
         var frame = FrameWithStyleForViewControllerInView(this.view, vc);
         vc.view.setFrame(frame);
-        this.showViewController(vc, true);
+        if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover) {
+            MIOWebApplication.sharedInstance().showPopOverControllerFromRect(vc, frame);
+        }
+        else {
+            this.addChildViewController(vc);
+            this.showViewController(vc, true);
+        }
     };
     MIOViewController.prototype.showViewController = function (vc, animate) {
         this.view.addSubview(vc.view);
@@ -423,6 +433,13 @@ var MIOViewController = (function (_super) {
         }
         if (target != null && completion != null)
             completion.call(target);
+    };
+    MIOViewController.prototype.popoverPresentationController = function () {
+        if (this._popoverPresentationController == null) {
+            this._popoverPresentationController = new MIOPopoverPresentationController(this.layerID + "_popovervc");
+            this._popoverPresentationController.initWithRootViewController(this);
+        }
+        return this._popoverPresentationController;
     };
     MIOViewController.prototype.viewDidLoad = function () { };
     MIOViewController.prototype.viewWillAppear = function () { };

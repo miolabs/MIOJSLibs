@@ -10,7 +10,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var MIOStepControlButton = (function (_super) {
     __extends(MIOStepControlButton, _super);
     function MIOStepControlButton() {
-        _super.call(this);
+        _super.apply(this, arguments);
         this.percentage = 0;
         this.width = 0;
         this.title = null;

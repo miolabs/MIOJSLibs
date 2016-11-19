@@ -18,16 +18,8 @@ var MIOCalendarCell = (function (_super) {
         this.index = 0;
         this.parent = null;
     }
-    MIOCalendarCell.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOCalendarCell.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
-        this._setupLayer();
-    };
-    MIOCalendarCell.prototype._setupLayer = function () {
-        this.layer.style.position = "absolute";
+    MIOCalendarCell.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         var instance = this;
         this.layer.onclick = function () {
             if (instance.parent.delegate != null)

@@ -55,13 +55,7 @@ class MIOTableViewCell extends MIOView
     init()
     {
         super.init();
-        this._setupLayer();
-    }
-
-    initWithLayer(layer, options?)
-    {
-        super.initWithLayer(layer, options);
-        this._setupLayer();
+        this._setup();
     }
 
     initWithStyle(style)
@@ -79,10 +73,10 @@ class MIOTableViewCell extends MIOView
             this.addSubview(this.textLabel);
         }
 
-        this._setupLayer();
+        this._setup();
     }
 
-    _setupLayer()
+    private _setup()
     {
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
@@ -99,8 +93,6 @@ class MIOTableViewCell extends MIOView
                 instance._onDblClickFn.call(instance._target, instance);
         };
     }
-
-    awakeFromHTML() {}
 
     setAccessoryType(type)
     {
@@ -210,9 +202,9 @@ class MIOTableView extends MIOView
     private _needReloadData = false;
     private cellPrototypes = {};
 
-    initWithLayer(layer, options?)
+    protected _customizeLayerSetup()
     {
-        super.initWithLayer(layer, options);
+        super._customizeLayerSetup();
 
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0)
@@ -328,7 +320,7 @@ class MIOTableView extends MIOView
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
-            cell.addSubLayersFromLayer(newLayer);
+            cell.addSubLayer(newLayer);
             cell.awakeFromHTML();
         }
         else {

@@ -18,9 +18,9 @@ class MIOTabBarItem extends MIOView
 
     isSelected = false;
 
-    initWithLayer(layer)
+    protected _customizeLayerSetup(layer)
     {
-        super.initWithLayer(layer);
+        super._customizeLayerSetup();
 
         if (layer.childNodes.length < 2)
             throw new Error("Tab bar item broken!");
@@ -68,16 +68,15 @@ class MIOTabBar extends MIOView
     items = [];
     selectedTabBarItemIndex = -1;
 
-    initWithLayer(layer)
+    protected _customizeLayerSetup()
     {
-        super.initWithLayer(layer);
+        super._customizeLayerSetup();
 
         // TODO: change to buttons
-
         // Check for tab items
-        for (var index = 0; index < layer.childNodes.length; index++)
+        for (var index = 0; index < this.layer.childNodes.length; index++)
         {
-            var tabItemLayer = layer.childNodes[index];
+            var tabItemLayer = this.layer.childNodes[index];
             if (tabItemLayer.tagName == "DIV")
             {
                 var ti = new MIOTabBarItem();

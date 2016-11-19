@@ -12,20 +12,10 @@ class MIOTextArea extends MIOControl
     textChangeTarget = null;
     textChangeAction = null;
 
-    init()
+    protected _customizeLayerSetup()
     {
-        super.init();
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    initWithLayer(layer)
-    {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
         this.textareaLayer = document.createElement("textarea");
         this.textareaLayer.style.width = "98%";
         this.textareaLayer.style.height = "90%";

@@ -11,39 +11,39 @@ class MIOPopUpButton extends MIOButton
     private _menu = null;
     private _isVisible = false;
 
-    initWithLayer(layer, options?)
+    protected  _customizeLayerSetup()
     {
-        super.initWithLayer(layer, options);
+        super._customizeLayerSetup();
 
         // Check if we have a menu
         /*if (this.layer.childNodes.length > 0)
-        {
-            // Get the first div element. We don't support more than one element
-            var index = 0;
-            var menuLayer = this.layer.childNodes[index];
-            while(menuLayer.tagName != "DIV")
-            {
-                index++;
-                if (index >= this.layer.childNodes.length) {
-                    menuLayer = null;
-                    break;
-                }
+         {
+         // Get the first div element. We don't support more than one element
+         var index = 0;
+         var menuLayer = this.layer.childNodes[index];
+         while(menuLayer.tagName != "DIV")
+         {
+         index++;
+         if (index >= this.layer.childNodes.length) {
+         menuLayer = null;
+         break;
+         }
 
-                menuLayer = this.layer.childNodes[index];
-            }
+         menuLayer = this.layer.childNodes[index];
+         }
 
-            if (menuLayer != null) {
-                var layerID = menuLayer.getAttribute("id");
-                this._menu = new MIOMenu(layerID);
-                this._menu.initWithLayer(menuLayer);
+         if (menuLayer != null) {
+         var layerID = menuLayer.getAttribute("id");
+         this._menu = new MIOMenu(layerID);
+         this._menu.initWithLayer(menuLayer);
 
-                var x = 10;
-                var y = this.getHeight();
-                this._menu.setX(x);
-                this._menu.setY(y);
+         var x = 10;
+         var y = this.getHeight();
+         this._menu.setX(x);
+         this._menu.setY(y);
 
-                this._linkViewToSubview(this._menu);
-            }*/
+         this._linkViewToSubview(this._menu);
+         }*/
 
         // Set action
         this.setAction(this, function() {

@@ -11,20 +11,10 @@ class MIOComboBox extends MIOControl
     target = null;
     action = null;
 
-    init()
+    protected _customizeLayerSetup()
     {
-        super.init();
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    initWithLayer(layer)
-    {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
         this._selectLayer = MIOLayerGetFirstElementWithTag(this.layer, "SELECT");
         if (this._selectLayer == null) {
             this._selectLayer = document.createElement("select");

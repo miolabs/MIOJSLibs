@@ -158,6 +158,7 @@ var MIOPredicate = (function (_super) {
                     else
                         token += ch2;
                 }
+                lastCharIsSpace = false;
             }
             else {
                 token += ch;

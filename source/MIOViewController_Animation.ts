@@ -10,7 +10,8 @@ enum MIOPresentationStyle
     CurrentContext,
     PageSheet,
     FormSheet,
-    FullScreen
+    FullScreen,
+    ModalPresentationPopover
 }
 
 enum MIOPresentationType
@@ -101,7 +102,9 @@ function AnimationTypeForViewController(vc, reverse)
             break;
 
         case MIOPresentationType.Modal:
-            if (MIOLibIsMobile())
+            if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover)
+                type = (reverse == false ? MIOAnimationType.FadeIn : MIOAnimationType.FadeOut);
+            else if (MIOLibIsMobile())
                 type = (reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
             else
                 type = (reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
@@ -185,6 +188,17 @@ function FrameWithStyleForViewControllerInView(view, vc)
         x = (view.getWidth() - w) / 2;
         y = (view.getHeight() - h) / 2;
     }
+    else if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover)
+    {
+        w = vc.preferredContentSize.width;
+        h = vc.preferredContentSize.height;
+        var v = vc.popoverPresentationController().sourceView;
+        var f = vc.popoverPresentationController().sourceRect;
+        x = v.layer.getBoundingClientRect().left + f.size.width + 10;
+        if ((x + w) > window.innerWidth)
+            x = v.layer.getBoundingClientRect().left - w - 10;
+        y = (window.innerHeight - h) / 2;
+    }
     else
     {
         w = view.getWidth();
@@ -194,3 +208,4 @@ function FrameWithStyleForViewControllerInView(view, vc)
     vc.contentSize = new MIOSize(w, h);
     return MIOFrame.frameWithRect(x, y, w, h);
 }
+

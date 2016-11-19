@@ -45,11 +45,7 @@ var MIOTableViewCell = (function (_super) {
     }
     MIOTableViewCell.prototype.init = function () {
         _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOTableViewCell.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        this._setupLayer();
+        this._setup();
     };
     MIOTableViewCell.prototype.initWithStyle = function (style) {
         _super.prototype.init.call(this);
@@ -62,9 +58,9 @@ var MIOTableViewCell = (function (_super) {
             this.textLabel.layer.style.bottom = "10px";
             this.addSubview(this.textLabel);
         }
-        this._setupLayer();
+        this._setup();
     };
-    MIOTableViewCell.prototype._setupLayer = function () {
+    MIOTableViewCell.prototype._setup = function () {
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
         this.layer.onclick = function () {
@@ -76,7 +72,6 @@ var MIOTableViewCell = (function (_super) {
                 instance._onDblClickFn.call(instance._target, instance);
         };
     };
-    MIOTableViewCell.prototype.awakeFromHTML = function () { };
     MIOTableViewCell.prototype.setAccessoryType = function (type) {
         if (type == this.accessoryType)
             return;
@@ -161,8 +156,8 @@ var MIOTableView = (function (_super) {
         this._needReloadData = false;
         this.cellPrototypes = {};
     }
-    MIOTableView.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
+    MIOTableView.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
             for (var index = 0; index < this.layer.childNodes.length; index++) {
@@ -248,7 +243,7 @@ var MIOTableView = (function (_super) {
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
-            cell.addSubLayersFromLayer(newLayer);
+            cell.addSubLayer(newLayer);
             cell.awakeFromHTML();
         }
         else {

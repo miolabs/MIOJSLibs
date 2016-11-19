@@ -11,13 +11,14 @@ class MIOPageControl extends MIOControl {
     private _items = [];
     private _currentPage = -1;
 
-    initWithLayer(layer, options?) {
-        super.initWithLayer(layer, options);
+    protected _customizeLayerSetup() {
+
+        super._customizeLayerSetup();
 
         // Check for page items
-        for (var index = 0; index < layer.childNodes.length; index++)
+        for (var index = 0; index < this.layer.childNodes.length; index++)
         {
-            var itemLayer = layer.childNodes[index];
+            var itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV")
             {
                 var i = new MIOButton();

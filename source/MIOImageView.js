@@ -19,25 +19,21 @@ function MIOImageViewFromElementID(view, elementID) {
 var MIOImageView = (function (_super) {
     __extends(MIOImageView, _super);
     function MIOImageView() {
-        _super.call(this);
-        this.imageLayer = null;
+        _super.apply(this, arguments);
+        this._imageLayer = null;
     }
-    MIOImageView.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOImageView.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
-        this._setupLayer();
-    };
-    MIOImageView.prototype._setupLayer = function () {
-        this.imageLayer = document.createElement("img");
-        this.imageLayer.style.width = "100%";
-        this.imageLayer.style.height = "100%";
-        this.layer.appendChild(this.imageLayer);
+    MIOImageView.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
+        this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "IMG");
+        if (this._imageLayer == null) {
+            this._imageLayer = document.createElement("img");
+            this._imageLayer.style.width = "100%";
+            this._imageLayer.style.height = "100%";
+            this.layer.appendChild(this._imageLayer);
+        }
     };
     MIOImageView.prototype.setImage = function (imageURL) {
-        this.imageLayer.setAttribute("src", imageURL);
+        this._imageLayer.setAttribute("src", imageURL);
     };
     return MIOImageView;
 }(MIOView));

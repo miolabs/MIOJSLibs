@@ -10,13 +10,15 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOViewController.ts" />
 var MIOWindow = (function (_super) {
     __extends(MIOWindow, _super);
-    function MIOWindow() {
-        _super.apply(this, arguments);
+    function MIOWindow(layerID) {
+        _super.call(this, layerID);
         this.rootViewController = null;
+        if (layerID == null)
+            this.layerID = "window";
     }
     MIOWindow.prototype.init = function () {
         this.layer = document.createElement("div");
-        this.layer.setAttribute("id", "window");
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.left = "0px";
         this.layer.style.top = "0px";
@@ -29,6 +31,9 @@ var MIOWindow = (function (_super) {
         this.init();
         this.rootViewController = vc;
         this.addSubview(vc.view);
+    };
+    MIOWindow.prototype.removeFromSuperview = function () {
+        document.body.removeChild(this.layer);
     };
     return MIOWindow;
 }(MIOView));

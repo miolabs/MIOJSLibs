@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOCore.ts" />
+/// <reference path="MIOCoreTypes.ts" />
 /// <reference path="MIOObject.ts" />
 var _MIOViewNextLayerID = 0;
 function MIOViewGetNextLayerID(prefix) {
@@ -103,27 +104,30 @@ var MIOView = (function (_super) {
         this.layer.style.height = "100%";
         this.layer.style.background = "rgb(255, 255, 255)";
     };
-    // initWithFrame(x, y, width, height)
-    // {
-    //     this.layer = document.createElement("div");
-    //     this.layer.setAttribute("id", this.layerID);
-    //     this.layer.style.position = "absolute";
-    //     this.layer.setAttribute("id", this.layerID);
-    //     this.layer.style.left = x + "px";
-    //     this.layer.style.top = y + "px";
-    //     this.layer.style.width = width + "px";
-    //     this.layer.style.height = height + "px";
-    // }
+    MIOView.prototype.initWithFrame = function (frame) {
+        this.layer = document.createElement("div");
+        this.layer.setAttribute("id", this.layerID);
+        this.layer.style.position = "absolute";
+        this.layer.style.left = frame.origin.x + "px";
+        this.layer.style.top = frame.origin.y + "px";
+        this.layer.style.width = frame.size.width + "px";
+        this.layer.style.height = frame.size.height + "px";
+    };
     MIOView.prototype.initWithLayer = function (layer, options) {
         this.layer = layer;
         this.layerOptions = options;
+        this._customizeLayerSetup();
+    };
+    MIOView.prototype.awakeFromHTML = function () {
+    };
+    MIOView.prototype._customizeLayerSetup = function () {
     };
     MIOView.prototype.setParent = function (view) {
         this.willChangeValue("parent");
         this.parent = view;
         this.didChangeValue("parent");
     };
-    MIOView.prototype.addSubLayersFromLayer = function (layer) {
+    MIOView.prototype.addSubLayer = function (layer) {
         this.layer.innerHTML = layer.innerHTML;
     };
     MIOView.prototype.addSubview = function (view) {
@@ -225,21 +229,24 @@ var MIOView = (function (_super) {
         this.layer.style.left = x + "px";
     };
     MIOView.prototype.getX = function () {
-        var x = this.layer.clientX;
+        //var x = this.layer.clientX;
+        var x = this._getIntValueFromCSSProperty("left");
         return x;
     };
     MIOView.prototype.setY = function (y) {
         this.layer.style.top = y + "px";
     };
     MIOView.prototype.getY = function () {
-        var y = this.layer.clientY;
+        //var y = this.layer.clientY;
+        var y = this._getIntValueFromCSSProperty("top");
         return y;
     };
     MIOView.prototype.setWidth = function (w) {
         this.layer.style.width = w + "px";
     };
     MIOView.prototype.getWidth = function () {
-        var w = this.layer.clientWidth;
+        //var w = this.layer.clientWidth;
+        var w = this._getIntValueFromCSSProperty("width");
         return w;
     };
     MIOView.prototype.setHeight = function (h) {
@@ -248,7 +255,8 @@ var MIOView = (function (_super) {
         this.didChangeValue("height");
     };
     MIOView.prototype.getHeight = function () {
-        var h = this.layer.clientHeight;
+        //var h = this.layer.clientHeight;
+        var h = this._getIntValueFromCSSProperty("height");
         return h;
     };
     MIOView.prototype.setFrameComponents = function (x, y, w, h) {
@@ -259,6 +267,32 @@ var MIOView = (function (_super) {
     };
     MIOView.prototype.setFrame = function (frame) {
         this.setFrameComponents(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+    };
+    Object.defineProperty(MIOView.prototype, "frame", {
+        get: function () {
+            return MIOFrame.frameWithRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        },
+        enumerable: true,
+        configurable: true
+    });
+    //
+    // CSS Subsystem
+    //
+    MIOView.prototype._getValueFromCSSProperty = function (property) {
+        var v = window.getComputedStyle(this.layer, null).getPropertyValue(property);
+        return v;
+    };
+    MIOView.prototype._getIntValueFromCSSProperty = function (property) {
+        var v = this._getValueFromCSSProperty(property);
+        var r = v.endsWith("px");
+        if (r == true)
+            v = v.substring(0, v.length - 2);
+        else {
+            var r2 = v.endsWith("%");
+            if (r2 == true)
+                v = v.substring(0, v.length - 1);
+        }
+        return parseInt(v);
     };
     return MIOView;
 }(MIOObject));

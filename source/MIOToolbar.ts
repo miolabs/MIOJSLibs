@@ -19,20 +19,10 @@ class MIOToolbar extends MIOView
 {
     buttons = [];
 
-    init()
+    protected _customizeLayerSetup()
     {
-        super.init();
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    initWithLayer(layer, options?)
-    {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
         // Check if we have sub nodes
         if (this.layer.childNodes.length > 0)
         {

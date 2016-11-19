@@ -11,16 +11,12 @@ class MIOScrollView extends MIOView
 
     private _lastOffsetX = 0;
 
-    initWithLayer(layer, options?)
+    protected _customizeLayerSetup()
     {
-        super.initWithLayer(layer, options);
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    private _setupLayer()
-    {
         var instance = this;
-        this.layer.onscroll = function () {
+        this.layer.onscroll = function (e) {
 
             instance._layerDidScroll.call(instance);
         };
@@ -57,5 +53,11 @@ class MIOScrollView extends MIOView
     {
         if (this.delegate != null && typeof this.delegate.scrollViewDidScroll === "function")
             this.delegate.scrollViewDidScroll.call(this.delegate, this);
+    }
+
+    get contentOffset()
+    {
+        var p = new MIOPoint(this.layer.scrollLeft, this.layer.scrollTop);
+        return p;
     }
 }

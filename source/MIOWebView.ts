@@ -11,23 +11,24 @@ class MIOWebView extends MIOView
     init()
     {
         super.init();
-        this._setupLayer();
-    }
 
-    initWithLayer(layer, options?)
-    {
-        super.initWithLayer(layer, options);
-        this._setupLayer();
-    }
-
-    private _setupLayer()
-    {
         this._iframeLayer = document.createElement("iframe");
         this._iframeLayer.setAttribute("scrolling", "auto");
         this._iframeLayer.setAttribute("frameborder", "0");
         this.layer.appendChild(this._iframeLayer);
     }
 
+    initWithLayer(layer, options?)
+    {
+        super.initWithLayer(layer, options);
+
+        this._iframeLayer = MIOLayerGetFirstElementWithTag(this.layer, "IFRAME");
+        if (this._iframeLayer == null) {
+            this._iframeLayer.setAttribute("scrolling", "auto");
+            this._iframeLayer.setAttribute("frameborder", "0");
+            this.layer.appendChild(this._iframeLayer);
+        }
+    }
 
     setURL(url)
     {

@@ -29,8 +29,14 @@ function MIOCoreLoadScript(url)
     head.appendChild(script);
 }
 
+var _stylesCache = {};
+
 function MIOCoreLoadStyle(url)
 {
+    // Prevent loading the same css files
+    if (_stylesCache[url] != null) return;
+    _stylesCache[url] = true;
+
     var ss = document.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";

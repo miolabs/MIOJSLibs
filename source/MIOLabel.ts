@@ -27,17 +27,13 @@ class MIOLabel extends MIOView
     init()
     {
         super.init();
-        this._setupLayer();
+        this.layer.style.background = "";
     }
 
-    initWithLayer(layer)
+    protected _customizeLayerSetup()
     {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    _setupLayer()
-    {
         this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
         if (this._textLayer == null)
         {

@@ -15,17 +15,19 @@ var MIOWebView = (function (_super) {
     }
     MIOWebView.prototype.init = function () {
         _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOWebView.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        this._setupLayer();
-    };
-    MIOWebView.prototype._setupLayer = function () {
         this._iframeLayer = document.createElement("iframe");
         this._iframeLayer.setAttribute("scrolling", "auto");
         this._iframeLayer.setAttribute("frameborder", "0");
         this.layer.appendChild(this._iframeLayer);
+    };
+    MIOWebView.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
+        this._iframeLayer = MIOLayerGetFirstElementWithTag(this.layer, "IFRAME");
+        if (this._iframeLayer == null) {
+            this._iframeLayer.setAttribute("scrolling", "auto");
+            this._iframeLayer.setAttribute("frameborder", "0");
+            this.layer.appendChild(this._iframeLayer);
+        }
     };
     MIOWebView.prototype.setURL = function (url) {
         this._iframeLayer.setAttribute("src", url);

@@ -26,13 +26,10 @@ var MIOLabel = (function (_super) {
     }
     MIOLabel.prototype.init = function () {
         _super.prototype.init.call(this);
-        this._setupLayer();
+        this.layer.style.background = "";
     };
-    MIOLabel.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
-        this._setupLayer();
-    };
-    MIOLabel.prototype._setupLayer = function () {
+    MIOLabel.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
         if (this._textLayer == null) {
             this.layer.innerHTML = "";

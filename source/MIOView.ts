@@ -3,6 +3,7 @@
  */
 
     /// <reference path="MIOCore.ts" />
+    /// <reference path="MIOCoreTypes.ts" />
     /// <reference path="MIOObject.ts" />
 
 var _MIOViewNextLayerID = 0;
@@ -140,22 +141,32 @@ class MIOView extends MIOObject
         this.layer.style.background = "rgb(255, 255, 255)";
     }
 
-    // initWithFrame(x, y, width, height)
-    // {
-    //     this.layer = document.createElement("div");
-    //     this.layer.setAttribute("id", this.layerID);
-    //     this.layer.style.position = "absolute";
-    //     this.layer.setAttribute("id", this.layerID);
-    //     this.layer.style.left = x + "px";
-    //     this.layer.style.top = y + "px";
-    //     this.layer.style.width = width + "px";
-    //     this.layer.style.height = height + "px";
-    // }
+    initWithFrame(frame)
+    {
+        this.layer = document.createElement("div");
+        this.layer.setAttribute("id", this.layerID);
+        this.layer.style.position = "absolute";
+        this.layer.style.left = frame.origin.x + "px";
+        this.layer.style.top = frame.origin.y + "px";
+        this.layer.style.width = frame.size.width + "px";
+        this.layer.style.height = frame.size.height + "px";
+    }
 
     initWithLayer(layer, options?)
     {
         this.layer = layer;
         this.layerOptions = options;
+        this._customizeLayerSetup();
+    }
+
+    awakeFromHTML()
+    {
+
+    }
+
+    protected _customizeLayerSetup()
+    {
+
     }
 
     setParent(view)
@@ -165,7 +176,7 @@ class MIOView extends MIOObject
         this.didChangeValue("parent");
     }
 
-    addSubLayersFromLayer(layer)
+    addSubLayer(layer)
     {
         this.layer.innerHTML = layer.innerHTML;
     }
@@ -322,7 +333,8 @@ class MIOView extends MIOObject
 
     getX()
     {
-        var x = this.layer.clientX;
+        //var x = this.layer.clientX;
+        var x = this._getIntValueFromCSSProperty("left");
         return x;
     }
 
@@ -333,7 +345,8 @@ class MIOView extends MIOObject
 
     getY()
     {
-        var y = this.layer.clientY;
+        //var y = this.layer.clientY;
+        var y = this._getIntValueFromCSSProperty("top");
         return y;
     }
 
@@ -344,7 +357,8 @@ class MIOView extends MIOObject
 
     getWidth()
     {
-        var w = this.layer.clientWidth;
+        //var w = this.layer.clientWidth;
+        var w = this._getIntValueFromCSSProperty("width");
         return w;
     }
 
@@ -357,7 +371,8 @@ class MIOView extends MIOObject
 
     getHeight()
     {
-        var h = this.layer.clientHeight;
+        //var h = this.layer.clientHeight;
+        var h = this._getIntValueFromCSSProperty("height");
         return h;
     }
 
@@ -373,5 +388,35 @@ class MIOView extends MIOObject
     {
         this.setFrameComponents(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
     }
+
+    public get frame()
+    {
+        return MIOFrame.frameWithRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    }
+
+    //
+    // CSS Subsystem
+    //
+
+    protected _getValueFromCSSProperty(property)
+    {
+        var v = window.getComputedStyle(this.layer, null).getPropertyValue(property);
+        return v;
+    }
+
+    protected _getIntValueFromCSSProperty(property)
+    {
+        var v = this._getValueFromCSSProperty(property);
+        var r = v.endsWith("px");
+        if (r == true) v = v.substring(0, v.length - 2);
+        else
+        {
+            var r2 = v.endsWith("%");
+            if (r2 == true) v = v.substring(0, v.length - 1);
+        }
+
+        return parseInt(v);
+    }
+
 }
 

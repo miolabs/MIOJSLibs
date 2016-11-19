@@ -15,11 +15,11 @@ var MIOSegmentedControl = (function (_super) {
         this.segmentedItems = [];
         this.selectedSegmentedIndex = -1;
     }
-    MIOSegmentedControl.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
+    MIOSegmentedControl.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         // Check for segmented items
-        for (var index = 0; index < layer.childNodes.length; index++) {
-            var itemLayer = layer.childNodes[index];
+        for (var index = 0; index < this.layer.childNodes.length; index++) {
+            var itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV") {
                 if (itemLayer.getAttribute("data-class") != "MIOButton")
                     continue;

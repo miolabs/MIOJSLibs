@@ -15,11 +15,11 @@ var MIOPageControl = (function (_super) {
         this._items = [];
         this._currentPage = -1;
     }
-    MIOPageControl.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
+    MIOPageControl.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         // Check for page items
-        for (var index = 0; index < layer.childNodes.length; index++) {
-            var itemLayer = layer.childNodes[index];
+        for (var index = 0; index < this.layer.childNodes.length; index++) {
+            var itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV") {
                 var i = new MIOButton();
                 i.initWithLayer(itemLayer);

@@ -194,6 +194,7 @@ class MIOPredicate extends MIOObject
                     else
                         token += ch2;
                 }
+                lastCharIsSpace = false;
             }
             else
             {

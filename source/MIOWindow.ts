@@ -9,10 +9,18 @@ class MIOWindow extends MIOView
 {
     rootViewController = null;
 
+    constructor(layerID?)
+    {
+        super(layerID);
+
+        if (layerID == null)
+            this.layerID = "window";
+    }
+
     init()
     {
         this.layer = document.createElement("div");
-        this.layer.setAttribute("id", "window");
+        this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.left = "0px";
         this.layer.style.top = "0px";
@@ -29,6 +37,11 @@ class MIOWindow extends MIOView
 
         this.rootViewController = vc;
         this.addSubview(vc.view);
+    }
+
+    removeFromSuperview()
+    {
+        document.body.removeChild(this.layer);
     }
 }
 

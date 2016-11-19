@@ -12,11 +12,6 @@ class MIOStepControlButton extends MIOButton
     index = 0;
     selectedButtonIndex = -1;
 
-    constructor()
-    {
-        super();
-    }
-
     initWithTitle(percentage, title, index)
     {
         super.init();

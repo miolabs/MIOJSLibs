@@ -60,7 +60,8 @@ class MIOBundle
 
         if (this._layoutCache[url] != null)
         {
-            var layout = this._layoutCache[url];
+            var item = this._layoutCache[url];
+            var layout = item["Layer"];
             completion.call(target, layout);
         }
         else
@@ -72,7 +73,7 @@ class MIOBundle
                 url2 = url2.substr(0, url2.lastIndexOf('/'));
             }
             url2 = url2 + "/" + url;
-            var item = {"URL": url2, "LayerID": layerID, "Target" : target, "Completion" : completion};
+            var item = {"Key": url, "URL": url2, "LayerID": layerID, "Target" : target, "Completion" : completion};
             this._layoutQueue.push(item);
 
             this.checkQueue();
@@ -105,8 +106,8 @@ class MIOBundle
 
         item["Layer"] = layer;
 
-        var url = item["URL"];
-        this._layoutCache[url] = item;
+        var key = item["Key"];
+        this._layoutCache[key] = item;
 
         var target = item["Target"];
         var completion = item["Completion"];

@@ -15,13 +15,10 @@ var MIOScrollView = (function (_super) {
         this.delegate = null;
         this._lastOffsetX = 0;
     }
-    MIOScrollView.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        this._setupLayer();
-    };
-    MIOScrollView.prototype._setupLayer = function () {
+    MIOScrollView.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         var instance = this;
-        this.layer.onscroll = function () {
+        this.layer.onscroll = function (e) {
             instance._layerDidScroll.call(instance);
         };
         this.layer.onwheel = function () {
@@ -52,6 +49,14 @@ var MIOScrollView = (function (_super) {
         if (this.delegate != null && typeof this.delegate.scrollViewDidScroll === "function")
             this.delegate.scrollViewDidScroll.call(this.delegate, this);
     };
+    Object.defineProperty(MIOScrollView.prototype, "contentOffset", {
+        get: function () {
+            var p = new MIOPoint(this.layer.scrollLeft, this.layer.scrollTop);
+            return p;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return MIOScrollView;
 }(MIOView));
 //# sourceMappingURL=MIOScrollView.js.map

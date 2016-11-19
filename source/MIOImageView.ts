@@ -19,35 +19,23 @@ function MIOImageViewFromElementID(view, elementID)
 
 class MIOImageView extends MIOView
 {
-    imageLayer = null;
+    private _imageLayer = null;
 
-    constructor()
+    protected _customizeLayerSetup()
     {
-        super();
-    }
+        super._customizeLayerSetup();
 
-    init()
-    {
-        super.init();
-        this._setupLayer();
-    }
-
-    initWithLayer(layer)
-    {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
-        this.imageLayer = document.createElement("img");
-        this.imageLayer.style.width = "100%";
-        this.imageLayer.style.height = "100%";
-        this.layer.appendChild(this.imageLayer);
+        this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "IMG");
+        if (this._imageLayer == null) {
+            this._imageLayer = document.createElement("img");
+            this._imageLayer.style.width = "100%";
+            this._imageLayer.style.height = "100%";
+            this.layer.appendChild(this._imageLayer);
+        }
     }
 
     setImage(imageURL)
     {
-        this.imageLayer.setAttribute("src", imageURL);
+        this._imageLayer.setAttribute("src", imageURL);
     }
 }

@@ -19,8 +19,8 @@ var MIOTabBarItem = (function (_super) {
         this._imageLayer = null;
         this.isSelected = false;
     }
-    MIOTabBarItem.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
+    MIOTabBarItem.prototype._customizeLayerSetup = function (layer) {
+        _super.prototype._customizeLayerSetup.call(this);
         if (layer.childNodes.length < 2)
             throw new Error("Tab bar item broken!");
         var count = 0;
@@ -64,12 +64,12 @@ var MIOTabBar = (function (_super) {
         this.items = [];
         this.selectedTabBarItemIndex = -1;
     }
-    MIOTabBar.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
+    MIOTabBar.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         // TODO: change to buttons
         // Check for tab items
-        for (var index = 0; index < layer.childNodes.length; index++) {
-            var tabItemLayer = layer.childNodes[index];
+        for (var index = 0; index < this.layer.childNodes.length; index++) {
+            var tabItemLayer = this.layer.childNodes[index];
             if (tabItemLayer.tagName == "DIV") {
                 var ti = new MIOTabBarItem();
                 ti.initWithLayer(tabItemLayer);

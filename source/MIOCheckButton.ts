@@ -23,20 +23,10 @@ class MIOCheckButton extends MIOControl
     action = null;
     on = false; //Off
 
-    init()
+    protected _customizeLayerSetup()
     {
-        super.init();
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    initWithLayer(layer)
-    {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
         this.layer.classList.add("check_button");
         this.layer.classList.add("check_button_state_off");
 

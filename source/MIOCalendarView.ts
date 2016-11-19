@@ -14,21 +14,10 @@ class MIOCalendarCell extends MIOView
 
     parent = null;
 
-    init()
+    protected _customizeLayerSetup()
     {
-        super.init();
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    initWithLayer(layer)
-    {
-        super.initWithLayer(layer);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
-        this.layer.style.position = "absolute";
         var instance = this;
         this.layer.onclick = function()
         {

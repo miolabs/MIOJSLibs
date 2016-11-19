@@ -9,6 +9,7 @@ var MIOPresentationStyle;
     MIOPresentationStyle[MIOPresentationStyle["PageSheet"] = 1] = "PageSheet";
     MIOPresentationStyle[MIOPresentationStyle["FormSheet"] = 2] = "FormSheet";
     MIOPresentationStyle[MIOPresentationStyle["FullScreen"] = 3] = "FullScreen";
+    MIOPresentationStyle[MIOPresentationStyle["ModalPresentationPopover"] = 4] = "ModalPresentationPopover";
 })(MIOPresentationStyle || (MIOPresentationStyle = {}));
 var MIOPresentationType;
 (function (MIOPresentationType) {
@@ -78,7 +79,9 @@ function AnimationTypeForViewController(vc, reverse) {
             type = (reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
             break;
         case MIOPresentationType.Modal:
-            if (MIOLibIsMobile())
+            if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover)
+                type = (reverse == false ? MIOAnimationType.FadeIn : MIOAnimationType.FadeOut);
+            else if (MIOLibIsMobile())
                 type = (reverse == false ? MIOAnimationType.SlideInUp : MIOAnimationType.SlideOutDown);
             else
                 type = (reverse == false ? MIOAnimationType.BeginSheet : MIOAnimationType.EndSheet);
@@ -140,6 +143,16 @@ function FrameWithStyleForViewControllerInView(view, vc) {
         x = (view.getWidth() - w) / 2;
         y = (view.getHeight() - h) / 2;
     }
+    else if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover) {
+        w = vc.preferredContentSize.width;
+        h = vc.preferredContentSize.height;
+        var v = vc.popoverPresentationController().sourceView;
+        var f = vc.popoverPresentationController().sourceRect;
+        x = v.layer.getBoundingClientRect().left + f.size.width + 10;
+        if ((x + w) > window.innerWidth)
+            x = v.layer.getBoundingClientRect().left - w - 10;
+        y = (window.innerHeight - h) / 2;
+    }
     else {
         w = view.getWidth();
         h = view.getHeight();
@@ -147,4 +160,4 @@ function FrameWithStyleForViewControllerInView(view, vc) {
     vc.contentSize = new MIOSize(w, h);
     return MIOFrame.frameWithRect(x, y, w, h);
 }
-//# sourceMappingURL=MIOViewController+Animation.js.map
+//# sourceMappingURL=MIOViewController_Animation.js.map

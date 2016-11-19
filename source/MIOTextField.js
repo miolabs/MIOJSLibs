@@ -29,72 +29,65 @@ var MIOTextField = (function (_super) {
     function MIOTextField() {
         _super.apply(this, arguments);
         this.placeHolder = null;
-        this.inputLayer = null;
+        this._inputLayer = null;
         this.type = MIOTextFieldType.NormalType;
         this.textChangeTarget = null;
         this.textChangeAction = null;
         this.enterPressTarget = null;
         this.enterPressAction = null;
     }
-    MIOTextField.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOTextField.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        this._setupLayer();
-    };
-    MIOTextField.prototype._setupLayer = function () {
-        this.inputLayer = MIOLayerGetFirstElementWithTag(this.layer, "INPUT");
-        if (this.inputLayer == null) {
-            this.inputLayer = document.createElement("input");
+    MIOTextField.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
+        this._inputLayer = MIOLayerGetFirstElementWithTag(this.layer, "INPUT");
+        if (this._inputLayer == null) {
+            this._inputLayer = document.createElement("input");
             if (this.type == MIOTextFieldType.SearchType) {
-                this.inputLayer.style.marginLeft = "10px";
-                this.inputLayer.style.marginRight = "10px";
+                this._inputLayer.style.marginLeft = "10px";
+                this._inputLayer.style.marginRight = "10px";
             }
             else {
-                this.inputLayer.style.marginLeft = "5px";
-                this.inputLayer.style.marginRight = "5px";
+                this._inputLayer.style.marginLeft = "5px";
+                this._inputLayer.style.marginRight = "5px";
             }
-            this.inputLayer.style.border = "0px";
-            this.inputLayer.style.backgroundColor = "transparent";
-            this.inputLayer.style.width = "100%";
-            this.inputLayer.style.height = "100%";
-            this.inputLayer.style.color = "inherit";
-            this.inputLayer.style.fontSize = "inherit";
-            this.inputLayer.style.fontFamily = "inherit";
-            this.inputLayer.style.outline = "none";
-            this.layer.appendChild(this.inputLayer);
+            this._inputLayer.style.border = "0px";
+            this._inputLayer.style.backgroundColor = "transparent";
+            this._inputLayer.style.width = "100%";
+            this._inputLayer.style.height = "100%";
+            this._inputLayer.style.color = "inherit";
+            this._inputLayer.style.fontSize = "inherit";
+            this._inputLayer.style.fontFamily = "inherit";
+            this._inputLayer.style.outline = "none";
+            this.layer.appendChild(this._inputLayer);
         }
         var placeholderKey = this.layer.getAttribute("data-placeholder");
         if (placeholderKey != null)
-            this.inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
+            this._inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
     };
     MIOTextField.prototype.layout = function () {
         _super.prototype.layout.call(this);
         var w = this.getWidth();
         var h = this.getHeight();
-        this.inputLayer.style.marginLeft = "4px";
-        this.inputLayer.style.width = (w - 8) + "px";
-        this.inputLayer.style.marginTop = "4px";
-        this.inputLayer.style.height = (h - 8) + "px";
+        this._inputLayer.style.marginLeft = "4px";
+        this._inputLayer.style.width = (w - 8) + "px";
+        this._inputLayer.style.marginTop = "4px";
+        this._inputLayer.style.height = (h - 8) + "px";
     };
     MIOTextField.prototype.setText = function (text) {
         this.text = text;
     };
     Object.defineProperty(MIOTextField.prototype, "text", {
         get: function () {
-            return this.inputLayer.value;
+            return this._inputLayer.value;
         },
         set: function (text) {
-            this.inputLayer.value = text != null ? text : "";
+            this._inputLayer.value = text != null ? text : "";
         },
         enumerable: true,
         configurable: true
     });
     MIOTextField.prototype.setPlaceholderText = function (text) {
         this.placeHolder = text;
-        this.inputLayer.setAttribute("placeholder", text);
+        this._inputLayer.setAttribute("placeholder", text);
     };
     MIOTextField.prototype.setOnChangeText = function (target, action) {
         this.textChangeTarget = target;
@@ -102,7 +95,7 @@ var MIOTextField = (function (_super) {
         var instance = this;
         this.layer.oninput = function () {
             if (instance.enabled)
-                instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+                instance.textChangeAction.call(target, instance, instance._inputLayer.value);
         };
     };
     MIOTextField.prototype.setOnEnterPress = function (target, action) {
@@ -112,10 +105,25 @@ var MIOTextField = (function (_super) {
         this.layer.onkeyup = function (e) {
             if (instance.enabled) {
                 if (e.keyCode == 13)
-                    instance.enterPressAction.call(target, instance, instance.inputLayer.value);
+                    instance.enterPressAction.call(target, instance, instance._inputLayer.value);
             }
         };
     };
+    MIOTextField.prototype.setTextRGBColor = function (r, g, b) {
+        var value = "rgb(" + r + ", " + g + ", " + b + ")";
+        this._inputLayer.style.color = value;
+    };
+    Object.defineProperty(MIOTextField.prototype, "textColor", {
+        get: function () {
+            var color = this._getValueFromCSSProperty("color");
+            return color;
+        },
+        set: function (color) {
+            this._inputLayer.style.color = color;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return MIOTextField;
 }(MIOControl));
 //# sourceMappingURL=MIOTextField.js.map

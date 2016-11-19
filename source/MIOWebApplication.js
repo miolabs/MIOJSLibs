@@ -1,11 +1,12 @@
 /**
  * Created by godshadow on 11/3/16.
  */
-/// <reference path="MIOLib_debug.ts" />
+/// <reference path="MIOLib.ts" />
 /// <reference path="MIOCore.ts" />
 /// <reference path="MIONotificationCenter.ts" />
 /// <reference path="MIOURLConnection.ts" />
 /// <reference path="MIOViewController.ts" />
+/// <reference path="MIOWindow.ts" />
 var MIOLocalizedStrings = null;
 var MIOWebApplication = (function () {
     function MIOWebApplication() {
@@ -22,6 +23,9 @@ var MIOWebApplication = (function () {
         //private _popUpMenuView = null;
         this._popUpMenu = null;
         this._popUpMenuControl = null;
+        this._popOverWindow = null;
+        this._popOverWindowFirstClick = false;
+        this._windows = [];
         if (MIOWebApplication._sharedInstance) {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
         }
@@ -158,13 +162,46 @@ var MIOWebApplication = (function () {
     MIOWebApplication.prototype.forwardClickEvent = function (e) {
         if (this.ready == false)
             return;
-        if (this._popUpMenu == null)
-            return;
-        var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
-        if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
-            && (e.clientY > controlRect.top && e.clientY < controlRect.bottom))
-            return;
-        this._popUpMenu.hide();
+        if (this._popUpMenu != null) {
+            var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
+            if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
+                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom))
+                this._popUpMenu.hide();
+        }
+        if (this._popOverWindow != null) {
+            // if (this._popOverWindowFirstClick == true) {
+            //     this._popOverWindowFirstClick = false;
+            //     return;
+            // }
+            var controlRect = this._popOverWindow.rootViewController.view.layer.getBoundingClientRect();
+            console.log("x: " + controlRect.left + " mx: " + e.clientX);
+            if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
+                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom)) {
+            }
+            else
+                this.hidePopOverController();
+        }
+    };
+    MIOWebApplication.prototype.showPopOverControllerFromRect = function (vc, frame) {
+        if (this._popOverWindow != null) {
+            this.hidePopOverController();
+        }
+        if (this._popOverWindow == null) {
+            this._popOverWindow = new MIOWindow("popover_window");
+            this._popOverWindow.initWithRootViewController(vc);
+            this._popOverWindow.layer.style.border = "2px solid rgb(170, 170, 170)";
+        }
+        this._popOverWindow.rootViewController.onLoadView(this, function () {
+            this._popOverWindow.rootViewController.viewWillAppear();
+            this._popOverWindow.rootViewController.viewDidAppear();
+        });
+        this._popOverWindowFirstClick = true;
+    };
+    MIOWebApplication.prototype.hidePopOverController = function () {
+        this._popOverWindow.rootViewController.viewWillDisappear();
+        this._popOverWindow.removeFromSuperview();
+        this._popOverWindow.rootViewController.viewDidDisappear();
+        this._popOverWindow = null;
     };
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;

@@ -7,7 +7,9 @@
     /// <reference path="MIOView.ts" />
     /// <reference path="MIOBundle.ts" />
     /// <reference path="MIOCoreTypes.ts" />
-    /// <reference path="MIOViewController+Animation.ts" />
+    /// <reference path="MIOViewController_Animation.ts" />
+    /// <reference path="MIOViewController_PopoverPresentationController.ts" />
+
 
 declare var MIOHTMLParser;
 
@@ -30,6 +32,8 @@ class MIOViewController extends MIOObject
 
     private _childViewControllers = [];
     navigationController = null;
+
+    private _popoverPresentationController = null;
 
     presentationStyle = MIOPresentationStyle.CurrentContext;
     presentationType = MIOPresentationType.Modal;
@@ -97,7 +101,8 @@ class MIOViewController extends MIOObject
 
             this.localizeSubLayers(layer.childNodes);
 
-            this.view.addSubLayersFromLayer(layer);
+            this.view.addSubLayer(layer);
+            this.view.awakeFromHTML();
             this._didLayerDownloaded();
         });
     }
@@ -243,6 +248,9 @@ class MIOViewController extends MIOObject
         c.initWithLayer(layer, options);
         this.view._linkViewToSubview(c);
 
+        if (c instanceof  MIOView)
+            c.awakeFromHTML();
+
         if (c instanceof MIOViewController)
             this.addChildViewController(c);
 
@@ -281,12 +289,19 @@ class MIOViewController extends MIOObject
     presentViewController(vc, animate)
     {
         vc.presentationType = MIOPresentationType.Modal;
-        this.addChildViewController(vc);
 
         var frame = FrameWithStyleForViewControllerInView(this.view, vc);
         vc.view.setFrame(frame);
 
-        this.showViewController(vc, true);
+        if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover)
+        {
+            MIOWebApplication.sharedInstance().showPopOverControllerFromRect(vc, frame);
+        }
+        else
+        {
+            this.addChildViewController(vc);
+            this.showViewController(vc, true);
+        }
     }
 
     showViewController(vc, animate)
@@ -533,6 +548,17 @@ class MIOViewController extends MIOObject
 
         if (target != null && completion != null)
             completion.call(target);
+    }
+
+    popoverPresentationController()
+    {
+        if (this._popoverPresentationController == null)
+        {
+            this._popoverPresentationController = new MIOPopoverPresentationController(this.layerID + "_popovervc");
+            this._popoverPresentationController.initWithRootViewController(this);
+        }
+
+        return this._popoverPresentationController;
     }
 
     viewDidLoad(){}

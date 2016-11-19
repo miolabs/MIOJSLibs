@@ -10,14 +10,14 @@ class MIOSegmentedControl extends MIOControl
     segmentedItems = [];
     selectedSegmentedIndex = -1;
 
-    initWithLayer(layer)
+    protected _customizeLayerSetup()
     {
-        super.initWithLayer(layer);
+        super._customizeLayerSetup();
 
         // Check for segmented items
-        for (var index = 0; index < layer.childNodes.length; index++)
+        for (var index = 0; index < this.layer.childNodes.length; index++)
         {
-            var itemLayer = layer.childNodes[index];
+            var itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV")
             {
                 if (itemLayer.getAttribute("data-class") != "MIOButton")

@@ -28,7 +28,7 @@ enum MIOTextFieldType {
 class MIOTextField extends MIOControl
 {
     placeHolder = null;
-    inputLayer = null;
+    private _inputLayer = null;
     type = MIOTextFieldType.NormalType;
 
     textChangeTarget = null;
@@ -37,49 +37,39 @@ class MIOTextField extends MIOControl
     enterPressTarget = null;
     enterPressAction = null;
 
-    init()
+    protected _customizeLayerSetup()
     {
-        super.init();
-        this._setupLayer();
-    }
+        super._customizeLayerSetup();
 
-    initWithLayer(layer, options?)
-    {
-        super.initWithLayer(layer, options);
-        this._setupLayer();
-    }
-
-    _setupLayer()
-    {
-        this.inputLayer = MIOLayerGetFirstElementWithTag(this.layer, "INPUT");
-        if (this.inputLayer == null)
+        this._inputLayer = MIOLayerGetFirstElementWithTag(this.layer, "INPUT");
+        if (this._inputLayer == null)
         {
-            this.inputLayer = document.createElement("input");
+            this._inputLayer = document.createElement("input");
 
             if (this.type == MIOTextFieldType.SearchType) {
-                this.inputLayer.style.marginLeft = "10px";
-                this.inputLayer.style.marginRight = "10px";
+                this._inputLayer.style.marginLeft = "10px";
+                this._inputLayer.style.marginRight = "10px";
             }
             else {
-                this.inputLayer.style.marginLeft = "5px";
-                this.inputLayer.style.marginRight = "5px";
+                this._inputLayer.style.marginLeft = "5px";
+                this._inputLayer.style.marginRight = "5px";
             }
 
-            this.inputLayer.style.border = "0px";
-            this.inputLayer.style.backgroundColor = "transparent";
-            this.inputLayer.style.width = "100%";
-            this.inputLayer.style.height = "100%";
-            this.inputLayer.style.color = "inherit";
-            this.inputLayer.style.fontSize = "inherit";
-            this.inputLayer.style.fontFamily = "inherit";
-            this.inputLayer.style.outline = "none";
+            this._inputLayer.style.border = "0px";
+            this._inputLayer.style.backgroundColor = "transparent";
+            this._inputLayer.style.width = "100%";
+            this._inputLayer.style.height = "100%";
+            this._inputLayer.style.color = "inherit";
+            this._inputLayer.style.fontSize = "inherit";
+            this._inputLayer.style.fontFamily = "inherit";
+            this._inputLayer.style.outline = "none";
 
-            this.layer.appendChild(this.inputLayer);
+            this.layer.appendChild(this._inputLayer);
         }
 
         var placeholderKey = this.layer.getAttribute("data-placeholder");
         if (placeholderKey != null)
-            this.inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
+            this._inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
     }
 
     layout()
@@ -89,10 +79,10 @@ class MIOTextField extends MIOControl
         var w = this.getWidth();
         var h = this.getHeight();
 
-        this.inputLayer.style.marginLeft = "4px";
-        this.inputLayer.style.width = (w - 8) + "px";
-        this.inputLayer.style.marginTop = "4px";
-        this.inputLayer.style.height = (h - 8) + "px";
+        this._inputLayer.style.marginLeft = "4px";
+        this._inputLayer.style.width = (w - 8) + "px";
+        this._inputLayer.style.marginTop = "4px";
+        this._inputLayer.style.height = (h - 8) + "px";
     }
 
     setText(text)
@@ -102,18 +92,18 @@ class MIOTextField extends MIOControl
 
     set text(text)
     {
-        this.inputLayer.value = text != null ? text : "";
+        this._inputLayer.value = text != null ? text : "";
     }
 
     get text()
     {
-        return this.inputLayer.value;
+        return this._inputLayer.value;
     }
 
     setPlaceholderText(text)
     {
         this.placeHolder = text;
-        this.inputLayer.setAttribute("placeholder", text);
+        this._inputLayer.setAttribute("placeholder", text);
     }
 
     setOnChangeText(target, action)
@@ -125,7 +115,7 @@ class MIOTextField extends MIOControl
         this.layer.oninput = function()
         {
             if (instance.enabled)
-                instance.textChangeAction.call(target, instance, instance.inputLayer.value);
+                instance.textChangeAction.call(target, instance, instance._inputLayer.value);
         }
     }
 
@@ -139,9 +129,27 @@ class MIOTextField extends MIOControl
         {
             if (instance.enabled) {
                 if (e.keyCode == 13)
-                    instance.enterPressAction.call(target, instance, instance.inputLayer.value);
+                    instance.enterPressAction.call(target, instance, instance._inputLayer.value);
             }
         }
     }
+
+    setTextRGBColor(r, g, b)
+    {
+        var value = "rgb(" + r + ", " + g + ", " + b + ")";
+        this._inputLayer.style.color = value;
+    }
+
+    set textColor(color)
+    {
+        this._inputLayer.style.color = color;
+    }
+
+    get textColor()
+    {
+        var color = this._getValueFromCSSProperty("color");
+        return color;
+    }
+
 }
 

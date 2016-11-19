@@ -15,15 +15,8 @@ var MIOComboBox = (function (_super) {
         this.target = null;
         this.action = null;
     }
-    MIOComboBox.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOComboBox.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
-        this._setupLayer();
-    };
-    MIOComboBox.prototype._setupLayer = function () {
+    MIOComboBox.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         this._selectLayer = MIOLayerGetFirstElementWithTag(this.layer, "SELECT");
         if (this._selectLayer == null) {
             this._selectLayer = document.createElement("select");

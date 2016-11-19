@@ -37,15 +37,8 @@ var MIOButton = (function (_super) {
         this._selected = false;
         this.type = MIOButtonType.MomentaryPushIn;
     }
-    MIOButton.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOButton.prototype.initWithLayer = function (layer, options) {
-        _super.prototype.initWithLayer.call(this, layer, options);
-        this._setupLayer();
-    };
-    MIOButton.prototype._setupLayer = function () {
+    MIOButton.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         var type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")
             this.type = MIOButtonType.MomentaryPushIn;

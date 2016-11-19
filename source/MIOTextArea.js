@@ -15,15 +15,8 @@ var MIOTextArea = (function (_super) {
         this.textChangeTarget = null;
         this.textChangeAction = null;
     }
-    MIOTextArea.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
-    MIOTextArea.prototype.initWithLayer = function (layer) {
-        _super.prototype.initWithLayer.call(this, layer);
-        this._setupLayer();
-    };
-    MIOTextArea.prototype._setupLayer = function () {
+    MIOTextArea.prototype._customizeLayerSetup = function () {
+        _super.prototype._customizeLayerSetup.call(this);
         this.textareaLayer = document.createElement("textarea");
         this.textareaLayer.style.width = "98%";
         this.textareaLayer.style.height = "90%";
