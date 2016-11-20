@@ -48,8 +48,6 @@ class MIOCollectionViewCell extends MIOView
         this.layer.addEventListener("click", function(e) {
 
             e.stopPropagation();
-            console.log("CLICK!!");
-
             if (instance._onClickFn != null)
                 instance._onClickFn.call(instance._target, instance);
         });

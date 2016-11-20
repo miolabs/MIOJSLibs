@@ -28,28 +28,28 @@ var MIONavigationController = (function (_super) {
         this.addChildViewController(vc);
         this.contentSize = vc.contentSize;
     };
-    MIONavigationController.prototype.viewWillAppear = function () {
+    MIONavigationController.prototype._childControllersWillAppear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewWillAppear();
         vc._childControllersWillAppear();
     };
-    MIONavigationController.prototype.viewDidAppear = function () {
+    MIONavigationController.prototype._childControllersDidAppear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewDidAppear();
         vc._childControllersDidAppear();
     };
-    MIONavigationController.prototype.viewWillDisappear = function () {
+    MIONavigationController.prototype._childControllersWillDisappear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewWillDisappear();
         vc._childControllersWillDisappear();
     };
-    MIONavigationController.prototype.viewDidDisappear = function () {
+    MIONavigationController.prototype._childControllersDidDisappear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
         var vc = this.viewControllersStack[this.currentViewControllerIndex];

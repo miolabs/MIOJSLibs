@@ -154,7 +154,7 @@ var MIOTableView = (function (_super) {
         this._cellPrototypesDownloadedCount = 0;
         this._isDownloadingCells = false;
         this._needReloadData = false;
-        this.cellPrototypes = {};
+        this._cellPrototypes = {};
     }
     MIOTableView.prototype._customizeLayerSetup = function () {
         _super.prototype._customizeLayerSetup.call(this);
@@ -180,16 +180,31 @@ var MIOTableView = (function (_super) {
     MIOTableView.prototype._addHeaderWithLayer = function (subLayer) {
         this.headerView = new MIOView();
         this.headerView.initWithLayer(subLayer);
+        //var h = this.headerView.getHeight();
+        //var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        //this.headerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     };
     MIOTableView.prototype._addFooterWithLayer = function (subLayer) {
         this.footerView = new MIOView();
         this.footerView.initWithLayer(subLayer);
+        // var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        // this.footerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     };
     MIOTableView.prototype._addCellPrototypeWithLayer = function (subLayer) {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
-        var item = { "class": cellClassname, "layer": subLayer };
-        this.cellPrototypes[cellIdentifier] = item;
+        if (cellClassname == null)
+            cellClassname = "MIOCollectionViewCell";
+        var item = {};
+        item["class"] = cellClassname;
+        item["layer"] = subLayer;
+        var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        if (size != null)
+            item["size"] = size;
+        var bg = window.getComputedStyle(subLayer, null).getPropertyValue('background-color');
+        if (bg != null)
+            item["bg"] = bg;
+        this._cellPrototypes[cellIdentifier] = item;
     };
     MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, elementID, url, classname) {
         var item = {};
@@ -199,7 +214,7 @@ var MIOTableView = (function (_super) {
         item["id"] = elementID;
         if (classname != null)
             item["class"] = classname;
-        this.cellPrototypes[identifier] = item;
+        this._cellPrototypes[identifier] = item;
         var mainBundle = MIOBundle.mainBundle();
         mainBundle.loadLayoutFromURL(url, elementID, this, function (data) {
             var result = data;
@@ -232,8 +247,8 @@ var MIOTableView = (function (_super) {
                         delete item["cells"];*/
         });
     };
-    MIOTableView.prototype.cellWithIdentifier = function (identifier) {
-        var item = this.cellPrototypes[identifier];
+    MIOTableView.prototype.dequeueReusableCellWithIdentifier = function (identifier) {
+        var item = this._cellPrototypes[identifier];
         //instance creation here
         var className = item["class"];
         var cell = Object.create(window[className].prototype);
@@ -243,7 +258,17 @@ var MIOTableView = (function (_super) {
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
+            var size = item["size"];
+            if (size != null) {
+                cell.setWidth(size.width);
+                cell.setHeight(size.height);
+            }
+            var bg = item["bg"];
+            if (bg != null) {
+                cell.layer.style.background = bg;
+            }
             cell.addSubLayer(newLayer);
+            cell._customizeLayerSetup();
             cell.awakeFromHTML();
         }
         else {
@@ -326,15 +351,21 @@ var MIOTableView = (function (_super) {
                 y += 23;
             }
             for (var index = 0; index < section.cells.length; index++) {
-                var h = 44;
+                var h = 0;
                 if (this.delegate != null) {
                     if (typeof this.delegate.heightForRowAtIndexPath === "function")
                         h = this.delegate.heightForRowAtIndexPath(this, index, section);
                 }
                 var cell = section.cells[index];
                 cell.setY(y);
-                //cell.setWidth(w);
-                cell.setHeight(h);
+                if (h > 0)
+                    cell.setHeight(h);
+                if (h == 0)
+                    h = cell.getHeight();
+                if (h == 0) {
+                    h = 44;
+                    cell.setHeight(h);
+                }
                 y += h + 1;
             }
         }

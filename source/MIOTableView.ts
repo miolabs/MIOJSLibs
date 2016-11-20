@@ -200,7 +200,7 @@ class MIOTableView extends MIOView
     private _cellPrototypesDownloadedCount = 0;
     private _isDownloadingCells = false;
     private _needReloadData = false;
-    private cellPrototypes = {};
+    private _cellPrototypes = {};
 
     protected _customizeLayerSetup()
     {
@@ -236,21 +236,34 @@ class MIOTableView extends MIOView
     {
         this.headerView = new MIOView();
         this.headerView.initWithLayer(subLayer);
+        //var h = this.headerView.getHeight();
+        //var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        //this.headerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     }
 
     private _addFooterWithLayer(subLayer)
     {
         this.footerView = new MIOView();
         this.footerView.initWithLayer(subLayer);
+        // var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        // this.footerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     }
 
     private _addCellPrototypeWithLayer(subLayer)
     {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
+        if (cellClassname == null) cellClassname = "MIOCollectionViewCell";
 
-        var item = {"class" : cellClassname, "layer" : subLayer};
-        this.cellPrototypes[cellIdentifier] = item;
+        var item = {};
+        item["class"] = cellClassname;
+        item["layer"] = subLayer;
+        var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        if (size != null) item["size"] = size;
+        var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
+        if (bg != null) item["bg"] = bg;
+
+        this._cellPrototypes[cellIdentifier] = item;
     }
 
     addCellPrototypeWithIdentifier(identifier, elementID, url, classname?) {
@@ -265,7 +278,7 @@ class MIOTableView extends MIOView
         if (classname != null)
             item["class"] = classname;
 
-        this.cellPrototypes[identifier] = item;
+        this._cellPrototypes[identifier] = item;
         var mainBundle = MIOBundle.mainBundle();
         mainBundle.loadLayoutFromURL(url, elementID, this, function (data) {
 
@@ -306,9 +319,9 @@ class MIOTableView extends MIOView
         });
     }
 
-    cellWithIdentifier(identifier)
+    dequeueReusableCellWithIdentifier(identifier)
     {
-        var item = this.cellPrototypes[identifier];
+        var item = this._cellPrototypes[identifier];
 
         //instance creation here
         var className = item["class"];
@@ -320,7 +333,17 @@ class MIOTableView extends MIOView
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
+            var size = item["size"];
+            if (size != null) {
+                cell.setWidth(size.width);
+                cell.setHeight(size.height);
+            }
+            var bg = item["bg"];
+            if (bg != null) {
+                cell.layer.style.background = bg;
+            }
             cell.addSubLayer(newLayer);
+            cell._customizeLayerSetup();
             cell.awakeFromHTML();
         }
         else {
@@ -435,7 +458,7 @@ class MIOTableView extends MIOView
             }
 
             for (var index = 0; index < section.cells.length; index++) {
-                var h = 44;
+                var h = 0;
 
                 if (this.delegate != null) {
                     if (typeof this.delegate.heightForRowAtIndexPath === "function")
@@ -444,8 +467,17 @@ class MIOTableView extends MIOView
 
                 var cell = section.cells[index];
                 cell.setY(y);
-                //cell.setWidth(w);
-                cell.setHeight(h);
+
+                if (h > 0)
+                    cell.setHeight(h);
+
+                if (h == 0)
+                    h = cell.getHeight();
+
+                if (h == 0){
+                    h = 44;
+                    cell.setHeight(h);
+                }
 
                 y += h + 1;
             }

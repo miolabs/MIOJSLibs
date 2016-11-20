@@ -65,23 +65,29 @@ var MIOButton = (function (_super) {
         var status = this.layer.getAttribute("data-status");
         if (status == "selected")
             this.setSelected(true);
+        // Prevent click
+        this.layer.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
         var instance = this;
-        this.layer.onmousedown = function () {
+        this.layer.addEventListener("mousedown", function (e) {
+            e.stopPropagation();
             if (instance.enabled) {
                 if (instance.type == MIOButtonType.PushOnPushOff)
                     instance.setSelected(!instance._selected);
                 else
                     instance.setSelected(true);
             }
-        };
-        this.layer.onmouseup = function () {
+        });
+        this.layer.addEventListener("mouseup", function (e) {
+            e.stopPropagation();
             if (instance.enabled) {
                 if (instance.type == MIOButtonType.MomentaryPushIn)
                     instance.setSelected(false);
                 if (instance.action != null && instance.target != null)
                     instance.action.call(instance.target, instance);
             }
-        };
+        });
     };
     MIOButton.prototype.initWithAction = function (target, action) {
         _super.prototype.init.call(this);

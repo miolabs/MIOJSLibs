@@ -444,11 +444,10 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.viewDidLoad = function () { };
     MIOViewController.prototype.viewWillAppear = function () { };
     MIOViewController.prototype._childControllersWillAppear = function () {
-        for (var index = 0; index < this._childViewControllers.length; index++)
-            for (var index = 0; index < this._childViewControllers.length; index++) {
-                var vc = this._childViewControllers[index];
-                vc.viewWillAppear();
-            }
+        for (var index = 0; index < this._childViewControllers.length; index++) {
+            var vc = this._childViewControllers[index];
+            vc.viewWillAppear();
+        }
     };
     MIOViewController.prototype.viewDidAppear = function () { };
     MIOViewController.prototype._childControllersDidAppear = function () {

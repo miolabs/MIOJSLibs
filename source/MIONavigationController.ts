@@ -31,7 +31,7 @@ class MIONavigationController extends MIOViewController
         this.contentSize = vc.contentSize;
     }
 
-    viewWillAppear()
+    _childControllersWillAppear()
     {
         if (this.currentViewControllerIndex < 0)
             return;
@@ -42,7 +42,7 @@ class MIONavigationController extends MIOViewController
         vc._childControllersWillAppear();
     }
 
-    viewDidAppear()
+    _childControllersDidAppear()
     {
         if (this.currentViewControllerIndex < 0)
             return;
@@ -53,7 +53,7 @@ class MIONavigationController extends MIOViewController
         vc._childControllersDidAppear();
     }
 
-    viewWillDisappear()
+    _childControllersWillDisappear()
     {
         if (this.currentViewControllerIndex < 0)
             return;
@@ -64,7 +64,7 @@ class MIONavigationController extends MIOViewController
         vc._childControllersWillDisappear();
     }
 
-    viewDidDisappear()
+    _childControllersDidDisappear()
     {
         if (this.currentViewControllerIndex < 0)
             return;

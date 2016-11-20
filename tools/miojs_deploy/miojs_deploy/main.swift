@@ -17,6 +17,7 @@ var index = 0
 let len = CommandLine.arguments.count
 var src_path : String?
 var deploy_path : String?
+var filename : String?
 
 while index < len {
     
@@ -36,6 +37,10 @@ while index < len {
         index += 1
         deploy_path = CommandLine.arguments[index]
         
+    case "--out":
+        index += 1
+        filename = CommandLine.arguments[index]
+        
     default:
         print("Argument not implemented!!")
     }
@@ -43,8 +48,10 @@ while index < len {
     index += 1;
 }
 
-let modeString = (release ? "release" : "debug");
+let modeString = (release ? "release" : "debug")
 print("Mode: \(modeString)")
+
+filename = filename ?? "app.js"
 
 func AddPathComponent(path:String, component: String) -> String
 {
@@ -56,12 +63,12 @@ func AddPathComponent(path:String, component: String) -> String
 
 let source_folder = src_path ?? FileManager.default.currentDirectoryPath
 let deploy_folder = AddPathComponent(path: (deploy_path ?? FileManager.default.currentDirectoryPath), component: "deploy_\(modeString)")
-let lib_path = AddPathComponent(path: deploy_folder, component: "MIOJSLib.js")
+let lib_path = AddPathComponent(path: deploy_folder, component: filename!)
 
 print("Deploy folder: \(deploy_folder)");
 print("Lib file path: \(lib_path)");
 
-func CreateLibFile(atPath path:String){
+func CreateFile(atPath path:String){
     
     do{
         try FileManager.default.removeItem(atPath: path)
@@ -84,30 +91,45 @@ func CreateLibFile(atPath path:String){
     print(done ? "File Create" : "File Not create")
 }
 
-func AppendLibFile(atPath path: String, filename: String)
+func AppendLibFile(atPath path: String, filename: String, appendPath: String, srcFile:String)
 {
-    let data = FileManager.default.contents(atPath: path)
-    if (data != nil)
-    {
-        let file = FileHandle.init(forWritingAtPath: lib_path)
+    do{
+        
+        let data = try String.init(contentsOfFile: path, encoding: .utf8)
+        let lines = data.components(separatedBy: "\n")
+        
+        var dstString = "\n\n// ---- \(srcFile) ----\n\n"
+        var index = 0
+        while index < lines.count {
+            
+            let l = lines[index]
+            let l2 = "//# sourceMappingURL=\(srcFile).map"
+            if (l != l2){
+                dstString.append(lines[index] + "\n")
+            }
+            index += 1
+        }
+        
+        let file = FileHandle.init(forWritingAtPath: appendPath)
         if (file != nil)
         {
             file!.seekToEndOfFile()
-            let comments = "\n\n// ---- \(filename) ----\n\n"
-            let commentsData = comments.data(using:String.Encoding.utf8)
-            if (commentsData != nil) {
-                file!.write(commentsData!)
+            let dstData = dstString.data(using: .utf8)
+            if (dstData != nil){
+                file!.write(dstData!)
             }
-            file!.write(data!)
             file!.closeFile()
         }
     }
+    catch{
+        print("Cann't open file")
+    }
+    
 }
 
 func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
 {
     do{
-        
         let data = try String.init(contentsOfFile: sp, encoding: .utf8)
         let lines = data.components(separatedBy: "\n")
         
@@ -116,7 +138,8 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
         while index < lines.count {
             
             let l = lines[index]
-            if (l != ("//# sourceMappingURL=\(fn).map")){
+            let l2 = "//# sourceMappingURL=\(fn).map"
+            if (l != l2){
                 dstString.append(lines[index] + "\n")
             }
             index += 1
@@ -128,10 +151,62 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
     catch{
         print("Cann't open file")
     }
-
 }
 
-func ScanFolder(atPath path:String, dstPath dst:String)
+func CompileFiles(fromPath path:String, dstPath:String, filename: String) ->Bool{
+    
+    // Check compile order file
+    do {
+        let compileOrderFile = path + "/compile_order";
+        let data = try String.init(contentsOfFile: compileOrderFile, encoding: .utf8)
+        let lines = data.components(separatedBy: "\n")
+        
+        var files = [String]()
+        var index = 0
+        var fn :String?
+        while index < lines.count {
+            
+            let l = lines[index]
+            index += 1
+            
+            let l2 = l.trimmingCharacters(in: .whitespacesAndNewlines)
+            if (l2.hasPrefix("//") == true) {continue}
+            if (l2.characters.count == 0) {continue}
+            if (l2.hasPrefix("#file:")) {
+                
+                let l3 = l2.substring(from: l2.index(l2.startIndex, offsetBy: 6))
+                let l4 = l3.trimmingCharacters(in: .whitespacesAndNewlines)
+                fn = l4
+                continue
+            }
+                
+            files.append(l2 + ".js")
+        }
+        
+        fn = fn ?? filename
+        
+        // Append files
+        let af = fn! + ".js"
+        let afp = dstPath + "/" + af
+        CreateFile(atPath: afp);
+        CreateFile(atPath: dstPath + "/" + fn! + ".min.js");
+        
+        for f in files {
+            
+            let sf = path + "/\(f)";
+            AppendLibFile(atPath: sf, filename: af, appendPath: afp, srcFile: f)
+        }
+        
+        return true;
+    }
+    catch{
+        print("There's no compile order file")
+    }
+    
+    return false;
+}
+
+func ScanFolder(atPath path:String, dstPath:String, ignoreJS:Bool)
 {
     do{
         print("Path: \(path)")
@@ -143,30 +218,41 @@ func ScanFolder(atPath path:String, dstPath dst:String)
             FileManager.default.fileExists(atPath: item_path, isDirectory: &isDir)
             if (isDir.boolValue){
                 
-                let newDir = dst + "/" + item;
-                if (release == false){
-                    try FileManager.default.createDirectory(atPath: newDir, withIntermediateDirectories: true, attributes: nil);
-                }
-                ScanFolder(atPath: path + "/" + item, dstPath: newDir);
+                let newDir = dstPath + "/" + item;
+                try FileManager.default.createDirectory(atPath: newDir, withIntermediateDirectories: true, attributes: nil)
+                let value = CompileFiles(fromPath: item_path, dstPath: newDir, filename: item)
+                ScanFolder(atPath: item_path, dstPath: newDir, ignoreJS:value);
             }
-            else if ((item.hasSuffix(".ts") || item.hasSuffix(".js.map") || item == ".DS_Store") == false){
-                
+            else {
+             
+                if (item.hasSuffix(".DS_Store")
+                    || item.hasSuffix("compile_order") ){
+                        
+                    continue
+                }
+                    
                 if (release == false){
                     
                     print("Coping: \(item)");
-                    let dst_path = dst + "/" + item;
-                    
-                    if (item.hasSuffix(".js")){
-                        CopyFile(filename: item, fromPath: item_path, toPath: dst_path)
-                    }
-                    else{
-                        try FileManager.default.copyItem(atPath: item_path, toPath: dst_path);
-                    }
-                    
+                    try FileManager.default.copyItem(atPath: item_path, toPath: dstPath + "/" + item);
                 }
-                else{
-                    print("Appending: \(item)");
-                    AppendLibFile(atPath: item_path, filename:item)
+                else
+                {
+                    if (item.hasSuffix(".ts")
+                        || item.hasSuffix(".js.map")){
+                    
+                        continue;
+                    }else if (item.hasSuffix(".js")){
+
+                        if (ignoreJS == false){
+                            print("Coping: \(item)");
+                            CopyFile(filename: item, fromPath: item_path, toPath: dstPath + "/" + item);
+                        }
+                    }
+                    else {
+                        print("Coping: \(item)");
+                        try FileManager.default.copyItem(atPath: item_path, toPath: dstPath + "/" + item);
+                    }
                 }
             }
         }
@@ -191,10 +277,6 @@ catch{
     print("Can't create delpoy fodler")
 }
 
-if (release == true) {
-    CreateLibFile(atPath:lib_path);
-}
-
-ScanFolder(atPath: source_folder, dstPath: deploy_folder)
+ScanFolder(atPath: source_folder, dstPath: deploy_folder, ignoreJS: false)
 
 

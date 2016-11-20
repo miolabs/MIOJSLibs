@@ -567,8 +567,6 @@ class MIOViewController extends MIOObject
     protected _childControllersWillAppear()
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
-
-        for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
             vc.viewWillAppear();
