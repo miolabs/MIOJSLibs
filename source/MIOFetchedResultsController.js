@@ -124,4 +124,3 @@ var MIOFetchedResultsController = (function (_super) {
     };
     return MIOFetchedResultsController;
 }(MIOObject));
-//# sourceMappingURL=MIOFetchedResultsController.js.map

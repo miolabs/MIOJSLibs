@@ -29,6 +29,7 @@ var MIOViewController = (function (_super) {
         this._layerIsReady = false;
         this._childViewControllers = [];
         this.navigationController = null;
+        this.modalController = null;
         this._popoverPresentationController = null;
         this.presentationStyle = MIOPresentationStyle.CurrentContext;
         this.presentationType = MIOPresentationType.Modal;
@@ -494,4 +495,3 @@ var MIOViewController = (function (_super) {
     });
     return MIOViewController;
 }(MIOObject));
-//# sourceMappingURL=MIOViewController.js.map

@@ -128,6 +128,16 @@ class MIOButton extends MIOControl
         this._titleLayer.innerHTML = title;
     }
 
+    set title(title)
+    {
+        this.setTitle(title);
+    }
+
+    get title()
+    {
+        return this._titleLayer.innerHTML;
+    }
+
     setSelected(value)
     {
         if (this._selected == value)

@@ -124,6 +124,8 @@ var MIOTextField = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    MIOTextField.prototype.becameFirstResponder = function () {
+        this._inputLayer.focus();
+    };
     return MIOTextField;
 }(MIOControl));
-//# sourceMappingURL=MIOTextField.js.map

@@ -60,4 +60,26 @@ class MIOScrollView extends MIOView
         var p = new MIOPoint(this.layer.scrollLeft, this.layer.scrollTop);
         return p;
     }
+
+    scrollToTop(animate)
+    {
+        // if (true)
+        //     this.layer.style.transition = "scrollTop 0.25s";
+
+        this.layer.scrollTop = 0;
+    }
+
+    scrollToBottom(animate)
+    {
+        // if (true)
+        //     this.layer.style.transition = "scrollTop 0.25s";
+
+        this.layer.scrollTop = this.layer.scrollHeight;
+    }
+
+    scrollRectToVisible(rect, animate)
+    {
+        //TODO: Implenet this
+
+    }
 }

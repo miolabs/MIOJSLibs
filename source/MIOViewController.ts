@@ -31,8 +31,9 @@ class MIOViewController extends MIOObject
     private _layerIsReady = false;
 
     private _childViewControllers = [];
-    navigationController = null;
 
+    navigationController = null;
+    modalController = null;
     private _popoverPresentationController = null;
 
     presentationStyle = MIOPresentationStyle.CurrentContext;

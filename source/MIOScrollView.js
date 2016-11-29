@@ -57,6 +57,19 @@ var MIOScrollView = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    MIOScrollView.prototype.scrollToTop = function (animate) {
+        // if (true)
+        //     this.layer.style.transition = "scrollTop 0.25s";
+        this.layer.scrollTop = 0;
+    };
+    MIOScrollView.prototype.scrollToBottom = function (animate) {
+        // if (true)
+        //     this.layer.style.transition = "scrollTop 0.25s";
+        this.layer.scrollTop = this.layer.scrollHeight;
+    };
+    MIOScrollView.prototype.scrollRectToVisible = function (rect, animate) {
+        //TODO: Implenet this
+    };
     return MIOScrollView;
 }(MIOView));
 //# sourceMappingURL=MIOScrollView.js.map

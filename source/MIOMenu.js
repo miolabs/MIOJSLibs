@@ -14,8 +14,9 @@ var MIOMenuItem = (function (_super) {
         _super.call(this, layerID == null ? MIOViewGetNextLayerID("mio_menu_item") : layerID);
         this.checked = false;
         this.title = null;
-        this.parent = null;
         this._titleLayer = null;
+        this.target = null;
+        this.action = null;
     }
     /*    public static itemWithLayer(layer)
         {
@@ -61,17 +62,19 @@ var MIOMenuItem = (function (_super) {
     };
     MIOMenuItem.prototype._setupLayer = function () {
         var instance = this;
-        this.layer.onmouseenter = function () {
+        this.layer.onmouseenter = function (e) {
+            e.stopPropagation();
             instance.layer.classList.add("menu_item_on_hover");
         };
-        this.layer.onmouseleave = function () {
+        this.layer.onmouseleave = function (e) {
+            e.stopPropagation();
             instance.layer.classList.remove("menu_item_on_hover");
         };
-        this.layer.onclick = function () {
-            if (instance.parent != null) {
+        this.layer.onclick = function (e) {
+            e.stopPropagation();
+            if (instance.action != null && instance.target != null) {
                 instance.layer.classList.remove("menu_item_on_hover");
-                var index = instance.parent.items.indexOf(instance);
-                instance.parent.action.call(instance.parent.target, instance, index);
+                instance.action.call(instance.target, instance);
             }
         };
     };
@@ -131,12 +134,21 @@ var MIOMenu = (function (_super) {
         this.items.push(menuItem);
     };
     MIOMenu.prototype.addMenuItem = function (menuItem) {
+        menuItem.action = this._menuItemDidClick;
+        menuItem.target = this;
         this.items.push(menuItem);
         this.addSubview(menuItem);
         this._updateWidth = true;
     };
     MIOMenu.prototype.removeMenuItem = function (menuItem) {
         //TODO: Implement this!!!
+    };
+    MIOMenu.prototype._menuItemDidClick = function (menuItem) {
+        if (this.action != null && this.target != null) {
+            var index = this.items.indexOf(menuItem);
+            this.action.call(this.target, this, index);
+        }
+        this.hide();
     };
     MIOMenu.prototype.showFromControl = function (control) {
         this._isVisible = true;
@@ -174,4 +186,3 @@ var MIOMenu = (function (_super) {
     };
     return MIOMenu;
 }(MIOView));
-//# sourceMappingURL=MIOMenu.js.map

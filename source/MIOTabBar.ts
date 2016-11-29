@@ -18,17 +18,17 @@ class MIOTabBarItem extends MIOView
 
     isSelected = false;
 
-    protected _customizeLayerSetup(layer)
+    protected _customizeLayerSetup()
     {
         super._customizeLayerSetup();
 
-        if (layer.childNodes.length < 2)
+        if (this.layer.childNodes.length < 2)
             throw new Error("Tab bar item broken!");
 
         var count = 0;
-        for (var index = 0; index < layer.childNodes.length; index++)
+        for (var index = 0; index < this.layer.childNodes.length; index++)
         {
-            var l = layer.childNodes[index];
+            var l = this.layer.childNodes[index];
             if (l.tagName == "DIV") {
                 count++;
                 if (count == 1) {

@@ -107,6 +107,7 @@ var MIOWebApplication = (function () {
         this._sheetViewController.view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
         this._sheetViewController.view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
         this._sheetViewController.view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
+        this._sheetViewController.view.layer.style.zIndex = 200;
         window.rootViewController.addChildViewController(vc);
         window.rootViewController.view.addSubview(vc.view);
         window.rootViewController.showViewController(vc, true);
@@ -136,6 +137,13 @@ var MIOWebApplication = (function () {
                 this._sheetViewController.view.setFrame(frame);
             }
         }
+    };
+    MIOWebApplication.prototype.showModalViewContoller = function (vc) {
+        var w = new MIOWindow(MIOViewGetNextLayerID("window"));
+        w.initWithRootViewController(vc);
+        // Add new window
+        document.body.appendChild(vc.view.layer);
+        this._windows.push(w);
     };
     MIOWebApplication.prototype.showMenuFromControl = function (control, menu) {
         if (menu === this._popUpMenu)
@@ -206,4 +214,3 @@ var MIOWebApplication = (function () {
     MIOWebApplication._sharedInstance = new MIOWebApplication();
     return MIOWebApplication;
 }());
-//# sourceMappingURL=MIOWebApplication.js.map

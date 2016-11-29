@@ -10,9 +10,10 @@ class MIOMenuItem extends MIOView
     checked = false;
     title = null;
 
-    parent = null;
-
     private _titleLayer = null;
+
+    target = null;
+    action = null;
 
     constructor(layerID?)
     {
@@ -73,20 +74,25 @@ class MIOMenuItem extends MIOView
     _setupLayer()
     {
         var instance = this;
-        this.layer.onmouseenter = function () {
+        this.layer.onmouseenter = function (e) {
+
+            e.stopPropagation();
             instance.layer.classList.add("menu_item_on_hover");
         };
 
-        this.layer.onmouseleave = function () {
+        this.layer.onmouseleave = function (e) {
+
+            e.stopPropagation();
             instance.layer.classList.remove("menu_item_on_hover");
         };
 
-        this.layer.onclick = function()
+        this.layer.onclick = function(e)
         {
-            if (instance.parent != null) {
+            e.stopPropagation();
+            if (instance.action != null && instance.target != null) {
+
                 instance.layer.classList.remove("menu_item_on_hover");
-                var index = instance.parent.items.indexOf(instance);
-                instance.parent.action.call(instance.parent.target, instance, index);
+                instance.action.call(instance.target, instance);
             }
         }
 
@@ -164,6 +170,8 @@ class MIOMenu extends MIOView
 
     addMenuItem(menuItem)
     {
+        menuItem.action = this._menuItemDidClick;
+        menuItem.target = this;
         this.items.push(menuItem);
         this.addSubview(menuItem);
         this._updateWidth = true;
@@ -172,6 +180,17 @@ class MIOMenu extends MIOView
     removeMenuItem(menuItem)
     {
         //TODO: Implement this!!!
+    }
+
+    private _menuItemDidClick(menuItem)
+    {
+        if (this.action != null && this.target != null) {
+
+            var index = this.items.indexOf(menuItem);
+            this.action.call(this.target, this, index);
+        }
+
+        this.hide();
     }
 
     showFromControl(control)

@@ -32,4 +32,3 @@ var MIOUserDefaults = (function () {
     MIOUserDefaults._sharedInstance = new MIOUserDefaults();
     return MIOUserDefaults;
 }());
-//# sourceMappingURL=MIOUserDefaults.js.map

@@ -100,6 +100,16 @@ var MIOButton = (function (_super) {
     MIOButton.prototype.setTitle = function (title) {
         this._titleLayer.innerHTML = title;
     };
+    Object.defineProperty(MIOButton.prototype, "title", {
+        get: function () {
+            return this._titleLayer.innerHTML;
+        },
+        set: function (title) {
+            this.setTitle(title);
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOButton.prototype.setSelected = function (value) {
         if (this._selected == value)
             return;
@@ -139,4 +149,3 @@ var MIOButton = (function (_super) {
     };
     return MIOButton;
 }(MIOControl));
-//# sourceMappingURL=MIOButton.js.map

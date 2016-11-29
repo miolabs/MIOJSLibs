@@ -12,15 +12,8 @@ var MIOActivityIndicator = (function (_super) {
     function MIOActivityIndicator() {
         _super.apply(this, arguments);
     }
-    MIOActivityIndicator.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setupLayer();
-    };
     MIOActivityIndicator.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
-        this._setupLayer();
-    };
-    MIOActivityIndicator.prototype._setupLayer = function () {
         var svg = "";
         svg += '<svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default">';
         svg += '  <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>';
@@ -65,4 +58,3 @@ var MIOActivityIndicator = (function (_super) {
     };
     return MIOActivityIndicator;
 }(MIOView));
-//# sourceMappingURL=MIOActivityIndicator.js.map

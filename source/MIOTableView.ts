@@ -52,12 +52,6 @@ class MIOTableViewCell extends MIOView
         super(MIOViewGetNextLayerID("tableview_cell"));
     }
 
-    init()
-    {
-        super.init();
-        this._setup();
-    }
-
     initWithStyle(style)
     {
         super.init();
@@ -73,11 +67,13 @@ class MIOTableViewCell extends MIOView
             this.addSubview(this.textLabel);
         }
 
-        this._setup();
+        this._customizeLayerSetup()
     }
 
-    private _setup()
+    protected _customizeLayerSetup()
     {
+        this.layer.style.background = "";
+
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
 
@@ -193,6 +189,12 @@ class MIOTableView extends MIOView
     headerView = null;
     footerView = null;
 
+    headerHeight = 0;
+    footerHeight = 0;
+
+    sectionHeaderHeight = 23;
+    sectionFooterHeight = 23;
+
     private selectedCellRow = -1;
     private selectedCellSection = -1;
 
@@ -260,8 +262,8 @@ class MIOTableView extends MIOView
         item["layer"] = subLayer;
         var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null) item["size"] = size;
-        var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
-        if (bg != null) item["bg"] = bg;
+        // var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
+        // if (bg != null) item["bg"] = bg;
 
         this._cellPrototypes[cellIdentifier] = item;
     }
@@ -295,7 +297,7 @@ class MIOTableView extends MIOView
             //cell.localizeSubLayers(layer.childNodes);
 
             item["layer"] = layer;
-            this.cellPrototypes[identifier] = item;
+            this._cellPrototypes[identifier] = item;
 
             this._cellPrototypesDownloadedCount++;
             if (this._cellPrototypesDownloadedCount == this._cellPrototypesCount)
@@ -402,16 +404,25 @@ class MIOTableView extends MIOView
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
                 var header = new MIOView();
                 header.init();
+                header.setHeight(this.sectionHeaderHeight);
+                header.layer.style.background = "";
                 header.layer.classList.add("tableview_header");
                 section.header = header;
 
                 var titleLabel = new MIOLabel();
                 titleLabel.init();
+                titleLabel.layer.style.background = "";
                 titleLabel.layer.classList.add("tableview_header_title");
                 titleLabel.text = title;
                 header.addSubview(titleLabel);
 
                 this.addSubview(header);
+            }
+            else if (typeof this.dataSource.viewForHeaderInSection === "function")
+            {
+                var view = this.dataSource.viewForHeaderInSection(this, sectionIndex);
+                section.header = view;
+                this.addSubview(view);
             }
 
             for (var index = 0; index < rows; index++)
@@ -444,7 +455,14 @@ class MIOTableView extends MIOView
 
         if (this.headerView != null)
         {
-            y += this.headerView.getHeight() + 1;
+            this.headerView.setY(y);
+
+            if (this.headerHeight > 0) {
+                this.headerView.setHeight(this.headerHeight);
+                y += this.headerHeight;
+            }
+            else
+                y += this.headerView.getHeight() + 1;
         }
 
         for (var count = 0; count < this.sections.length; count++)
@@ -454,7 +472,12 @@ class MIOTableView extends MIOView
             if (section.header != null)
             {
                 section.header.setY(y);
-                y += 23;
+                if (this.sectionHeaderHeight > 0){
+                    section.header.setHeight(this.sectionHeaderHeight);
+                    y += this.sectionHeaderHeight;
+                }
+                else
+                    y += section.header.getHeight();
             }
 
             for (var index = 0; index < section.cells.length; index++) {
@@ -486,7 +509,16 @@ class MIOTableView extends MIOView
         if (this.footerView != null)
         {
             this.footerView.setY(y);
+
+            if (this.footerHeight > 0) {
+                this.footerView.setHeight(this.footerHeight);
+                y += this.footerHeight;
+            }
+            else
+                y += this.footerView.getHeight() + 1;
         }
+
+        this.layer.scrollHeight = y;
     }
 
     cellOnClickFn(cell)

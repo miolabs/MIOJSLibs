@@ -43,10 +43,6 @@ var MIOTableViewCell = (function (_super) {
         this._row = 0;
         this._section = 0;
     }
-    MIOTableViewCell.prototype.init = function () {
-        _super.prototype.init.call(this);
-        this._setup();
-    };
     MIOTableViewCell.prototype.initWithStyle = function (style) {
         _super.prototype.init.call(this);
         if (style == MIOTableViewCellStyle.Default) {
@@ -58,9 +54,10 @@ var MIOTableViewCell = (function (_super) {
             this.textLabel.layer.style.bottom = "10px";
             this.addSubview(this.textLabel);
         }
-        this._setup();
+        this._customizeLayerSetup();
     };
-    MIOTableViewCell.prototype._setup = function () {
+    MIOTableViewCell.prototype._customizeLayerSetup = function () {
+        this.layer.style.background = "";
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
         this.layer.onclick = function () {
@@ -148,6 +145,10 @@ var MIOTableView = (function (_super) {
         this.sections = [];
         this.headerView = null;
         this.footerView = null;
+        this.headerHeight = 0;
+        this.footerHeight = 0;
+        this.sectionHeaderHeight = 23;
+        this.sectionFooterHeight = 23;
         this.selectedCellRow = -1;
         this.selectedCellSection = -1;
         this._cellPrototypesCount = 0;
@@ -201,9 +202,8 @@ var MIOTableView = (function (_super) {
         var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null)
             item["size"] = size;
-        var bg = window.getComputedStyle(subLayer, null).getPropertyValue('background-color');
-        if (bg != null)
-            item["bg"] = bg;
+        // var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
+        // if (bg != null) item["bg"] = bg;
         this._cellPrototypes[cellIdentifier] = item;
     };
     MIOTableView.prototype.addCellPrototypeWithIdentifier = function (identifier, elementID, url, classname) {
@@ -227,7 +227,7 @@ var MIOTableView = (function (_super) {
             var layer = items.getElementById(elementID);
             //cell.localizeSubLayers(layer.childNodes);
             item["layer"] = layer;
-            this.cellPrototypes[identifier] = item;
+            this._cellPrototypes[identifier] = item;
             this._cellPrototypesDownloadedCount++;
             if (this._cellPrototypesDownloadedCount == this._cellPrototypesCount) {
                 this._isDownloadingCells = false;
@@ -312,14 +312,22 @@ var MIOTableView = (function (_super) {
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
                 var header = new MIOView();
                 header.init();
+                header.setHeight(this.sectionHeaderHeight);
+                header.layer.style.background = "";
                 header.layer.classList.add("tableview_header");
                 section.header = header;
                 var titleLabel = new MIOLabel();
                 titleLabel.init();
+                titleLabel.layer.style.background = "";
                 titleLabel.layer.classList.add("tableview_header_title");
                 titleLabel.text = title;
                 header.addSubview(titleLabel);
                 this.addSubview(header);
+            }
+            else if (typeof this.dataSource.viewForHeaderInSection === "function") {
+                var view = this.dataSource.viewForHeaderInSection(this, sectionIndex);
+                section.header = view;
+                this.addSubview(view);
             }
             for (var index = 0; index < rows; index++) {
                 var cell = this.dataSource.cellAtIndexPath(this, index, sectionIndex);
@@ -342,13 +350,24 @@ var MIOTableView = (function (_super) {
         var y = 0;
         var w = this.getWidth();
         if (this.headerView != null) {
-            y += this.headerView.getHeight() + 1;
+            this.headerView.setY(y);
+            if (this.headerHeight > 0) {
+                this.headerView.setHeight(this.headerHeight);
+                y += this.headerHeight;
+            }
+            else
+                y += this.headerView.getHeight() + 1;
         }
         for (var count = 0; count < this.sections.length; count++) {
             var section = this.sections[count];
             if (section.header != null) {
                 section.header.setY(y);
-                y += 23;
+                if (this.sectionHeaderHeight > 0) {
+                    section.header.setHeight(this.sectionHeaderHeight);
+                    y += this.sectionHeaderHeight;
+                }
+                else
+                    y += section.header.getHeight();
             }
             for (var index = 0; index < section.cells.length; index++) {
                 var h = 0;
@@ -371,7 +390,14 @@ var MIOTableView = (function (_super) {
         }
         if (this.footerView != null) {
             this.footerView.setY(y);
+            if (this.footerHeight > 0) {
+                this.footerView.setHeight(this.footerHeight);
+                y += this.footerHeight;
+            }
+            else
+                y += this.footerView.getHeight() + 1;
         }
+        this.layer.scrollHeight = y;
     };
     MIOTableView.prototype.cellOnClickFn = function (cell) {
         var index = cell._row;
@@ -449,4 +475,3 @@ var MIOTableView = (function (_super) {
     };
     return MIOTableView;
 }(MIOView));
-//# sourceMappingURL=MIOTableView.js.map

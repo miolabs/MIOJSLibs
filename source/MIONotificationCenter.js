@@ -65,4 +65,3 @@ var MIONotificationCenter = (function () {
     MIONotificationCenter._sharedInstance = new MIONotificationCenter();
     return MIONotificationCenter;
 }());
-//# sourceMappingURL=MIONotificationCenter.js.map

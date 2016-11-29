@@ -19,13 +19,13 @@ var MIOTabBarItem = (function (_super) {
         this._imageLayer = null;
         this.isSelected = false;
     }
-    MIOTabBarItem.prototype._customizeLayerSetup = function (layer) {
+    MIOTabBarItem.prototype._customizeLayerSetup = function () {
         _super.prototype._customizeLayerSetup.call(this);
-        if (layer.childNodes.length < 2)
+        if (this.layer.childNodes.length < 2)
             throw new Error("Tab bar item broken!");
         var count = 0;
-        for (var index = 0; index < layer.childNodes.length; index++) {
-            var l = layer.childNodes[index];
+        for (var index = 0; index < this.layer.childNodes.length; index++) {
+            var l = this.layer.childNodes[index];
             if (l.tagName == "DIV") {
                 count++;
                 if (count == 1) {
@@ -121,4 +121,3 @@ var MIOTabBar = (function (_super) {
     };
     return MIOTabBar;
 }(MIOView));
-//# sourceMappingURL=MIOTabBar.js.map

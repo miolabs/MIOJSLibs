@@ -27,6 +27,7 @@ var MIOLabel = (function (_super) {
     MIOLabel.prototype.init = function () {
         _super.prototype.init.call(this);
         this.layer.style.background = "";
+        this._customizeLayerSetup();
     };
     MIOLabel.prototype._customizeLayerSetup = function () {
         _super.prototype._customizeLayerSetup.call(this);
@@ -104,4 +105,3 @@ var MIOLabel = (function (_super) {
     };
     return MIOLabel;
 }(MIOView));
-//# sourceMappingURL=MIOLabel.js.map

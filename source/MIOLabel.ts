@@ -28,6 +28,7 @@ class MIOLabel extends MIOView
     {
         super.init();
         this.layer.style.background = "";
+        this._customizeLayerSetup();
     }
 
     protected _customizeLayerSetup()

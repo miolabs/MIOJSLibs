@@ -151,5 +151,10 @@ class MIOTextField extends MIOControl
         return color;
     }
 
+    becameFirstResponder()
+    {
+        this._inputLayer.focus();
+    }
+
 }
 

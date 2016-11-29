@@ -25,4 +25,3 @@ var MIOSortDescriptor = (function (_super) {
     };
     return MIOSortDescriptor;
 }(MIOObject));
-//# sourceMappingURL=MIOSortDescriptor.js.map

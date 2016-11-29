@@ -14,7 +14,7 @@ class MIOWindow extends MIOView
         super(layerID);
 
         if (layerID == null)
-            this.layerID = "window";
+            this.layerID = "main_window";
     }
 
     init()

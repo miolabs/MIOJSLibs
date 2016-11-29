@@ -9,6 +9,15 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOWebApplication.ts" />
 /// <reference path="MIOButton.ts" />
 /// <reference path="MIOMenu.ts" />
+function MIOPopUpButtonFromElementID(view, elementID) {
+    var layer = MIOLayerSearchElementByID(view.layer, elementID);
+    if (layer == null)
+        return null;
+    var button = new MIOPopUpButton(elementID);
+    button.initWithLayer(layer);
+    view._linkViewToSubview(button);
+    return button;
+}
 var MIOPopUpButton = (function (_super) {
     __extends(MIOPopUpButton, _super);
     function MIOPopUpButton() {
@@ -74,4 +83,3 @@ var MIOPopUpButton = (function (_super) {
     };
     return MIOPopUpButton;
 }(MIOButton));
-//# sourceMappingURL=MIOPopUpButton.js.map

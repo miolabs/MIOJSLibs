@@ -14,7 +14,7 @@ var MIOWindow = (function (_super) {
         _super.call(this, layerID);
         this.rootViewController = null;
         if (layerID == null)
-            this.layerID = "window";
+            this.layerID = "main_window";
     }
     MIOWindow.prototype.init = function () {
         this.layer = document.createElement("div");
@@ -37,4 +37,3 @@ var MIOWindow = (function (_super) {
     };
     return MIOWindow;
 }(MIOView));
-//# sourceMappingURL=MIOWindow.js.map

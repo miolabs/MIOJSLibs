@@ -160,4 +160,3 @@ function FrameWithStyleForViewControllerInView(view, vc) {
     vc.contentSize = new MIOSize(w, h);
     return MIOFrame.frameWithRect(x, y, w, h);
 }
-//# sourceMappingURL=MIOViewController_Animation.js.map

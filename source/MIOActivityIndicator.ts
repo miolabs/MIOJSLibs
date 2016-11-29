@@ -2,24 +2,14 @@
  * Created by godshadow on 21/5/16.
  */
 
-    /// <reference path="MIOView.ts" />
+/// <reference path="MIOView.ts" />
 
 class MIOActivityIndicator extends MIOView
 {
-    init()
-    {
-        super.init();
-        this._setupLayer();
-    }
-
     initWithLayer(layer, options?)
     {
         super.initWithLayer(layer, options);
-        this._setupLayer();
-    }
 
-    _setupLayer()
-    {
         var svg = "";
 
         svg += '<svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default">';

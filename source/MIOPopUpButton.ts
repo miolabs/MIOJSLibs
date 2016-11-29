@@ -6,6 +6,20 @@
     /// <reference path="MIOButton.ts" />
     /// <reference path="MIOMenu.ts" />
 
+function MIOPopUpButtonFromElementID(view, elementID)
+{
+    var layer = MIOLayerSearchElementByID(view.layer, elementID);
+    if (layer == null)
+        return null;
+
+    var button = new MIOPopUpButton(elementID);
+    button.initWithLayer(layer);
+    view._linkViewToSubview(button);
+
+    return button;
+}
+
+
 class MIOPopUpButton extends MIOButton
 {
     private _menu = null;
@@ -56,7 +70,6 @@ class MIOPopUpButton extends MIOButton
             else {
                 this._menu.hide();
             }
-
         });
     }
 
