@@ -65,3 +65,4 @@ var MIOURLConnection = (function () {
     };
     return MIOURLConnection;
 }());
+//# sourceMappingURL=MIOURLConnection.js.map

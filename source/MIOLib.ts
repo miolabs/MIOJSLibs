@@ -155,7 +155,7 @@ function MIOLibDownloadFile(file)
 
 var _mc_force_mobile = false;
 
-function MIOLibCheckParams() {
+function MIOLibInit() {
     MIOLibDecodeParams(window.location.search, this, function (param, value) {
 
         // Only for test

@@ -220,8 +220,10 @@ class MIOWebApplication
 
     showMenuFromControl(control, menu)
     {
-        if (menu === this._popUpMenu)
-            this._popUpMenu.hide();
+        if (this._popUpMenu != null) {
+            if (menu.layerID != this._popUpMenu.layerID)
+                this._popUpMenu.hide();
+        }
 
         this._popUpMenuControl = control;
         this._popUpMenu = menu;
@@ -232,6 +234,7 @@ class MIOWebApplication
         var y = control.layer.getBoundingClientRect().top + control.layer.getBoundingClientRect().height;
         this._popUpMenu.setX(x);
         this._popUpMenu.setY(y);
+        this._popUpMenu.layer.style.zIndex = 200;
 
         this._popUpMenu.layout();
     }
@@ -259,8 +262,13 @@ class MIOWebApplication
             var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
 
             if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
-                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom))
+                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom)) {
+
+                // Nothing
+            }
+            else {
                 this._popUpMenu.hide();
+            }
         }
 
         if (this._popOverWindow != null)

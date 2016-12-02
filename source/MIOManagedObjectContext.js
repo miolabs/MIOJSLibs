@@ -231,3 +231,4 @@ var MIOPersistentStore = (function (_super) {
     }
     return MIOPersistentStore;
 }(MIOObject));
+//# sourceMappingURL=MIOManagedObjectContext.js.map

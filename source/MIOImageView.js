@@ -37,3 +37,4 @@ var MIOImageView = (function (_super) {
     };
     return MIOImageView;
 }(MIOView));
+//# sourceMappingURL=MIOImageView.js.map

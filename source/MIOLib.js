@@ -115,7 +115,7 @@ function MIOLibDownloadFile(file) {
     console.log("Added file to download: " + file);
 }
 var _mc_force_mobile = false;
-function MIOLibCheckParams() {
+function MIOLibInit() {
     MIOLibDecodeParams(window.location.search, this, function (param, value) {
         // Only for test
         if (param == "forceMobile")
@@ -182,3 +182,4 @@ function MIOLibEvaluateParam(param, value, target, completion) {
     if (target != null && completion != null)
         completion.call(target, param, value);
 }
+//# sourceMappingURL=MIOLib.js.map

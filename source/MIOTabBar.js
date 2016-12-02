@@ -121,3 +121,4 @@ var MIOTabBar = (function (_super) {
     };
     return MIOTabBar;
 }(MIOView));
+//# sourceMappingURL=MIOTabBar.js.map

@@ -65,6 +65,7 @@ class MIOTableViewCell extends MIOView
             this.textLabel.layer.style.bottom = "10px";
 
             this.addSubview(this.textLabel);
+            this.layer.style.height = "44px";
         }
 
         this._customizeLayerSetup()

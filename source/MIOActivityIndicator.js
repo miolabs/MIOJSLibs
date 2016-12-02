@@ -58,3 +58,4 @@ var MIOActivityIndicator = (function (_super) {
     };
     return MIOActivityIndicator;
 }(MIOView));
+//# sourceMappingURL=MIOActivityIndicator.js.map

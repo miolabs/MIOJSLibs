@@ -53,6 +53,7 @@ var MIOTableViewCell = (function (_super) {
             this.textLabel.layer.style.right = "10px";
             this.textLabel.layer.style.bottom = "10px";
             this.addSubview(this.textLabel);
+            this.layer.style.height = "44px";
         }
         this._customizeLayerSetup();
     };
@@ -475,3 +476,4 @@ var MIOTableView = (function (_super) {
     };
     return MIOTableView;
 }(MIOView));
+//# sourceMappingURL=MIOTableView.js.map

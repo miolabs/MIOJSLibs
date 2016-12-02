@@ -29,3 +29,4 @@ var MIOTabBarController = (function (_super) {
     };
     return MIOTabBarController;
 }(MIOViewController));
+//# sourceMappingURL=MIOTabBarController.js.map
