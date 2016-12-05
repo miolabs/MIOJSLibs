@@ -20,10 +20,6 @@ var MIOWindow = (function (_super) {
         this.layer = document.createElement("div");
         this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
-        this.layer.style.left = "0px";
-        this.layer.style.top = "0px";
-        this.layer.style.width = "100%";
-        this.layer.style.height = "100%";
         // Only windows
         document.body.appendChild(this.layer);
     };
@@ -34,6 +30,9 @@ var MIOWindow = (function (_super) {
     };
     MIOWindow.prototype.removeFromSuperview = function () {
         document.body.removeChild(this.layer);
+    };
+    MIOWindow.prototype.layout = function () {
+        this.rootViewController.view.layout();
     };
     return MIOWindow;
 }(MIOView));

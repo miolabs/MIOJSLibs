@@ -24,11 +24,36 @@ var MIOPopoverPresentationController = (function (_super) {
         this.sourceRect = MIOFrame.Zero();
         this.delegate = null;
         this._rootViewController = null;
+        this._canvasLayer = null;
     }
     MIOPopoverPresentationController.prototype.initWithRootViewController = function (vc) {
         _super.prototype.init.call(this);
         this._rootViewController = vc;
         this.addChildViewController(vc);
+        var contentSize = vc.preferredContentSize;
+        this._canvasLayer = document.createElement("CANVAS");
+        this._canvasLayer.setAttribute("width", contentSize.width);
+        this._canvasLayer.setAttribute("height", contentSize.height);
+    };
+    MIOPopoverPresentationController.prototype.viewDidLoad = function () {
+        _super.prototype.viewDidLoad.call(this);
+        this._drawPopOverBorder();
+    };
+    MIOPopoverPresentationController.prototype._drawPopOverBorder = function () {
+        var context = this._canvasLayer.getContext('2d');
+        var w = this.view.getWidth();
+        var radius = 3;
+        var color = 'rgba(170, 170, 170, 1)';
+        //// Bezier Drawing
+        context.beginPath();
+        // Left corner
+        context.moveTo(0, radius);
+        context.bezierCurveTo(0, 0, w, 0, radius, 0);
+        context.lineTo(w - radius, 0);
+        context.closePath();
+        context.strokeStyle = color;
+        context.lineWidth = 1;
+        context.stroke();
     };
     return MIOPopoverPresentationController;
 }(MIOViewController));

@@ -202,8 +202,9 @@ var MIOWebApplication = (function () {
         }
         if (this._popOverWindow == null) {
             this._popOverWindow = new MIOWindow("popover_window");
-            this._popOverWindow.initWithRootViewController(vc);
-            this._popOverWindow.layer.style.border = "2px solid rgb(170, 170, 170)";
+            this._popOverWindow.initWithRootViewController(vc.popoverPresentationController());
+            //this._popOverWindow.layer.style.border = "2px solid rgb(170, 170, 170)";
+            this._popOverWindow.setFrame(vc.popoverPresentationController().frame);
         }
         this._popOverWindow.rootViewController.onLoadView(this, function () {
             this._popOverWindow.rootViewController.viewWillAppear();

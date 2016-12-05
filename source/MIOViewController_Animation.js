@@ -151,7 +151,8 @@ function FrameWithStyleForViewControllerInView(view, vc) {
         x = v.layer.getBoundingClientRect().left + f.size.width + 10;
         if ((x + w) > window.innerWidth)
             x = v.layer.getBoundingClientRect().left - w - 10;
-        y = (window.innerHeight - h) / 2;
+        //y = (window.innerHeight - h) / 2;
+        y = v.layer.getBoundingClientRect().top + f.size.height + 10;
     }
     else {
         w = view.getWidth();

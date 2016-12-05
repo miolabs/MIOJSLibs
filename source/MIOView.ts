@@ -263,7 +263,6 @@ class MIOView extends MIOObject
         }
     }
 
-
     layerWithItemID(itemID)
     {
         return MIOLayerSearchElementByID(this.layer, itemID);

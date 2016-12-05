@@ -22,10 +22,6 @@ class MIOWindow extends MIOView
         this.layer = document.createElement("div");
         this.layer.setAttribute("id", this.layerID);
         this.layer.style.position = "absolute";
-        this.layer.style.left = "0px";
-        this.layer.style.top = "0px";
-        this.layer.style.width = "100%";
-        this.layer.style.height = "100%";
 
         // Only windows
         document.body.appendChild(this.layer);
@@ -42,6 +38,11 @@ class MIOWindow extends MIOView
     removeFromSuperview()
     {
         document.body.removeChild(this.layer);
+    }
+
+    layout()
+    {
+        this.rootViewController.view.layout();
     }
 }
 
