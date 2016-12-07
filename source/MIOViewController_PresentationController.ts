@@ -1,0 +1,210 @@
+/**
+ * Created by godshadow on 06/12/2016.
+ */
+
+/// <reference path="MIOViewController.ts" />
+
+enum MIOModalPresentationStyle
+{
+    CurrentContext,
+    FullScreen,
+    PageSheet,
+    FormSheet,
+    Popover,
+    None
+}
+
+enum MIOModalTransitionStyle
+{
+    CoverVertical,
+    FlipHorizontal,
+    CrossDisolve
+}
+
+class MIOPresentationController extends MIOObject
+{
+    presentationStyle = MIOModalPresentationStyle.CurrentContext;
+    shouldPresentInFullscreen = true;
+
+    presentedViewController = null; //ToVC
+    presentingViewController = null; //FromVC
+    presentedView = null;
+
+    initWithPresentedViewControllerAndPresentingViewController(presentedViewController, presentingViewController)
+    {
+        super.init();
+
+        this.presentedViewController = presentedViewController;
+        this.presentingViewController = presentingViewController;
+    }
+
+    presentationTransitionWillBegin()
+    {
+        var fromVC = this.presentingViewController;
+        var toVC = this.presentedViewController;
+
+        toVC.viewWillAppear();
+        toVC._childControllersWillAppear();
+
+        if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+            || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+            fromVC.viewWillDisappear();
+            fromVC._childControllersWillDisappear();
+        }
+    }
+
+    presentationTransitionDidEnd(completed)
+    {
+        var fromVC = this.presentingViewController;
+        var toVC = this.presentedViewController;
+
+        toVC.viewDidAppear();
+        toVC._childControllersDidAppear();
+
+        if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+            || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+            fromVC.viewDidDisappear();
+            fromVC._childControllersDidDisappear();
+        }
+    }
+
+    dismissalTransitionWillBegin()
+    {
+        var toVC = this.presentingViewController;
+        var fromVC = this.presentedViewController;
+
+        if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+            || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+            toVC.viewWillAppear();
+            toVC._childControllersWillAppear();
+
+            toVC.view.layout();
+        }
+
+        fromVC.viewWillDisappear();
+        fromVC._childControllersWillDisappear();
+    }
+
+    dismissalTransitionDidEnd(completed)
+    {
+        var toVC = this.presentingViewController;
+        var fromVC = this.presentedViewController;
+
+        if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+            || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+            toVC.viewDidAppear();
+            toVC._childControllersDidAppear();
+        }
+
+        fromVC.viewDidDisappear();
+        fromVC._childControllersDidDisappear();
+    }
+}
+
+class MIOModalTransitioningDelegate extends MIOObject
+{
+    modalTransitionStyle = null;
+
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
+    {
+
+    }
+
+    animationControllerForDismissedController(dismissedController)
+    {
+
+    }
+}
+
+class MIOModalPresentAnimationController extends MIOObject
+{
+    transitionDuration(transitionContext)
+    {
+        return 0.15;
+    }
+
+    animateTransition(transitionContext)
+    {
+        // make view configurations before transitions
+        var fromVC = transitionContext.presentingViewController;
+        var toVC = transitionContext.presentedViewController;
+
+        if (toVC.modalPresentationStyle == MIOModalPresentationStyle.CurrentContext)
+        {
+            if (MIOLibIsMobile() == false)
+            {
+                // Present like desktop sheet window
+                var ws = MUIWindowSize();
+
+                var w = toVC.preferredContentSize.width;
+                var h = toVC.preferredContentSize.height;
+                var x = (ws.width - w) / 2;
+
+                toVC.view.setFrame(MIOFrame.frameWithRect(x, 0, w, h));
+            }
+            else
+            {
+                var w = toVC.preferredContentSize.width;
+                var h = toVC.preferredContentSize.height;
+                var x = (fromVC.view.getWidth() - w) / 2;
+
+                toVC.view.setFrame(MIOFrame.frameWithRect(x, 0, w, h));
+            }
+
+        }
+    }
+
+    animationEnded(transitionCompleted)
+    {
+        // make view configurations after transitions
+    }
+
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext)
+    {
+        var animations = null;
+
+        if (MIOLibIsMobile() == true)
+            animations = MUIClassListForAnimationType(MUIAnimationType.SlideInUp);
+        else
+            animations = MUIClassListForAnimationType(MUIAnimationType.BeginSheet);
+
+        return animations;
+    }
+
+}
+
+class MIOModalDismissAnimationController extends MIOObject
+{
+    transitionDuration(transitionContext)
+    {
+        return 0.15;
+    }
+
+    animateTransition(transitionContext)
+    {
+        // make view configurations after transitions
+    }
+
+    animationEnded(transitionCompleted)
+    {
+        // make view configurations before transitions
+    }
+
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext)
+    {
+        var animations = null;
+        if (MIOLibIsMobile() == true)
+            animations = MUIClassListForAnimationType(MUIAnimationType.SlideOutDown);
+        else
+            animations = MUIClassListForAnimationType(MUIAnimationType.EndSheet);
+
+        return animations;
+    }
+
+}

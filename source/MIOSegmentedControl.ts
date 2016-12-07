@@ -10,9 +10,9 @@ class MIOSegmentedControl extends MIOControl
     segmentedItems = [];
     selectedSegmentedIndex = -1;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         // Check for segmented items
         for (var index = 0; index < this.layer.childNodes.length; index++)

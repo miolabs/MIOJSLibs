@@ -25,8 +25,8 @@ var MIOToolbar = (function (_super) {
         _super.apply(this, arguments);
         this.buttons = [];
     }
-    MIOToolbar.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOToolbar.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         // Check if we have sub nodes
         if (this.layer.childNodes.length > 0) {
             for (var index = 0; index < this.layer.childNodes.length; index++) {

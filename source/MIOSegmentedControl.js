@@ -15,8 +15,8 @@ var MIOSegmentedControl = (function (_super) {
         this.segmentedItems = [];
         this.selectedSegmentedIndex = -1;
     }
-    MIOSegmentedControl.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOSegmentedControl.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         // Check for segmented items
         for (var index = 0; index < this.layer.childNodes.length; index++) {
             var itemLayer = this.layer.childNodes[index];

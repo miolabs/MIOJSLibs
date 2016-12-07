@@ -37,8 +37,8 @@ var MIOButton = (function (_super) {
         this._selected = false;
         this.type = MIOButtonType.MomentaryPushIn;
     }
-    MIOButton.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOButton.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         var type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")
             this.type = MIOButtonType.MomentaryPushIn;

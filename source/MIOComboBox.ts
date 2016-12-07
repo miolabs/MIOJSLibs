@@ -11,9 +11,9 @@ class MIOComboBox extends MIOControl
     target = null;
     action = null;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         this._selectLayer = MIOLayerGetFirstElementWithTag(this.layer, "SELECT");
         if (this._selectLayer == null) {

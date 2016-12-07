@@ -21,9 +21,9 @@ class MIOImageView extends MIOView
 {
     private _imageLayer = null;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "IMG");
         if (this._imageLayer == null) {

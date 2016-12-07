@@ -19,9 +19,7 @@ class MIOWindow extends MIOView
 
     init()
     {
-        this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
-        this.layer.style.position = "absolute";
+        super.init();
 
         // Only windows
         document.body.appendChild(this.layer);

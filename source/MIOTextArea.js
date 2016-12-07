@@ -15,8 +15,8 @@ var MIOTextArea = (function (_super) {
         this.textChangeTarget = null;
         this.textChangeAction = null;
     }
-    MIOTextArea.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOTextArea.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this.textareaLayer = document.createElement("textarea");
         this.textareaLayer.style.width = "98%";
         this.textareaLayer.style.height = "90%";

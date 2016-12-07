@@ -11,25 +11,17 @@ var MIOPageController = (function (_super) {
     __extends(MIOPageController, _super);
     function MIOPageController() {
         _super.apply(this, arguments);
-        this.selectedViewControllerIndex = -1;
+        this.selectedViewControllerIndex = 0;
     }
     MIOPageController.prototype.addPageViewController = function (vc) {
-        this.view.addSubview(vc.view);
         this.addChildViewController(vc);
-        if (this.selectedViewControllerIndex == -1)
-            this.selectedViewControllerIndex = 0;
-        else
-            vc.view.setHidden(true);
     };
     MIOPageController.prototype._loadChildControllers = function () {
-        if (this.selectedViewControllerIndex > -1) {
-            var vc = this.childViewControllers[this.selectedViewControllerIndex];
-            vc.onLoadView(this, function () {
-                this._setViewLoaded(true);
-            });
-        }
-        else
+        var vc = this.childViewControllers[0];
+        this.view.addSubview(vc.view);
+        vc.onLoadView(this, function () {
             this._setViewLoaded(true);
+        });
     };
     MIOPageController.prototype.viewWillAppear = function () {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
@@ -63,9 +55,9 @@ var MIOPageController = (function (_super) {
         var oldVC = this.childViewControllers[this.selectedViewControllerIndex];
         var newVC = this.childViewControllers[index];
         this.selectedViewControllerIndex = index;
-        newVC.view.setHidden(false);
+        this.view.addSubview(newVC.view);
         this.transitionFromViewControllerToViewController(oldVC, newVC, 0, MIOAnimationType.None, this, function () {
-            oldVC.view.setHidden(true);
+            oldVC.view.removeFromSuperview();
         });
     };
     MIOPageController.prototype.showNextPage = function () {

@@ -17,9 +17,7 @@ var MIOWindow = (function (_super) {
             this.layerID = "main_window";
     }
     MIOWindow.prototype.init = function () {
-        this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
-        this.layer.style.position = "absolute";
+        _super.prototype.init.call(this);
         // Only windows
         document.body.appendChild(this.layer);
     };

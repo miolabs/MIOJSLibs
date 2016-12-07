@@ -18,9 +18,9 @@ class MIOTabBarItem extends MIOView
 
     isSelected = false;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         if (this.layer.childNodes.length < 2)
             throw new Error("Tab bar item broken!");
@@ -68,9 +68,9 @@ class MIOTabBar extends MIOView
     items = [];
     selectedTabBarItemIndex = -1;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         // TODO: change to buttons
         // Check for tab items

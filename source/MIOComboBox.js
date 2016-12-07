@@ -15,8 +15,8 @@ var MIOComboBox = (function (_super) {
         this.target = null;
         this.action = null;
     }
-    MIOComboBox.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOComboBox.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._selectLayer = MIOLayerGetFirstElementWithTag(this.layer, "SELECT");
         if (this._selectLayer == null) {
             this._selectLayer = document.createElement("select");

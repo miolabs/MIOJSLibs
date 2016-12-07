@@ -6,19 +6,6 @@
 /// <reference path="MIOControl.ts" />
 /// <reference path="MIOString.ts" />
 
-function MIOTextFieldFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var tf = new MIOTextField();
-    tf.initWithLayer(layer);
-    view._linkViewToSubview(tf);
-
-    return tf;
-}
-
 enum MIOTextFieldType {
     NormalType,
     PasswordType,
@@ -37,11 +24,24 @@ class MIOTextField extends MIOControl
     enterPressTarget = null;
     enterPressAction = null;
 
-    protected _customizeLayerSetup()
+    init()
     {
-        super._customizeLayerSetup();
+        super.init();
+
+        this._setupLayer();
+    }
+
+    initWithLayer(layer, options?)
+    {
+        super.initWithLayer(layer, options);
 
         this._inputLayer = MIOLayerGetFirstElementWithTag(this.layer, "INPUT");
+
+        this._setupLayer();
+    }
+
+    private _setupLayer()
+    {
         if (this._inputLayer == null)
         {
             this._inputLayer = document.createElement("input");

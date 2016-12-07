@@ -10,10 +10,15 @@ class MIONavigationController extends MIOViewController
     viewControllersStack = [];
     currentViewControllerIndex = -1;
 
-    initWithRootViewController(vc)
+    init()
     {
         super.init();
+        this.view.layer.style.overflow = "hidden";
+    }
 
+    initWithRootViewController(vc)
+    {
+        this.init();
         this.setRootViewController(vc);
     }
 
@@ -29,6 +34,14 @@ class MIONavigationController extends MIOViewController
 
         this.addChildViewController(vc);
         this.contentSize = vc.contentSize;
+
+        vc.transitioningDelegate = this;
+    }
+
+    setPresentationController(pc)
+    {
+        super.setPresentationController(pc);
+        this.rootViewController.presentationController = pc;
     }
 
     _childControllersWillAppear()
@@ -83,14 +96,22 @@ class MIONavigationController extends MIOViewController
         this.currentViewControllerIndex++;
 
         vc.navigationController = this;
-        vc.presentationType = MIOPresentationType.Navigation;
+        if (vc.transitioningDelegate == null)
+            vc.transitioningDelegate = this.rootViewController.transitioningDelegate;
 
-        this.view.addSubview(vc.view);
-        this.addChildViewController(vc);
+        var presentationController = new MIOPresentationController();
+        presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, lastVC);
+        vc.presentationController = presentationController;
 
-        this.contentSize = vc.preferredContentSize;
+        vc.onLoadView(this, function () {
 
-        this.transitionFromViewControllerToViewController(lastVC, vc, 0.25, MIOAnimationType.Push);
+            this.view.addSubview(vc.view);
+            this.addChildViewController(vc);
+
+            this.contentSize = vc.preferredContentSize;
+
+            _MIUShowViewController(lastVC, vc, this);
+        });
     }
 
     popViewController(animate?)
@@ -107,11 +128,11 @@ class MIONavigationController extends MIOViewController
 
         this.contentSize = toVC.preferredContentSize;
 
-        this.transitionFromViewControllerToViewController(fromVC, toVC, 0.25, MIOAnimationType.Pop, this, function () {
+        _MUIDismissViewController(fromVC, toVC, this, this, function () {
 
+            fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();
-            this.removeChildViewController(fromVC);
-        }, true);
+        });
     }
 
     popToRootViewController()
@@ -156,4 +177,97 @@ class MIONavigationController extends MIOViewController
 
         return vc.preferredContentSize;
     }
+
+
+    // Transitioning delegate
+    private _pushAnimationController = null;
+    private _popAnimationController = null;
+
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
+    {
+        if (this._pushAnimationController == null) {
+
+            this._pushAnimationController = new MIOPushAnimationController();
+            this._pushAnimationController.init();
+        }
+
+        return this._pushAnimationController;
+    }
+
+    animationControllerForDismissedController(dismissedController)
+    {
+        if (this._popAnimationController == null) {
+
+            this._popAnimationController = new MIOPopAnimationController();
+            this._popAnimationController.init();
+        }
+
+        return this._popAnimationController;
+    }
+}
+
+/*
+    ANIMATIONS
+ */
+
+class MIOPushAnimationController extends MIOObject
+{
+    transitionDuration(transitionContext)
+    {
+        return 0.25;
+    }
+
+    animateTransition(transitionContext)
+    {
+        // make view configurations before transitions
+        var fromVC = transitionContext.presentingViewController;
+        var toVC = transitionContext.presentedViewController;
+
+        w = fromVC.view.getWidth();
+        h = fromVC.view.getHeight();
+
+        var w = toVC.preferredContentSize.width;
+        var h = toVC.preferredContentSize.height;
+
+        toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+    }
+
+    animationEnded(transitionCompleted)
+    {
+        // make view configurations after transitions
+    }
+
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext)
+    {
+        var animations = MUIClassListForAnimationType(MUIAnimationType.Push);
+        return animations;
+    }
+
+}
+
+class MIOPopAnimationController extends MIOObject
+{
+    transitionDuration(transitionContext)
+    {
+        return 0.25;
+    }
+
+    animateTransition(transitionContext)
+    {
+        // make view configurations after transitions
+    }
+
+    animationEnded(transitionCompleted)
+    {
+        // make view configurations before transitions
+    }
+
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext)
+    {
+        var animations = MUIClassListForAnimationType(MUIAnimationType.Pop);
+        return animations;
+    }
+
 }

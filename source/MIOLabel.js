@@ -7,15 +7,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOView.ts" />
-function MIOLabelFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var label = new MIOLabel();
-    label.initWithLayer(layer);
-    view._linkViewToSubview(label);
-    return label;
-}
 var MIOLabel = (function (_super) {
     __extends(MIOLabel, _super);
     function MIOLabel() {
@@ -27,11 +18,14 @@ var MIOLabel = (function (_super) {
     MIOLabel.prototype.init = function () {
         _super.prototype.init.call(this);
         this.layer.style.background = "";
-        this._customizeLayerSetup();
+        this._setupLayer();
     };
-    MIOLabel.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOLabel.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
+        this._setupLayer();
+    };
+    MIOLabel.prototype._setupLayer = function () {
         if (this._textLayer == null) {
             this.layer.innerHTML = "";
             this._textLayer = document.createElement("span");

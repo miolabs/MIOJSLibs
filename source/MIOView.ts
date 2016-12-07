@@ -24,19 +24,6 @@ function MIOViewGetNextLayerID(prefix?)
     return layerID;
 }
 
-function MIOViewFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var v = new MIOView();
-    v.initWithLayer(layer);
-    view._linkViewToSubview(v);
-
-    return v;
-}
-
 function MIOLayerSearchElementByID(layer, elementID)
 {
     if (layer.tagName != "DIV" && layer.tagName != "INPUT")
@@ -80,16 +67,6 @@ function MIOLayerGetFirstElementWithTag(layer, tag)
     return foundLayer;
 }
 
-function MIOViewFromResource(url, css, elementID)
-{
-    var view = new MIOView();
-
-    var layer = MIOLayerFromResource(url, css, elementID);
-    view.initWithLayer(layer);
-
-    return view;
-}
-
 function MIOLayerFromResource(url, css, elementID)
 {
     var htmlString = MIOCCoreLoadTextFile(url);
@@ -104,7 +81,6 @@ function MIOLayerFromResource(url, css, elementID)
 
     return(html.getElementById(elementID));
 }
-
 
 class MIOView extends MIOObject
 {
@@ -156,15 +132,11 @@ class MIOView extends MIOObject
     {
         this.layer = layer;
         this.layerOptions = options;
-        this._customizeLayerSetup();
+
+        this._checkDOMLayer();
     }
 
     awakeFromHTML()
-    {
-
-    }
-
-    protected _customizeLayerSetup()
     {
 
     }
@@ -186,10 +158,10 @@ class MIOView extends MIOObject
         view.setParent(this);
         this.subviews.push(view);
 
-        view._addLayerToDOM();
+        view._checkDOMLayer();
     }
 
-    protected _addLayerToDOM()
+    protected _checkDOMLayer()
     {
         if (this._isLayerInDOM == true)
             return;

@@ -29,8 +29,6 @@
 /// <reference path="MIOControl.ts" />
 /// <reference path="MIOButton.ts" />
 /// <reference path="MIOPopUpButton.ts" />
-/// <reference path="MIOStepControlButton.ts" />
-/// <reference path="MIOStepControl.ts" />
 /// <reference path="MIOCheckButton.ts" />
 /// <reference path="MIOTextField.ts" />
 /// <reference path="MIOTextArea.ts" />
@@ -42,6 +40,8 @@
 /// <reference path="MIOPageController.ts" />
 /// <reference path="MIOSplitViewController.ts" />
 /// <reference path="MIOTabBarController.ts" />
+
+/// <reference path="MIOUIKit.ts" />
 
 var MIOLibIsLoaded = false;
 

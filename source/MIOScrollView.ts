@@ -11,9 +11,9 @@ class MIOScrollView extends MIOView
 
     private _lastOffsetX = 0;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         var instance = this;
         this.layer.onscroll = function (e) {

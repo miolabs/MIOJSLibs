@@ -15,8 +15,8 @@ var MIOScrollView = (function (_super) {
         this.delegate = null;
         this._lastOffsetX = 0;
     }
-    MIOScrollView.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOScrollView.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         var instance = this;
         this.layer.onscroll = function (e) {
             instance._layerDidScroll.call(instance);

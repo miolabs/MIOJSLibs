@@ -41,7 +41,14 @@ class MIOCollectionViewCell extends MIOView
         super(MIOViewGetNextLayerID("collectionview_cell"));
     }
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options)
+    {
+        super.initWithLayer(layer, options);
+
+        this._setupLayer();
+    }
+
+    private _setupLayer()
     {
         var instance = this;
 
@@ -98,9 +105,9 @@ class MIOCollectionView extends MIOView
         this._collectionViewLayout = layout;
     }
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0)
@@ -178,22 +185,21 @@ class MIOCollectionView extends MIOView
         var cell = Object.create(window[className].prototype);
         cell.constructor.apply(cell);
 
-        cell.init();
+        //cell.init();
         var layer = item["layer"];
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
-            var size = item["size"];
-            if (size != null) {
-                cell.setWidth(size.width);
-                cell.setHeight(size.height);
-            }
-            var bg = item["bg"];
-            if (bg != null) {
-                cell.layer.style.background = bg;
-            }
-            cell.addSubLayer(newLayer);
-            cell._customizeLayerSetup();
+            // var size = item["size"];
+            // if (size != null) {
+            //     cell.setWidth(size.width);
+            //     cell.setHeight(size.height);
+            // }
+            // var bg = item["bg"];
+            // if (bg != null) {
+            //     cell.layer.style.background = bg;
+            // }
+            cell.initWithLayer(newLayer);
             cell.awakeFromHTML();
         }
         else {
@@ -217,23 +223,23 @@ class MIOCollectionView extends MIOView
         var view = Object.create(window[className].prototype);
         view.constructor.apply(view);
 
-        view.init();
+        //view.init();
         var layer = item["layer"];
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
-            var size = item["size"];
-            if (size != null) {
-                //view.setWidth(size.width);
-                view.layer.style.width = "100%";
-                view.setHeight(size.height);
-            }
+            // var size = item["size"];
+            // if (size != null) {
+            //     view.setWidth(size.width);
+            //     view.layer.style.width = "100%";
+            //     view.setHeight(size.height);
+            // }
             // var bg = item["bg"];
             // if (bg != null) {
             //     view.layer.style.background = bg;
             // }
-            view.addSubLayer(newLayer);
-            view._customizeLayerSetup();
+            view.initWithLayer(newLayer);
+            //view._addLayerToDOM();
             view.awakeFromHTML();
         }
         else {

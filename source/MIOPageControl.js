@@ -15,8 +15,8 @@ var MIOPageControl = (function (_super) {
         this._items = [];
         this._currentPage = -1;
     }
-    MIOPageControl.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOPageControl.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         // Check for page items
         for (var index = 0; index < this.layer.childNodes.length; index++) {
             var itemLayer = this.layer.childNodes[index];

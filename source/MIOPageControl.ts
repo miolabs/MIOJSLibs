@@ -11,9 +11,9 @@ class MIOPageControl extends MIOControl {
     private _items = [];
     private _currentPage = -1;
 
-    protected _customizeLayerSetup() {
-
-        super._customizeLayerSetup();
+    initWithLayer(layer, options?)
+    {
+        super.initWithLayer(layer, options);
 
         // Check for page items
         for (var index = 0; index < this.layer.childNodes.length; index++)

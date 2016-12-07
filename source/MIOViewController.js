@@ -12,7 +12,9 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOBundle.ts" />
 /// <reference path="MIOCoreTypes.ts" />
 /// <reference path="MIOViewController_Animation.ts" />
+/// <reference path="MIOViewController_PresentationController.ts" />
 /// <reference path="MIOViewController_PopoverPresentationController.ts" />
+/// <reference path="MIOUIKit.ts" />
 var MIOViewController = (function (_super) {
     __extends(MIOViewController, _super);
     function MIOViewController(layerID, prefixID) {
@@ -28,11 +30,17 @@ var MIOViewController = (function (_super) {
         this._viewIsLoaded = false;
         this._layerIsReady = false;
         this._childViewControllers = [];
+        this.presentingViewController = null;
+        this.presentedViewController = null;
+        this.parentViewController = null;
         this.navigationController = null;
-        this.modalController = null;
+        this.splitViewController = null;
+        this.tabBarController = null;
+        this._presentationController = null;
         this._popoverPresentationController = null;
-        this.presentationStyle = MIOPresentationStyle.CurrentContext;
-        this.presentationType = MIOPresentationType.Modal;
+        this.modalPresentationStyle = MIOModalPresentationStyle.CurrentContext;
+        this.modalTransitionStyle = MIOModalTransitionStyle.CoverVertical;
+        this.transitioningDelegate = null;
         this._contentSize = new MIOSize(320, 200);
         this._preferredContentSize = new MIOSize(320, 200);
         this.layerID = layerID;
@@ -58,7 +66,7 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.initWithResource = function (url) {
         _super.prototype.init.call(this);
         this.view = new MIOView(this.layerID);
-        this.view.init();
+        //this.view.init();
         var mainBundle = MIOBundle.mainBundle();
         mainBundle.loadLayoutFromURL(url, this.layerID, this, function (data) {
             //var result = MIOHTMLParser(data, this.layerID);
@@ -74,7 +82,8 @@ var MIOViewController = (function (_super) {
             var items = domParser.parseFromString(result.layout, "text/html");
             var layer = items.getElementById(this.layerID);
             this.localizeSubLayers(layer.childNodes);
-            this.view.addSubLayer(layer);
+            //this.view.addSubLayer(layer);
+            this.view.initWithLayer(layer);
             this.view.awakeFromHTML();
             this._didLayerDownloaded();
         });
@@ -97,7 +106,7 @@ var MIOViewController = (function (_super) {
         layer.innerHTML = MIOLocalizeString(key, key);
     };
     MIOViewController.prototype.loadView = function () {
-        this.view.layer.style.overflow = "hidden";
+        //this.view.layer.style.overflow = "hidden";
     };
     MIOViewController.prototype._didLayerDownloaded = function () {
         this._layerIsReady = true;
@@ -169,26 +178,6 @@ var MIOViewController = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    MIOViewController.prototype.setOutlet = function (elementID, className, options) {
-        //var layer = MIOLayerSearchElementByID(this.view.layer, elementID);
-        var layer = document.getElementById(elementID);
-        if (className == null)
-            className = layer.getAttribute("data-class");
-        if (className == null) {
-            var view = new MIOView();
-            view.initWithLayer(layer);
-            this.view._linkViewToSubview(view);
-            return view;
-        }
-        var c = MIOClassFromString(className);
-        c.initWithLayer(layer, options);
-        this.view._linkViewToSubview(c);
-        if (c instanceof MIOView)
-            c.awakeFromHTML();
-        if (c instanceof MIOViewController)
-            this.addChildViewController(c);
-        return c;
-    };
     Object.defineProperty(MIOViewController.prototype, "childViewControllers", {
         get: function () {
             return this._childViewControllers;
@@ -215,152 +204,89 @@ var MIOViewController = (function (_super) {
     //     this.view.removeFromSuperview();
     //     //this.didMoveToParentViewController(null);
     // }
-    MIOViewController.prototype.presentViewController = function (vc, animate) {
-        vc.presentationType = MIOPresentationType.Modal;
-        var frame = FrameWithStyleForViewControllerInView(this.view, vc);
-        vc.view.setFrame(frame);
-        if (vc.presentationStyle == MIOPresentationStyle.ModalPresentationPopover) {
-            MIOWebApplication.sharedInstance().showPopOverControllerFromRect(vc, frame);
-        }
-        else {
-            this.addChildViewController(vc);
-            this.showViewController(vc, true);
-        }
+    MIOViewController.prototype.setPresentationController = function (pc) {
+        this._presentationController = pc;
     };
-    MIOViewController.prototype.showViewController = function (vc, animate) {
-        this.view.addSubview(vc.view);
-        var type = AnimationTypeForViewController(this, false);
-        this.transitionFromViewControllerToViewController(this, vc, 0.25, type, null, null, false);
-        /*vc.onLoadView(this, function () {
-
-            if (vc.presentationStyle == MIOPresentationStyle.CurrentContext
-                || vc.presentationStyle == MIOPresentationStyle.FullScreen)
-            {
-                this.viewWillDisappear();
-                this._childControllersWillDisappear();
+    Object.defineProperty(MIOViewController.prototype, "presentationController", {
+        get: function () {
+            return this._presentationController;
+        },
+        set: function (pc) {
+            this.setPresentationController(pc);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MIOViewController.prototype, "popoverPresentationController", {
+        get: function () {
+            if (this._popoverPresentationController == null) {
+                this._popoverPresentationController = new MIOPopoverPresentationController();
             }
+            return this._popoverPresentationController;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    MIOViewController.prototype.showViewController = function (vc, animate) {
+        // this.view.addSubview(vc.view);
+        //
+        // var presentationController = new MIOPresentationController();
+        // presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, this);
+        // vc.presentationController = presentationController;
+        //
+        // var type = AnimationTypeForViewController(this, false);
+        // this.transitionFromViewControllerToViewController(this, vc, 0.25, type, null, null, false);
+    };
+    MIOViewController.prototype.presentViewController = function (vc, animate) {
+        var presentationController = new MIOPresentationController();
+        presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, this);
+        vc.presentationController = presentationController;
+        vc.onLoadView(this, function () {
+            this.view.addSubview(vc.view);
+            this.addChildViewController(vc);
+            _MIUShowViewController(this, vc, this);
+        });
+    };
+    MIOViewController.prototype.dismissViewController = function (animate) {
+        var toVC = this.presentationController.presentingViewController;
+        var fromVC = this.presentationController.presentedViewController;
+        _MUIDismissViewController(fromVC, toVC, this, this, function () {
+            fromVC.removeChildViewController(this);
+            fromVC.view.removeFromSuperview();
+        });
+    };
+    MIOViewController.prototype.transitionFromViewControllerToViewController = function (fromVC, toVC, duration, animationType, target, completion) {
+        /*toVC.onLoadView(this, function () {
 
-            vc.viewWillAppear();
-            vc._childControllersWillAppear();
-
-            vc.view.layout();
-
-            if (animate)
+            if (fromVC.presentationStyle == MIOPresentationStyle.CurrentContext
+                || fromVC.presentationStyle == MIOPresentationStyle.FullScreen)
             {
-                var newVC = vc;
-                var oldVC = this;
+                fromVC.viewWillDisappear();
+                fromVC._childControllersWillDisappear();
 
-                newVC.view.layer.style.animationDuration = "0.25s";
-                AddAnimationClassesForType(newVC, false);
-                newVC.view.layer.addEventListener("animationend", function(e) {
+                toVC.viewWillAppear();
+                toVC._childControllersWillAppear();
 
-                    RemoveAnimationClassesForType(newVC, false);
-                    newVC.view.layer.removeEventListener("animationend", null);
-
-                    newVC.viewDidAppear();
-                    newVC._childControllersDidAppear();
-
-                    if (newVC.presentationStyle == MIOPresentationStyle.CurrentContext
-                        || newVC.presentationStyle == MIOPresentationStyle.FullScreen)
-                    {
-                        oldVC.viewDidDisappear();
-                        oldVC._childControllersDidDisappear();
-                    }
-                });
+                toVC.view.layout();
             }
             else
             {
-                vc.viewDidAppear();
-                vc._childControllersDidAppear();
+                if (reverse == false)
+                {
+                    toVC.viewWillAppear();
+                    toVC._childControllersWillAppear();
 
-                if (vc.presentationStyle == MIOPresentationStyle.CurrentContext
-                    || vc.presentationStyle == MIOPresentationStyle.FullScreen)
-                {
-                    this.viewDidDisappear();
-                    this._childControllersDidDisappear();
-                }
-            }
-        });*/
-    };
-    MIOViewController.prototype.dismissViewController = function (animate) {
-        var type = AnimationTypeForViewController(this, true);
-        this.transitionFromViewControllerToViewController(this, this.parent, 0.25, type, this, function () {
-            this.view.removeFromSuperview();
-        }, true);
-        /*        if (this.presentationStyle == MIOPresentationStyle.CurrentContext
-                    || this.presentationStyle == MIOPresentationStyle.FullScreen)
-                {
-                    this.parent.viewWillAppear();
-                    this.parent._childControllersWillAppear();
-                    this.parent.view.layout();
-                }
-        
-                this.viewWillDisappear();
-                this._childControllersWillDisappear();
-        
-                if (animate)
-                {
-                    var newVC = this.parent;
-                    var oldVC = this;
-        
-                    oldVC.view.layer.style.animationDuration = "0.25s";
-                    AddAnimationClassesForType(oldVC, true);
-                    oldVC.view.layer.addEventListener("animationend", function(e) {
-        
-                        RemoveAnimationClassesForType(oldVC, true);
-                        oldVC.view.layer.removeEventListener("animationend", null);
-        
-                        oldVC.viewDidDisappear();
-                        oldVC._childControllersDidDisappear();
-        
-                        if (oldVC.presentationStyle == MIOPresentationStyle.CurrentContext
-                            || oldVC.presentationStyle == MIOPresentationStyle.FullScreen)
-                        {
-                            newVC.viewDidAppear();
-                            newVC._childControllersDidAppear();
-                        }
-        
-                        oldVC.view.removeFromSuperview();
-                    });
+                    toVC.view.layout();
                 }
                 else
                 {
-                    this.viewDidDisappear();
-                    this._childControllersDidDisappear();
-        
-                    if (this.presentationStyle == MIOPresentationStyle.CurrentContext
-                        || this.presentationStyle == MIOPresentationStyle.FullScreen)
-                    {
-                        this.parent.viewDidAppear();
-                        this.parent._childControllersDidAppear();
-                    }
-        
-                    this.view.removeFromSuperview();
-                }*/
-    };
-    MIOViewController.prototype.transitionFromViewControllerToViewController = function (fromVC, toVC, duration, animationType, target, completion, reverse) {
-        toVC.onLoadView(this, function () {
-            var presentationStyle = reverse ? fromVC.presentationStyle : toVC.presentationStyle;
-            if (fromVC.presentationStyle == MIOPresentationStyle.CurrentContext
-                || fromVC.presentationStyle == MIOPresentationStyle.FullScreen) {
-                fromVC.viewWillDisappear();
-                fromVC._childControllersWillDisappear();
-                toVC.viewWillAppear();
-                toVC._childControllersWillAppear();
-                toVC.view.layout();
-            }
-            else {
-                if (reverse == false) {
-                    toVC.viewWillAppear();
-                    toVC._childControllersWillAppear();
-                    toVC.view.layout();
-                }
-                else {
                     fromVC.viewWillDisappear();
                     fromVC._childControllersWillDisappear();
                 }
             }
-            if (duration > 0) {
+
+            if (duration > 0)
+            {
                 var vc = reverse == true ? fromVC : toVC;
                 vc.view.layer.style.animationDuration = duration + "s";
                 AddAnimationClasses(vc, ClassListForAnimationType(animationType));
@@ -376,71 +302,35 @@ var MIOViewController = (function (_super) {
                 vc.view.layer.animationParams["reverse"] = reverse;
                 vc.view.layer.addEventListener("animationend", this._animationDidFinish);
             }
-            else {
+            else
+            {
                 if (fromVC.presentationStyle == MIOPresentationStyle.CurrentContext
-                    || fromVC.presentationStyle == MIOPresentationStyle.FullScreen) {
+                    || fromVC.presentationStyle == MIOPresentationStyle.FullScreen)
+                {
                     toVC.viewDidAppear();
                     toVC._childControllersDidAppear();
+
                     fromVC.viewDidDisappear();
                     fromVC._childControllersDidDisappear();
                 }
-                else {
-                    if (reverse == false) {
+                else
+                {
+                    if (reverse == false)
+                    {
                         toVC.viewDidAppear();
                         toVC._childControllersDidAppear();
                     }
-                    else {
+                    else
+                    {
                         fromVC.viewDidDisappear();
                         fromVC._childControllersDidDisappear();
                     }
                 }
+
                 if (target != null && completion != null)
                     completion.call(target);
             }
-        });
-    };
-    MIOViewController.prototype._animationDidFinish = function (event) {
-        var type = event.target.animationParams["type"];
-        var toVC = event.target.animationParams["toVC"];
-        var fromVC = event.target.animationParams["fromVC"];
-        var target = event.target.animationParams["target"];
-        var completion = event.target.animationParams["completion"];
-        var instance = event.target.animationParams["instance"];
-        var reverse = event.target.animationParams["reverse"];
-        if (reverse == true) {
-            RemoveAnimationClasses(fromVC, ClassListForAnimationType(type));
-            toVC.view.layer.removeEventListener("animationend", instance._animationDidFinish);
-        }
-        else {
-            RemoveAnimationClasses(toVC, ClassListForAnimationType(type));
-            fromVC.view.layer.removeEventListener("animationend", instance._animationDidFinish);
-        }
-        if (fromVC.presentationStyle == MIOPresentationStyle.CurrentContext
-            || fromVC.presentationStyle == MIOPresentationStyle.FullScreen) {
-            toVC.viewDidAppear();
-            toVC._childControllersDidAppear();
-            fromVC.viewDidDisappear();
-            fromVC._childControllersDidDisappear();
-        }
-        else {
-            if (reverse == false) {
-                toVC.viewDidAppear();
-                toVC._childControllersDidAppear();
-            }
-            else {
-                fromVC.viewDidDisappear();
-                fromVC._childControllersDidDisappear();
-            }
-        }
-        if (target != null && completion != null)
-            completion.call(target);
-    };
-    MIOViewController.prototype.popoverPresentationController = function () {
-        if (this._popoverPresentationController == null) {
-            this._popoverPresentationController = new MIOPopoverPresentationController(this.layerID + "_popovervc");
-            this._popoverPresentationController.initWithRootViewController(this);
-        }
-        return this._popoverPresentationController;
+        });*/
     };
     MIOViewController.prototype.viewDidLoad = function () { };
     MIOViewController.prototype.viewWillAppear = function () { };

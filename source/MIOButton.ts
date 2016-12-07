@@ -41,9 +41,9 @@ class MIOButton extends MIOControl
     private _selected = false;
     type = MIOButtonType.MomentaryPushIn;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         var type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")

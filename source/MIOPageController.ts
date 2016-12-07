@@ -6,31 +6,21 @@
 
 class MIOPageController extends MIOViewController
 {
-    selectedViewControllerIndex = -1;
+    selectedViewControllerIndex = 0;
 
     addPageViewController(vc)
     {
-        this.view.addSubview(vc.view);
         this.addChildViewController(vc);
-
-        if (this.selectedViewControllerIndex == -1)
-            this.selectedViewControllerIndex = 0;
-        else
-            vc.view.setHidden(true);
     }
 
     protected _loadChildControllers()
     {
-        if (this.selectedViewControllerIndex > -1)
-        {
-            var vc = this.childViewControllers[this.selectedViewControllerIndex];
-            vc.onLoadView(this, function () {
+        var vc = this.childViewControllers[0];
+        this.view.addSubview(vc.view);
+        vc.onLoadView(this, function () {
 
-                this._setViewLoaded(true);
-            });
-        }
-        else
             this._setViewLoaded(true);
+        });
     }
 
     viewWillAppear()
@@ -80,10 +70,10 @@ class MIOPageController extends MIOViewController
 
         this.selectedViewControllerIndex = index;
 
-        newVC.view.setHidden(false);
+        this.view.addSubview(newVC.view);
         this.transitionFromViewControllerToViewController(oldVC, newVC, 0, MIOAnimationType.None, this, function () {
 
-            oldVC.view.setHidden(true);
+            oldVC.view.removeFromSuperview();
         });
     }
 

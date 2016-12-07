@@ -22,8 +22,8 @@ var MIOImageView = (function (_super) {
         _super.apply(this, arguments);
         this._imageLayer = null;
     }
-    MIOImageView.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOImageView.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "IMG");
         if (this._imageLayer == null) {
             this._imageLayer = document.createElement("img");

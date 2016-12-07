@@ -9,15 +9,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="MIOView.ts" />
 /// <reference path="MIOControl.ts" />
 /// <reference path="MIOString.ts" />
-function MIOTextFieldFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var tf = new MIOTextField();
-    tf.initWithLayer(layer);
-    view._linkViewToSubview(tf);
-    return tf;
-}
 var MIOTextFieldType;
 (function (MIOTextFieldType) {
     MIOTextFieldType[MIOTextFieldType["NormalType"] = 0] = "NormalType";
@@ -36,9 +27,16 @@ var MIOTextField = (function (_super) {
         this.enterPressTarget = null;
         this.enterPressAction = null;
     }
-    MIOTextField.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOTextField.prototype.init = function () {
+        _super.prototype.init.call(this);
+        this._setupLayer();
+    };
+    MIOTextField.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this._inputLayer = MIOLayerGetFirstElementWithTag(this.layer, "INPUT");
+        this._setupLayer();
+    };
+    MIOTextField.prototype._setupLayer = function () {
         if (this._inputLayer == null) {
             this._inputLayer = document.createElement("input");
             if (this.type == MIOTextFieldType.SearchType) {

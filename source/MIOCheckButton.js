@@ -24,8 +24,8 @@ var MIOCheckButton = (function (_super) {
         this.action = null;
         this.on = false; //Off
     }
-    MIOCheckButton.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOCheckButton.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         this.layer.classList.add("check_button");
         this.layer.classList.add("check_button_state_off");
         var instance = this;

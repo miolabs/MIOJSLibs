@@ -2,7 +2,7 @@
  * Created by godshadow on 11/11/2016.
  */
 
-/// <reference path="MIOViewController.ts" />
+/// <reference path="MIOViewController_PresentationController.ts" />
 
 enum MIOPopoverArrowDirection
 {
@@ -13,7 +13,7 @@ enum MIOPopoverArrowDirection
     Right
 }
 
-class MIOPopoverPresentationController extends MIOViewController
+class MIOPopoverPresentationController extends MIOPresentationController
 {
     permittedArrowDirections = MIOPopoverArrowDirection.Any;
 

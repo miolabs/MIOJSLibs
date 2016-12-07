@@ -6,28 +6,14 @@
     /// <reference path="MIOButton.ts" />
     /// <reference path="MIOMenu.ts" />
 
-function MIOPopUpButtonFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var button = new MIOPopUpButton(elementID);
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-
-    return button;
-}
-
-
 class MIOPopUpButton extends MIOButton
 {
     private _menu = null;
     private _isVisible = false;
 
-    protected  _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         // Check if we have a menu
         /*if (this.layer.childNodes.length > 0)

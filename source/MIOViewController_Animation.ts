@@ -5,91 +5,7 @@
 /// <reference path="MIOCore.ts" />
 /// <reference path="MIOCoreTypes.ts" />
 
-enum MIOPresentationStyle
-{
-    CurrentContext,
-    PageSheet,
-    FormSheet,
-    FullScreen,
-    ModalPresentationPopover
-}
 
-enum MIOPresentationType
-{
-    Sheet,
-    Modal,
-    Navigation
-}
-
-enum MIOAnimationType
-{
-    None,
-    BeginSheet,
-    EndSheet,
-    Push,
-    Pop,
-    FlipLeft,
-    FlipRight,
-    FadeIn,
-    FadeOut,
-    LightSpeedIn,
-    LightSpeedOut,
-    Hinge,
-    SlideInUp,
-    SlideOutDown
-}
-
-// ANIMATION TYPES
-function ClassListForAnimationType(type)
-{
-    var array = [];
-    array.push("animated");
-
-    switch (type)
-    {
-        case MIOAnimationType.BeginSheet:
-            array.push("slideInDown");
-            break;
-
-        case MIOAnimationType.EndSheet:
-            array.push("slideOutUp");
-            break;
-
-        case MIOAnimationType.Push:
-            array.push("slideInRight");
-            break;
-
-        case MIOAnimationType.Pop:
-            array.push("slideOutRight");
-            break;
-
-        case MIOAnimationType.FadeIn:
-            array.push("fadeIn");
-            break;
-
-        case MIOAnimationType.FadeOut:
-            array.push("fadeOut");
-            break;
-
-        case MIOAnimationType.LightSpeedOut:
-            array.push("lightSpeedOut");
-            break;
-
-        case MIOAnimationType.Hinge:
-            array.push("hinge");
-            break;
-
-        case MIOAnimationType.SlideInUp:
-            array.push("slideInUp");
-            break;
-
-        case MIOAnimationType.SlideOutDown:
-            array.push("slideOutDown");
-            break;
-    }
-
-    return array;
-}
 
 function AnimationTypeForViewController(vc, reverse)
 {
@@ -155,17 +71,6 @@ function RemoveAnimationClassesForType(vc, reverse)
     RemoveAnimationClasses(vc, classes);
 }
 
-function  AddAnimationClasses(vc, classes)
-{
-    for (var index = 0; index < classes.length; index++)
-        vc.view.layer.classList.add(classes[index]);
-}
-
-function RemoveAnimationClasses(vc, classes)
-{
-    for (var index = 0; index < classes.length; index++)
-        vc.view.layer.classList.remove(classes[index]);
-}
 
 function FrameWithStyleForViewControllerInView(view, vc)
 {

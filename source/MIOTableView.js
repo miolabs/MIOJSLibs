@@ -20,15 +20,6 @@ var MIOTableViewCellAccessoryType;
     MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["DetailDisclosoure"] = 2] = "DetailDisclosoure";
     MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["Checkmark"] = 3] = "Checkmark";
 })(MIOTableViewCellAccessoryType || (MIOTableViewCellAccessoryType = {}));
-function MIOTableViewFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var tv = new MIOTableView();
-    tv.initWithLayer(layer);
-    view._linkViewToSubview(tv);
-    return tv;
-}
 var MIOTableViewCell = (function (_super) {
     __extends(MIOTableViewCell, _super);
     function MIOTableViewCell() {
@@ -55,9 +46,13 @@ var MIOTableViewCell = (function (_super) {
             this.addSubview(this.textLabel);
             this.layer.style.height = "44px";
         }
-        this._customizeLayerSetup();
+        this._setupLayer();
     };
-    MIOTableViewCell.prototype._customizeLayerSetup = function () {
+    MIOTableViewCell.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
+        this._setupLayer();
+    };
+    MIOTableViewCell.prototype._setupLayer = function () {
         this.layer.style.background = "";
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
@@ -158,8 +153,8 @@ var MIOTableView = (function (_super) {
         this._needReloadData = false;
         this._cellPrototypes = {};
     }
-    MIOTableView.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOTableView.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
             for (var index = 0; index < this.layer.childNodes.length; index++) {
@@ -254,22 +249,22 @@ var MIOTableView = (function (_super) {
         var className = item["class"];
         var cell = Object.create(window[className].prototype);
         cell.constructor.apply(cell);
-        cell.init();
+        //cell.init();
         var layer = item["layer"];
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
             var size = item["size"];
-            if (size != null) {
-                cell.setWidth(size.width);
-                cell.setHeight(size.height);
-            }
-            var bg = item["bg"];
-            if (bg != null) {
-                cell.layer.style.background = bg;
-            }
-            cell.addSubLayer(newLayer);
-            cell._customizeLayerSetup();
+            // if (size != null) {
+            //     cell.setWidth(size.width);
+            //     cell.setHeight(size.height);
+            // }
+            // var bg = item["bg"];
+            // if (bg != null) {
+            //     cell.layer.style.background = bg;
+            // }
+            cell.initWithStyle(newLayer);
+            //cell._addLayerToDOM();
             cell.awakeFromHTML();
         }
         else {

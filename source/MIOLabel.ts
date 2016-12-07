@@ -4,20 +4,6 @@
 
 /// <reference path="MIOView.ts" />
 
-function MIOLabelFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var label = new MIOLabel();
-    label.initWithLayer(layer);
-    view._linkViewToSubview(label);
-
-    return label;
-}
-
-
 class MIOLabel extends MIOView
 {
     private _textLayer = null;
@@ -28,14 +14,19 @@ class MIOLabel extends MIOView
     {
         super.init();
         this.layer.style.background = "";
-        this._customizeLayerSetup();
+        this._setupLayer();
     }
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         this._textLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
+        this._setupLayer();
+    }
+
+    private _setupLayer()
+    {
         if (this._textLayer == null)
         {
             this.layer.innerHTML = "";

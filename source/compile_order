@@ -40,8 +40,10 @@ MIOTabBar
 MIOPageControl
 MIOViewController
 MIOViewController_Animation
+MIOViewController_PresentationController
 MIOViewController_PopoverPresentationController
 MIONavigationController
 MIOPageController
 MIOSplitViewController
+MIOUIKit
 webworkers/MIOHTMLParser

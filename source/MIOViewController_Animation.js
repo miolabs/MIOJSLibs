@@ -3,75 +3,6 @@
  */
 /// <reference path="MIOCore.ts" />
 /// <reference path="MIOCoreTypes.ts" />
-var MIOPresentationStyle;
-(function (MIOPresentationStyle) {
-    MIOPresentationStyle[MIOPresentationStyle["CurrentContext"] = 0] = "CurrentContext";
-    MIOPresentationStyle[MIOPresentationStyle["PageSheet"] = 1] = "PageSheet";
-    MIOPresentationStyle[MIOPresentationStyle["FormSheet"] = 2] = "FormSheet";
-    MIOPresentationStyle[MIOPresentationStyle["FullScreen"] = 3] = "FullScreen";
-    MIOPresentationStyle[MIOPresentationStyle["ModalPresentationPopover"] = 4] = "ModalPresentationPopover";
-})(MIOPresentationStyle || (MIOPresentationStyle = {}));
-var MIOPresentationType;
-(function (MIOPresentationType) {
-    MIOPresentationType[MIOPresentationType["Sheet"] = 0] = "Sheet";
-    MIOPresentationType[MIOPresentationType["Modal"] = 1] = "Modal";
-    MIOPresentationType[MIOPresentationType["Navigation"] = 2] = "Navigation";
-})(MIOPresentationType || (MIOPresentationType = {}));
-var MIOAnimationType;
-(function (MIOAnimationType) {
-    MIOAnimationType[MIOAnimationType["None"] = 0] = "None";
-    MIOAnimationType[MIOAnimationType["BeginSheet"] = 1] = "BeginSheet";
-    MIOAnimationType[MIOAnimationType["EndSheet"] = 2] = "EndSheet";
-    MIOAnimationType[MIOAnimationType["Push"] = 3] = "Push";
-    MIOAnimationType[MIOAnimationType["Pop"] = 4] = "Pop";
-    MIOAnimationType[MIOAnimationType["FlipLeft"] = 5] = "FlipLeft";
-    MIOAnimationType[MIOAnimationType["FlipRight"] = 6] = "FlipRight";
-    MIOAnimationType[MIOAnimationType["FadeIn"] = 7] = "FadeIn";
-    MIOAnimationType[MIOAnimationType["FadeOut"] = 8] = "FadeOut";
-    MIOAnimationType[MIOAnimationType["LightSpeedIn"] = 9] = "LightSpeedIn";
-    MIOAnimationType[MIOAnimationType["LightSpeedOut"] = 10] = "LightSpeedOut";
-    MIOAnimationType[MIOAnimationType["Hinge"] = 11] = "Hinge";
-    MIOAnimationType[MIOAnimationType["SlideInUp"] = 12] = "SlideInUp";
-    MIOAnimationType[MIOAnimationType["SlideOutDown"] = 13] = "SlideOutDown";
-})(MIOAnimationType || (MIOAnimationType = {}));
-// ANIMATION TYPES
-function ClassListForAnimationType(type) {
-    var array = [];
-    array.push("animated");
-    switch (type) {
-        case MIOAnimationType.BeginSheet:
-            array.push("slideInDown");
-            break;
-        case MIOAnimationType.EndSheet:
-            array.push("slideOutUp");
-            break;
-        case MIOAnimationType.Push:
-            array.push("slideInRight");
-            break;
-        case MIOAnimationType.Pop:
-            array.push("slideOutRight");
-            break;
-        case MIOAnimationType.FadeIn:
-            array.push("fadeIn");
-            break;
-        case MIOAnimationType.FadeOut:
-            array.push("fadeOut");
-            break;
-        case MIOAnimationType.LightSpeedOut:
-            array.push("lightSpeedOut");
-            break;
-        case MIOAnimationType.Hinge:
-            array.push("hinge");
-            break;
-        case MIOAnimationType.SlideInUp:
-            array.push("slideInUp");
-            break;
-        case MIOAnimationType.SlideOutDown:
-            array.push("slideOutDown");
-            break;
-    }
-    return array;
-}
 function AnimationTypeForViewController(vc, reverse) {
     var type = MIOAnimationType.None;
     switch (vc.presentationType) {
@@ -117,14 +48,6 @@ function AddAnimationClassesForType(vc, reverse) {
 function RemoveAnimationClassesForType(vc, reverse) {
     var classes = AnimationClassesForPresentationType(vc.presentationType, reverse);
     RemoveAnimationClasses(vc, classes);
-}
-function AddAnimationClasses(vc, classes) {
-    for (var index = 0; index < classes.length; index++)
-        vc.view.layer.classList.add(classes[index]);
-}
-function RemoveAnimationClasses(vc, classes) {
-    for (var index = 0; index < classes.length; index++)
-        vc.view.layer.classList.remove(classes[index]);
 }
 function FrameWithStyleForViewControllerInView(view, vc) {
     var w = 0;

@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-/// <reference path="MIOViewController.ts" />
+/// <reference path="MIOViewController_PresentationController.ts" />
 var MIOPopoverArrowDirection;
 (function (MIOPopoverArrowDirection) {
     MIOPopoverArrowDirection[MIOPopoverArrowDirection["Any"] = 0] = "Any";
@@ -56,5 +56,5 @@ var MIOPopoverPresentationController = (function (_super) {
         context.stroke();
     };
     return MIOPopoverPresentationController;
-}(MIOViewController));
+}(MIOPresentationController));
 //# sourceMappingURL=MIOViewController_PopoverPresentationController.js.map
