@@ -228,14 +228,11 @@ var MIOViewController = (function (_super) {
         configurable: true
     });
     MIOViewController.prototype.showViewController = function (vc, animate) {
-        // this.view.addSubview(vc.view);
-        //
-        // var presentationController = new MIOPresentationController();
-        // presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, this);
-        // vc.presentationController = presentationController;
-        //
-        // var type = AnimationTypeForViewController(this, false);
-        // this.transitionFromViewControllerToViewController(this, vc, 0.25, type, null, null, false);
+        vc.onLoadView(this, function () {
+            this.view.addSubview(vc.view);
+            this.addChildViewController(vc);
+            _MIUShowViewController(this, vc, this);
+        });
     };
     MIOViewController.prototype.presentViewController = function (vc, animate) {
         var presentationController = new MIOPresentationController();

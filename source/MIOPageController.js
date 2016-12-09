@@ -12,9 +12,13 @@ var MIOPageController = (function (_super) {
     function MIOPageController() {
         _super.apply(this, arguments);
         this.selectedViewControllerIndex = 0;
+        // Transitioning delegate
+        this._pageAnimationController = null;
     }
     MIOPageController.prototype.addPageViewController = function (vc) {
         this.addChildViewController(vc);
+        if (vc.transitioningDelegate == null)
+            vc.transitioningDelegate = this;
     };
     MIOPageController.prototype._loadChildControllers = function () {
         var vc = this.childViewControllers[0];
@@ -55,9 +59,12 @@ var MIOPageController = (function (_super) {
         var oldVC = this.childViewControllers[this.selectedViewControllerIndex];
         var newVC = this.childViewControllers[index];
         this.selectedViewControllerIndex = index;
-        this.view.addSubview(newVC.view);
-        this.transitionFromViewControllerToViewController(oldVC, newVC, 0, MIOAnimationType.None, this, function () {
-            oldVC.view.removeFromSuperview();
+        newVC.onLoadView(this, function () {
+            this.view.addSubview(newVC.view);
+            this.addChildViewController(newVC);
+            _MIUShowViewController(oldVC, newVC, this, this, function () {
+                oldVC.view.removeFromSuperview();
+            });
         });
     };
     MIOPageController.prototype.showNextPage = function () {
@@ -66,6 +73,43 @@ var MIOPageController = (function (_super) {
     MIOPageController.prototype.showPrevPage = function () {
         this.showPageAtIndex(this.selectedViewControllerIndex - 1);
     };
+    MIOPageController.prototype.animationControllerForPresentedController = function (presentedViewController, presentingViewController, sourceController) {
+        if (this._pageAnimationController == null) {
+            this._pageAnimationController = new MIOPageAnimationController();
+            this._pageAnimationController.init();
+        }
+        return this._pageAnimationController;
+    };
+    MIOPageController.prototype.animationControllerForDismissedController = function (dismissedController) {
+        if (this._pageAnimationController == null) {
+            this._pageAnimationController = new MIOPageAnimationController();
+            this._pageAnimationController.init();
+        }
+        return this._pageAnimationController;
+    };
     return MIOPageController;
 }(MIOViewController));
+/*
+ ANIMATIONS
+ */
+var MIOPageAnimationController = (function (_super) {
+    __extends(MIOPageAnimationController, _super);
+    function MIOPageAnimationController() {
+        _super.apply(this, arguments);
+    }
+    MIOPageAnimationController.prototype.transitionDuration = function (transitionContext) {
+        return 0;
+    };
+    MIOPageAnimationController.prototype.animateTransition = function (transitionContext) {
+        // make view configurations before transitions
+    };
+    MIOPageAnimationController.prototype.animationEnded = function (transitionCompleted) {
+        // make view configurations after transitions
+    };
+    // TODO: Not iOS like transitions. For now we use css animations
+    MIOPageAnimationController.prototype.animations = function (transitionContext) {
+        return null;
+    };
+    return MIOPageAnimationController;
+}(MIOObject));
 //# sourceMappingURL=MIOPageController.js.map

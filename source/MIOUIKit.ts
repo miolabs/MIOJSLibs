@@ -133,9 +133,20 @@ function _MUIRemoveAnimations(layer, animations)
         layer.classList.remove(animations[index]);
 }
 
-function _MIUShowViewController(fromVC, toVC, sourceVC)
+function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
-    var pc = toVC.presentationController;
+    toVC.viewWillAppear();
+    toVC._childControllersWillAppear();
+
+    if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+        || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+        fromVC.viewWillDisappear();
+        fromVC._childControllersWillDisappear();
+    }
+
+    toVC.view.layout();
+
     var ac = null;
     if (toVC.transitioningDelegate != null)
     {
@@ -157,25 +168,51 @@ function _MIUShowViewController(fromVC, toVC, sourceVC)
 
     var layer = toVC.view.layer;
 
-    pc.presentationTransitionWillBegin();
-    toVC.view.layout();
+    var pc = toVC.presentationController;
+    if (pc != null)
+        pc.presentationTransitionWillBegin();
+
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
 
-        pc.presentationTransitionDidEnd(true);
+        toVC.viewDidAppear();
+        toVC._childControllersDidAppear();
+
+        if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+            || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+            fromVC.viewDidDisappear();
+            fromVC._childControllersDidDisappear();
+        }
+        if (pc != null)
+            pc.presentationTransitionDidEnd(true);
+
+        if (target != null && completion != null)
+            completion.call(target);
     });
 }
 
 function _MUIDismissViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
-    var pc = fromVC.presentationController;
+    if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+        || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+        toVC.viewWillAppear();
+        toVC._childControllersWillAppear();
+
+        toVC.view.layout();
+    }
+
+    fromVC.viewWillDisappear();
+    fromVC._childControllersWillDisappear();
+
     var ac = null;
     if (fromVC.transitioningDelegate != null)
     {
-        ac = fromVC.transitioningDelegate.animationControllerForPresentedController(fromVC, toVC, sourceVC);
+        ac = fromVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
     else if (sourceVC.transitioningDelegate != null)
     {
-        ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
+        ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(toVC);
     }
     else
     {
@@ -189,10 +226,24 @@ function _MUIDismissViewController(fromVC, toVC, sourceVC, target?, completion?)
 
     var layer = fromVC.view.layer;
 
-    pc.dismissalTransitionWillBegin();
+    var pc = fromVC.presentationController;
+    if (pc != null)
+        pc.dismissalTransitionWillBegin();
+
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
 
-        pc.dismissalTransitionDidEnd(true);
+        if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
+            || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+
+            toVC.viewDidAppear();
+            toVC._childControllersDidAppear();
+        }
+
+        fromVC.viewDidDisappear();
+        fromVC._childControllersDidDisappear();
+
+        if (pc != null)
+            pc.dismissalTransitionDidEnd(true);
 
         if (target != null && completion != null)
             completion.call(target);
@@ -205,6 +256,17 @@ function _MUIAnimationStart(layer, animationController, animationContext, target
     var animations = animationController.animations(animationContext);
 
     animationController.animateTransition(animationContext);
+
+    if (duration == 0 ||animations == null)
+    {
+        // NO animation
+        animationController.animationEnded(true);
+
+        if (target != null && completion != null)
+            completion.call(target);
+
+        return;
+    }
 
     layer.style.animationDuration = duration + "s";
     _MUIAddAnimations(layer, animations);
@@ -223,7 +285,7 @@ function _MUIAnimationStart(layer, animationController, animationContext, target
 
 function _MUIAnimationDidFinish(event)
 {
-    var animationCcontroller = event.target.animationParams["animationController"];
+    var animationController = event.target.animationParams["animationController"];
     var animations = event.target.animationParams["animations"];
     var target = event.target.animationParams["target"];
     var completion = event.target.animationParams["completion"];
@@ -231,7 +293,7 @@ function _MUIAnimationDidFinish(event)
 
     _MUIRemoveAnimations(layer, animations);
     layer.removeEventListener("animationend", _MUIAnimationDidFinish);
-    animationCcontroller.animationEnded(true);
+    animationController.animationEnded(true);
 
     if (target != null && completion != null)
         completion.call(target);

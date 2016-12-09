@@ -11,6 +11,8 @@ class MIOPageController extends MIOViewController
     addPageViewController(vc)
     {
         this.addChildViewController(vc);
+        if (vc.transitioningDelegate == null)
+            vc.transitioningDelegate = this;
     }
 
     protected _loadChildControllers()
@@ -70,10 +72,15 @@ class MIOPageController extends MIOViewController
 
         this.selectedViewControllerIndex = index;
 
-        this.view.addSubview(newVC.view);
-        this.transitionFromViewControllerToViewController(oldVC, newVC, 0, MIOAnimationType.None, this, function () {
+        newVC.onLoadView(this, function () {
 
-            oldVC.view.removeFromSuperview();
+            this.view.addSubview(newVC.view);
+            this.addChildViewController(newVC);
+
+            _MIUShowViewController(oldVC, newVC, this, this, function () {
+
+                oldVC.view.removeFromSuperview();
+            });
         });
     }
 
@@ -86,4 +93,58 @@ class MIOPageController extends MIOViewController
     {
         this.showPageAtIndex(this.selectedViewControllerIndex - 1);
     }
+
+    // Transitioning delegate
+    private _pageAnimationController = null;
+
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
+    {
+        if (this._pageAnimationController == null) {
+
+            this._pageAnimationController = new MIOPageAnimationController();
+            this._pageAnimationController.init();
+        }
+
+        return this._pageAnimationController;
+    }
+
+    animationControllerForDismissedController(dismissedController)
+    {
+        if (this._pageAnimationController == null) {
+
+            this._pageAnimationController = new MIOPageAnimationController();
+            this._pageAnimationController.init();
+        }
+
+        return this._pageAnimationController;
+    }
+}
+
+/*
+ ANIMATIONS
+ */
+
+class MIOPageAnimationController extends MIOObject
+{
+    transitionDuration(transitionContext)
+    {
+        return 0;
+    }
+
+    animateTransition(transitionContext)
+    {
+        // make view configurations before transitions
+    }
+
+    animationEnded(transitionCompleted)
+    {
+        // make view configurations after transitions
+    }
+
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext)
+    {
+        return null;
+    }
+
 }

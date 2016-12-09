@@ -34,8 +34,6 @@ class MIONavigationController extends MIOViewController
 
         this.addChildViewController(vc);
         this.contentSize = vc.contentSize;
-
-        vc.transitioningDelegate = this;
     }
 
     setPresentationController(pc)
@@ -97,11 +95,9 @@ class MIONavigationController extends MIOViewController
 
         vc.navigationController = this;
         if (vc.transitioningDelegate == null)
-            vc.transitioningDelegate = this.rootViewController.transitioningDelegate;
+            vc.transitioningDelegate = this;
 
-        var presentationController = new MIOPresentationController();
-        presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, lastVC);
-        vc.presentationController = presentationController;
+        vc.presentationController = this.presentationController;
 
         vc.onLoadView(this, function () {
 
@@ -151,10 +147,11 @@ class MIONavigationController extends MIOViewController
 
         this.contentSize = rootVC.preferredContentSize;
 
-        this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
+        _MUIDismissViewController(currentVC, rootVC, this, this, function () {
 
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
+
         });
     }
 

@@ -40,13 +40,6 @@ class MIOPopoverPresentationController extends MIOPresentationController
         this._canvasLayer.setAttribute("height", contentSize.height);
     }
 
-    viewDidLoad()
-    {
-        super.viewDidLoad();
-
-        this._drawPopOverBorder();
-    }
-
     private _drawPopOverBorder()
     {
         var context = this._canvasLayer.getContext('2d');

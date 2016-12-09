@@ -34,7 +34,6 @@ var MIONavigationController = (function (_super) {
         this.rootViewController.navigationController = this;
         this.addChildViewController(vc);
         this.contentSize = vc.contentSize;
-        vc.transitioningDelegate = this;
     };
     MIONavigationController.prototype.setPresentationController = function (pc) {
         _super.prototype.setPresentationController.call(this, pc);
@@ -74,10 +73,8 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex++;
         vc.navigationController = this;
         if (vc.transitioningDelegate == null)
-            vc.transitioningDelegate = this.rootViewController.transitioningDelegate;
-        var presentationController = new MIOPresentationController();
-        presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, lastVC);
-        vc.presentationController = presentationController;
+            vc.transitioningDelegate = this;
+        vc.presentationController = this.presentationController;
         vc.onLoadView(this, function () {
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
@@ -108,7 +105,7 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex = 0;
         var rootVC = this.viewControllersStack[0];
         this.contentSize = rootVC.preferredContentSize;
-        this.transitionFromViewControllerToViewController(rootVC, currentVC, 0.25, MIOAnimationType.Pop, this, function () {
+        _MUIDismissViewController(currentVC, rootVC, this, this, function () {
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
         });

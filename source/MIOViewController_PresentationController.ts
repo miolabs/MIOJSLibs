@@ -40,68 +40,18 @@ class MIOPresentationController extends MIOObject
 
     presentationTransitionWillBegin()
     {
-        var fromVC = this.presentingViewController;
-        var toVC = this.presentedViewController;
-
-        toVC.viewWillAppear();
-        toVC._childControllersWillAppear();
-
-        if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-            || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
-
-            fromVC.viewWillDisappear();
-            fromVC._childControllersWillDisappear();
-        }
     }
 
     presentationTransitionDidEnd(completed)
     {
-        var fromVC = this.presentingViewController;
-        var toVC = this.presentedViewController;
-
-        toVC.viewDidAppear();
-        toVC._childControllersDidAppear();
-
-        if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-            || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
-
-            fromVC.viewDidDisappear();
-            fromVC._childControllersDidDisappear();
-        }
     }
 
     dismissalTransitionWillBegin()
     {
-        var toVC = this.presentingViewController;
-        var fromVC = this.presentedViewController;
-
-        if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-            || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
-
-            toVC.viewWillAppear();
-            toVC._childControllersWillAppear();
-
-            toVC.view.layout();
-        }
-
-        fromVC.viewWillDisappear();
-        fromVC._childControllersWillDisappear();
     }
 
     dismissalTransitionDidEnd(completed)
     {
-        var toVC = this.presentingViewController;
-        var fromVC = this.presentedViewController;
-
-        if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-            || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
-
-            toVC.viewDidAppear();
-            toVC._childControllersDidAppear();
-        }
-
-        fromVC.viewDidDisappear();
-        fromVC._childControllersDidDisappear();
     }
 }
 
