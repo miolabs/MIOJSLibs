@@ -36,6 +36,8 @@ class MIOWebApplication
     private _popOverWindow = null;
     private _popOverWindowFirstClick = false;
 
+    private _popOverViewController = null;
+
     private _windows = [];
 
     constructor()
@@ -271,14 +273,14 @@ class MIOWebApplication
             }
         }
 
-        if (this._popOverWindow != null)
+        if (this._popOverViewController != null)
         {
             // if (this._popOverWindowFirstClick == true) {
             //     this._popOverWindowFirstClick = false;
             //     return;
             // }
 
-            var controlRect = this._popOverWindow.rootViewController.view.layer.getBoundingClientRect();
+            var controlRect = this._popOverViewController.view.layer.getBoundingClientRect();
 
             console.log("x: " + controlRect.left + " mx: " + e.clientX);
 
@@ -288,8 +290,16 @@ class MIOWebApplication
                 //Nothing
             }
             else
-                this.hidePopOverController();
+                this._popOverViewController.dismissViewController(true);
         }
+    }
+
+    setPopOverViewController(vc)
+    {
+        if (this._popOverViewController != null)
+            this._popOverViewController.dismissViewController(true);
+
+        this._popOverViewController = vc;
     }
 
     showPopOverControllerFromRect(vc, frame)

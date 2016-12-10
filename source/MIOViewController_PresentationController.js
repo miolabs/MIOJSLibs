@@ -28,7 +28,7 @@ var MIOPresentationController = (function (_super) {
         _super.apply(this, arguments);
         this.presentationStyle = MIOModalPresentationStyle.CurrentContext;
         this.shouldPresentInFullscreen = true;
-        this.presentedViewController = null; //ToVC
+        this._presentedViewController = null; //ToVC
         this.presentingViewController = null; //FromVC
         this.presentedView = null;
     }
@@ -37,6 +37,20 @@ var MIOPresentationController = (function (_super) {
         this.presentedViewController = presentedViewController;
         this.presentingViewController = presentingViewController;
     };
+    MIOPresentationController.prototype.setPresentedViewController = function (vc) {
+        this._presentedViewController = vc;
+        this.presentedView = vc.view;
+    };
+    Object.defineProperty(MIOPresentationController.prototype, "presentedViewController", {
+        get: function () {
+            return this._presentedViewController;
+        },
+        set: function (vc) {
+            this.setPresentedViewController(vc);
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOPresentationController.prototype.presentationTransitionWillBegin = function () {
     };
     MIOPresentationController.prototype.presentationTransitionDidEnd = function (completed) {

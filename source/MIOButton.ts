@@ -2,21 +2,8 @@
  * Created by godshadow on 12/3/16.
  */
 
-    /// <reference path="MIOControl.ts" />
-    /// <reference path="MIOString.ts" />
-
-function MIOButtonFromElementID(view, elementID)
-{
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var button = new MIOButton(elementID);
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-
-    return button;
-}
+/// <reference path="MIOControl.ts" />
+/// <reference path="MIOString.ts" />
 
 enum MIOButtonType
 {
@@ -51,7 +38,9 @@ class MIOButton extends MIOControl
         else if (type == "PushOnPushOff")
             this.type = MIOButtonType.PushOnPushOff;
 
-        this._statusStyle = this.layer.getAttribute("data-status-style");
+        this._statusStyle = this.layer.getAttribute("data-status-style-prefix");
+        if (this._statusStyle == null && options != null)
+            this._statusStyle = options["status-style-prefix"] + "_status";
 
         // Check for title layer
         this._titleLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
@@ -60,8 +49,11 @@ class MIOButton extends MIOControl
             this.layer.appendChild(this._titleLayer);
         }
 
-        if (this._titleLayer != null)
+        if (this._titleLayer != null) {
             this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style");
+            if (this._titleStatusStyle == null && options != null)
+                this._titleStatusStyle = options["status-style-prefix"] + "_title_status";
+        }
 
          var key = this.layer.getAttribute("data-title");
          if (key != null)
@@ -72,6 +64,8 @@ class MIOButton extends MIOControl
 
         if (this._imageLayer != null) {
             this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style");
+            if (this._imageStatusStyle == null && options != null)
+                this._imageStatusStyle = options["status-style-prefix"] + "_image_status";
         }
 
         // Check for status

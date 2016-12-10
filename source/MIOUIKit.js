@@ -97,38 +97,48 @@ function _MUIRemoveAnimations(layer, animations) {
     for (var index = 0; index < animations.length; index++)
         layer.classList.remove(animations[index]);
 }
-function _MIUShowViewController(fromVC, toVC, sourceVC, target, completion) {
+function _MIUShowViewController(fromVC, toVC, sourceVC, modal, target, completion) {
     toVC.viewWillAppear();
     toVC._childControllersWillAppear();
-    if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-        || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+    if (toVC.modalPresentationStyle == MIOModalPresentationStyle.FullScreen
+        || toVC.modalPresentationStyle == MIOModalPresentationStyle.CurrentContext) {
         fromVC.viewWillDisappear();
         fromVC._childControllersWillDisappear();
     }
-    toVC.view.layout();
+    var view = null;
+    if (modal == true) {
+        var pc = toVC.presentationController;
+        view = pc.presentedView;
+    }
+    else
+        view = toVC.view;
+    view.layout();
     var ac = null;
     if (toVC.transitioningDelegate != null) {
         ac = toVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
-    else if (sourceVC.transitioningDelegate != null) {
+    else if (sourceVC != null && sourceVC.transitioningDelegate != null) {
         ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
     else {
-        ac = new MIOModalPresentAnimationController();
+        if (toVC.modalPresentationStyle == MIOModalPresentationStyle.Popover)
+            ac = new MIOPopOverPresentAnimationController();
+        else
+            ac = new MIOModalPresentAnimationController();
         ac.init();
     }
     var animationContext = {};
     animationContext["presentingViewController"] = fromVC;
     animationContext["presentedViewController"] = toVC;
-    var layer = toVC.view.layer;
-    var pc = toVC.presentationController;
+    animationContext["presentedView"] = view;
+    var layer = view.layer;
     if (pc != null)
         pc.presentationTransitionWillBegin();
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
         toVC.viewDidAppear();
         toVC._childControllersDidAppear();
-        if (toVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-            || toVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+        if (toVC.modalPresentationStyle == MIOModalPresentationStyle.FullScreen
+            || toVC.modalPresentationStyle == MIOModalPresentationStyle.CurrentContext) {
             fromVC.viewDidDisappear();
             fromVC._childControllersDidDisappear();
         }
@@ -138,36 +148,47 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target, completion) {
             completion.call(target);
     });
 }
-function _MUIDismissViewController(fromVC, toVC, sourceVC, target, completion) {
-    if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-        || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+function _MUIHideViewController(fromVC, toVC, sourceVC, modal, target, completion) {
+    if (fromVC.modalPresentationStyle == MIOModalPresentationStyle.FullScreen
+        || fromVC.modalPresentationStyle == MIOModalPresentationStyle.CurrentContext) {
         toVC.viewWillAppear();
         toVC._childControllersWillAppear();
         toVC.view.layout();
     }
     fromVC.viewWillDisappear();
     fromVC._childControllersWillDisappear();
+    var view = null;
+    if (modal == true) {
+        var pc = fromVC.presentationController;
+        view = pc.presentedView;
+    }
+    else
+        view = fromVC.view;
     var ac = null;
     if (fromVC.transitioningDelegate != null) {
         ac = fromVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
-    else if (sourceVC.transitioningDelegate != null) {
+    else if (sourceVC != null && sourceVC.transitioningDelegate != null) {
         ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(toVC);
     }
     else {
-        ac = new MIOModalDismissAnimationController();
+        if (fromVC.modalPresentationStyle == MIOModalPresentationStyle.Popover)
+            ac = new MIOPopOverDismissAnimationController();
+        else
+            ac = new MIOModalDismissAnimationController();
         ac.init();
     }
     var animationContext = {};
     animationContext["presentingViewController"] = fromVC;
     animationContext["presentedViewController"] = toVC;
-    var layer = fromVC.view.layer;
+    animationContext["presentedView"] = view;
+    var layer = view.layer;
     var pc = fromVC.presentationController;
     if (pc != null)
         pc.dismissalTransitionWillBegin();
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
-        if (fromVC.presentationStyle == MIOModalPresentationStyle.FullScreen
-            || fromVC.presentationStyle == MIOModalPresentationStyle.CurrentContext) {
+        if (fromVC.modalPresentationStyle == MIOModalPresentationStyle.FullScreen
+            || fromVC.modalPresentationStyle == MIOModalPresentationStyle.CurrentContext) {
             toVC.viewDidAppear();
             toVC._childControllersDidAppear();
         }

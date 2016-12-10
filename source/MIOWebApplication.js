@@ -25,6 +25,7 @@ var MIOWebApplication = (function () {
         this._popUpMenuControl = null;
         this._popOverWindow = null;
         this._popOverWindowFirstClick = false;
+        this._popOverViewController = null;
         this._windows = [];
         if (MIOWebApplication._sharedInstance) {
             throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
@@ -182,19 +183,24 @@ var MIOWebApplication = (function () {
                 this._popUpMenu.hide();
             }
         }
-        if (this._popOverWindow != null) {
+        if (this._popOverViewController != null) {
             // if (this._popOverWindowFirstClick == true) {
             //     this._popOverWindowFirstClick = false;
             //     return;
             // }
-            var controlRect = this._popOverWindow.rootViewController.view.layer.getBoundingClientRect();
+            var controlRect = this._popOverViewController.view.layer.getBoundingClientRect();
             console.log("x: " + controlRect.left + " mx: " + e.clientX);
             if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
                 && (e.clientY > controlRect.top && e.clientY < controlRect.bottom)) {
             }
             else
-                this.hidePopOverController();
+                this._popOverViewController.dismissViewController(true);
         }
+    };
+    MIOWebApplication.prototype.setPopOverViewController = function (vc) {
+        if (this._popOverViewController != null)
+            this._popOverViewController.dismissViewController(true);
+        this._popOverViewController = vc;
     };
     MIOWebApplication.prototype.showPopOverControllerFromRect = function (vc, frame) {
         if (this._popOverWindow != null) {

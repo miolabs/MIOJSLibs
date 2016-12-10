@@ -18,13 +18,15 @@ var MIOSegmentedControl = (function (_super) {
     MIOSegmentedControl.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
         // Check for segmented items
+        var opts = {};
+        var sp = layer.getAttribute("data-status-style-prefix");
+        if (sp != null)
+            opts["status-style-prefix"] = sp;
         for (var index = 0; index < this.layer.childNodes.length; index++) {
             var itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV") {
-                if (itemLayer.getAttribute("data-class") != "MIOButton")
-                    continue;
                 var si = new MIOButton();
-                si.initWithLayer(itemLayer);
+                si.initWithLayer(itemLayer, opts);
                 si.type = MIOButtonType.PushIn;
                 this._addSegmentedItem(si);
             }

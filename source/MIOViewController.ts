@@ -291,7 +291,11 @@ class MIOViewController extends MIOObject
         {
             this._popoverPresentationController = new MIOPopoverPresentationController();
             //this._popoverPresentationController.initWithRootViewController(this);
+            this._popoverPresentationController.init();
+            this._popoverPresentationController.presentedViewController = this;
         }
+
+        this.presentationController = this._popoverPresentationController;
 
         return this._popoverPresentationController;
     }
@@ -303,22 +307,32 @@ class MIOViewController extends MIOObject
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
 
-            _MIUShowViewController(this, vc, this);
+            _MIUShowViewController(this, vc, this, false);
         });
     }
 
     presentViewController(vc, animate)
     {
-        var presentationController = new MIOPresentationController();
-        presentationController.initWithPresentedViewControllerAndPresentingViewController(vc, this);
-        vc.presentationController = presentationController;
+        var pc = vc.presentationController;
+        if (pc == null) {
+            pc = new MIOPresentationController();
+            pc.init();
+            pc.presentedViewController = vc;
+            vc.presentationController = pc;
+        }
+
+        pc.presentingViewController = this;
 
         vc.onLoadView(this, function () {
 
-            this.view.addSubview(vc.view);
+            this.view.addSubview(vc.presentationController.presentedView);
             this.addChildViewController(vc);
 
-            _MIUShowViewController(this, vc, this);
+            _MIUShowViewController(this, vc, null, true, this, function () {
+
+                if (vc.modalPresentationStyle == MIOModalPresentationStyle.Popover)
+                    MIOWebApplication.sharedInstance().setPopOverViewController(vc);
+            });
         });
     }
 
@@ -326,10 +340,11 @@ class MIOViewController extends MIOObject
     {
         var toVC = this.presentationController.presentingViewController;
         var fromVC = this.presentationController.presentedViewController;
-        _MUIDismissViewController(fromVC, toVC, this, this, function () {
+
+        _MUIHideViewController(fromVC, toVC, null, true, this, function () {
 
             fromVC.removeChildViewController(this);
-            fromVC.view.removeFromSuperview();
+            fromVC.presentationController.presentedView.removeFromSuperview();
         });
     }
 

@@ -26,7 +26,7 @@ class MIOPresentationController extends MIOObject
     presentationStyle = MIOModalPresentationStyle.CurrentContext;
     shouldPresentInFullscreen = true;
 
-    presentedViewController = null; //ToVC
+    private _presentedViewController = null; //ToVC
     presentingViewController = null; //FromVC
     presentedView = null;
 
@@ -36,6 +36,22 @@ class MIOPresentationController extends MIOObject
 
         this.presentedViewController = presentedViewController;
         this.presentingViewController = presentingViewController;
+    }
+
+    setPresentedViewController(vc)
+    {
+        this._presentedViewController = vc;
+        this.presentedView = vc.view;
+    }
+
+    set presentedViewController(vc)
+    {
+        this.setPresentedViewController(vc);
+    }
+
+    get presentedViewController()
+    {
+        return this._presentedViewController;
     }
 
     presentationTransitionWillBegin()

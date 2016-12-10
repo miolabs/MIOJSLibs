@@ -62,7 +62,7 @@ var MIOPageController = (function (_super) {
         newVC.onLoadView(this, function () {
             this.view.addSubview(newVC.view);
             this.addChildViewController(newVC);
-            _MIUShowViewController(oldVC, newVC, this, this, function () {
+            _MIUShowViewController(oldVC, newVC, this, false, this, function () {
                 oldVC.view.removeFromSuperview();
             });
         });

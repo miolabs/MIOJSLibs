@@ -21,7 +21,9 @@ function MIOCoreLoadScript(url) {
     // Fire the loading
     head.appendChild(script);
 }
-var _stylesCache = {};
+// ignore app.css beause it's already downloaded
+// TODO: Check the last item only not the full path, could be different
+var _stylesCache = { "layout/../app.css": true };
 function MIOCoreLoadStyle(url) {
     // Prevent loading the same css files
     if (_stylesCache[url] != null)

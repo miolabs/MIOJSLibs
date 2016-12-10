@@ -8,15 +8,6 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 /// <reference path="MIOControl.ts" />
 /// <reference path="MIOString.ts" />
-function MIOButtonFromElementID(view, elementID) {
-    var layer = MIOLayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-    var button = new MIOButton(elementID);
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-    return button;
-}
 var MIOButtonType;
 (function (MIOButtonType) {
     MIOButtonType[MIOButtonType["MomentaryPushIn"] = 0] = "MomentaryPushIn";
@@ -44,15 +35,20 @@ var MIOButton = (function (_super) {
             this.type = MIOButtonType.MomentaryPushIn;
         else if (type == "PushOnPushOff")
             this.type = MIOButtonType.PushOnPushOff;
-        this._statusStyle = this.layer.getAttribute("data-status-style");
+        this._statusStyle = this.layer.getAttribute("data-status-style-prefix");
+        if (this._statusStyle == null && options != null)
+            this._statusStyle = options["status-style-prefix"] + "_status";
         // Check for title layer
         this._titleLayer = MIOLayerGetFirstElementWithTag(this.layer, "SPAN");
         if (this._titleLayer == null) {
             this._titleLayer = document.createElement("span");
             this.layer.appendChild(this._titleLayer);
         }
-        if (this._titleLayer != null)
+        if (this._titleLayer != null) {
             this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style");
+            if (this._titleStatusStyle == null && options != null)
+                this._titleStatusStyle = options["status-style-prefix"] + "_title_status";
+        }
         var key = this.layer.getAttribute("data-title");
         if (key != null)
             this.setTitle(MIOLocalizeString(key, key));
@@ -60,6 +56,8 @@ var MIOButton = (function (_super) {
         this._imageLayer = MIOLayerGetFirstElementWithTag(this.layer, "DIV");
         if (this._imageLayer != null) {
             this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style");
+            if (this._imageStatusStyle == null && options != null)
+                this._imageStatusStyle = options["status-style-prefix"] + "_image_status";
         }
         // Check for status
         var status = this.layer.getAttribute("data-status");

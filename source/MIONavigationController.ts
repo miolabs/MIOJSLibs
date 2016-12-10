@@ -106,7 +106,7 @@ class MIONavigationController extends MIOViewController
 
             this.contentSize = vc.preferredContentSize;
 
-            _MIUShowViewController(lastVC, vc, this);
+            _MIUShowViewController(lastVC, vc, this, false);
         });
     }
 
@@ -124,7 +124,7 @@ class MIONavigationController extends MIOViewController
 
         this.contentSize = toVC.preferredContentSize;
 
-        _MUIDismissViewController(fromVC, toVC, this, this, function () {
+        _MUIHideViewController(fromVC, toVC, this, false, this, function () {
 
             fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();
@@ -147,7 +147,7 @@ class MIONavigationController extends MIOViewController
 
         this.contentSize = rootVC.preferredContentSize;
 
-        _MUIDismissViewController(currentVC, rootVC, this, this, function () {
+        _MUIHideViewController(currentVC, rootVC, this, false, this, function () {
 
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);

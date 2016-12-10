@@ -79,7 +79,7 @@ var MIONavigationController = (function (_super) {
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
             this.contentSize = vc.preferredContentSize;
-            _MIUShowViewController(lastVC, vc, this);
+            _MIUShowViewController(lastVC, vc, this, false);
         });
     };
     MIONavigationController.prototype.popViewController = function (animate) {
@@ -90,7 +90,7 @@ var MIONavigationController = (function (_super) {
         this.viewControllersStack.pop();
         var toVC = this.viewControllersStack[this.currentViewControllerIndex];
         this.contentSize = toVC.preferredContentSize;
-        _MUIDismissViewController(fromVC, toVC, this, this, function () {
+        _MUIHideViewController(fromVC, toVC, this, false, this, function () {
             fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();
         });
@@ -105,7 +105,7 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex = 0;
         var rootVC = this.viewControllersStack[0];
         this.contentSize = rootVC.preferredContentSize;
-        _MUIDismissViewController(currentVC, rootVC, this, this, function () {
+        _MUIHideViewController(currentVC, rootVC, this, false, this, function () {
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
         });

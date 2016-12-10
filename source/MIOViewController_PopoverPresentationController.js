@@ -23,38 +23,110 @@ var MIOPopoverPresentationController = (function (_super) {
         this.sourceView = null;
         this.sourceRect = MIOFrame.Zero();
         this.delegate = null;
-        this._rootViewController = null;
+        this._contentSize = null;
         this._canvasLayer = null;
+        this._contentView = null;
     }
-    MIOPopoverPresentationController.prototype.initWithRootViewController = function (vc) {
+    MIOPopoverPresentationController.prototype.init = function () {
         _super.prototype.init.call(this);
-        this._rootViewController = vc;
-        this.addChildViewController(vc);
-        var contentSize = vc.preferredContentSize;
-        this._canvasLayer = document.createElement("CANVAS");
-        this._canvasLayer.setAttribute("width", contentSize.width);
-        this._canvasLayer.setAttribute("height", contentSize.height);
     };
-    MIOPopoverPresentationController.prototype.viewDidLoad = function () {
-        _super.prototype.viewDidLoad.call(this);
-        this._drawPopOverBorder();
+    MIOPopoverPresentationController.prototype.setPresentedViewController = function (vc) {
+        _super.prototype.setPresentedViewController.call(this, vc);
+        var size = vc.preferredContentSize;
+        this._contentSize = size;
+        var w = size.width + 2;
+        var h = size.height + 2;
+        this.presentedView = new MIOView();
+        this.presentedView.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        this.presentedView.layer.style.borderRadius = "5px 5px 5px 5px";
+        this.presentedView.layer.style.border = "1px solid rgb(170, 170, 170)";
+        this.presentedView.layer.style.overflow = "hidden";
+        this.presentedView.layer.style.zIndex = 10; // To make clip the children views
+        this.presentedView.addSubview(vc.view);
+        //this.presentedView.addSubview(vc.view);
+        // this._canvasLayer = document.createElement("CANVAS");
+        // this._canvasLayer.setAttribute("width", w);
+        // this._canvasLayer.setAttribute("height", h);
+        //
+        // this._drawRoundRect(0, 0, w, h, 12);
+        // this._contentView = new MIOView();
+        // this._contentView.initWithLayer(this._canvasLayer);
+        // this.presentedView.addSubview(this._contentView);
     };
-    MIOPopoverPresentationController.prototype._drawPopOverBorder = function () {
-        var context = this._canvasLayer.getContext('2d');
-        var w = this.view.getWidth();
-        var radius = 3;
+    MIOPopoverPresentationController.prototype._drawRoundRect = function (x, y, width, height, radius) {
+        var ctx = this._canvasLayer.getContext('2d');
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
         var color = 'rgba(170, 170, 170, 1)';
-        //// Bezier Drawing
-        context.beginPath();
-        // Left corner
-        context.moveTo(0, radius);
-        context.bezierCurveTo(0, 0, w, 0, radius, 0);
-        context.lineTo(w - radius, 0);
-        context.closePath();
-        context.strokeStyle = color;
-        context.lineWidth = 1;
-        context.stroke();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.stroke();
     };
     return MIOPopoverPresentationController;
 }(MIOPresentationController));
+var MIOPopOverPresentAnimationController = (function (_super) {
+    __extends(MIOPopOverPresentAnimationController, _super);
+    function MIOPopOverPresentAnimationController() {
+        _super.apply(this, arguments);
+    }
+    MIOPopOverPresentAnimationController.prototype.transitionDuration = function (transitionContext) {
+        return 0.15;
+    };
+    MIOPopOverPresentAnimationController.prototype.animateTransition = function (transitionContext) {
+        // make view configurations before transitions
+        var vc = transitionContext.presentedViewController;
+        var view = transitionContext["presentedView"];
+        var w = vc.preferredContentSize.width;
+        var h = vc.preferredContentSize.height;
+        var v = vc.popoverPresentationController.sourceView;
+        var f = vc.popoverPresentationController.sourceRect;
+        var x = v.layer.getBoundingClientRect().left + f.size.width + 10;
+        if ((x + w) > window.innerWidth)
+            x = v.layer.getBoundingClientRect().left - w - 10;
+        var y = (window.innerHeight - h) / 2;
+        //var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
+        //view.setFrame(MIOFrame.frameWithRect(x, y, w, h));
+        view.setX(x);
+        view.setY(y);
+    };
+    MIOPopOverPresentAnimationController.prototype.animationEnded = function (transitionCompleted) {
+        // make view configurations after transitions
+    };
+    // TODO: Not iOS like transitions. For now we use css animations
+    MIOPopOverPresentAnimationController.prototype.animations = function (transitionContext) {
+        var animations = MUIClassListForAnimationType(MUIAnimationType.FadeIn);
+        return animations;
+    };
+    return MIOPopOverPresentAnimationController;
+}(MIOObject));
+var MIOPopOverDismissAnimationController = (function (_super) {
+    __extends(MIOPopOverDismissAnimationController, _super);
+    function MIOPopOverDismissAnimationController() {
+        _super.apply(this, arguments);
+    }
+    MIOPopOverDismissAnimationController.prototype.transitionDuration = function (transitionContext) {
+        return 0.15;
+    };
+    MIOPopOverDismissAnimationController.prototype.animateTransition = function (transitionContext) {
+        // make view configurations after transitions
+    };
+    MIOPopOverDismissAnimationController.prototype.animationEnded = function (transitionCompleted) {
+        // make view configurations before transitions
+    };
+    // TODO: Not iOS like transitions. For now we use css animations
+    MIOPopOverDismissAnimationController.prototype.animations = function (transitionContext) {
+        var animations = MUIClassListForAnimationType(MUIAnimationType.FadeOut);
+        return animations;
+    };
+    return MIOPopOverDismissAnimationController;
+}(MIOObject));
 //# sourceMappingURL=MIOViewController_PopoverPresentationController.js.map
