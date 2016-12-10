@@ -6,6 +6,8 @@
     /// <reference path="MIOURLConnection.ts" />
     /// <reference path="MIOWebApplication.ts" />
 
+    /// <reference path="MIOString.ts" />
+
 class MIOBundle
 {
     private _layoutWorker = null;
@@ -44,7 +46,7 @@ class MIOBundle
         if (this._layoutWorker == null)
         {
             this._layoutWorker = new Worker("src/miolib/webworkers/MIOBundleDownloadLayout.js");
-            this._layoutWorker.postMessage({"CMD" : "SetLanguage", "LanguageStrings" : MIOLocalizedStrings});
+            this._layoutWorker.postMessage({"CMD" : "SetLanguage", "LanguageStrings" : _MIOLocalizedStrings});
             var instance = this;
             this._layoutWorker.onmessage = function (event) {
 
@@ -60,8 +62,8 @@ class MIOBundle
 
         if (this._layoutCache[url] != null)
         {
-            var item = this._layoutCache[url];
-            var layout = item["Layer"];
+            var i = this._layoutCache[url];
+            var layout = i["Layer"];
             completion.call(target, layout);
         }
         else
@@ -92,7 +94,7 @@ class MIOBundle
         var item = this._layoutQueue[0];
 
         // Send only the information need
-        console.log("Download resource: " + item["URL"])
+        console.log("Download resource: " + item["URL"]);
         var msg = {"CMD" : "DownloadResource", "URL" : item["URL"], "LayerID" : item["LayerID"]};
         this._layoutWorker.postMessage(msg);
     }

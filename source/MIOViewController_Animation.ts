@@ -6,7 +6,7 @@
 /// <reference path="MIOCoreTypes.ts" />
 
 
-
+/*
 function AnimationTypeForViewController(vc, reverse)
 {
     var type = MIOAnimationType.None;
@@ -115,3 +115,4 @@ function FrameWithStyleForViewControllerInView(view, vc)
     return MIOFrame.frameWithRect(x, y, w, h);
 }
 
+*/

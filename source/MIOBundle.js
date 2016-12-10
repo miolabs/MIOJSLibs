@@ -4,6 +4,7 @@
 /// <reference path="MIOObject.ts" />
 /// <reference path="MIOURLConnection.ts" />
 /// <reference path="MIOWebApplication.ts" />
+/// <reference path="MIOString.ts" />
 var MIOBundle = (function () {
     function MIOBundle() {
         this._layoutWorker = null;
@@ -27,7 +28,7 @@ var MIOBundle = (function () {
     MIOBundle.prototype.loadLayoutFromURL = function (url, layerID, target, completion) {
         if (this._layoutWorker == null) {
             this._layoutWorker = new Worker("src/miolib/webworkers/MIOBundleDownloadLayout.js");
-            this._layoutWorker.postMessage({ "CMD": "SetLanguage", "LanguageStrings": MIOLocalizedStrings });
+            this._layoutWorker.postMessage({ "CMD": "SetLanguage", "LanguageStrings": _MIOLocalizedStrings });
             var instance = this;
             this._layoutWorker.onmessage = function (event) {
                 instance.layerDidDownload(event.data);
@@ -38,8 +39,8 @@ var MIOBundle = (function () {
         if (this._layoutCache == null)
             this._layoutCache = {};
         if (this._layoutCache[url] != null) {
-            var item = this._layoutCache[url];
-            var layout = item["Layer"];
+            var i = this._layoutCache[url];
+            var layout = i["Layer"];
             completion.call(target, layout);
         }
         else {

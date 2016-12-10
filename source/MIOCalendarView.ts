@@ -14,9 +14,9 @@ class MIOCalendarCell extends MIOView
 
     parent = null;
 
-    protected _customizeLayerSetup()
+    initWithLayer(layer, options?)
     {
-        super._customizeLayerSetup();
+        super.initWithLayer(layer, options);
 
         var instance = this;
         this.layer.onclick = function()

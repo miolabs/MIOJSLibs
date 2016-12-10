@@ -56,6 +56,10 @@ interface Window {
     prototype;
 }
 
+interface String {
+    endsWith(searchString: string, endPosition?: number): boolean;
+}
+
 function MIOClassFromString(className)
 {
     //instance creation here

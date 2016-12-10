@@ -11,8 +11,6 @@
 
     /// <reference path="MIOWindow.ts" />
 
-var MIOLocalizedStrings = null;
-
 class MIOWebApplication
 {
     private static _sharedInstance:MIOWebApplication = new MIOWebApplication();
@@ -86,7 +84,7 @@ class MIOWebApplication
         if (this.currentLanguage == null)
             this.currentLanguage = this.defaultLanguage;
 
-        if (MIOLocalizedStrings == null && this.currentLanguage != null)
+        if (_MIOLocalizedStrings == null && this.currentLanguage != null)
         {
             // Download language
             this.downloadLanguage(this.currentLanguage, function(){
@@ -146,7 +144,7 @@ class MIOWebApplication
             if (data != null)
             {
                 var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                MIOLocalizedStrings = json;
+                _MIOLocalizedStrings = json;
             }
 
             fn.call(this);
@@ -155,7 +153,7 @@ class MIOWebApplication
 
     beginSheetViewController(vc)
     {
-        var window = this.delegate.window;
+/*        var window = this.delegate.window;
 
         this._sheetViewController = vc;
         this._sheetViewController.presentationStyle = MIOPresentationStyle.PageSheet;
@@ -173,7 +171,7 @@ class MIOWebApplication
         window.rootViewController.showViewController(vc, true);
 
         this._sheetSize = vc.contentSize;
-        this._sheetViewController.addObserver(this, "contentSize");
+        this._sheetViewController.addObserver(this, "contentSize");*/
     }
 
     endSheetViewController()
@@ -191,7 +189,7 @@ class MIOWebApplication
 
     observeValueForKeyPath(key, type, object)
     {
-        if (type == "will")
+/*        if (type == "will")
         {
             this._sheetSize = this._sheetViewController.contentSize;
         }
@@ -206,7 +204,7 @@ class MIOWebApplication
                 var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
                 this._sheetViewController.view.setFrame(frame);
             }
-        }
+        }*/
     }
 
     showModalViewContoller(vc)

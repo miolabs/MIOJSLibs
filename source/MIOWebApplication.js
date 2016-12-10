@@ -7,7 +7,6 @@
 /// <reference path="MIOURLConnection.ts" />
 /// <reference path="MIOViewController.ts" />
 /// <reference path="MIOWindow.ts" />
-var MIOLocalizedStrings = null;
 var MIOWebApplication = (function () {
     function MIOWebApplication() {
         this.delegate = null;
@@ -55,7 +54,7 @@ var MIOWebApplication = (function () {
         // Check languages
         if (this.currentLanguage == null)
             this.currentLanguage = this.defaultLanguage;
-        if (MIOLocalizedStrings == null && this.currentLanguage != null) {
+        if (_MIOLocalizedStrings == null && this.currentLanguage != null) {
             // Download language
             this.downloadLanguage(this.currentLanguage, function () {
                 this._run();
@@ -93,27 +92,31 @@ var MIOWebApplication = (function () {
         conn.initWithRequestBlock(new MIOURLRequest(url), this, function (error, data) {
             if (data != null) {
                 var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                MIOLocalizedStrings = json;
+                _MIOLocalizedStrings = json;
             }
             fn.call(this);
         });
     };
     MIOWebApplication.prototype.beginSheetViewController = function (vc) {
-        var window = this.delegate.window;
-        this._sheetViewController = vc;
-        this._sheetViewController.presentationStyle = MIOPresentationStyle.PageSheet;
-        this._sheetViewController.presentationType = MIOPresentationType.Sheet;
-        var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
-        this._sheetViewController.view.setFrame(frame);
-        this._sheetViewController.view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
-        this._sheetViewController.view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
-        this._sheetViewController.view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
-        this._sheetViewController.view.layer.style.zIndex = 200;
-        window.rootViewController.addChildViewController(vc);
-        window.rootViewController.view.addSubview(vc.view);
-        window.rootViewController.showViewController(vc, true);
-        this._sheetSize = vc.contentSize;
-        this._sheetViewController.addObserver(this, "contentSize");
+        /*        var window = this.delegate.window;
+        
+                this._sheetViewController = vc;
+                this._sheetViewController.presentationStyle = MIOPresentationStyle.PageSheet;
+                this._sheetViewController.presentationType = MIOPresentationType.Sheet;
+        
+                var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
+                this._sheetViewController.view.setFrame(frame);
+                this._sheetViewController.view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
+                this._sheetViewController.view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
+                this._sheetViewController.view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
+                this._sheetViewController.view.layer.style.zIndex = 200;
+        
+                window.rootViewController.addChildViewController(vc);
+                window.rootViewController.view.addSubview(vc.view);
+                window.rootViewController.showViewController(vc, true);
+        
+                this._sheetSize = vc.contentSize;
+                this._sheetViewController.addObserver(this, "contentSize");*/
     };
     MIOWebApplication.prototype.endSheetViewController = function () {
         if (this._sheetViewController == null)
@@ -125,19 +128,22 @@ var MIOWebApplication = (function () {
         this._sheetViewController = null;
     };
     MIOWebApplication.prototype.observeValueForKeyPath = function (key, type, object) {
-        if (type == "will") {
-            this._sheetSize = this._sheetViewController.contentSize;
-        }
-        else if (type == "did") {
-            var newSize = this._sheetViewController.contentSize;
-            if (!newSize.isEqualTo(this._sheetSize)) {
-                // Animate the frame
-                this._sheetViewController.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
-                var window = this.delegate.window;
-                var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
-                this._sheetViewController.view.setFrame(frame);
-            }
-        }
+        /*        if (type == "will")
+                {
+                    this._sheetSize = this._sheetViewController.contentSize;
+                }
+                else if (type == "did")
+                {
+                    var newSize = this._sheetViewController.contentSize;
+                    if (!newSize.isEqualTo(this._sheetSize))
+                    {
+                        // Animate the frame
+                        this._sheetViewController.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+                        var window = this.delegate.window;
+                        var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
+                        this._sheetViewController.view.setFrame(frame);
+                    }
+                }*/
     };
     MIOWebApplication.prototype.showModalViewContoller = function (vc) {
         var w = new MIOWindow(MIOViewGetNextLayerID("window"));

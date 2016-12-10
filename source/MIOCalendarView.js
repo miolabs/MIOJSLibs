@@ -18,8 +18,8 @@ var MIOCalendarCell = (function (_super) {
         this.index = 0;
         this.parent = null;
     }
-    MIOCalendarCell.prototype._customizeLayerSetup = function () {
-        _super.prototype._customizeLayerSetup.call(this);
+    MIOCalendarCell.prototype.initWithLayer = function (layer, options) {
+        _super.prototype.initWithLayer.call(this, layer, options);
         var instance = this;
         this.layer.onclick = function () {
             if (instance.parent.delegate != null)

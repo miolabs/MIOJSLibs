@@ -2,11 +2,13 @@
  * Created by godshadow on 21/3/16.
  */
 
-    /// <reference path="MIOCore.ts" />
+/// <reference path="MIOCore.ts" />
+
+var _MIOLocalizedStrings = null;
 
 function MIOLocalizeString(key, defaultValue)
 {
-    var strings =  MIOLocalizedStrings;
+    var strings =  _MIOLocalizedStrings;
     if (strings == null)
         return defaultValue;
 
