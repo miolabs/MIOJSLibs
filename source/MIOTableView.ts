@@ -338,7 +338,7 @@ class MIOTableView extends MIOView
             // if (bg != null) {
             //     cell.layer.style.background = bg;
             // }
-            cell.initWithStyle(newLayer);
+            cell.initWithLayer(newLayer);
             //cell._addLayerToDOM();
             cell.awakeFromHTML();
         }

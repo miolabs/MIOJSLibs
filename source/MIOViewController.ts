@@ -342,11 +342,12 @@ class MIOViewController extends MIOObject
     {
         var toVC = this.presentationController.presentingViewController;
         var fromVC = this.presentationController.presentedViewController;
+        var fromView = this.presentationController.presentedView;
 
         _MUIHideViewController(fromVC, toVC, null, true, this, function () {
 
-            fromVC.removeChildViewController(this);
-            fromVC.presentationController.presentedView.removeFromSuperview();
+            toVC.removeChildViewController(fromVC);
+            fromView.removeFromSuperview();
         });
     }
 

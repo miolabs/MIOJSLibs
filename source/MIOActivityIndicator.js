@@ -15,8 +15,9 @@ var MIOActivityIndicator = (function (_super) {
     }
     MIOActivityIndicator.prototype.initWithLayer = function (layer, options) {
         _super.prototype.initWithLayer.call(this, layer, options);
-        if (options["Gray"] == true)
-            this.gray = true;
+        if (options != null) {
+            this.gray = options["Gray"] == true ? true : false;
+        }
         var color = this.gray == false ? "#ffffff" : "#aaaaaa";
         var svg = "";
         svg += '<svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default">';

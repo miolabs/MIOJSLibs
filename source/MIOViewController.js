@@ -260,9 +260,10 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.dismissViewController = function (animate) {
         var toVC = this.presentationController.presentingViewController;
         var fromVC = this.presentationController.presentedViewController;
+        var fromView = this.presentationController.presentedView;
         _MUIHideViewController(fromVC, toVC, null, true, this, function () {
-            fromVC.removeChildViewController(this);
-            fromVC.presentationController.presentedView.removeFromSuperview();
+            toVC.removeChildViewController(fromVC);
+            fromView.removeFromSuperview();
         });
     };
     MIOViewController.prototype.transitionFromViewControllerToViewController = function (fromVC, toVC, duration, animationType, target, completion) {

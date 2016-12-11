@@ -12,7 +12,9 @@ class MIOActivityIndicator extends MIOView
     {
         super.initWithLayer(layer, options);
 
-        if (options["Gray"] == true) this.gray = true;
+        if (options != null){
+            this.gray = options["Gray"] == true ? true : false;
+        }
 
         var color = this.gray == false ? "#ffffff" : "#aaaaaa";
         var svg = "";
