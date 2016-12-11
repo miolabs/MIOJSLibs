@@ -52,6 +52,11 @@ var MIOPresentationController = (function (_super) {
         configurable: true
     });
     MIOPresentationController.prototype.presentationTransitionWillBegin = function () {
+        if (MIOLibIsMobile() == false) {
+            this.presentedView.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
+            this.presentedView.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
+            this.presentedView.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
+        }
     };
     MIOPresentationController.prototype.presentationTransitionDidEnd = function (completed) {
     };

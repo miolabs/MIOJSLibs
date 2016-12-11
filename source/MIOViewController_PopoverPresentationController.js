@@ -38,20 +38,13 @@ var MIOPopoverPresentationController = (function (_super) {
         var h = size.height + 2;
         this.presentedView = new MIOView();
         this.presentedView.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        this.presentedView.addSubview(vc.view);
+    };
+    MIOPopoverPresentationController.prototype.presentationTransitionWillBegin = function () {
         this.presentedView.layer.style.borderRadius = "5px 5px 5px 5px";
         this.presentedView.layer.style.border = "1px solid rgb(170, 170, 170)";
         this.presentedView.layer.style.overflow = "hidden";
         this.presentedView.layer.style.zIndex = 10; // To make clip the children views
-        this.presentedView.addSubview(vc.view);
-        //this.presentedView.addSubview(vc.view);
-        // this._canvasLayer = document.createElement("CANVAS");
-        // this._canvasLayer.setAttribute("width", w);
-        // this._canvasLayer.setAttribute("height", h);
-        //
-        // this._drawRoundRect(0, 0, w, h, 12);
-        // this._contentView = new MIOView();
-        // this._contentView.initWithLayer(this._canvasLayer);
-        // this.presentedView.addSubview(this._contentView);
     };
     MIOPopoverPresentationController.prototype._drawRoundRect = function (x, y, width, height, radius) {
         var ctx = this._canvasLayer.getContext('2d');
