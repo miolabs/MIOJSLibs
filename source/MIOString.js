@@ -12,4 +12,13 @@ function MIOLocalizeString(key, defaultValue) {
         return defaultValue;
     return value;
 }
+// interface String {
+//     endsWith(searchString: string, endPosition?: number): boolean;
+// }
+// String.prototype.endsWith = function(suffix) {
+//     return this.indexOf(suffix, this.length - suffix.length) !== -1;
+// };
+function MIOStringHasSuffix(str, suffix) {
+    return str.match(suffix + "$") == suffix;
+}
 //# sourceMappingURL=MIOString.js.map

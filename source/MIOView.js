@@ -7,6 +7,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 /// <reference path="MIOCore.ts" />
+/// <reference path="MIOString.ts" />
 /// <reference path="MIOCoreTypes.ts" />
 /// <reference path="MIOObject.ts" />
 var _MIOViewNextLayerID = 0;
@@ -267,11 +268,11 @@ var MIOView = (function (_super) {
     };
     MIOView.prototype._getIntValueFromCSSProperty = function (property) {
         var v = this._getValueFromCSSProperty(property);
-        var r = v.endsWith("px");
+        var r = MIOStringHasSuffix(v, "px");
         if (r == true)
             v = v.substring(0, v.length - 2);
         else {
-            var r2 = v.endsWith("%");
+            var r2 = MIOStringHasSuffix(v, "%");
             if (r2 == true)
                 v = v.substring(0, v.length - 1);
         }

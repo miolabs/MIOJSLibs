@@ -3,6 +3,7 @@
  */
 
     /// <reference path="MIOCore.ts" />
+    /// <reference path="MIOString.ts" />
     /// <reference path="MIOCoreTypes.ts" />
     /// <reference path="MIOObject.ts" />
 
@@ -378,11 +379,11 @@ class MIOView extends MIOObject
     protected _getIntValueFromCSSProperty(property)
     {
         var v = this._getValueFromCSSProperty(property);
-        var r = v.endsWith("px");
+        var r = MIOStringHasSuffix(v, "px");
         if (r == true) v = v.substring(0, v.length - 2);
         else
         {
-            var r2 = v.endsWith("%");
+            var r2 = MIOStringHasSuffix(v, "%");
             if (r2 == true) v = v.substring(0, v.length - 1);
         }
 
