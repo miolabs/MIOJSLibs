@@ -107,7 +107,7 @@ class MIOPopOverPresentAnimationController extends MIOObject
         // Below
         var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
         if ((y + h) > window.innerHeight) // Below no, Up?
-            y = v.layer.getBoundingClientRect().top - f.size.height - 10;
+            y = v.layer.getBoundingClientRect().top - h - 10;
         if (y < 0) // Up no, horizonal shift
         {
             xShift = true;
