@@ -22,7 +22,6 @@ var MIOViewController = (function (_super) {
         this.layerID = null;
         this.prefixID = null;
         this.view = null;
-        this.parent = null;
         this._onViewLoadedTarget = null;
         this._onViewLoadedAction = null;
         this._onLoadLayerTarget = null;
@@ -30,9 +29,9 @@ var MIOViewController = (function (_super) {
         this._viewIsLoaded = false;
         this._layerIsReady = false;
         this._childViewControllers = [];
+        this.parentViewController = null;
         this.presentingViewController = null;
         this.presentedViewController = null;
-        this.parentViewController = null;
         this.navigationController = null;
         this.splitViewController = null;
         this.tabBarController = null;
@@ -186,7 +185,7 @@ var MIOViewController = (function (_super) {
         configurable: true
     });
     MIOViewController.prototype.addChildViewController = function (vc) {
-        vc.parent = this;
+        vc.parentViewController = this;
         this._childViewControllers.push(vc);
         //vc.willMoveToParentViewController(this);
     };
@@ -194,7 +193,7 @@ var MIOViewController = (function (_super) {
         var index = this._childViewControllers.indexOf(vc);
         if (index != -1) {
             this._childViewControllers.splice(index, 1);
-            vc.parent = null;
+            vc.parentViewController = null;
         }
     };
     // removeFromParentViewController()
@@ -209,6 +208,8 @@ var MIOViewController = (function (_super) {
     };
     Object.defineProperty(MIOViewController.prototype, "presentationController", {
         get: function () {
+            if (this._presentationController == null && this.parentViewController != null)
+                return this.parentViewController.presentationController;
             return this._presentationController;
         },
         set: function (pc) {
@@ -244,9 +245,9 @@ var MIOViewController = (function (_super) {
             pc = new MIOPresentationController();
             pc.init();
             pc.presentedViewController = vc;
-            vc.presentationController = pc;
         }
         pc.presentingViewController = this;
+        vc.presentationController = pc;
         vc.onLoadView(this, function () {
             this.view.addSubview(vc.presentationController.presentedView);
             this.addChildViewController(vc);

@@ -35,10 +35,6 @@ var MIONavigationController = (function (_super) {
         this.addChildViewController(vc);
         this.contentSize = vc.contentSize;
     };
-    MIONavigationController.prototype.setPresentationController = function (pc) {
-        _super.prototype.setPresentationController.call(this, pc);
-        this.rootViewController.presentationController = pc;
-    };
     MIONavigationController.prototype._childControllersWillAppear = function () {
         if (this.currentViewControllerIndex < 0)
             return;
@@ -74,7 +70,6 @@ var MIONavigationController = (function (_super) {
         vc.navigationController = this;
         if (vc.transitioningDelegate == null)
             vc.transitioningDelegate = this;
-        vc.presentationController = this.presentationController;
         vc.onLoadView(this, function () {
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);

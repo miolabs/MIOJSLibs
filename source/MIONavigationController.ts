@@ -36,12 +36,6 @@ class MIONavigationController extends MIOViewController
         this.contentSize = vc.contentSize;
     }
 
-    setPresentationController(pc)
-    {
-        super.setPresentationController(pc);
-        this.rootViewController.presentationController = pc;
-    }
-
     _childControllersWillAppear()
     {
         if (this.currentViewControllerIndex < 0)
@@ -96,8 +90,6 @@ class MIONavigationController extends MIOViewController
         vc.navigationController = this;
         if (vc.transitioningDelegate == null)
             vc.transitioningDelegate = this;
-
-        vc.presentationController = this.presentationController;
 
         vc.onLoadView(this, function () {
 

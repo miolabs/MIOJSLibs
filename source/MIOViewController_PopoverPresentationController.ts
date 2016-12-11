@@ -101,13 +101,34 @@ class MIOPopOverPresentAnimationController extends MIOObject
         var h = vc.preferredContentSize.height;
         var v = vc.popoverPresentationController.sourceView;
         var f = vc.popoverPresentationController.sourceRect;
-        var x = v.layer.getBoundingClientRect().left + f.size.width + 10;
-        if ((x + w) > window.innerWidth)
-            x = v.layer.getBoundingClientRect().left - w - 10;
-        var y = (window.innerHeight - h) / 2;
-        //var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
 
-        //view.setFrame(MIOFrame.frameWithRect(x, y, w, h));
+        var xShift = false;
+
+        // Below
+        var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
+        if ((y + h) > window.innerHeight) // Below no, Up?
+            y = v.layer.getBoundingClientRect().top - f.size.height - 10;
+        if (y < 0) // Up no, horizonal shift
+        {
+            xShift = true;
+            y = (window.innerHeight - h) / 2;
+        }
+
+        var x = 0;
+
+        if (xShift == false)
+        {
+            x = v.layer.getBoundingClientRect().left + 10;
+            if ((x + w) > window.innerWidth)
+                x = v.layer.getBoundingClientRect().left +f.size.width - w + 10;
+        }
+        else
+        {
+            x = v.layer.getBoundingClientRect().left + f.size.width + 10;
+            if ((x + w) > window.innerWidth)
+                x = v.layer.getBoundingClientRect().left - w - 10;
+        }
+
         view.setX(x);
         view.setY(y);
     }

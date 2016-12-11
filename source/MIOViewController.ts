@@ -21,7 +21,6 @@ class MIOViewController extends MIOObject
     prefixID = null;
 
     view = null;
-    parent = null;
 
     private _onViewLoadedTarget = null;
     private _onViewLoadedAction = null;
@@ -33,10 +32,10 @@ class MIOViewController extends MIOObject
     private _layerIsReady = false;
 
     private _childViewControllers = [];
+    parentViewController = null;
 
     presentingViewController = null;
     presentedViewController = null;
-    parentViewController = null;
     navigationController = null;
     splitViewController = null;
     tabBarController = null;
@@ -248,7 +247,7 @@ class MIOViewController extends MIOObject
 
     addChildViewController(vc)
     {
-        vc.parent = this;
+        vc.parentViewController = this;
         this._childViewControllers.push(vc);
         //vc.willMoveToParentViewController(this);
     }
@@ -258,7 +257,7 @@ class MIOViewController extends MIOObject
         var index = this._childViewControllers.indexOf(vc);
         if (index != -1) {
             this._childViewControllers.splice(index, 1);
-            vc.parent = null;
+            vc.parentViewController = null;
         }
     }
 
@@ -282,6 +281,9 @@ class MIOViewController extends MIOObject
 
     get presentationController()
     {
+        if (this._presentationController == null && this.parentViewController != null)
+            return this.parentViewController.presentationController;
+
         return this._presentationController;
     }
 
@@ -318,10 +320,10 @@ class MIOViewController extends MIOObject
             pc = new MIOPresentationController();
             pc.init();
             pc.presentedViewController = vc;
-            vc.presentationController = pc;
         }
 
         pc.presentingViewController = this;
+        vc.presentationController = pc;
 
         vc.onLoadView(this, function () {
 
