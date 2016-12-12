@@ -90,7 +90,7 @@ var MIONavigationController = (function (_super) {
             fromVC.view.removeFromSuperview();
         });
     };
-    MIONavigationController.prototype.popToRootViewController = function () {
+    MIONavigationController.prototype.popToRootViewController = function (animate) {
         var currentVC = this.viewControllersStack.pop();
         for (var index = this.currentViewControllerIndex - 1; index > 0; index--) {
             var vc = this.viewControllersStack.pop();
@@ -157,9 +157,16 @@ var MIOPushAnimationController = (function (_super) {
         var toVC = transitionContext.presentedViewController;
         w = fromVC.view.getWidth();
         h = fromVC.view.getHeight();
-        var w = toVC.preferredContentSize.width;
-        var h = toVC.preferredContentSize.height;
-        toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        if (MIOLibIsMobile() == false) {
+            var w = toVC.preferredContentSize.width;
+            var h = toVC.preferredContentSize.height;
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        }
+        else {
+            var w = fromVC.view.getWidth();
+            var h = fromVC.view.getHeight();
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        }
     };
     MIOPushAnimationController.prototype.animationEnded = function (transitionCompleted) {
         // make view configurations after transitions

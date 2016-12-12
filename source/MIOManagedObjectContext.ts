@@ -111,10 +111,13 @@ class MIOManagedObjectContext extends MIOObject
         if (array == null)
         {
             array = [];
+            array.push(obj);
             this._insertedObjects[entityName] = array;
         }
-
-        array.push(obj);
+        else
+        {
+            array.push(obj);
+        }
     }
 
     updateObject(obj)

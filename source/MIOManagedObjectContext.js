@@ -95,9 +95,12 @@ var MIOManagedObjectContext = (function (_super) {
         var array = this._insertedObjects[entityName];
         if (array == null) {
             array = [];
+            array.push(obj);
             this._insertedObjects[entityName] = array;
         }
-        array.push(obj);
+        else {
+            array.push(obj);
+        }
     };
     MIOManagedObjectContext.prototype.updateObject = function (obj) {
         obj.saveChanges();

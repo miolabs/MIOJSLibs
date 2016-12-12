@@ -121,11 +121,10 @@ class MIOModalPresentAnimationController extends MIOObject
             }
             else
             {
-                var w = toVC.preferredContentSize.width;
-                var h = toVC.preferredContentSize.height;
-                var x = (fromVC.view.getWidth() - w) / 2;
+                var w = fromVC.view.getWidth();
+                var h = fromVC.view.getHeight();
 
-                toVC.view.setFrame(MIOFrame.frameWithRect(x, 0, w, h));
+                toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
             }
 
         }

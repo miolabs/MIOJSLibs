@@ -123,7 +123,7 @@ class MIONavigationController extends MIOViewController
         });
     }
 
-    popToRootViewController()
+    popToRootViewController(animate?)
     {
         var currentVC = this.viewControllersStack.pop();
 
@@ -215,10 +215,22 @@ class MIOPushAnimationController extends MIOObject
         w = fromVC.view.getWidth();
         h = fromVC.view.getHeight();
 
-        var w = toVC.preferredContentSize.width;
-        var h = toVC.preferredContentSize.height;
+        if (MIOLibIsMobile() == false)
+        {
+            var w = toVC.preferredContentSize.width;
+            var h = toVC.preferredContentSize.height;
 
-        toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            //TODO: Animate frame change
+        }
+        else
+        {
+            var w = fromVC.view.getWidth();
+            var h = fromVC.view.getHeight();
+
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        }
+
     }
 
     animationEnded(transitionCompleted)

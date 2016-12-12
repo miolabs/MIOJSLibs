@@ -78,9 +78,9 @@ class MIOURLConnection
             this.xmlHttpRequest.setRequestHeader(item["Field"], item["Value"]);
         }
 
-        if (this.request.httpMethod == "POST" && this.request.body != null)
-            this.xmlHttpRequest.send(this.request.body);
-        else
+        if (this.request.httpMethod == "GET" || this.request.body == null)
             this.xmlHttpRequest.send();
+        else
+            this.xmlHttpRequest.send(this.request.body);
     }
 }
