@@ -253,7 +253,7 @@ class MIOWebApplication
             this.delegate.window.layout();
     }
 
-    forwardClickEvent(e)
+    forwardClickEvent(target, x, y)
     {
         if (this.ready == false)
             return;
@@ -261,8 +261,8 @@ class MIOWebApplication
         if (this._popUpMenu != null) {
             var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
 
-            if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
-                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom)) {
+            if ((x > controlRect.left && x < controlRect.right)
+                && (y > controlRect.top && y < controlRect.bottom)) {
 
                 // Nothing
             }
@@ -280,10 +280,10 @@ class MIOWebApplication
 
             var controlRect = this._popOverViewController.view.layer.getBoundingClientRect();
 
-            console.log("x: " + controlRect.left + " mx: " + e.clientX);
+            console.log("x: " + controlRect.left + " mx: " + x);
 
-            if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
-                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom))
+            if ((x > controlRect.left && x < controlRect.right)
+                && (y > controlRect.top && y < controlRect.bottom))
             {
                 //Nothing
             }

@@ -1,0 +1,18 @@
+#view
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255);
+}
+#view_label
+{
+    position: absolute;
+    top: 15%;
+    left: 0px;
+    width: 100%;
+    height: 20px;
+    text-align: center;
+}

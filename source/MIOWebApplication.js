@@ -177,13 +177,13 @@ var MIOWebApplication = (function () {
         if (this.ready == true)
             this.delegate.window.layout();
     };
-    MIOWebApplication.prototype.forwardClickEvent = function (e) {
+    MIOWebApplication.prototype.forwardClickEvent = function (target, x, y) {
         if (this.ready == false)
             return;
         if (this._popUpMenu != null) {
             var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
-            if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
-                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom)) {
+            if ((x > controlRect.left && x < controlRect.right)
+                && (y > controlRect.top && y < controlRect.bottom)) {
             }
             else {
                 this._popUpMenu.hide();
@@ -195,9 +195,9 @@ var MIOWebApplication = (function () {
             //     return;
             // }
             var controlRect = this._popOverViewController.view.layer.getBoundingClientRect();
-            console.log("x: " + controlRect.left + " mx: " + e.clientX);
-            if ((e.clientX > controlRect.left && e.clientX < controlRect.right)
-                && (e.clientY > controlRect.top && e.clientY < controlRect.bottom)) {
+            console.log("x: " + controlRect.left + " mx: " + x);
+            if ((x > controlRect.left && x < controlRect.right)
+                && (y > controlRect.top && y < controlRect.bottom)) {
             }
             else
                 this._popOverViewController.dismissViewController(true);

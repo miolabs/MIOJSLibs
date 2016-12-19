@@ -51,6 +51,34 @@ var _MIOLibLoadedCompletion = null;
 var _MIOLibFileIndex = 0;
 var _MIOLibFiles = [];
 
+var _mc_force_mobile = false;
+
+enum MIOLibInitType
+{
+    Release,
+    Debug
+}
+
+var _MIOLibMainFn = null;
+
+function MIOLibInit(mainFn, type?:MIOLibInitType) {
+
+    _MIOLibMainFn = mainFn;
+
+    MIOLibDecodeParams(window.location.search, this, function (param, value) {
+
+        // Only for test
+        if (param == "forceMobile")
+            _mc_force_mobile = value == "true" ? true : false;
+    });
+
+    // If debug load MIOJS Libs
+    if (type == MIOLibInitType.Debug)
+    {
+        _MIOLibDownloadLibFiles();
+    }
+}
+
 function MIOLibDownloadScript(url, target, completion)
 {
     var xhr = new XMLHttpRequest();
@@ -147,23 +175,17 @@ function MIOLibOnLoaded(target, completion)
     }
 }
 
+function MIOLibDownloadLibFile(file)
+{
+    _MIOLibFiles.push(file);
+    console.log("Added file to download: " + file);
+}
+
 function MIOLibDownloadFile(file)
 {
     _MIOLibFiles.push("../" + file);
     console.log("Added file to download: " + file);
 }
-
-var _mc_force_mobile = false;
-
-function MIOLibInit() {
-    MIOLibDecodeParams(window.location.search, this, function (param, value) {
-
-        // Only for test
-        if (param == "forceMobile")
-            _mc_force_mobile = value == "true" ? true : false;
-    });
-}
-
 
 function MIOLibIsMobile()
 {
@@ -245,3 +267,109 @@ function MIOLibEvaluateParam(param, value, target, completion)
     if (target != null && completion != null)
         completion.call(target, param, value);
 }
+
+// Download files individually in debug mode
+function _MIOLibDownloadLibFiles()
+{
+    // MIOLib files
+    MIOLibDownloadLibFile("MIOCore");
+    MIOLibDownloadLibFile("MIOCoreTypes");
+    MIOLibDownloadLibFile("MIOObject");
+    MIOLibDownloadLibFile("MIOUserDefaults");
+    MIOLibDownloadLibFile("MIOString");
+    MIOLibDownloadLibFile("MIODate");
+    MIOLibDownloadLibFile("Date_MIO");
+    MIOLibDownloadLibFile("MIOUUID");
+    MIOLibDownloadLibFile("MIONotificationCenter");
+    MIOLibDownloadLibFile("MIOWebApplication");
+    MIOLibDownloadLibFile("MIOURLConnection");
+    MIOLibDownloadLibFile("MIOBundle");
+    MIOLibDownloadLibFile("MIOPredicate");
+    MIOLibDownloadLibFile("MIOSortDescriptor");
+    MIOLibDownloadLibFile("MIOManagedObjectContext");
+    MIOLibDownloadLibFile("MIOFetchedResultsController");
+    MIOLibDownloadLibFile("MIOView");
+    MIOLibDownloadLibFile("MIOScrollView");
+    MIOLibDownloadLibFile("MIOWindow");
+    MIOLibDownloadLibFile("MIOLabel");
+    MIOLibDownloadLibFile("MIOTableView");
+    MIOLibDownloadLibFile("MIOCollectionView");
+    MIOLibDownloadLibFile("MIOCalendarView");
+    MIOLibDownloadLibFile("MIOImageView");
+    MIOLibDownloadLibFile("MIOMenu");
+    MIOLibDownloadLibFile("MIOActivityIndicator");
+    MIOLibDownloadLibFile("MIOWebView");
+    MIOLibDownloadLibFile("MIOControl");
+    MIOLibDownloadLibFile("MIOButton");
+    MIOLibDownloadLibFile("MIOComboBox");
+    MIOLibDownloadLibFile("MIOPopUpButton");
+    MIOLibDownloadLibFile("MIOCheckButton");
+    MIOLibDownloadLibFile("MIOSegmentedControl");
+    MIOLibDownloadLibFile("MIOTextField");
+    MIOLibDownloadLibFile("MIOTextArea");
+    MIOLibDownloadLibFile("MIOTabBar");
+    MIOLibDownloadLibFile("MIOPageControl");
+    MIOLibDownloadLibFile("MIOViewController");
+    MIOLibDownloadLibFile("MIOViewController_Animation");
+    MIOLibDownloadLibFile("MIOViewController_PresentationController");
+    MIOLibDownloadLibFile("MIOViewController_PopoverPresentationController");
+    MIOLibDownloadLibFile("MIONavigationController");
+    MIOLibDownloadLibFile("MIOPageController");
+    MIOLibDownloadLibFile("MIOSplitViewController");
+    MIOLibDownloadLibFile("MIOUIKit");
+    MIOLibDownloadLibFile("webworkers/MIOHTMLParser");
+}
+
+/*
+    Window events mapping
+*/
+
+window.onload = function()
+{
+    MIOLibOnLoaded(this, function () {
+
+        _MIOLibMainFn(null);
+    });
+};
+
+window.onresize = function(e)
+{
+    if (MIOLibIsLoaded == false)
+        return;
+
+    var app = MIOWebApplication.sharedInstance();
+    app.forwardResizeEvent.call(app, e);
+};
+
+window.addEventListener("click", function (e) {
+
+    if (MIOLibIsLoaded == false)
+        return;
+
+    var app = MIOWebApplication.sharedInstance();
+    app.forwardClickEvent.call(app, e.target, e.clientX, e.clientY);
+
+    //e.preventDefault();
+
+}, false);
+
+window.addEventListener('touchend', function(e){
+
+    if (MIOLibIsLoaded == false)
+        return;
+
+    //TODO: Declare changedTouches interface for typescript
+    var touch = e.changedTouches[0] // reference first touch point for this event
+
+    var app = MIOWebApplication.sharedInstance();
+    app.forwardClickEvent.call(app, e.target, touch.clientX, touch.clientY);
+
+    //e.preventDefault();
+
+}, false);
+
+// output errors to console log
+window.onerror = function (e) {
+    console.log("window.onerror ::" + JSON.stringify(e));
+};
+
