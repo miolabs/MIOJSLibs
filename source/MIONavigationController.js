@@ -33,7 +33,10 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex = 0;
         this.rootViewController.navigationController = this;
         this.addChildViewController(vc);
-        this.contentSize = vc.contentSize;
+        if (this.presentationController != null) {
+            var size = vc.preferredContentSize;
+            this.contentSize = size;
+        }
     };
     MIONavigationController.prototype._childControllersWillAppear = function () {
         if (this.currentViewControllerIndex < 0)
@@ -73,7 +76,11 @@ var MIONavigationController = (function (_super) {
         vc.onLoadView(this, function () {
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
-            this.contentSize = vc.preferredContentSize;
+            if (this.presentationController != null) {
+                var size = vc.preferredContentSize;
+                this.contentSize = size;
+            }
+            //this.contentSize = vc.preferredContentSize;
             _MIUShowViewController(lastVC, vc, this, false);
         });
     };
@@ -84,7 +91,11 @@ var MIONavigationController = (function (_super) {
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
         var toVC = this.viewControllersStack[this.currentViewControllerIndex];
-        this.contentSize = toVC.preferredContentSize;
+        if (this.presentationController != null) {
+            var size = toVC.preferredContentSize;
+            this.contentSize = size;
+        }
+        //this.contentSize = toVC.preferredContentSize;
         _MUIHideViewController(fromVC, toVC, this, false, this, function () {
             fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();
@@ -120,6 +131,23 @@ var MIONavigationController = (function (_super) {
                 return this._preferredContentSize;
             var vc = this.viewControllersStack[this.currentViewControllerIndex];
             return vc.preferredContentSize;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MIONavigationController.prototype, "contentSize", {
+        set: function (size) {
+            _super.prototype.setContentSize.call(this, size);
+            if (MIOLibIsMobile() == false) {
+                // Calculate new frame
+                var ws = MUIWindowSize();
+                var w = size.width;
+                var h = size.height;
+                var x = (ws.width - w) / 2;
+                var frame = MIOFrame.frameWithRect(x, 0, w, h);
+                this.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+                this.view.setFrame(frame);
+            }
         },
         enumerable: true,
         configurable: true
@@ -160,7 +188,8 @@ var MIOPushAnimationController = (function (_super) {
         if (MIOLibIsMobile() == false) {
             var w = toVC.preferredContentSize.width;
             var h = toVC.preferredContentSize.height;
-            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            var newFrame = MIOFrame.frameWithRect(0, 0, w, h);
+            toVC.view.setFrame(newFrame);
         }
         else {
             var w = fromVC.view.getWidth();

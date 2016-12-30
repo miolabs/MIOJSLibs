@@ -476,11 +476,16 @@ class MIOViewController extends MIOObject
         return this.view.getHeight();
     }
 
-    public set contentSize(size)
+    setContentSize(size)
     {
         this.willChangeValue("contentSize");
         this._contentSize = size;
         this.didChangeValue("contentSize");
+    }
+
+    public set contentSize(size)
+    {
+        this.setContentSize(size);
     }
 
     public get contentSize()

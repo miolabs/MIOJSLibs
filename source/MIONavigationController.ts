@@ -33,7 +33,10 @@ class MIONavigationController extends MIOViewController
         this.rootViewController.navigationController = this;
 
         this.addChildViewController(vc);
-        this.contentSize = vc.contentSize;
+        if (this.presentationController != null) {
+            var size = vc.preferredContentSize;
+            this.contentSize = size;
+        }
     }
 
     _childControllersWillAppear()
@@ -96,7 +99,12 @@ class MIONavigationController extends MIOViewController
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
 
-            this.contentSize = vc.preferredContentSize;
+            if (this.presentationController != null) {
+                var size = vc.preferredContentSize;
+                this.contentSize = size;
+            }
+
+            //this.contentSize = vc.preferredContentSize;
 
             _MIUShowViewController(lastVC, vc, this, false);
         });
@@ -114,7 +122,12 @@ class MIONavigationController extends MIOViewController
 
         var toVC = this.viewControllersStack[this.currentViewControllerIndex];
 
-        this.contentSize = toVC.preferredContentSize;
+        if (this.presentationController != null) {
+            var size = toVC.preferredContentSize;
+            this.contentSize = size;
+        }
+
+        //this.contentSize = toVC.preferredContentSize;
 
         _MUIHideViewController(fromVC, toVC, this, false, this, function () {
 
@@ -165,6 +178,26 @@ class MIONavigationController extends MIOViewController
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
         return vc.preferredContentSize;
+    }
+
+    public set contentSize(size)
+    {
+        super.setContentSize(size);
+
+        if (MIOLibIsMobile() == false)
+        {
+            // Calculate new frame
+            var ws = MUIWindowSize();
+
+            var w = size.width;
+            var h = size.height;
+            var x = (ws.width - w) / 2;
+
+            var frame = MIOFrame.frameWithRect(x, 0, w, h);
+
+            this.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+            this.view.setFrame(frame);
+        }
     }
 
 
@@ -220,8 +253,8 @@ class MIOPushAnimationController extends MIOObject
             var w = toVC.preferredContentSize.width;
             var h = toVC.preferredContentSize.height;
 
-            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-            //TODO: Animate frame change
+            var newFrame = MIOFrame.frameWithRect(0, 0, w, h);
+            toVC.view.setFrame(newFrame);
         }
         else
         {

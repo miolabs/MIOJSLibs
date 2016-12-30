@@ -375,14 +375,17 @@ var MIOViewController = (function (_super) {
     MIOViewController.prototype.contentHeight = function () {
         return this.view.getHeight();
     };
+    MIOViewController.prototype.setContentSize = function (size) {
+        this.willChangeValue("contentSize");
+        this._contentSize = size;
+        this.didChangeValue("contentSize");
+    };
     Object.defineProperty(MIOViewController.prototype, "contentSize", {
         get: function () {
             return this._contentSize;
         },
         set: function (size) {
-            this.willChangeValue("contentSize");
-            this._contentSize = size;
-            this.didChangeValue("contentSize");
+            this.setContentSize(size);
         },
         enumerable: true,
         configurable: true

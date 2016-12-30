@@ -47,12 +47,16 @@ var MIOManagedObject = (function (_super) {
     function MIOManagedObject() {
         _super.apply(this, arguments);
         this.entityName = null;
+        this.managedObjectContext = null;
         this._trackChanges = {};
     }
     MIOManagedObject.prototype.setValue = function (propertyName, value) {
         var oldValue = this[propertyName];
-        if (oldValue != value)
+        if (oldValue != value) {
             this._trackChanges[propertyName] = value;
+            if (this.managedObjectContext != null)
+                this.managedObjectContext.updateObject(this);
+        }
     };
     MIOManagedObject.prototype.getValue = function (propertyName) {
         var value = this._trackChanges[propertyName];
@@ -86,6 +90,7 @@ var MIOManagedObjectContext = (function (_super) {
     MIOManagedObjectContext.prototype.insertNewObjectForEntityName = function (entityName) {
         var obj = MIOClassFromString(entityName);
         obj.entityName = entityName;
+        obj.managedObjectContext = this;
         this.insertNewObject(obj);
         return obj;
     };
@@ -103,13 +108,13 @@ var MIOManagedObjectContext = (function (_super) {
         }
     };
     MIOManagedObjectContext.prototype.updateObject = function (obj) {
-        obj.saveChanges();
+        //obj.saveChanges();
         var entityName = obj.entityName;
-        var array = this._insertedObjects[entityName];
+        var array = this._updateObjects[entityName];
         if (array == null) {
             array = [];
-            this._updateObjects[entityName] = array;
             array.push(obj);
+            this._updateObjects[entityName] = array;
         }
         else {
             var index = array.indexOf(obj);
@@ -162,14 +167,14 @@ var MIOManagedObjectContext = (function (_super) {
                 return this._sortObjects2(a, b, sortDescriptors, ++index);
             }
             else if (a[key] < b[key])
-                return -1;
+                return sd.ascending ? -1 : 1;
             else
-                return 1;
+                return sd.ascending ? 1 : -1;
         }
         else if (a[key] < b[key])
-            return -1;
+            return sd.ascending ? -1 : 1;
         else
-            return 1;
+            return sd.ascending ? 1 : -1;
     };
     MIOManagedObjectContext.prototype.saveContext = function () {
         // Inserted objects
@@ -181,17 +186,22 @@ var MIOManagedObjectContext = (function (_super) {
                 this._objects[key] = array;
             }
             array.push.apply(array, objs);
-            // Clear array
-            this._insertedObjects = [];
             MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "INSERTED");
         }
+        // Clear array
+        this._insertedObjects = [];
         // Update objects
         for (var key in this._updateObjects) {
             var objs = this._updateObjects[key];
-            // Clear array
-            this._updateObjects = [];
+            // save changes
+            for (var i = 0; i < objs.length; i++) {
+                var o = objs[i];
+                o.saveChanges();
+            }
             MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "UPDATED");
         }
+        // Clear array
+        this._updateObjects = [];
     };
     MIOManagedObjectContext.prototype.queryObject = function (entityName, predicateFormat) {
         var request = MIOFetchRequest.fetchRequestWithEntityName(entityName);

@@ -44,14 +44,19 @@ class MIOEntityDescription extends MIOObject
 class MIOManagedObject extends MIOObject
 {
     entityName = null;
+    managedObjectContext = null;
 
     private _trackChanges = {};
 
     setValue(propertyName, value)
     {
         var oldValue = this[propertyName];
-        if (oldValue != value)
+        if (oldValue != value) {
+
             this._trackChanges[propertyName] = value;
+            if (this.managedObjectContext != null)
+                this.managedObjectContext.updateObject(this);
+        }
     }
 
     getValue(propertyName)
@@ -96,6 +101,7 @@ class MIOManagedObjectContext extends MIOObject
     {
         var obj = MIOClassFromString(entityName);
         obj.entityName = entityName;
+        obj.managedObjectContext = this;
 
         this.insertNewObject(obj);
 
@@ -122,15 +128,15 @@ class MIOManagedObjectContext extends MIOObject
 
     updateObject(obj)
     {
-        obj.saveChanges();
+        //obj.saveChanges();
 
         var entityName = obj.entityName;
-        var array = this._insertedObjects[entityName];
+        var array = this._updateObjects[entityName];
         if (array == null)
         {
             array = [];
-            this._updateObjects[entityName] = array;
             array.push(obj);
+            this._updateObjects[entityName] = array;
         }
         else
         {
@@ -207,14 +213,14 @@ class MIOManagedObjectContext extends MIOObject
                 return this._sortObjects2(a, b, sortDescriptors, ++index);
             }
             else if (a[key] < b[key])
-                return -1;
+                return sd.ascending ? -1 : 1;
             else
-                return 1;
+                return sd.ascending ? 1 : -1;
         }
         else if (a[key] < b[key])
-            return -1;
+            return sd.ascending ? -1 : 1;
         else
-            return 1;
+            return sd.ascending ? 1 : -1;
 
     }
 
@@ -234,22 +240,29 @@ class MIOManagedObjectContext extends MIOObject
 
             array.push.apply(array, objs);
 
-            // Clear array
-            this._insertedObjects = [];
-
             MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "INSERTED");
         }
+
+        // Clear array
+        this._insertedObjects = [];
 
         // Update objects
         for (var key in this._updateObjects)
         {
             var objs = this._updateObjects[key];
 
-            // Clear array
-            this._updateObjects = [];
+            // save changes
+            for (var i = 0; i < objs.length; i++)
+            {
+                var o = objs[i];
+                o.saveChanges();
+            }
 
             MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "UPDATED");
         }
+
+        // Clear array
+        this._updateObjects = [];
     }
 
     queryObject(entityName, predicateFormat?)

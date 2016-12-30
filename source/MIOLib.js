@@ -271,6 +271,7 @@ window.addEventListener("click", function (e) {
 window.addEventListener('touchend', function (e) {
     if (MIOLibIsLoaded == false)
         return;
+    //TODO: Declare changedTouches interface for typescript
     var touch = e.changedTouches[0]; // reference first touch point for this event
     var app = MIOWebApplication.sharedInstance();
     app.forwardClickEvent.call(app, e.target, touch.clientX, touch.clientY);
