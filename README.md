@@ -24,9 +24,9 @@ So, my question back of the days was: Why not use the normal HTML5 and CSS tools
 
 With the standards tools for HTML5/CSS I only needed a small wrapper around tags, not a fully runtime, that I needed to download a lot of bytes… just to see the main page of the web.
 
-Also, I need to develop a fast tutorial for our company to teach, specially to one person, that didn’t code before, how an iOS programing works, how to code, how the patterns are used, etc. and I have the problem that Objective-C is a difficult language for beginners, and swift was not stable by that time, so I decide to start a web tutorials but I need a way of programming like iOS / macOS.
+Also, I needed to develop a fast tutorial beacuse one special person step in our company, she didn’t code before, but she had to learn how an iOS programing works, how to code, how the patterns are used, etc. and Objective-C is really a difficult language for beginners, and swift was not stable by that time, so I decide to start with web tutorials but I need a way of programming like iOS / macOS.
 
-All new programmers, I teach them with this framework and after they can decide to go web or native.
+Now, to the begginers in programing, I teach them with this framework and after they can decide to go web or native.
 
 After programing for a lot of environments like desktop or mobile platforms (Windows, macOS, Linux, iOS, Android, etc.) and microcontrollers (company customs libs, RTOS, etc.) I found that the way of Cocoa / Cocoa touch works, brings me the possibility of do much more with less resources. For now, it’s the framework we use in our daily basis even when we code for other platforms.
 
