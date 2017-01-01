@@ -39,6 +39,7 @@ I want to pointed out something, it’s not about the Cocoa API, it’s how you 
 -	The code, should be simple but powerful enough to develop huge web application so we can maintain with few resources
 -	All common patterns in native app should be built into the frameworks
 -	All teams, can switch between web app and iOS app with ease, because the API works almost the same
+- Animation in mind! All mobile and desktop native apps has beautiful transitions/animations. The majority of webs don't have transitions at all. (A transtion/animation informs the user where he was and how to go back, safe you a UI elements specially in mobile apps)
 
 
 **What is not intend for:**
