@@ -30,7 +30,7 @@ Now in our company all people can swicth between web or native easily.
 
 After programing for a lot of environments like desktop or mobile platforms (Windows, macOS, Linux, iOS, Android, etc.) and microcontrollers (manufacter customs libs, RTOS, etc.) I found that the way of Cocoa / Cocoa touch works, brings me the possibility of do much more with less resources. For now, it’s the framework we use in our daily basis even when we code for other platforms.
 
-I want to pointed out something, it’s not about the Cocoa API, it’s how you use it. Things like Views, View Controllers, Notification center, Delegation, KVC/KVO, Gestures, how a Fetch Results Controller works, and so on, the things that make us more productive, not just how you’re app looks like, or how the API can support or not. That’s the thing we like about Cocoa / Cocoa touch
+I want to pointed out something, it’s not about the Cocoa API, it’s how to you use it. Things like Views, View Controllers, Notification center, Delegation, KVC/KVO, Gestures, how a Fetch Results Controller works, and so on, the things that make us more productive, not just how you’re app looks like, or how the API can support or not. That’s the thing we like about Cocoa / Cocoa touch
 
 **So, I start this project to solve these things:**
 
