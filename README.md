@@ -1,9 +1,8 @@
-# MIOJSLibs
-## **Cocoa / Cocoa touch on the web**
+# MIOJSLibs - Cocoa / Cocoa touch on the web
 
 These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.
 
-**Brief history:**
+## **Brief history:**
 
 Nowadays the web is a important part of developing company, specially, if your target are the desktop or laptop computers.
 
@@ -33,7 +32,7 @@ After programing for a lot of environments like desktop or mobile platforms (Win
 
 I want to pointed out something, it’s not only the Cocoa API, it’s how you use, things like Views, View Controllers, Notification center, Delegation, KVC/KVO, Gestures, how a Fetch Results Controller works, and so on, the things that make us more productive, not just how you’re app looks like, or how the API can support or not. That’s the thing we like about Cocoa / Cocoa touch
 
-So, I start this project to solve these things:
+**So, I start this project to solve these things:**
 
 -	The design team needs to see how looks like the view or app with standard HTML5/CSS tools.
 -	We don’t want another runtime.
@@ -42,7 +41,7 @@ So, I start this project to solve these things:
 -	All teams, can switch between web app and iOS app with ease, because the API works almost the same
 
 
-What is not intend for:
+**What is not intend for:**
 
 - It's not a UI framework that looks like iOS / macOS native application.
 - It's not a framework that converts the swift or Objective-C code into a web application
@@ -50,7 +49,7 @@ What is not intend for:
 - It's not design to create a simple web page (Of course, you can do it).
 
 
-Emaples and tutorials:
+## Examples and tutorials:
 
 // TODO: Working on... :)
 
