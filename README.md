@@ -44,8 +44,8 @@ I want to pointed out something, it’s not about the Cocoa API, it’s how you 
 **What is not intend for:**
 
 - It's not a UI framework that looks like iOS / macOS native application.
-- It's not a framework that converts the swift or Objective-C code into a web application
-- The classes, functions, etc. are like Cocoa / Cocoa touch but with slight differences to work in the web. It’s not intended to be an exact match, but most of the time are quite similar.
+- It's not a framework that converts the swift or Objective-C code into a web application.
+- The classes, functions, etc. are like Cocoa / Cocoa touch but with slight differences to work on the web. It’s not intended to be an exact match, but most of the time are quite similar.
 - It's not design to create a simple web page (Of course, you can do it).
 
 
