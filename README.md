@@ -26,7 +26,7 @@ With the standards tools for HTML5/CSS I only needed a small wrapper around tags
 
 Also, I needed to develop a fast tutorial beacuse one special person step in our company, she didn’t code before, but she had to learn how an iOS programing works, how to code, how the patterns are used, etc. and Objective-C is really a difficult language for beginners, and swift was not stable by that time, so I decide to start with web tutorials but I need a way of programming like iOS / macOS.
 
-Now, to the begginers in programing, I teach them with this framework and after they can decide to go web or native.
+Now in our company all people can swicth between web or native easily
 
 After programing for a lot of environments like desktop or mobile platforms (Windows, macOS, Linux, iOS, Android, etc.) and microcontrollers (company customs libs, RTOS, etc.) I found that the way of Cocoa / Cocoa touch works, brings me the possibility of do much more with less resources. For now, it’s the framework we use in our daily basis even when we code for other platforms.
 
