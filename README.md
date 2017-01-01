@@ -1,9 +1,9 @@
 # MIOJSLibs
-**Cocoa / Cocoa touch on the web**
+## **Cocoa / Cocoa touch on the web**
 
 These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.
 
-** Brief history: **
+**Brief history:**
 
 Nowadays the web is a important part of developing company, specially, if your target are the desktop or laptop computers.
 
