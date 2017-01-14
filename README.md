@@ -54,3 +54,6 @@ I want to pointed out something, it’s not about the Cocoa API, it’s how to y
 
 // TODO: Working on... :)
 
+## License
+
+Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
