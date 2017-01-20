@@ -31,12 +31,14 @@ var MIOSplitViewController = (function (_super) {
     };
     MIOSplitViewController.prototype.setMasterViewController = function (vc) {
         vc.parent = this;
+        vc.splitViewController = this;
         this._masterView.addSubview(vc.view);
         this.childViewControllers.push(vc);
         this._masterViewController = vc;
     };
     MIOSplitViewController.prototype.setDetailViewController = function (vc) {
         vc.parent = this;
+        vc.splitViewController = this;
         this._detailView.addSubview(vc.view);
         this.childViewControllers.push(vc);
         this._detailViewController = vc;

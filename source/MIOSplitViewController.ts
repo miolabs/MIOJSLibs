@@ -32,6 +32,7 @@ class MIOSplitViewController extends MIOViewController
     setMasterViewController(vc)
     {
         vc.parent = this;
+        vc.splitViewController = this;
         this._masterView.addSubview(vc.view);
         this.childViewControllers.push(vc);
 
@@ -41,6 +42,7 @@ class MIOSplitViewController extends MIOViewController
     setDetailViewController(vc)
     {
         vc.parent = this;
+        vc.splitViewController = this;
         this._detailView.addSubview(vc.view);
         this.childViewControllers.push(vc);
 
