@@ -30,20 +30,44 @@ var MIOSplitViewController = (function (_super) {
         this.view.addSubview(this._detailView);
     };
     MIOSplitViewController.prototype.setMasterViewController = function (vc) {
-        vc.parent = this;
-        vc.splitViewController = this;
-        this._masterView.addSubview(vc.view);
-        this.childViewControllers.push(vc);
-        this._masterViewController = vc;
+        if (this._masterViewController != null) {
+            this._masterViewController.view.removeFromSuperview();
+            this.removeChildViewController(this._masterViewController);
+            this._masterViewController = null;
+        }
+        if (vc != null) {
+            vc.parent = this;
+            vc.splitViewController = this;
+            this._masterView.addSubview(vc.view);
+            this.addChildViewController(vc);
+            this._masterViewController = vc;
+        }
     };
     MIOSplitViewController.prototype.setDetailViewController = function (vc) {
-        vc.parent = this;
-        vc.splitViewController = this;
-        this._detailView.addSubview(vc.view);
-        this.childViewControllers.push(vc);
-        this._detailViewController = vc;
+        if (this._detailViewController != null) {
+            this._detailViewController.view.removeFromSuperview();
+            this.removeChildViewController(this._detailViewController);
+            this._detailViewController = null;
+        }
+        if (vc != null) {
+            vc.parent = this;
+            vc.splitViewController = this;
+            this._detailView.addSubview(vc.view);
+            this.addChildViewController(vc);
+            this._detailViewController = vc;
+        }
     };
     MIOSplitViewController.prototype.showDetailViewController = function (vc) {
+        var oldVC = this._detailViewController;
+        var newVC = vc;
+        newVC.onLoadView(this, function () {
+            this._detailView.addSubview(newVC.view);
+            this.addChildViewController(newVC);
+            _MIUShowViewController(oldVC, newVC, this, false, this, function () {
+                oldVC.view.removeFromSuperview();
+                this.removeChildViewController(oldVC);
+            });
+        });
     };
     return MIOSplitViewController;
 }(MIOViewController));

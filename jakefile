@@ -1,0 +1,8 @@
+//var task = require("jake").task;
+//var minify = require('jake-uglify').minify;
+
+//desc('This is the default task.');
+task('default', function () {
+  console.log('This is the default task.');  
+   print("hey there!");
+});

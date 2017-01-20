@@ -168,8 +168,10 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, modal, target?, completi
     {
         if (toVC.modalPresentationStyle == MIOModalPresentationStyle.Popover)
             ac = new MIOPopOverPresentAnimationController();
-        else
+        else if (modal == true)
             ac = new MIOModalPresentAnimationController();
+        else
+            ac = new MIOPresentAnimationController();
 
         ac.init();
     }

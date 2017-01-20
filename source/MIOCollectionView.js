@@ -147,8 +147,10 @@ var MIOCollectionView = (function (_super) {
         this._supplementaryViews[viewIdentifier] = item;
     };
     MIOCollectionView.prototype.registerClassForCellWithReuseIdentifier = function (cellClass, resource, identifier) {
+        //TODO:
     };
     MIOCollectionView.prototype.registerClassForSupplementaryViewWithReuseIdentifier = function (viewClass, resource, identifier) {
+        //TODO:
     };
     MIOCollectionView.prototype.dequeueReusableCellWithIdentifier = function (identifier) {
         var item = this._cellPrototypes[identifier];
