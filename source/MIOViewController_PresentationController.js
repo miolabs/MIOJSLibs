@@ -78,6 +78,26 @@ var MIOModalTransitioningDelegate = (function (_super) {
     };
     return MIOModalTransitioningDelegate;
 }(MIOObject));
+var MIOPresentAnimationController = (function (_super) {
+    __extends(MIOPresentAnimationController, _super);
+    function MIOPresentAnimationController() {
+        _super.apply(this, arguments);
+    }
+    MIOPresentAnimationController.prototype.transitionDuration = function (transitionContext) {
+        return 0;
+    };
+    MIOPresentAnimationController.prototype.animateTransition = function (transitionContext) {
+        // make view configurations before transitions
+    };
+    MIOPresentAnimationController.prototype.animationEnded = function (transitionCompleted) {
+        // make view configurations after transitions
+    };
+    // TODO: Not iOS like transitions. For now we use css animations
+    MIOPresentAnimationController.prototype.animations = function (transitionContext) {
+        return null;
+    };
+    return MIOPresentAnimationController;
+}(MIOObject));
 var MIOModalPresentAnimationController = (function (_super) {
     __extends(MIOModalPresentAnimationController, _super);
     function MIOModalPresentAnimationController() {

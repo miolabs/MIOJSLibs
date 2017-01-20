@@ -168,12 +168,12 @@ class MIOCollectionView extends MIOView
 
     registerClassForCellWithReuseIdentifier(cellClass, resource, identifier)
     {
-
+        //TODO:
     }
 
     registerClassForSupplementaryViewWithReuseIdentifier(viewClass, resource, identifier)
     {
-
+        //TODO:
     }
 
     dequeueReusableCellWithIdentifier(identifier)

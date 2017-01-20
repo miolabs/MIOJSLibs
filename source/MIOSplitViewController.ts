@@ -31,25 +31,61 @@ class MIOSplitViewController extends MIOViewController
 
     setMasterViewController(vc)
     {
-        vc.parent = this;
-        this._masterView.addSubview(vc.view);
-        this.childViewControllers.push(vc);
+        if (this._masterViewController != null)
+        {
+            this._masterViewController.view.removeFromSuperview();
+            this.removeChildViewController(this._masterViewController);
+            this._masterViewController = null;
+        }
 
-        this._masterViewController = vc;
+        if (vc != null)
+        {
+            vc.parent = this;
+            vc.splitViewController = this;
+
+            this._masterView.addSubview(vc.view);
+            this.addChildViewController(vc);
+            this._masterViewController = vc;
+        }
     }
 
     setDetailViewController(vc)
     {
-        vc.parent = this;
-        this._detailView.addSubview(vc.view);
-        this.childViewControllers.push(vc);
+        if (this._detailViewController != null)
+        {
+            this._detailViewController.view.removeFromSuperview();
+            this.removeChildViewController(this._detailViewController);
+            this._detailViewController = null;
+        }
 
-        this._detailViewController = vc;
+        if (vc != null)
+        {
+            vc.parent = this;
+            vc.splitViewController = this;
+
+            this._detailView.addSubview(vc.view);
+            this.addChildViewController(vc);
+
+            this._detailViewController = vc;
+        }
     }
 
     showDetailViewController(vc)
     {
+        var oldVC = this._detailViewController;
+        var newVC = vc;
 
+        newVC.onLoadView(this, function () {
+
+            this._detailView.addSubview(newVC.view);
+            this.addChildViewController(newVC);
+
+            _MIUShowViewController(oldVC, newVC, this, false, this, function () {
+
+                oldVC.view.removeFromSuperview();
+                this.removeChildViewController(oldVC);
+            });
+        });
     }
 }
 

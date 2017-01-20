@@ -93,6 +93,31 @@ class MIOModalTransitioningDelegate extends MIOObject
     }
 }
 
+class MIOPresentAnimationController extends MIOObject
+{
+    transitionDuration(transitionContext)
+    {
+        return 0;
+    }
+
+    animateTransition(transitionContext)
+    {
+        // make view configurations before transitions
+    }
+
+    animationEnded(transitionCompleted)
+    {
+        // make view configurations after transitions
+    }
+
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext)
+    {
+        return null;
+    }
+
+}
+
 class MIOModalPresentAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
