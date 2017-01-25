@@ -64,6 +64,13 @@ var MIOManagedObject = (function (_super) {
             value = this[propertyName];
         return value;
     };
+    Object.defineProperty(MIOManagedObject.prototype, "hasChanges", {
+        get: function () {
+            return (Object.keys(this._trackChanges).length > 0);
+        },
+        enumerable: true,
+        configurable: true
+    });
     MIOManagedObject.prototype.getChanges = function () {
         return this._trackChanges;
     };
@@ -71,6 +78,7 @@ var MIOManagedObject = (function (_super) {
         for (var propertyName in this._trackChanges) {
             this[propertyName] = this._trackChanges[propertyName];
         }
+        this._trackChanges = {};
     };
     MIOManagedObject.prototype.discardChanges = function () {
         this._trackChanges = {};

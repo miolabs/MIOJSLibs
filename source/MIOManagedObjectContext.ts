@@ -68,6 +68,11 @@ class MIOManagedObject extends MIOObject
         return value;
     }
 
+    get hasChanges()
+    {
+        return (Object.keys(this._trackChanges).length > 0);
+    }
+
     getChanges()
     {
         return this._trackChanges;
@@ -79,6 +84,7 @@ class MIOManagedObject extends MIOObject
         {
             this[propertyName] = this._trackChanges[propertyName];
         }
+        this._trackChanges = {};
     }
 
     discardChanges()
