@@ -65,7 +65,6 @@ class MIOSplitViewController extends MIOViewController
 
             this._detailView.addSubview(vc.view);
             this.addChildViewController(vc);
-
             this._detailViewController = vc;
         }
     }
