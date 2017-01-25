@@ -389,9 +389,9 @@ var MIOTableView = (function (_super) {
                     cell.setHeight(h);
                 }
                 y += h;
-                if (cell.separationStyle == MIOTableViewCellSeparatorStyle.SingleLine)
+                if (cell.separatorStyle == MIOTableViewCellSeparatorStyle.SingleLine)
                     y += 1;
-                else if (cell.separationStyle == MIOTableViewCellSeparatorStyle.SingleLineEtched)
+                else if (cell.separatorStyle == MIOTableViewCellSeparatorStyle.SingleLineEtched)
                     y += 2;
             }
         }
