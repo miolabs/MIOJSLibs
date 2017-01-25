@@ -20,6 +20,12 @@ var MIOTableViewCellAccessoryType;
     MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["DetailDisclosoure"] = 2] = "DetailDisclosoure";
     MIOTableViewCellAccessoryType[MIOTableViewCellAccessoryType["Checkmark"] = 3] = "Checkmark";
 })(MIOTableViewCellAccessoryType || (MIOTableViewCellAccessoryType = {}));
+var MIOTableViewCellSeparatorStyle;
+(function (MIOTableViewCellSeparatorStyle) {
+    MIOTableViewCellSeparatorStyle[MIOTableViewCellSeparatorStyle["None"] = 0] = "None";
+    MIOTableViewCellSeparatorStyle[MIOTableViewCellSeparatorStyle["SingleLine"] = 1] = "SingleLine";
+    MIOTableViewCellSeparatorStyle[MIOTableViewCellSeparatorStyle["SingleLineEtched"] = 2] = "SingleLineEtched"; // TODO
+})(MIOTableViewCellSeparatorStyle || (MIOTableViewCellSeparatorStyle = {}));
 var MIOTableViewCell = (function (_super) {
     __extends(MIOTableViewCell, _super);
     function MIOTableViewCell() {
@@ -28,6 +34,7 @@ var MIOTableViewCell = (function (_super) {
         this.textLabel = null;
         this.accessoryType = MIOTableViewCellAccessoryType.None;
         this.accesoryView = null;
+        this.separatorStyle = MIOTableViewCellSeparatorStyle.SingleLine;
         this._target = null;
         this._onClickFn = null;
         this._onDblClickFn = null;
@@ -381,7 +388,11 @@ var MIOTableView = (function (_super) {
                     h = 44;
                     cell.setHeight(h);
                 }
-                y += h + 1;
+                y += h;
+                if (cell.separationStyle == MIOTableViewCellSeparatorStyle.SingleLine)
+                    y += 1;
+                else if (cell.separationStyle == MIOTableViewCellSeparatorStyle.SingleLineEtched)
+                    y += 2;
             }
         }
         if (this.footerView != null) {

@@ -19,6 +19,13 @@ enum MIOTableViewCellAccessoryType {
     Checkmark
 }
 
+enum MIOTableViewCellSeparatorStyle {
+
+    None,
+    SingleLine,
+    SingleLineEtched // TODO
+}
+
 class MIOTableViewCell extends MIOView
 {
     selected = false;
@@ -26,6 +33,7 @@ class MIOTableViewCell extends MIOView
     textLabel = null;
     accessoryType = MIOTableViewCellAccessoryType.None;
     accesoryView = null;
+    separatorStyle = MIOTableViewCellSeparatorStyle.SingleLine;
 
     private _target = null;
     private _onClickFn = null;
@@ -496,7 +504,11 @@ class MIOTableView extends MIOView
                     cell.setHeight(h);
                 }
 
-                y += h + 1;
+                y += h;
+                if (cell.separationStyle == MIOTableViewCellSeparatorStyle.SingleLine)
+                    y += 1;
+                else if (cell.separationStyle == MIOTableViewCellSeparatorStyle.SingleLineEtched)
+                    y += 2;
             }
         }
 
