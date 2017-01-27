@@ -69,6 +69,20 @@ var MIOSplitViewController = (function (_super) {
             });
         });
     };
+    Object.defineProperty(MIOSplitViewController.prototype, "masterViewController", {
+        get: function () {
+            return this._masterViewController;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MIOSplitViewController.prototype, "detailViewController", {
+        get: function () {
+            return this._detailViewController;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return MIOSplitViewController;
 }(MIOViewController));
 //# sourceMappingURL=MIOSplitViewController.js.map

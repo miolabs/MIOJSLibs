@@ -86,5 +86,17 @@ class MIOSplitViewController extends MIOViewController
             });
         });
     }
+
+    get masterViewController()
+    {
+        return this._masterViewController;
+    }
+
+    get detailViewController()
+    {
+        return this._detailViewController;
+    }
+
+
 }
 
