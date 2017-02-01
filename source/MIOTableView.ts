@@ -610,6 +610,12 @@ class MIOTableView extends MIOView
         return c;
     }
 
+    indexPathForCell(cell)
+    {
+        //TODO
+        return null;
+    }
+
     _selectCell(cell)
     {
         cell.setSelected(true);

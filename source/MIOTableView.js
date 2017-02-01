@@ -462,6 +462,10 @@ var MIOTableView = (function (_super) {
         var c = s.cells[row];
         return c;
     };
+    MIOTableView.prototype.indexPathForCell = function (cell) {
+        //TODO
+        return null;
+    };
     MIOTableView.prototype._selectCell = function (cell) {
         cell.setSelected(true);
     };
