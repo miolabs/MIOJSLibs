@@ -23,7 +23,7 @@ class MIOSplitViewController extends MIOViewController
 
         this._detailView = new MIOView(MIOViewGetNextLayerID("split_detail_view"));
         this._detailView.init();
-        this._detailView.layer.style.left = "321px";
+        this._detailView.layer.style.left = "320px";
         this._detailView.layer.style.width = "auto";
         this._detailView.layer.style.right = "0px";
         this.view.addSubview(this._detailView);
@@ -74,10 +74,13 @@ class MIOSplitViewController extends MIOViewController
         var oldVC = this._detailViewController;
         var newVC = vc;
 
+        if (oldVC == newVC) return;
+
         newVC.onLoadView(this, function () {
 
             this._detailView.addSubview(newVC.view);
             this.addChildViewController(newVC);
+            this._detailViewController = vc;
 
             _MIUShowViewController(oldVC, newVC, this, false, this, function () {
 
