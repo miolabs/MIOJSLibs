@@ -51,7 +51,7 @@ var MIOManagedObject = (function (_super) {
         this._trackChanges = {};
     }
     MIOManagedObject.prototype.setValue = function (propertyName, value) {
-        var oldValue = this[propertyName];
+        var oldValue = this.getValue(propertyName); //this[propertyName];
         if (oldValue != value) {
             this._trackChanges[propertyName] = value;
             if (this.managedObjectContext != null)

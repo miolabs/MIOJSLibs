@@ -31,6 +31,12 @@ class MIOSize
         return s;
     }
 
+    public static Inherit()
+    {
+        var s = new MIOSize(-1, -1);
+        return s;
+    }
+
     constructor(w, h)
     {
         this.width = w;

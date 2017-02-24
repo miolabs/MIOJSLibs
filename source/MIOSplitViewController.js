@@ -60,9 +60,12 @@ var MIOSplitViewController = (function (_super) {
     MIOSplitViewController.prototype.showDetailViewController = function (vc) {
         var oldVC = this._detailViewController;
         var newVC = vc;
+        if (oldVC == newVC)
+            return;
         newVC.onLoadView(this, function () {
             this._detailView.addSubview(newVC.view);
             this.addChildViewController(newVC);
+            this._detailViewController = vc;
             _MIUShowViewController(oldVC, newVC, this, false, this, function () {
                 oldVC.view.removeFromSuperview();
                 this.removeChildViewController(oldVC);

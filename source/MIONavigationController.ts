@@ -253,7 +253,16 @@ class MIOPushAnimationController extends MIOObject
             var w = toVC.preferredContentSize.width;
             var h = toVC.preferredContentSize.height;
 
+
+            /*
+                Added by Miguel: if viewController has defined an Inherit Size ( See MIOSize) -1, -1
+                then use the previous viewController's size;
+             */
+            if(w == -1)  w = fromVC.view.getWidth();
+            if(h == -1)  h = fromVC.view.getHeight();
+
             var newFrame = MIOFrame.frameWithRect(0, 0, w, h);
+
             toVC.view.setFrame(newFrame);
         }
         else

@@ -197,8 +197,12 @@ class MIOTableView extends MIOView
     sectionHeaderHeight = 23;
     sectionFooterHeight = 23;
 
+    allowsMultipleSelection = false;
+
     private selectedCellRow = -1;
     private selectedCellSection = -1;
+
+    private _indexPathsForSelectedRows = [];
 
     private _cellPrototypesCount = 0;
     private _cellPrototypesDownloadedCount = 0;
@@ -391,6 +395,7 @@ class MIOTableView extends MIOView
         }
 
         this.sections = [];
+        this._indexPathsForSelectedRows = [];
 
         var sections = this.dataSource.numberOfSections(this);
         for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++)
@@ -398,6 +403,8 @@ class MIOTableView extends MIOView
             var section = new MIOTableViewSection();
             section.init();
             this.sections.push(section);
+            this._indexPathsForSelectedRows[sectionIndex] = [];
+
 
             var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
 
@@ -534,25 +541,25 @@ class MIOTableView extends MIOView
 
         var canSelectCell = true;
 
-        if (this.selectedCellRow == index && this.selectedCellSection == section)
-            return;
+        if (!(this.selectedCellRow == index && this.selectedCellSection == section)) {
 
-        if (this.delegate != null)
-        {
-            if (typeof this.delegate.canSelectCellAtIndexPath === "function")
-                canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
+            if (this.delegate != null) {
+                if (typeof this.delegate.canSelectCellAtIndexPath === "function")
+                    canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
+            }
+
+            if (canSelectCell == false)
+                return;
+            if(!this.allowsMultipleSelection) {
+                if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
+                    this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
+            }
+
+            this.selectedCellRow = index;
+            this.selectedCellSection = section;
+
+            this._selectCell(cell);
         }
-
-        if (canSelectCell == false)
-            return;
-
-        if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
-            this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
-
-        this.selectedCellRow = index;
-        this.selectedCellSection = section;
-
-        this._selectCell(cell);
 
         if (this.delegate != null){
             if (typeof this.delegate.didSelectCellAtIndexPath === "function")
@@ -602,6 +609,19 @@ class MIOTableView extends MIOView
                 this.delegate.didMakeDoubleClick(this, index, section);
     }
 
+    // get indexPathsForSelectedRows()
+    // {
+    //     var selected = [];
+    //
+    //     this._indexPathsForSelectedRows.forEach(function (rows, section) {
+    //         rows.forEach(function (row, index) {
+    //             selected.push({'section': section, 'row': row});
+    //         }, selected, section);
+    //     }, selected);
+    //
+    //     return selected;
+    // }
+
     cellAtIndexPath(row, section)
     {
         var s = this.sections[section];
@@ -626,6 +646,7 @@ class MIOTableView extends MIOView
         this.selectedCellRow = row;
         this.selectedCellSection = section;
         var cell = this.sections[section].cells[row];
+
         this._selectCell(cell);
     }
 

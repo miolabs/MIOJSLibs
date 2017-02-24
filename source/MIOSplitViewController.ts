@@ -74,10 +74,13 @@ class MIOSplitViewController extends MIOViewController
         var oldVC = this._detailViewController;
         var newVC = vc;
 
+        if (oldVC == newVC) return;
+
         newVC.onLoadView(this, function () {
 
             this._detailView.addSubview(newVC.view);
             this.addChildViewController(newVC);
+            this._detailViewController = vc;
 
             _MIUShowViewController(oldVC, newVC, this, false, this, function () {
 

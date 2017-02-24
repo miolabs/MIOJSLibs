@@ -50,7 +50,7 @@ class MIOManagedObject extends MIOObject
 
     setValue(propertyName, value)
     {
-        var oldValue = this[propertyName];
+        var oldValue = this.getValue(propertyName);//this[propertyName];
         if (oldValue != value) {
 
             this._trackChanges[propertyName] = value;
