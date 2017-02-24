@@ -23,7 +23,7 @@ class MIOSplitViewController extends MIOViewController
 
         this._detailView = new MIOView(MIOViewGetNextLayerID("split_detail_view"));
         this._detailView.init();
-        this._detailView.layer.style.left = "321px";
+        this._detailView.layer.style.left = "320px";
         this._detailView.layer.style.width = "auto";
         this._detailView.layer.style.right = "0px";
         this.view.addSubview(this._detailView);
