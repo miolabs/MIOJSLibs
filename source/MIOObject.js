@@ -43,4 +43,3 @@ var MIOObject = (function () {
     };
     return MIOObject;
 }());
-//# sourceMappingURL=MIOObject.js.map

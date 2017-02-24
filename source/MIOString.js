@@ -40,4 +40,3 @@ function MIOStringHasPreffix(str, preffix) {
 function MIOStringHasSuffix(str, suffix) {
     return str.match(suffix + "$") == suffix;
 }
-//# sourceMappingURL=MIOString.js.map

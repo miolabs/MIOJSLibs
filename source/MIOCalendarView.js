@@ -174,4 +174,3 @@ function MIOCalendarGetDayRowFromDate(date) {
         row--;
     return row;
 }
-//# sourceMappingURL=MIOCalendarView.js.map

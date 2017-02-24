@@ -228,4 +228,3 @@ var MIOPopAnimationController = (function (_super) {
     };
     return MIOPopAnimationController;
 }(MIOObject));
-//# sourceMappingURL=MIONavigationController.js.map

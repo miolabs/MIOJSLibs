@@ -365,4 +365,3 @@ var MIOCollectionView = (function (_super) {
     };
     return MIOCollectionView;
 }(MIOView));
-//# sourceMappingURL=MIOCollectionView.js.map

@@ -99,4 +99,3 @@ var MIOLabel = (function (_super) {
     };
     return MIOLabel;
 }(MIOView));
-//# sourceMappingURL=MIOLabel.js.map
