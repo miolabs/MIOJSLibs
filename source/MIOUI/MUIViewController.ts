@@ -45,13 +45,12 @@ class MUIViewController extends MIOObject
     transitioningDelegate = null;
 
     protected _contentSize = new MIOSize(320, 200);
-    protected _preferredContentSize = new MIOSize(320, 200);
+    protected _preferredContentSize = null;
 
-    constructor(layerID, prefixID?)
+    constructor(layerID?)
     {
         super();
-        this.layerID = layerID;
-        this.prefixID = prefixID;
+        this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
     init()
@@ -327,7 +326,7 @@ class MUIViewController extends MIOObject
             this.view.addSubview(vc.presentationController.presentedView);
             this.addChildViewController(vc);
 
-            _MIUShowViewController(this, vc, null, true, this, function () {
+            _MIUShowViewController(this, vc, null, this, function () {
 
                 if (vc.modalPresentationStyle == MUIModalPresentationStyle.Popover)
                     MUIWebApplication.sharedInstance().setPopOverViewController(vc);
@@ -350,81 +349,7 @@ class MUIViewController extends MIOObject
 
     transitionFromViewControllerToViewController(fromVC, toVC, duration, animationType, target?, completion?)
     {
-        /*toVC.onLoadView(this, function () {
-
-            if (fromVC.presentationStyle == MIOPresentationStyle.CurrentContext
-                || fromVC.presentationStyle == MIOPresentationStyle.FullScreen)
-            {
-                fromVC.viewWillDisappear();
-                fromVC._childControllersWillDisappear();
-
-                toVC.viewWillAppear();
-                toVC._childControllersWillAppear();
-
-                toVC.view.layout();
-            }
-            else
-            {
-                if (reverse == false)
-                {
-                    toVC.viewWillAppear();
-                    toVC._childControllersWillAppear();
-
-                    toVC.view.layout();
-                }
-                else
-                {
-                    fromVC.viewWillDisappear();
-                    fromVC._childControllersWillDisappear();
-                }
-            }
-
-            if (duration > 0)
-            {
-                var vc = reverse == true ? fromVC : toVC;
-                vc.view.layer.style.animationDuration = duration + "s";
-                AddAnimationClasses(vc, ClassListForAnimationType(animationType));
-                vc.view.layer.animationParams = {};
-                vc.view.layer.animationParams["type"] = animationType;
-                vc.view.layer.animationParams["toVC"] = toVC;
-                vc.view.layer.animationParams["fromVC"] = fromVC;
-                if (target != null)
-                    vc.view.layer.animationParams["target"] = target;
-                if (completion != null)
-                    vc.view.layer.animationParams["completion"] = completion;
-                vc.view.layer.animationParams["instance"] = this;
-                vc.view.layer.animationParams["reverse"] = reverse;
-                vc.view.layer.addEventListener("animationend", this._animationDidFinish);
-            }
-            else
-            {
-                if (fromVC.presentationStyle == MIOPresentationStyle.CurrentContext
-                    || fromVC.presentationStyle == MIOPresentationStyle.FullScreen)
-                {
-                    toVC.viewDidAppear();
-                    toVC._childControllersDidAppear();
-
-                    fromVC.viewDidDisappear();
-                    fromVC._childControllersDidDisappear();
-                }
-                else
-                {
-                    if (reverse == false)
-                    {
-                        toVC.viewDidAppear();
-                        toVC._childControllersDidAppear();
-                    }
-                    else
-                    {
-                        fromVC.viewDidDisappear();
-                        fromVC._childControllersDidDisappear();
-                    }
-                }
-
-                if (target != null && completion != null)
-                    completion.call(target);
-            }
-        });*/
+        //TODO
     }
 
     viewDidLoad(){}

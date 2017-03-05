@@ -1,4 +1,5 @@
 
+/// <reference path="MIOUI_CoreAnimation.ts" />
 /// <reference path="MUIView.ts" />
 
 interface Window {
@@ -52,93 +53,7 @@ function MUIWindowSize()
     return new MIOSize(w, h);
 }
 
-/*
-    ANIMATIONS
- */
-
-enum MUIAnimationType
-{
-    None,
-    BeginSheet,
-    EndSheet,
-    Push,
-    Pop,
-    FlipLeft,
-    FlipRight,
-    FadeIn,
-    FadeOut,
-    LightSpeedIn,
-    LightSpeedOut,
-    Hinge,
-    SlideInUp,
-    SlideOutDown
-}
-
-// ANIMATION TYPES
-function MUIClassListForAnimationType(type)
-{
-    var array = [];
-    array.push("animated");
-
-    switch (type)
-    {
-        case MUIAnimationType.BeginSheet:
-            array.push("slideInDown");
-            break;
-
-        case MUIAnimationType.EndSheet:
-            array.push("slideOutUp");
-            break;
-
-        case MUIAnimationType.Push:
-            array.push("slideInRight");
-            break;
-
-        case MUIAnimationType.Pop:
-            array.push("slideOutRight");
-            break;
-
-        case MUIAnimationType.FadeIn:
-            array.push("fadeIn");
-            break;
-
-        case MUIAnimationType.FadeOut:
-            array.push("fadeOut");
-            break;
-
-        case MUIAnimationType.LightSpeedOut:
-            array.push("lightSpeedOut");
-            break;
-
-        case MUIAnimationType.Hinge:
-            array.push("hinge");
-            break;
-
-        case MUIAnimationType.SlideInUp:
-            array.push("slideInUp");
-            break;
-
-        case MUIAnimationType.SlideOutDown:
-            array.push("slideOutDown");
-            break;
-    }
-
-    return array;
-}
-
-function _MUIAddAnimations(layer, animations)
-{
-    for (var index = 0; index < animations.length; index++)
-        layer.classList.add(animations[index]);
-}
-
-function _MUIRemoveAnimations(layer, animations)
-{
-    for (var index = 0; index < animations.length; index++)
-        layer.classList.remove(animations[index]);
-}
-
-function _MIUShowViewController(fromVC, toVC, sourceVC, modal, target?, completion?)
+function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     toVC.viewWillAppear();
     toVC._childControllersWillAppear();
@@ -151,7 +66,11 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, modal, target?, completi
     }
 
     var view = null;
-    if (modal == true) {
+    if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
+        || toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
+        || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
+        || toVC.modalPresentationStyle == MUIModalPresentationStyle.Custom) {
+        
         var pc = toVC.presentationController;
         view = pc.presentedView;
     }
@@ -169,17 +88,17 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, modal, target?, completi
     {
         ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
-    else
-    {
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.Popover)
-            ac = new MIOPopOverPresentAnimationController();
-        else if (modal == true)
-            ac = new MIOModalPresentAnimationController();
-        else
-            ac = new MIOPresentAnimationController();
+    // else
+    // {
+    //     if (toVC.modalPresentationStyle == MUIModalPresentationStyle.Popover)
+    //         ac = new MIOPopOverPresentAnimationController();
+    //     else if (modal == true)
+    //         ac = new MIOModalPresentAnimationController();
+    //     else
+    //         ac = new MIOPresentAnimationController();
 
-        ac.init();
-    }
+    //     ac.init();
+    // }
 
     var animationContext = {};
     animationContext["presentingViewController"] = fromVC;
@@ -210,7 +129,7 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, modal, target?, completi
     });
 }
 
-function _MUIHideViewController(fromVC, toVC, sourceVC, modal, target?, completion?)
+function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
@@ -225,7 +144,11 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, modal, target?, completi
     fromVC._childControllersWillDisappear();
 
     var view = null;
-    if (modal == true) {
+    if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
+        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
+        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
+        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.Custom) {
+
         var pc = fromVC.presentationController;
         view = pc.presentedView;
     }
@@ -233,9 +156,9 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, modal, target?, completi
         view = fromVC.view;
 
     var ac = null;
-    if (fromVC.transitioningDelegate != null)
+    if (toVC.transitioningDelegate != null)
     {
-        ac = fromVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
+        ac = toVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
     else if (sourceVC != null && sourceVC.transitioningDelegate != null)
     {
@@ -282,51 +205,43 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, modal, target?, completi
     });
 }
 
-function _MUIAnimationStart(layer, animationController, animationContext, target?, completion?)
+function _MUITransitionFromViewControllerToViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
-    var duration = animationController.transitionDuration(animationContext);
-    var animations = animationController.animations(animationContext);
+    toVC.viewWillAppear();
+    toVC._childControllersWillAppear();
 
-    animationController.animateTransition(animationContext);
+    fromVC.viewWillDisappear();                
+    fromVC._childControllersWillDisappear();
+    
+    toVC.view.layout();
 
-    if (duration == 0 ||animations == null)
+    var ac = null;
+    if (toVC.transitioningDelegate != null)
     {
-        // NO animation
-        animationController.animationEnded(true);
+        ac = toVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
+    }
+    else if (sourceVC != null && sourceVC.transitioningDelegate != null)
+    {
+        ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
+    }
+
+    var animationContext = {};
+    animationContext["presentingViewController"] = fromVC;
+    animationContext["presentedViewController"] = toVC;
+    animationContext["presentedView"] = toVC;
+
+    var layer = toVC.view.layer;
+
+    _MUIAnimationStart(layer, ac, animationContext, this, function () {
+
+        toVC.viewDidAppear();
+        toVC._childControllersDidAppear();
+
+        fromVC.viewDidDisappear();
+        fromVC._childControllersDidDisappear();
 
         if (target != null && completion != null)
             completion.call(target);
-
-        return;
-    }
-
-    layer.style.animationDuration = duration + "s";
-    _MUIAddAnimations(layer, animations);
-
-    layer.animationParams = {};
-    layer.animationParams["animationController"] = animationController;
-    layer.animationParams["animations"] = animations;
-
-    if (target != null)
-        layer.animationParams["target"] = target;
-    if (completion != null)
-        layer.animationParams["completion"] = completion;
-
-    layer.addEventListener("animationend", _MUIAnimationDidFinish);
+    });
 }
 
-function _MUIAnimationDidFinish(event)
-{
-    var animationController = event.target.animationParams["animationController"];
-    var animations = event.target.animationParams["animations"];
-    var target = event.target.animationParams["target"];
-    var completion = event.target.animationParams["completion"];
-    var layer = event.target;
-
-    _MUIRemoveAnimations(layer, animations);
-    layer.removeEventListener("animationend", _MUIAnimationDidFinish);
-    animationController.animationEnded(true);
-
-    if (target != null && completion != null)
-        completion.call(target);
-}

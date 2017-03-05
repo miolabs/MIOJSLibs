@@ -100,12 +100,10 @@ class MUINavigationController extends MUIViewController
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
 
-            if (this.presentationController != null) {
-                var size = vc.preferredContentSize;
-                this.contentSize = size;
-            }
+            if (vc.preferredContentSize != null)
+                this.preferredContentSize = vc.preferredContentSize;
 
-            //this.contentSize = vc.preferredContentSize;
+            //_MUITransitionFromViewControllerToViewController(lastVC, vc, this);
 
             _MIUShowViewController(lastVC, vc, this, false);
         });
@@ -123,14 +121,15 @@ class MUINavigationController extends MUIViewController
 
         var toVC = this.viewControllersStack[this.currentViewControllerIndex];
 
-        if (this.presentationController != null) {
-            var size = toVC.preferredContentSize;
-            this.contentSize = size;
-        }
+        if (toVC.transitioningDelegate == null)
+            toVC.transitioningDelegate = this;
 
-        //this.contentSize = toVC.preferredContentSize;
+        if (toVC.preferredContentSize != null)
+            this.contentSize = toVC.preferredContentSize;
 
-        _MUIHideViewController(fromVC, toVC, this, false, this, function () {
+        _MUIHideViewController(fromVC, toVC, this, this, function () {
+
+        //_MUITransitionFromViewControllerToViewController(fromVC, toVC, this, this, function(){
 
             fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();

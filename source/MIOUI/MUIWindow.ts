@@ -9,13 +9,7 @@ class MUIWindow extends MUIView
 {
     rootViewController = null;
 
-    constructor(layerID?)
-    {
-        super(layerID);
-
-        if (layerID == null)
-            this.layerID = "main_window";
-    }
+    private _resizeWindow = false;
 
     init()
     {

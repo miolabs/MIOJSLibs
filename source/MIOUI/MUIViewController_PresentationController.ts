@@ -6,11 +6,14 @@
 
 enum MUIModalPresentationStyle
 {
-    CurrentContext,
     FullScreen,
-    PageSheet,
-    FormSheet,
-    Popover,
+    PageSheet, // normal modal sheet in osx
+    FormSheet, // normal modal like floating window but horizontal and vertically centered
+    CurrentContext,
+    Custom,
+    OverFullScreen,     // Similar to FullScreen but the view beneath doesnpt dissappear
+    OverCurrentContext, // Similuar like previus, but in current context
+    Popover, // the popover, almost like FormSheet but no centered
     None
 }
 
@@ -24,7 +27,7 @@ enum MUIModalTransitionStyle
 class MUIPresentationController extends MIOObject
 {
     presentationStyle = MUIModalPresentationStyle.CurrentContext;
-    shouldPresentInFullscreen = true;
+    shouldPresentInFullscreen = false;
 
     private _presentedViewController = null; //ToVC
     presentingViewController = null; //FromVC
@@ -131,27 +134,35 @@ class MIOModalPresentAnimationController extends MIOObject
         var fromVC = transitionContext.presentingViewController;
         var toVC = transitionContext.presentedViewController;
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen)
         {
-            if (MIOLibIsMobile() == false)
-            {
-                // Present like desktop sheet window
-                var ws = MUIWindowSize();
+            var ws = MUIWindowSize();
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
+        }
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
+        {
+            var w = fromVC.view.getWidth();
+            var h = fromVC.view.getHeight();
 
-                var w = toVC.preferredContentSize.width;
-                var h = toVC.preferredContentSize.height;
-                var x = (ws.width - w) / 2;
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        }
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
+        {
+            // Present like desktop sheet window
+            var ws = MUIWindowSize();
 
-                toVC.view.setFrame(MIOFrame.frameWithRect(x, 0, w, h));
-            }
-            else
-            {
-                var w = fromVC.view.getWidth();
-                var h = fromVC.view.getHeight();
+            var w = toVC.preferredContentSize.width;
+            var h = toVC.preferredContentSize.height;
+            var x = (ws.width - w) / 2;
 
-                toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-            }
+            toVC.view.setFrame(MIOFrame.frameWithRect(x, 0, w, h));
+        }
+        else
+        {
+            var w = toVC.preferredContentSize.width;
+            var h = toVC.preferredContentSize.height;
 
+            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
         }
     }
 
@@ -165,14 +176,19 @@ class MIOModalPresentAnimationController extends MIOObject
     {
         var animations = null;
 
-        if (MIOLibIsMobile() == true)
-            animations = MUIClassListForAnimationType(MUIAnimationType.SlideInUp);
-        else
-            animations = MUIClassListForAnimationType(MUIAnimationType.BeginSheet);
+        var toVC = transitionContext.presentedViewController;
+
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
+            || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
+        {
+            if (MIOLibIsMobile() == true)
+                animations = MUIClassListForAnimationType(MUIAnimationType.SlideInUp);
+            else 
+                animations = MUIClassListForAnimationType(MUIAnimationType.BeginSheet);
+        }                            
 
         return animations;
     }
-
 }
 
 class MIOModalDismissAnimationController extends MIOObject
@@ -196,10 +212,17 @@ class MIOModalDismissAnimationController extends MIOObject
     animations(transitionContext)
     {
         var animations = null;
-        if (MIOLibIsMobile() == true)
-            animations = MUIClassListForAnimationType(MUIAnimationType.SlideOutDown);
-        else
-            animations = MUIClassListForAnimationType(MUIAnimationType.EndSheet);
+
+        var fromVC = transitionContext.presentingViewController;
+
+        if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
+            || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
+        {
+            if (MIOLibIsMobile() == true)                        
+                animations = MUIClassListForAnimationType(MUIAnimationType.SlideOutDown);
+            else 
+                animations = MUIClassListForAnimationType(MUIAnimationType.EndSheet);
+        }                            
 
         return animations;
     }

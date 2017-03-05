@@ -7,11 +7,6 @@ class MIOObject
 {
     keyPaths = {};
 
-    constructor()
-    {
-
-    }
-
     init() {}
 
     willChangeValue(key)

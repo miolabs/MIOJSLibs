@@ -97,10 +97,7 @@ class MUIView extends MIOObject
     constructor(layerID?)
     {
         super();
-        if (layerID != null)
-            this.layerID = layerID;
-        else
-            this.layerID = MUIViewGetNextLayerID();
+        this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
     init()
