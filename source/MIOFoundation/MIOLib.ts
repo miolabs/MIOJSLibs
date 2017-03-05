@@ -260,7 +260,7 @@ function _MIOLibDownloadLibFiles()
     MIOLibDownloadLibFile("MIOView");
     MIOLibDownloadLibFile("MIOScrollView");
     MIOLibDownloadLibFile("MIOWindow");
-    MIOLibDownloadLibFile("MIOLabel");
+    MIOLibDownloadLibFile("MUILabel");
     MIOLibDownloadLibFile("MIOTableView");
     MIOLibDownloadLibFile("MIOCollectionView");
     MIOLibDownloadLibFile("MIOCalendarView");
@@ -269,12 +269,12 @@ function _MIOLibDownloadLibFiles()
     MIOLibDownloadLibFile("MIOActivityIndicator");
     MIOLibDownloadLibFile("MIOWebView");
     MIOLibDownloadLibFile("MIOControl");
-    MIOLibDownloadLibFile("MIOButton");
+    MIOLibDownloadLibFile("MUIButton");
     MIOLibDownloadLibFile("MIOComboBox");
     MIOLibDownloadLibFile("MIOPopUpButton");
     MIOLibDownloadLibFile("MIOCheckButton");
     MIOLibDownloadLibFile("MIOSegmentedControl");
-    MIOLibDownloadLibFile("MIOTextField");
+    MIOLibDownloadLibFile("MUITextField");
     MIOLibDownloadLibFile("MIOTextArea");
     MIOLibDownloadLibFile("MIOTabBar");
     MIOLibDownloadLibFile("MIOPageControl");

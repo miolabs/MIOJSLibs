@@ -178,13 +178,13 @@ class MUITableViewCell extends MUIView
     }
 }
 
-class MIOTableViewSection extends MIOObject
+class MUITableViewSection extends MIOObject
 {
     header = null;
     cells = [];
 }
 
-class MIOTableView extends MUIView
+class MUITableView extends MUIView
 {
     dataSource = null;
     delegate = null;
@@ -402,7 +402,7 @@ class MIOTableView extends MUIView
         var sections = this.dataSource.numberOfSections(this);
         for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++)
         {
-            var section = new MIOTableViewSection();
+            var section = new MUITableViewSection();
             section.init();
             this.sections.push(section);
             this._indexPathsForSelectedRows[sectionIndex] = [];

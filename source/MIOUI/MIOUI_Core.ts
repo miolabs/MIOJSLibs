@@ -22,6 +22,9 @@ function MUIOutlet(owner, elementID, className?, options?)
     else if (owner instanceof MUIViewController)
         layer = MUILayerSearchElementByID(owner.view.layer, elementID);
 
+    if (layer == null) 
+        throw ("DIV identifier specified is not valid (" + elementID + ")");
+
     if (className == null)
         className = layer.getAttribute("data-class");
 
