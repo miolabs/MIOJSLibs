@@ -5,7 +5,7 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
 /// <reference path="MIOUI_Core.ts" />
-
+/// <reference path="MIOUI_CoreLayer.ts" />
 /// <reference path="MUIViewController_PresentationController.ts" />
 /// <reference path="MUIViewController_PopoverPresentationController.ts" />
 
