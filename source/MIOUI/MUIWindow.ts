@@ -7,7 +7,7 @@
 
 class MUIWindow extends MUIView
 {
-    rootViewController = null;
+    rootViewController:MUIViewController = null;
 
     private _resizeWindow = false;
 
@@ -32,11 +32,16 @@ class MUIWindow extends MUIView
 
     layout()
     {
-
         if (this.rootViewController != null)
             this.rootViewController.view.layout();
         else
             super.layout();                
+    }
+
+    addSubview(view:MUIView)
+    {
+        view._window = this;
+        super.addSubview(view);
     }
 
     protected _addLayerToDOM()
@@ -53,7 +58,7 @@ class MUIWindow extends MUIView
     }
 
     removeFromSuperview()
-    {
+    {                
         this._removeLayerFromDOM();
     }
 
@@ -70,13 +75,10 @@ class MUIWindow extends MUIView
     {
         if (hidden == false)
         {
-            this._addLayerToDOM();            
+            this._addLayerToDOM();
         }
         else
         {
-            if (this.rootViewController != null)
-                this.rootViewController.dismissViewController(true);
-        
             this._removeLayerFromDOM();
         }
     }

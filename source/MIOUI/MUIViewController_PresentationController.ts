@@ -29,43 +29,46 @@ class MUIPresentationController extends MIOObject
     presentationStyle = MUIModalPresentationStyle.PageSheet;
     shouldPresentInFullscreen = false;
 
-    protected _presentedViewController = null; //ToVC
+    protected _presentedViewController:MUIViewController = null; //ToVC
     presentingViewController = null; //FromVC
     presentedView = null;
+
+    protected _transitioningDelegate = null;
+    private _window = null;
 
     initWithPresentedViewControllerAndPresentingViewController(presentedViewController, presentingViewController)
     {
         super.init();
 
         this.presentedViewController = presentedViewController;
-        this.presentingViewController = presentingViewController;
+        this.presentingViewController = presentingViewController;        
     }
 
     setPresentedViewController(vc)
     {
         this._presentedViewController = vc;
-        //this.presentedView = vc.view;
+        this.presentedView = vc.view;
 
-        var size = vc.preferredContentSize;
+        // var size = vc.preferredContentSize;
 
-        var w = size.width + 2;
-        var h = size.height + 2;
+        // var w = size.width + 2;
+        // var h = size.height + 2;
 
-        var window = new MUIWindow();
-        window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        // var window = new MUIWindow();
+        // window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
 
-        window.rootViewController = vc;
-        window.addSubview(vc.view);
+        // window.rootViewController = vc;
+        // window.addSubview(vc.view);
                 
-        this.presentedView = window;
+        // this.presentedView = window;
 
-        window.makeKeyAndVisible();
+        // window.makeKeyAndVisible();
 
-        if (vc.transitioningDelegate == null)
-        {
-            vc.transitioningDelegate = new MIOModalTransitioningDelegate();
-            vc.transitioningDelegate.init();
-        }        
+        // if (vc.transitioningDelegate == null)
+        // {
+        //     vc.transitioningDelegate = new MIOModalTransitioningDelegate();
+        //     vc.transitioningDelegate.init();
+        // }        
     }
 
     set presentedViewController(vc)
@@ -78,14 +81,57 @@ class MUIPresentationController extends MIOObject
         return this._presentedViewController;
     }
 
+    get transitioningDelegate()
+    {
+        if (this._transitioningDelegate == null)
+        {
+            this._transitioningDelegate = new MIOModalTransitioningDelegate();
+            this._transitioningDelegate.init();
+        }
+
+        return this._transitioningDelegate;
+    }
+
     presentationTransitionWillBegin()
     {
-        if (MIOCoreIsMobile() == false)
+        var fromVC = this.presentingViewController;
+        var toVC = this.presentedViewController;
+        var view = this.presentedView;
+
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen)
         {
-            this.presentedView.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
-            this.presentedView.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
-            this.presentedView.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
-            //this.presentedView.layer.style.zIndex = 10; // To make clip the children views
+            var ws = MUIWindowSize();
+            view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
+        }
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
+        {
+            var w = fromVC.view.getWidth();
+            var h = fromVC.view.getHeight();
+
+            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        }
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
+        {
+            // Present like desktop sheet window
+            var ws = MUIWindowSize();
+
+            var w = toVC.preferredContentSize.width;
+            var h = toVC.preferredContentSize.height;
+            var x = (ws.width - w) / 2;
+
+            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            this.window.setFrame(MIOFrame.frameWithRect(x, 0, w, h))
+
+            view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
+            view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
+            view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";            
+        }
+        else
+        {
+            var w = toVC.preferredContentSize.width;
+            var h = toVC.preferredContentSize.height;
+
+            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
         }
     }
 
@@ -100,6 +146,39 @@ class MUIPresentationController extends MIOObject
     dismissalTransitionDidEnd(completed)
     {
     }
+
+    // Track view frame changes
+    set window(window:MUIWindow)
+    {
+        this._window = window;
+        if (window != null && this._presentedViewController.modalPresentationStyle != MUIModalPresentationStyle.FullScreen)
+        {
+            this.presentedView.addObserver(this, "frame");
+        }
+        else 
+        {
+            
+        }
+    }
+
+    get window()
+    {
+        return this._window;
+    }
+
+    observeValueForKeyPath(key, type, object) {
+            
+        if (type == "will")
+        {
+            //this._sheetSize = this._sheetViewController.contentSize;
+        }
+        else if (type == "did")
+        {
+            var frame:MIOFrame = this.presentedView.frame;
+            this._window.setFrame(frame);
+        }
+    }
+
 }
 
 class MIOModalTransitioningDelegate extends MIOObject
@@ -167,39 +246,6 @@ class MIOModalPresentAnimationController extends MIOObject
     animateTransition(transitionContext)
     {
         // make view configurations before transitions
-        var fromVC = transitionContext.presentingViewController;
-        var toVC = transitionContext.presentedViewController;
-
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen)
-        {
-            var ws = MUIWindowSize();
-            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
-        }
-        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
-        {
-            var w = fromVC.view.getWidth();
-            var h = fromVC.view.getHeight();
-
-            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        }
-        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
-        {
-            // Present like desktop sheet window
-            var ws = MUIWindowSize();
-
-            var w = toVC.preferredContentSize.width;
-            var h = toVC.preferredContentSize.height;
-            var x = (ws.width - w) / 2;
-
-            toVC.view.setFrame(MIOFrame.frameWithRect(x, 0, w, h));
-        }
-        else
-        {
-            var w = toVC.preferredContentSize.width;
-            var h = toVC.preferredContentSize.height;
-
-            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        }
     }
 
     animationEnded(transitionCompleted)

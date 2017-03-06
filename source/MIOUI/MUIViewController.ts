@@ -306,15 +306,14 @@ class MUIViewController extends MIOObject
             && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet)            
             vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
         
-        var pc = vc.presentationController;
+        var pc:MUIPresentationController = vc.presentationController;
         if (pc == null) {
             pc = new MUIPresentationController();
             pc.init();
             pc.presentedViewController = vc;
+            pc.presentingViewController = this;
+            vc._presentationController = pc;
         }
-
-        pc.presentingViewController = this;
-        vc._presentationController = pc;
 
         vc.onLoadView(this, function () {
 
@@ -323,11 +322,25 @@ class MUIViewController extends MIOObject
                 this.view.addSubview(vc.presentationController.presentedView);
                 this.addChildViewController(vc);
             }
+            else
+            {
+                // It's a window instead of a view
+                var w:MUIWindow = pc.window;
+                if (w == null)
+                {
+                    w = new MUIWindow();
+                    w.init();
+                    w.layer.style.background = "";
+                    w.rootViewController = vc;
+                    w.addSubview(pc.presentedView);
+                    pc.window = w;
+                }
+                w.setHidden(false);
+            }
 
             _MIUShowViewController(this, vc, null, this, function () {
 
-                // if (vc.modalPresentationStyle == MUIModalPresentationStyle.Popover)
-                //     MUIWebApplication.sharedInstance().setPopOverViewController(vc);
+                w.makeKey();
             });
         });
     }
@@ -341,11 +354,20 @@ class MUIViewController extends MIOObject
         _MUIHideViewController(fromVC, toVC, null, this, function () {
 
             if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
+            {
                 toVC.removeChildViewController(fromVC);
+                var pc = fromVC.presentationController;
+                var view = pc.presentedView;
+                view.removeFromSuperview();
+            }
+            else
+            {
+                // It's a window instead of a view
+                var pc = fromVC.presentationController;
+                var w:MUIWindow = pc.window;
+                w.setHidden(true);
+            }
 
-            var pc = fromVC.presentationController;
-            var view = pc.presentedView;
-            view.removeFromSuperview();
         });
     }
 

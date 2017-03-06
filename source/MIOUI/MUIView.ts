@@ -94,6 +94,8 @@ class MUIView extends MIOObject
     _needDisplay = false;
     _isLayerInDOM = false;
 
+    _window:MUIWindow = null;
+
     constructor(layerID?)
     {
         super();
@@ -352,7 +354,9 @@ class MUIView extends MIOObject
 
     setFrame(frame)
     {
+        this.willChangeValue("frame");
         this.setFrameComponents(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+        this.didChangeValue("frame");
     }
 
     public get frame()

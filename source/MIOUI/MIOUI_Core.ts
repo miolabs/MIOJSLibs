@@ -63,7 +63,7 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     }
 
     var view = null;
-    var pc = null;
+    var pc:MUIPresentationController = null;
 
     if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
@@ -77,7 +77,13 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     else
         view = toVC.view;
 
-    view.layout();
+    var animationContext = {};
+    animationContext["presentingViewController"] = fromVC;
+    animationContext["presentedViewController"] = toVC;
+    animationContext["presentedView"] = view;
+    
+    if (pc != null)
+        pc.presentationTransitionWillBegin();
 
     var ac = null;
     if (toVC.transitioningDelegate != null)
@@ -88,17 +94,15 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     {
         ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
+    else if (pc != null)
+    {
+        ac = pc.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
+    }
 
-    var animationContext = {};
-    animationContext["presentingViewController"] = fromVC;
-    animationContext["presentedViewController"] = toVC;
-    animationContext["presentedView"] = view;
+    view.layout();
 
     var layer = view.layer;
-
-    if (pc != null)
-        pc.presentationTransitionWillBegin();
-
+        
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
 
         toVC.viewDidAppear();

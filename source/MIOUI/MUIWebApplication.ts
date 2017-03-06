@@ -265,7 +265,7 @@ class MUIWebApplication {
                 //Nothing. Forward the event
             }
             else
-                this._keyWindow.setHidden(true);
+                this._keyWindow.rootViewController.dismissViewController(true);
         }
     }
 

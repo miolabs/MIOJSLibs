@@ -26,38 +26,93 @@ class MUIPopoverPresentationController extends MUIPresentationController
     private _canvasLayer = null;
     private _contentView = null;
 
-    setPresentedViewController(vc) {
+    // setPresentedViewController(vc) {
 
-        this._presentedViewController = vc;
+    //     this._presentedViewController = vc;
 
-        var size = vc.preferredContentSize;
+    //     var size = vc.preferredContentSize;
 
-        var w = size.width + 2;
-        var h = size.height + 2;
+    //     var w = size.width + 2;
+    //     var h = size.height + 2;
 
-        var window = new MUIWindow();
-        window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
+    //     var window = new MUIWindow();
+    //     window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
 
-        window.rootViewController = vc;
-        window.addSubview(vc.view);
+    //     window.rootViewController = vc;
+    //     window.addSubview(vc.view);
                 
-        this.presentedView = window;
+    //     this.presentedView = window;
 
-        window.makeKeyAndVisible();
+    //     if (vc.transitioningDelegate == null)
+    //     {
+    //         vc.transitioningDelegate = new MIOModalPopOverTransitioningDelegate();
+    //         vc.transitioningDelegate.init();
+    //     }
+    // }
 
-        if (vc.transitioningDelegate == null)
+    get transitioningDelegate()
+    {
+        if (this._transitioningDelegate == null)
         {
-            vc.transitioningDelegate = new MIOModalPopOverTransitioningDelegate();
-            vc.transitioningDelegate.init();
+            this._transitioningDelegate = new MIOModalPopOverTransitioningDelegate();
+            this._transitioningDelegate.init();
         }
+
+        return this._transitioningDelegate;
     }
 
     presentationTransitionWillBegin()
     {
+        var vc = this.presentedViewController;
+        var view:MUIView = this.presentedView;
+        
+        this._calculateFrame();
+
         this.presentedView.layer.style.borderRadius = "5px 5px 5px 5px";
         this.presentedView.layer.style.border = "1px solid rgb(170, 170, 170)";
         this.presentedView.layer.style.overflow = "hidden";
-        this.presentedView.layer.style.zIndex = 10; // To make clip the children views
+        this.presentedView.layer.style.zIndex = 10; // To make clip the children views                
+    }
+
+    private _calculateFrame()
+    {
+        var vc = this.presentedViewController;
+        var view:MUIView = this.presentedView;
+
+        var w = vc.preferredContentSize.width;
+        var h = vc.preferredContentSize.height;
+        var v = vc.popoverPresentationController.sourceView;
+        var f = vc.popoverPresentationController.sourceRect;
+
+        var xShift = false;
+
+        // Below
+        var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
+        if ((y + h) > window.innerHeight) // Below no, Up?
+            y = v.layer.getBoundingClientRect().top - h - 10;
+        if (y < 0) // Up no, horizonal shift
+        {
+            xShift = true;
+            y = (window.innerHeight - h) / 2;
+        }
+
+        var x = 0;
+
+        if (xShift == false)
+        {
+            x = v.layer.getBoundingClientRect().left + 10;
+            if ((x + w) > window.innerWidth)
+                x = v.layer.getBoundingClientRect().left +f.size.width - w + 10;
+        }
+        else
+        {
+            x = v.layer.getBoundingClientRect().left + f.size.width + 10;
+            if ((x + w) > window.innerWidth)
+                x = v.layer.getBoundingClientRect().left - w - 10;
+        }
+
+        view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        this.window.setFrame(MIOFrame.frameWithRect(x, y, w, h))
     }
 
     private _drawRoundRect(x, y, width, height, radius) {
@@ -124,43 +179,6 @@ class MIOPopOverPresentAnimationController extends MIOObject
     animateTransition(transitionContext)
     {
         // make view configurations before transitions
-        var vc = transitionContext.presentedViewController;
-        var view = transitionContext["presentedView"];
-
-        var w = vc.preferredContentSize.width;
-        var h = vc.preferredContentSize.height;
-        var v = vc.popoverPresentationController.sourceView;
-        var f = vc.popoverPresentationController.sourceRect;
-
-        var xShift = false;
-
-        // Below
-        var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
-        if ((y + h) > window.innerHeight) // Below no, Up?
-            y = v.layer.getBoundingClientRect().top - h - 10;
-        if (y < 0) // Up no, horizonal shift
-        {
-            xShift = true;
-            y = (window.innerHeight - h) / 2;
-        }
-
-        var x = 0;
-
-        if (xShift == false)
-        {
-            x = v.layer.getBoundingClientRect().left + 10;
-            if ((x + w) > window.innerWidth)
-                x = v.layer.getBoundingClientRect().left +f.size.width - w + 10;
-        }
-        else
-        {
-            x = v.layer.getBoundingClientRect().left + f.size.width + 10;
-            if ((x + w) > window.innerWidth)
-                x = v.layer.getBoundingClientRect().left - w - 10;
-        }
-
-        view.setX(x);
-        view.setY(y);
     }
 
     animationEnded(transitionCompleted)
