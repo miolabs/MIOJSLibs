@@ -176,25 +176,25 @@ class MUINavigationController extends MUIViewController
         return vc.preferredContentSize;
     }
 
-    public set contentSize(size)
-    {
-        super.setContentSize(size);
+    // public set contentSize(size)
+    // {
+    //     super.setContentSize(size);
 
-        if (MIOLibIsMobile() == false)
-        {
-            // Calculate new frame
-            var ws = MUIWindowSize();
+    //     if (MIOLibIsMobile() == false)
+    //     {
+    //         // Calculate new frame
+    //         var ws = MUIWindowSize();
 
-            var w = size.width;
-            var h = size.height;
-            var x = (ws.width - w) / 2;
+    //         var w = size.width;
+    //         var h = size.height;
+    //         var x = (ws.width - w) / 2;
 
-            var frame = MIOFrame.frameWithRect(x, 0, w, h);
+    //         var frame = MIOFrame.frameWithRect(x, 0, w, h);
 
-            this.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
-            this.view.setFrame(frame);
-        }
-    }
+    //         this.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+    //         this.view.setFrame(frame);
+    //     }
+    // }
 
     // Transitioning delegate
     private _pushAnimationController = null;

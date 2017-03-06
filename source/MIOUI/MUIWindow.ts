@@ -82,5 +82,30 @@ class MUIWindow extends MUIView
             this._removeLayerFromDOM();
         }
     }
+
+    _eventHappendOutsideWindow()
+    {
+        this._dismissRootViewController();        
+    }
+
+    _becameKeyWindow()
+    {
+        
+    }
+
+    _resignKeyWindow()
+    {
+        this._dismissRootViewController();
+    }
+
+    private _dismissRootViewController()
+    {
+        if (this.rootViewController.isPresented == true)
+        {
+            var pc = this.rootViewController.presentationController;
+            if (pc instanceof MUIPopoverPresentationController)
+                this.rootViewController.dismissViewController(true);
+        }
+    }
 }
 

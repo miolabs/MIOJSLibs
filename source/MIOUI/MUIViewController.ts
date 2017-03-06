@@ -37,8 +37,8 @@ class MUIViewController extends MIOObject
     splitViewController = null;
     tabBarController = null;
 
-    private _presentationController = null;
-    private _popoverPresentationController = null;
+    private _presentationController:MUIPresentationController = null;
+    private _popoverPresentationController:MUIPopoverPresentationController = null;
 
     modalPresentationStyle = MUIModalPresentationStyle.CurrentContext;
     modalTransitionStyle = MUIModalTransitionStyle.CoverVertical;
@@ -265,6 +265,12 @@ class MUIViewController extends MIOObject
     //     //this.didMoveToParentViewController(null);
     // }
 
+    get isPresented()
+    {
+        if (this._presentationController != null)
+            return this._presentationController.isPresented;
+    }
+
     get presentationController()
     {
         if (this._presentationController == null && this.parentViewController != null)
@@ -299,12 +305,7 @@ class MUIViewController extends MIOObject
     }
 
     presentViewController(vc:MUIViewController, animate:boolean)
-    {   
-        if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
-            && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
-            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet)            
-            vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
-        
+    {           
         var pc:MUIPresentationController = vc.presentationController;
         if (pc == null) {
             pc = new MUIPresentationController();
@@ -313,6 +314,16 @@ class MUIViewController extends MIOObject
             pc.presentingViewController = this;
             vc._presentationController = pc;
         }
+        else if (pc.isPresented == true)
+        {
+            // You try to presented a presetnation controller that is already presented
+            return;
+        }
+
+        if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet)            
+            vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
 
         vc.onLoadView(this, function () {
 

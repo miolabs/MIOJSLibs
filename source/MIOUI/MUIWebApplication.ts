@@ -51,12 +51,14 @@ class MUIWebApplication {
     private _popOverViewController = null;
 
     private _windows = [];
-    private _keyWindow = null;
+    private _keyWindow:MUIWindow = null;
+    private _mainWindow = null;
 
     run() {
 
         this.delegate.didFinishLaunching();
         this.delegate.window.makeKeyAndVisible();
+        this._mainWindow = this.delegate.window;
         
         this.delegate.window.rootViewController.onLoadView(this, function () {
             
@@ -265,7 +267,7 @@ class MUIWebApplication {
                 //Nothing. Forward the event
             }
             else
-                this._keyWindow.rootViewController.dismissViewController(true);
+                this._keyWindow._eventHappendOutsideWindow();
         }
     }
 
@@ -312,6 +314,11 @@ class MUIWebApplication {
 
     makeKeyWindow(window)
     {
+        if (this._keyWindow === window) return;
+
+        if (this._keyWindow != null)        
+            this._keyWindow._resignKeyWindow();
+
         this.addWindow(window);
         this._keyWindow = window;
     }

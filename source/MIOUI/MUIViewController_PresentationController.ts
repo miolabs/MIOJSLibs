@@ -36,6 +36,8 @@ class MUIPresentationController extends MIOObject
     protected _transitioningDelegate = null;
     private _window = null;
 
+    isPresented:boolean = false;
+
     initWithPresentedViewControllerAndPresentingViewController(presentedViewController, presentingViewController)
     {
         super.init();
@@ -44,39 +46,18 @@ class MUIPresentationController extends MIOObject
         this.presentingViewController = presentingViewController;        
     }
 
-    setPresentedViewController(vc)
+    setPresentedViewController(vc:MUIViewController)
     {
         this._presentedViewController = vc;
         this.presentedView = vc.view;
-
-        // var size = vc.preferredContentSize;
-
-        // var w = size.width + 2;
-        // var h = size.height + 2;
-
-        // var window = new MUIWindow();
-        // window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
-
-        // window.rootViewController = vc;
-        // window.addSubview(vc.view);
-                
-        // this.presentedView = window;
-
-        // window.makeKeyAndVisible();
-
-        // if (vc.transitioningDelegate == null)
-        // {
-        //     vc.transitioningDelegate = new MIOModalTransitioningDelegate();
-        //     vc.transitioningDelegate.init();
-        // }        
     }
 
-    set presentedViewController(vc)
+    set presentedViewController(vc:MUIViewController)
     {
         this.setPresentedViewController(vc);
     }
 
-    get presentedViewController()
+    get presentedViewController():MUIViewController
     {
         return this._presentedViewController;
     }
@@ -93,6 +74,21 @@ class MUIPresentationController extends MIOObject
     }
 
     presentationTransitionWillBegin()
+    {
+        var toVC = this.presentedViewController;
+        var view = this.presentedView;
+
+        this._calculateFrame();
+
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
+        {
+            view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
+            view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
+            view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
+        }       
+    }
+
+    _calculateFrame()
     {
         var fromVC = this.presentingViewController;
         var toVC = this.presentedViewController;
@@ -132,50 +128,47 @@ class MUIPresentationController extends MIOObject
             var h = toVC.preferredContentSize.height;
 
             view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        }
+        }        
     }
 
     presentationTransitionDidEnd(completed)
     {
+        this.isPresented = true;
     }
 
     dismissalTransitionWillBegin()
     {
+
     }
 
     dismissalTransitionDidEnd(completed)
     {
-    }
-
-    // Track view frame changes
-    set window(window:MUIWindow)
-    {
-        this._window = window;
-        if (window != null && this._presentedViewController.modalPresentationStyle != MUIModalPresentationStyle.FullScreen)
-        {
-            this.presentedView.addObserver(this, "frame");
-        }
-        else 
-        {
-            
-        }
+        this.isPresented = false;
     }
 
     get window()
     {
         return this._window;
     }
+    
+    set window(window:MUIWindow)
+    {
+        var vc = this.presentedViewController;
+        this._window = window;
+        
+        // Track view frame changes
+        if (MIOCoreIsMobile() == false && vc.modalPresentationStyle != MUIModalPresentationStyle.CurrentContext)
+        {
+            vc.addObserver(this, "contentSize");
+        }
+    }
 
     observeValueForKeyPath(key, type, object) {
-            
-        if (type == "will")
+
+        if (key == "contentSize" && type == "did")
         {
-            //this._sheetSize = this._sheetViewController.contentSize;
-        }
-        else if (type == "did")
-        {
-            var frame:MIOFrame = this.presentedView.frame;
-            this._window.setFrame(frame);
+            this._calculateFrame();
+            this.window.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
         }
     }
 
