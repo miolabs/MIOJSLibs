@@ -271,7 +271,7 @@ class MUIViewController extends MIOObject
             return this.parentViewController.presentationController;
 
         return this._presentationController;
-    }
+    }   
 
     get popoverPresentationController()
     {
@@ -299,8 +299,13 @@ class MUIViewController extends MIOObject
         });
     }
 
-    presentViewController(vc, animate)
-    {
+    presentViewController(vc:MUIViewController, animate:boolean)
+    {   
+        if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet)            
+            vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
+        
         var pc = vc.presentationController;
         if (pc == null) {
             pc = new MUIPresentationController();
@@ -309,7 +314,7 @@ class MUIViewController extends MIOObject
         }
 
         pc.presentingViewController = this;
-        vc.presentationController = pc;
+        vc._presentationController = pc;
 
         vc.onLoadView(this, function () {
 
@@ -335,8 +340,12 @@ class MUIViewController extends MIOObject
 
         _MUIHideViewController(fromVC, toVC, null, this, function () {
 
-            toVC.removeChildViewController(fromVC);
-            fromView.removeFromSuperview();
+            if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
+                toVC.removeChildViewController(fromVC);
+
+            var pc = fromVC.presentationController;
+            var view = pc.presentedView;
+            view.removeFromSuperview();
         });
     }
 

@@ -82,7 +82,7 @@ class MUISplitViewController extends MUIViewController
             this.addChildViewController(newVC);
             this._detailViewController = vc;
 
-            _MIUShowViewController(oldVC, newVC, this, false, this, function () {
+            _MIUShowViewController(oldVC, newVC, this, this, function () {
 
                 oldVC.view.removeFromSuperview();
                 this.removeChildViewController(oldVC);

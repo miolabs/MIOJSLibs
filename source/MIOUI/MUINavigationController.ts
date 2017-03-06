@@ -196,7 +196,6 @@ class MUINavigationController extends MUIViewController
         }
     }
 
-
     // Transitioning delegate
     private _pushAnimationController = null;
     private _popAnimationController = null;

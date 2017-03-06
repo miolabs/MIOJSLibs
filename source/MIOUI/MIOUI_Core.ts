@@ -133,25 +133,28 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
     fromVC._childControllersWillDisappear();
 
     var view = null;
+    var pc = null;
+
     if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
         || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
-        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.Custom) {
+        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.Custom
+        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.Popover) {
 
-        var pc = fromVC.presentationController;
+        pc = fromVC.presentationController;
         view = pc.presentedView;
     }
     else
         view = fromVC.view;
 
     var ac = null;
-    if (toVC.transitioningDelegate != null)
+    if (fromVC.transitioningDelegate != null)
     {
-        ac = toVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
+        ac = fromVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
     else if (sourceVC != null && sourceVC.transitioningDelegate != null)
     {
-        ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(toVC);
+        ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
 
     var animationContext = {};
@@ -161,7 +164,6 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
 
     var layer = view.layer;
 
-    var pc = fromVC.presentationController;
     if (pc != null)
         pc.dismissalTransitionWillBegin();
 

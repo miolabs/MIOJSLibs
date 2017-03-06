@@ -77,7 +77,7 @@ class MUIPageController extends MUIViewController
             this.view.addSubview(newVC.view);
             this.addChildViewController(newVC);
 
-            _MIUShowViewController(oldVC, newVC, this, false, this, function () {
+            _MIUShowViewController(oldVC, newVC, this, this, function () {
 
                 oldVC.view.removeFromSuperview();
             });

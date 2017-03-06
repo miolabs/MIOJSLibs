@@ -52,6 +52,11 @@ class MUIWindow extends MUIView
         this._isLayerInDOM = true;
     }
 
+    removeFromSuperview()
+    {
+        this._removeLayerFromDOM();
+    }
+
     protected _removeLayerFromDOM()
     {
         if (this._isLayerInDOM == false)

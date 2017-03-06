@@ -26,7 +26,7 @@ enum MUIModalTransitionStyle
 
 class MUIPresentationController extends MIOObject
 {
-    presentationStyle = MUIModalPresentationStyle.CurrentContext;
+    presentationStyle = MUIModalPresentationStyle.PageSheet;
     shouldPresentInFullscreen = false;
 
     protected _presentedViewController = null; //ToVC
@@ -44,7 +44,28 @@ class MUIPresentationController extends MIOObject
     setPresentedViewController(vc)
     {
         this._presentedViewController = vc;
-        this.presentedView = vc.view;
+        //this.presentedView = vc.view;
+
+        var size = vc.preferredContentSize;
+
+        var w = size.width + 2;
+        var h = size.height + 2;
+
+        var window = new MUIWindow();
+        window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
+
+        window.rootViewController = vc;
+        window.addSubview(vc.view);
+                
+        this.presentedView = window;
+
+        window.makeKeyAndVisible();
+
+        if (vc.transitioningDelegate == null)
+        {
+            vc.transitioningDelegate = new MIOModalTransitioningDelegate();
+            vc.transitioningDelegate.init();
+        }        
     }
 
     set presentedViewController(vc)
@@ -59,7 +80,7 @@ class MUIPresentationController extends MIOObject
 
     presentationTransitionWillBegin()
     {
-        if (MIOLibIsMobile() == false)
+        if (MIOCoreIsMobile() == false)
         {
             this.presentedView.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
             this.presentedView.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
@@ -85,18 +106,33 @@ class MIOModalTransitioningDelegate extends MIOObject
 {
     modalTransitionStyle = null;
 
+    private _presentAnimationController = null;
+    private _dissmissAnimationController = null;
+
     animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
     {
+        if (this._presentAnimationController == null) {
 
+            this._presentAnimationController = new MIOModalPresentAnimationController();
+            this._presentAnimationController.init();
+        }
+
+        return this._presentAnimationController
     }
 
     animationControllerForDismissedController(dismissedController)
     {
+        if (this._dissmissAnimationController == null) {
 
+            this._dissmissAnimationController = new MIOModalDismissAnimationController();
+            this._dissmissAnimationController.init();
+        }
+
+        return this._dissmissAnimationController;
     }
 }
 
-class MIOPresentAnimationController extends MIOObject
+class MIOAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {
@@ -105,7 +141,7 @@ class MIOPresentAnimationController extends MIOObject
 
     animateTransition(transitionContext)
     {
-        // make view configurations before transitions
+        // make view configurations before transitions        
     }
 
     animationEnded(transitionCompleted)
