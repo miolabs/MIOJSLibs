@@ -278,7 +278,6 @@ class MUIViewController extends MIOObject
         if (this._popoverPresentationController == null)
         {
             this._popoverPresentationController = new MUIPopoverPresentationController();
-            //this._popoverPresentationController.initWithRootViewController(this);
             this._popoverPresentationController.init();
             this._popoverPresentationController.presentedViewController = this;
         }
@@ -347,9 +346,10 @@ class MUIViewController extends MIOObject
 
     dismissViewController(animate)
     {
-        var toVC = this.presentationController.presentingViewController;
-        var fromVC = this.presentationController.presentedViewController;
-        var fromView = this.presentationController.presentedView;
+        var pc = this.presentationController;
+        var toVC = pc.presentingViewController;
+        var fromVC = pc.presentedViewController;
+        var fromView = pc.presentedView;
 
         _MUIHideViewController(fromVC, toVC, null, this, function () {
 

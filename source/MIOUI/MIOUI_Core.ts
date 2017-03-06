@@ -160,6 +160,10 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
     {
         ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
+    else if (pc != null)
+    {
+        ac = pc.transitioningDelegate.animationControllerForDismissedController(fromVC);
+    }
 
     var animationContext = {};
     animationContext["presentingViewController"] = fromVC;
