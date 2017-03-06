@@ -6,12 +6,6 @@ interface Window {
     prototype;
 }
 
-interface Event {
-    touches:TouchList;
-    targetTouches:TouchList;
-    changedTouches:TouchList;
-};
-
 function MUIOutlet(owner, elementID, className?, options?)
 {
     //var layer = document.getElementById(elementID);
@@ -69,12 +63,15 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     }
 
     var view = null;
+    var pc = null;
+
     if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
         || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
-        || toVC.modalPresentationStyle == MUIModalPresentationStyle.Custom) {
+        || toVC.modalPresentationStyle == MUIModalPresentationStyle.Custom
+        || toVC.modalPresentationStyle == MUIModalPresentationStyle.Popover) {
         
-        var pc = toVC.presentationController;
+        pc = toVC.presentationController;
         view = pc.presentedView;
     }
     else
@@ -91,17 +88,6 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     {
         ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
-    // else
-    // {
-    //     if (toVC.modalPresentationStyle == MUIModalPresentationStyle.Popover)
-    //         ac = new MIOPopOverPresentAnimationController();
-    //     else if (modal == true)
-    //         ac = new MIOModalPresentAnimationController();
-    //     else
-    //         ac = new MIOPresentAnimationController();
-
-    //     ac.init();
-    // }
 
     var animationContext = {};
     animationContext["presentingViewController"] = fromVC;
@@ -166,15 +152,6 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
     else if (sourceVC != null && sourceVC.transitioningDelegate != null)
     {
         ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(toVC);
-    }
-    else
-    {
-        if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.Popover)
-            ac = new MIOPopOverDismissAnimationController();
-        else
-            ac = new MIOModalDismissAnimationController();
-
-        ac.init();
     }
 
     var animationContext = {};

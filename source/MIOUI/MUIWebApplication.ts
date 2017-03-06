@@ -51,13 +51,19 @@ class MUIWebApplication {
     private _popOverViewController = null;
 
     private _windows = [];
+    private _keyWindow = null;
 
     run() {
+
         this.delegate.didFinishLaunching();
+        this.delegate.window.makeKeyAndVisible();
+        
         this.delegate.window.rootViewController.onLoadView(this, function () {
             
             this.delegate.window.rootViewController.viewWillAppear();
             this.delegate.window.rootViewController.viewDidAppear();
+
+            this.ready = true;
         });
     }
 
@@ -248,22 +254,18 @@ class MUIWebApplication {
             }
         }
 
-        if (this._popOverViewController != null) {
-            // if (this._popOverWindowFirstClick == true) {
-            //     this._popOverWindowFirstClick = false;
-            //     return;
-            // }
-
-            var controlRect = this._popOverViewController.view.layer.getBoundingClientRect();
+        if (this._keyWindow != null) 
+        {        
+            var controlRect = this._keyWindow.layer.getBoundingClientRect();
 
             console.log("x: " + controlRect.left + " mx: " + x);
 
             if ((x > controlRect.left && x < controlRect.right)
                 && (y > controlRect.top && y < controlRect.bottom)) {
-                //Nothing
+                //Nothing. Forward the event
             }
             else
-                this._popOverViewController.dismissViewController(true);
+                this._keyWindow.setHidden(true);
         }
     }
 
@@ -301,5 +303,16 @@ class MUIWebApplication {
         this._popOverWindow.rootViewController.viewDidDisappear();
 
         this._popOverWindow = null;
+    }
+
+    addWindow(window)
+    {
+        this._windows.push(window);
+    }
+
+    makeKeyWindow(window)
+    {
+        this.addWindow(window);
+        this._keyWindow = window;
     }
 }

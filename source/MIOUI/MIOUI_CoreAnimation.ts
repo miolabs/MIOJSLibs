@@ -90,7 +90,7 @@ function _MUIAnimationStart(layer, animationController, animationContext, target
     if (animationController == null)
     {
         if (target != null && completion != null)
-            completion.call(target);        
+                completion.call(target);        
             return;
     }
 

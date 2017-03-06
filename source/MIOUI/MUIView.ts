@@ -128,7 +128,7 @@ class MUIView extends MIOObject
         this.layer = layer;
         this.layerOptions = options;
 
-        this._checkDOMLayer();
+        this._addLayerToDOM();
     }
 
     awakeFromHTML()
@@ -153,10 +153,10 @@ class MUIView extends MIOObject
         view.setParent(this);
         this.subviews.push(view);
 
-        view._checkDOMLayer();
+        view._addLayerToDOM();
     }
 
-    protected _checkDOMLayer()
+    protected _addLayerToDOM()
     {
         if (this._isLayerInDOM == true)
             return;
@@ -175,7 +175,7 @@ class MUIView extends MIOObject
         this._isLayerInDOM = false;
     }
 
-    _removeLayerFromDOM()
+    protected _removeLayerFromDOM()
     {
         if (this._isLayerInDOM == false)
             return;

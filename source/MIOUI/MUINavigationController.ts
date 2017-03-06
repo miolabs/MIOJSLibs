@@ -103,8 +103,6 @@ class MUINavigationController extends MUIViewController
             if (vc.preferredContentSize != null)
                 this.preferredContentSize = vc.preferredContentSize;
 
-            //_MUITransitionFromViewControllerToViewController(lastVC, vc, this);
-
             _MIUShowViewController(lastVC, vc, this, false);
         });
     }
@@ -129,8 +127,6 @@ class MUINavigationController extends MUIViewController
 
         _MUIHideViewController(fromVC, toVC, this, this, function () {
 
-        //_MUITransitionFromViewControllerToViewController(fromVC, toVC, this, this, function(){
-
             fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();
         });
@@ -152,7 +148,7 @@ class MUINavigationController extends MUIViewController
 
         this.contentSize = rootVC.preferredContentSize;
 
-        _MUIHideViewController(currentVC, rootVC, this, false, this, function () {
+        _MUIHideViewController(currentVC, rootVC, this, this, function () {
 
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
@@ -242,36 +238,36 @@ class MUIPushAnimationController extends MIOObject
     animateTransition(transitionContext)
     {
         // make view configurations before transitions
-        var fromVC = transitionContext.presentingViewController;
-        var toVC = transitionContext.presentedViewController;
+        // var fromVC = transitionContext.presentingViewController;
+        // var toVC = transitionContext.presentedViewController;
 
-        w = fromVC.view.getWidth();
-        h = fromVC.view.getHeight();
+        // w = fromVC.view.getWidth();
+        // h = fromVC.view.getHeight();
 
-        if (MIOLibIsMobile() == false)
-        {
-            var w = toVC.preferredContentSize.width;
-            var h = toVC.preferredContentSize.height;
+        // if (MIOLibIsMobile() == false)
+        // {
+        //     var w = toVC.preferredContentSize.width;
+        //     var h = toVC.preferredContentSize.height;
 
 
-            /*
-                Added by Miguel: if viewController has defined an Inherit Size ( See MIOSize) -1, -1
-                then use the previous viewController's size;
-             */
-            if(w == -1)  w = fromVC.view.getWidth();
-            if(h == -1)  h = fromVC.view.getHeight();
+        //     /*
+        //         Added by Miguel: if viewController has defined an Inherit Size ( See MIOSize) -1, -1
+        //         then use the previous viewController's size;
+        //      */
+        //     if(w == -1)  w = fromVC.view.getWidth();
+        //     if(h == -1)  h = fromVC.view.getHeight();
 
-            var newFrame = MIOFrame.frameWithRect(0, 0, w, h);
+        //     var newFrame = MIOFrame.frameWithRect(0, 0, w, h);
 
-            toVC.view.setFrame(newFrame);
-        }
-        else
-        {
-            var w = fromVC.view.getWidth();
-            var h = fromVC.view.getHeight();
+        //     toVC.view.setFrame(newFrame);
+        // }
+        // else
+        // {
+        //     var w = fromVC.view.getWidth();
+        //     var h = fromVC.view.getHeight();
 
-            toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        }
+        //     toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+        // }
 
     }
 

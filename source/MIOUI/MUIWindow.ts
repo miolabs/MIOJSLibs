@@ -11,14 +11,6 @@ class MUIWindow extends MUIView
 
     private _resizeWindow = false;
 
-    init()
-    {
-        super.init();
-
-        // Only windows
-        document.body.appendChild(this.layer);
-    }
-
     initWithRootViewController(vc)
     {
         this.init();
@@ -27,14 +19,61 @@ class MUIWindow extends MUIView
         this.addSubview(vc.view);
     }
 
-    removeFromSuperview()
+    makeKey()
     {
-        document.body.removeChild(this.layer);
+        MUIWebApplication.sharedInstance().makeKeyWindow(this);
+    }
+
+    makeKeyAndVisible()
+    {
+        this.makeKey();
+        this.setHidden(false);
     }
 
     layout()
     {
-        this.rootViewController.view.layout();
+
+        if (this.rootViewController != null)
+            this.rootViewController.view.layout();
+        else
+            super.layout();                
+    }
+
+    protected _addLayerToDOM()
+    {
+        if (this._isLayerInDOM == true)
+            return;
+
+        if (this.layer == null)
+            return;
+
+        document.body.appendChild(this.layer);
+
+        this._isLayerInDOM = true;
+    }
+
+    protected _removeLayerFromDOM()
+    {
+        if (this._isLayerInDOM == false)
+            return;
+
+        document.body.removeChild(this.layer);
+        this._isLayerInDOM = false;
+    }
+
+    setHidden(hidden)
+    {
+        if (hidden == false)
+        {
+            this._addLayerToDOM();            
+        }
+        else
+        {
+            if (this.rootViewController != null)
+                this.rootViewController.dismissViewController(true);
+        
+            this._removeLayerFromDOM();
+        }
     }
 }
 

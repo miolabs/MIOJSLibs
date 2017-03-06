@@ -265,16 +265,6 @@ class MUIViewController extends MIOObject
     //     //this.didMoveToParentViewController(null);
     // }
 
-    setPresentationController(pc)
-    {
-        this._presentationController = pc;
-    }
-
-    set presentationController(pc)
-    {
-        this.setPresentationController(pc);
-    }
-
     get presentationController()
     {
         if (this._presentationController == null && this.parentViewController != null)
@@ -292,8 +282,8 @@ class MUIViewController extends MIOObject
             this._popoverPresentationController.init();
             this._popoverPresentationController.presentedViewController = this;
         }
-
-        this.presentationController = this._popoverPresentationController;
+        
+        this._presentationController = this._popoverPresentationController;
 
         return this._popoverPresentationController;
     }
@@ -323,13 +313,16 @@ class MUIViewController extends MIOObject
 
         vc.onLoadView(this, function () {
 
-            this.view.addSubview(vc.presentationController.presentedView);
-            this.addChildViewController(vc);
+            if (vc.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
+            {
+                this.view.addSubview(vc.presentationController.presentedView);
+                this.addChildViewController(vc);
+            }
 
             _MIUShowViewController(this, vc, null, this, function () {
 
-                if (vc.modalPresentationStyle == MUIModalPresentationStyle.Popover)
-                    MUIWebApplication.sharedInstance().setPopOverViewController(vc);
+                // if (vc.modalPresentationStyle == MUIModalPresentationStyle.Popover)
+                //     MUIWebApplication.sharedInstance().setPopOverViewController(vc);
             });
         });
     }
@@ -340,7 +333,7 @@ class MUIViewController extends MIOObject
         var fromVC = this.presentationController.presentedViewController;
         var fromView = this.presentationController.presentedView;
 
-        _MUIHideViewController(fromVC, toVC, null, true, this, function () {
+        _MUIHideViewController(fromVC, toVC, null, this, function () {
 
             toVC.removeChildViewController(fromVC);
             fromView.removeFromSuperview();

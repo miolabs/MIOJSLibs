@@ -29,7 +29,7 @@ class MUIPresentationController extends MIOObject
     presentationStyle = MUIModalPresentationStyle.CurrentContext;
     shouldPresentInFullscreen = false;
 
-    private _presentedViewController = null; //ToVC
+    protected _presentedViewController = null; //ToVC
     presentingViewController = null; //FromVC
     presentedView = null;
 

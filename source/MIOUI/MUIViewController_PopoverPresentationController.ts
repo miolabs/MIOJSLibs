@@ -26,23 +26,30 @@ class MUIPopoverPresentationController extends MUIPresentationController
     private _canvasLayer = null;
     private _contentView = null;
 
-    init() {
-        super.init();
-    }
-
     setPresentedViewController(vc) {
 
-        super.setPresentedViewController(vc);
+        this._presentedViewController = vc;
 
         var size = vc.preferredContentSize;
-        this._contentSize = size;
 
         var w = size.width + 2;
         var h = size.height + 2;
 
-        this.presentedView = new MUIView();
-        this.presentedView.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        this.presentedView.addSubview(vc.view);
+        var window = new MUIWindow();
+        window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
+
+        window.rootViewController = vc;
+        window.addSubview(vc.view);
+                
+        this.presentedView = window;
+
+        window.makeKeyAndVisible();
+
+        if (vc.transitioningDelegate == null)
+        {
+            vc.transitioningDelegate = new MIOModalPopOverTransitioningDelegate();
+            vc.transitioningDelegate.init();
+        }
     }
 
     presentationTransitionWillBegin()
@@ -75,6 +82,36 @@ class MUIPopoverPresentationController extends MUIPresentationController
         ctx.stroke();
     }
 
+}
+
+class MIOModalPopOverTransitioningDelegate extends MIOObject
+{
+    modalTransitionStyle = null;
+
+    private _showAnimationController = null;
+    private _dissmissAnimationController = null;
+
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
+    {
+        if (this._showAnimationController == null) {
+
+            this._showAnimationController = new MIOPopOverPresentAnimationController();
+            this._showAnimationController.init();
+        }
+
+        return this._showAnimationController;
+    }
+
+    animationControllerForDismissedController(dismissedController)
+    {
+        if (this._dissmissAnimationController == null) {
+
+            this._dissmissAnimationController = new MIOPopOverDismissAnimationController();
+            this._dissmissAnimationController.init();
+        }
+
+        return this._dissmissAnimationController;
+    }
 }
 
 class MIOPopOverPresentAnimationController extends MIOObject
