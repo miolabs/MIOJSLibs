@@ -71,7 +71,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
         this.presentedView.layer.style.borderRadius = "5px 5px 5px 5px";
         this.presentedView.layer.style.border = "1px solid rgb(170, 170, 170)";
         this.presentedView.layer.style.overflow = "hidden";
-        this.presentedView.layer.style.zIndex = 10; // To make clip the children views     
+        //this.presentedView.layer.style.zIndex = 10; // To make clip the children views     
     }
 
     _calculateFrame()
