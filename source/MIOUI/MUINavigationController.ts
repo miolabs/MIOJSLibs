@@ -236,38 +236,7 @@ class MUIPushAnimationController extends MIOObject
 
     animateTransition(transitionContext)
     {
-        // make view configurations before transitions
-        // var fromVC = transitionContext.presentingViewController;
-        // var toVC = transitionContext.presentedViewController;
-
-        // w = fromVC.view.getWidth();
-        // h = fromVC.view.getHeight();
-
-        // if (MIOLibIsMobile() == false)
-        // {
-        //     var w = toVC.preferredContentSize.width;
-        //     var h = toVC.preferredContentSize.height;
-
-
-        //     /*
-        //         Added by Miguel: if viewController has defined an Inherit Size ( See MIOSize) -1, -1
-        //         then use the previous viewController's size;
-        //      */
-        //     if(w == -1)  w = fromVC.view.getWidth();
-        //     if(h == -1)  h = fromVC.view.getHeight();
-
-        //     var newFrame = MIOFrame.frameWithRect(0, 0, w, h);
-
-        //     toVC.view.setFrame(newFrame);
-        // }
-        // else
-        // {
-        //     var w = fromVC.view.getWidth();
-        //     var h = fromVC.view.getHeight();
-
-        //     toVC.view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        // }
-
+        // make view configurations before transitions       
     }
 
     animationEnded(transitionCompleted)

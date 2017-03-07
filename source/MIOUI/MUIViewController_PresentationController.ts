@@ -111,6 +111,9 @@ class MUIPresentationController extends MIOObject
             // Present like desktop sheet window
             var ws = MUIWindowSize();
 
+            var size = toVC.preferredContentSize;
+            if (size == null) size = new MIOSize(320, 200);
+
             var w = toVC.preferredContentSize.width;
             var h = toVC.preferredContentSize.height;
             var x = (ws.width - w) / 2;
@@ -121,6 +124,25 @@ class MUIPresentationController extends MIOObject
             view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
             view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
             view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";            
+        }
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
+        {
+            // Present at the center of the screen
+            var ws = MUIWindowSize();
+
+            var size = toVC.preferredContentSize;
+            if (size == null) size = new MIOSize(320, 200);
+
+            var w = size.width;
+            var h = size.height;
+            var x = (ws.width - w) / 2;
+            var y = (ws.height - h) / 2;
+
+            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            this.window.setFrame(MIOFrame.frameWithRect(x, y, w, h))
+
+            view.layer.style.borderRadius = "5px 5px 5px 5px";
+            view.layer.style.border = "1px solid rgb(170, 170, 170)";
         }
         else
         {

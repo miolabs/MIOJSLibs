@@ -45,7 +45,8 @@ function MUIOutlet(owner, elementID, className?, options?)
 function MUIWindowSize()
 {
     var w = document.body.clientWidth;
-    var h = document.body.clientHeight;
+    //var h = document.body.clientHeight;window.innerHeight
+    var h = window.innerHeight;
 
     return new MIOSize(w, h);
 }

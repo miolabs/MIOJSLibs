@@ -10,6 +10,7 @@
 
 enum MUITableViewCellStyle {
 
+    Custom,
     Default
 }
 
@@ -43,17 +44,12 @@ class MUITableViewCell extends MUIView
     private _row = 0;
     private _section = 0;
 
-    constructor()
-    {
-        super(MUIViewGetNextLayerID("tableview_cell"));
-    }
-
-    initWithStyle(style)
+    initWithStyle(style:MUITableViewCellStyle)
     {
         super.init();
 
         if (style == MUITableViewCellStyle.Default) {
-            this.textLabel = new MUILabel(MUIViewGetNextLayerID("tableview_cell_label"));
+            this.textLabel = new MUILabel();
             this.textLabel.init();
             this.textLabel.layer.style.left = "10px";
             this.textLabel.layer.style.top = "10px";
