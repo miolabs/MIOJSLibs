@@ -31,6 +31,7 @@
 /// <reference path="MUIPageController.ts" />
 /// <reference path="MUISplitViewController.ts" />
 /// <reference path="MUITabBarController.ts" />
+/// <reference path="MUIAlertViewController.ts" />
 
 /// <reference path="MUIWebApplication.ts" />
 

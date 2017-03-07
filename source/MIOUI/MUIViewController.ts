@@ -14,10 +14,10 @@ declare var MIOHTMLParser;
 
 class MUIViewController extends MIOObject
 {
-    layerID = null;
+    layerID:string = null;
     prefixID = null;
 
-    view = null;
+    view:MUIView = null;
 
     private _onViewLoadedTarget = null;
     private _onViewLoadedAction = null;
