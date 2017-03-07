@@ -33,7 +33,7 @@ class MUIViewController extends MIOObject
 
     presentingViewController = null;
     presentedViewController = null;
-    navigationController = null;
+    navigationController:MUINavigationController = null;
     splitViewController = null;
     tabBarController = null;
 
