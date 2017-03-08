@@ -245,11 +245,9 @@ class MUIView extends MIOObject
             return;
 
         if (hidden)
-            //this.layer.style.display = "none";
-            this.layer.classList.add('hidden');
+            this.layer.style.display = "none";
         else
-            this.layer.classList.remove('hidden');
-            //this.layer.style.display = "inline";
+            this.layer.style.display = "";
 
     }
 
