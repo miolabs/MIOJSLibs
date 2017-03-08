@@ -131,6 +131,11 @@ class MUIButton extends MUIControl
         return this._titleLayer.innerHTML;
     }
 
+    get selected()
+    {
+        return this._selected;
+    }
+    
     setSelected(value)
     {
         if (this._selected == value)
