@@ -134,6 +134,8 @@ class MUINavigationController extends MUIViewController
 
     popToRootViewController(animate?)
     {
+        if(this.viewControllersStack.length == 1) return;
+        
         var currentVC = this.viewControllersStack.pop();
 
         for(var index = this.currentViewControllerIndex - 1; index > 0; index--)
