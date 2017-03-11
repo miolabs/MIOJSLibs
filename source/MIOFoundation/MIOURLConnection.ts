@@ -2,14 +2,25 @@
  * Created by godshadow on 14/3/16.
  */
 
-class MIOURLRequest
+/// <reference path="MIOURL.ts" />
+
+
+class MIOURLRequest extends MIOObject
 {
     url = null;
     httpMethod = "GET";
     body = null;
     headers = [];
 
-    constructor(url)
+    static requestWithURL(url:MIOURL):MIOURLRequest
+    {
+        var request = new MIOURLRequest();
+        request.initWithURL(url);
+
+        return request;
+    }
+
+    initWithURL(url:MIOURL)
     {
         this.url = url;
     }
@@ -22,21 +33,21 @@ class MIOURLRequest
 
 class MIOURLConnection
 {
-    request = null;
+    request:MIOURLRequest = null;
     delegate = null;
     blockFN = null;
     blockTarget = null;
 
     private xmlHttpRequest = null;
 
-    initWithRequest(request, delegate)
+    initWithRequest(request:MIOURLRequest, delegate)
     {
         this.request = request;
         this.delegate = delegate;
         this.start();
     }
 
-    initWithRequestBlock(request, blockTarget, blockFN)
+    initWithRequestBlock(request:MIOURLRequest, blockTarget, blockFN)
     {
         this.request = request;
         this.blockFN = blockFN;
@@ -69,7 +80,8 @@ class MIOURLConnection
             }
         };
 
-        this.xmlHttpRequest.open(this.request.httpMethod, this.request.url);
+        var urlString = this.request.url.absoluteString;
+        this.xmlHttpRequest.open(this.request.httpMethod, urlString);
 
         // Add headers
         for (var count = 0; count < this.request.headers.length; count++)

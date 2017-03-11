@@ -128,12 +128,12 @@ class MUIWebApplication {
     }
 
     downloadLanguage(key, fn) {
+        
         var url = this.languages[key];
 
         // Download
-
         var conn = new MIOURLConnection();
-        conn.initWithRequestBlock(new MIOURLRequest(url), this, function (error, data) {
+        conn.initWithRequestBlock(MIOURLRequest.requestWithURL(url), this, function (error, data) {
 
             if (data != null) {
                 var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));

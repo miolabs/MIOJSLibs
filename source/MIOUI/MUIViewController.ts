@@ -10,14 +10,15 @@
 /// <reference path="MUIViewController_PopoverPresentationController.ts" />
 
 
-declare var MIOHTMLParser;
+//declare var MIOHTMLParser;
 
 class MUIViewController extends MIOObject
 {
-    layerID:string = null;
-    prefixID = null;
+    layerID:string = null;    
 
     view:MUIView = null;
+
+    private _htmlResourcePath = null;
 
     private _onViewLoadedTarget = null;
     private _onViewLoadedAction = null;
@@ -79,38 +80,14 @@ class MUIViewController extends MIOObject
         this._layerIsReady = true;
     }
 
-    initWithResource(url)
+    initWithResource(path)
     {
-        super.init();
+        if (path == null) throw ("MIOViewController:initWithResource can't be null");
 
-        this.view = new MUIView(this.layerID);
-        //this.view.init();
+        super.init();        
 
-        var mainBundle = MIOBundle.mainBundle();
-        mainBundle.loadLayoutFromURL(url, this.layerID, this, function (data) {
-
-            //var result = MIOHTMLParser(data, this.layerID);
-            var result = data;
-            var cssFiles = result.styles;
-            var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
-            for (var index = 0; index < cssFiles.length; index++) {
-
-                var cssurl  = baseURL + cssFiles[index];
-                console.log("Adding CSS: " + cssurl);
-                MIOCoreLoadStyle(cssurl);
-            }
-
-            var domParser = new DOMParser();
-            var items = domParser.parseFromString(result.layout, "text/html");
-            var layer = items.getElementById(this.layerID);
-
-            this.localizeSubLayers(layer.childNodes);
-
-            //this.view.addSubLayer(layer);
-            this.view.initWithLayer(layer);
-            this.view.awakeFromHTML();
-            this._didLayerDownloaded();
-        });
+        this._htmlResourcePath = path;
+        this.loadView();
     }
 
     localizeSubLayers(layers)
@@ -140,7 +117,34 @@ class MUIViewController extends MIOObject
 
     loadView()
     {
-        //this.view.layer.style.overflow = "hidden";
+        this.view = new MUIView(this.layerID);
+        //this.view.init();
+
+        var mainBundle = MIOBundle.mainBundle();
+        mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layerData) {
+
+            //var result = MIOHTMLParser(data, this.layerID);
+            // var result = data;
+            // var cssFiles = result.styles;
+            // var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
+            // for (var index = 0; index < cssFiles.length; index++) {
+
+            //     var cssurl  = baseURL + cssFiles[index];
+            //     console.log("Adding CSS: " + cssurl);
+            //     MIOCoreLoadStyle(cssurl);
+            // }
+
+            var domParser = new DOMParser();
+            var items = domParser.parseFromString(layerData, "text/html");
+            var layer = items.getElementById(this.layerID);
+
+            this.localizeSubLayers(layer.childNodes);
+
+            //this.view.addSubLayer(layer);
+            this.view.initWithLayer(layer);
+            this.view.awakeFromHTML();
+            this._didLayerDownloaded();
+        });        
     }
 
     _didLayerDownloaded()
@@ -156,7 +160,7 @@ class MUIViewController extends MIOObject
 
         if (this._onViewLoadedAction != null && this._onViewLoadedTarget != null)
         {
-            this.loadView();
+            //this.loadView();
             this.viewDidLoad();
             this._loadChildControllers();
         }
@@ -212,7 +216,7 @@ class MUIViewController extends MIOObject
         }
         else if (this._layerIsReady == true)
         {
-            this.loadView();
+            //this.loadView();
             this.viewDidLoad();
             this._loadChildControllers();
         }

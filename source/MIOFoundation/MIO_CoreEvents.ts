@@ -1,18 +1,18 @@
 
 
 /// <reference path="MIO_Core.ts" />
+/// <reference path="MIOBundle.ts" />
 
 
-// Platform events
+// Declare main funciton so we can call after intizalization
+
 declare function main(args);
 
 window.onload = function() {
-
-    var args = {};
-    MIOCoreDecodeParams(window.location.search, this, function (param, value) {
-
-        args[param] = value;        
-    });
+    
+    var mb = MIOBundle.mainBundle();
+    console.log("Main URL: " + mb.url.absoluteString);
+    var args = mb.url.params;
 
     main(args);
 };

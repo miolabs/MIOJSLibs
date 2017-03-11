@@ -2,58 +2,42 @@
  * Created by godshadow on 11/3/16.
  */
 
-function MIOCoreDecodeParams(string, target?, completion?)
-{
-    var param = "";
-    var value = "";
-    var isParam = false;
+/// <reference path="MIOURL.ts" />
 
-    for (var index = 0; index < string.length; index++)
+enum MIOCoreAppType
+{
+    Web,
+    iOS,
+    macOS,
+    Android,
+    WindowsMobile,
+    Windows,
+    Linux
+}
+
+var _miocore_app_type:MIOCoreAppType;
+
+function MIOCoreSetAppType(appType:MIOCoreAppType)
+{
+    _miocore_app_type = appType;
+}
+
+function MIOCoreGetAppType():MIOCoreAppType
+{
+    return _miocore_app_type;
+}
+
+function MIOCoreGetMainBundleURL()
+{    
+    var url = null;
+
+    if (MIOCoreGetAppType() == MIOCoreAppType.Web)
     {
-        var ch = string.charAt(index);
-
-        if (ch == "?")
-        {
-            isParam = true;
-        }
-        else if (ch == "&")
-        {
-            // new param
-            MIOCoreEvaluateParam(param, value, target, completion);
-            isParam = true;
-            param = "";
-            value = "";
-        }
-        else if (ch == "=")
-        {
-            isParam = false;
-        }
-        else
-        {
-            if (isParam == true)
-                param += ch;
-            else
-                value += ch;
-        }
+        url = new MIOURL();    
+        url.initWithURLString(window.location.href);
     }
-
-    MIOCoreEvaluateParam(param, value, target, completion);
-}
-
-function MIOCoreEvaluateParam(param, value, target, completion)
-{
-    if (target != null && completion != null)
-        completion.call(target, param, value);
-}
-
-function MIOCCoreLoadTextFile(href)
-{
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", href, false);
-    xmlhttp.send();
-
-    var response = xmlhttp.responseText;
-    return response;
+    
+    return url;
 }
 
 function MIOCoreLoadScript(url)
@@ -75,9 +59,9 @@ function MIOCoreLoadScript(url)
 
 // ignore app.css beause it's already downloaded
 // TODO: Check the last item only not the full path, could be different
-var _stylesCache = {"layout/../app.css" : true};
+var _stylesCache = {"app.css" : true};
 
-function MIOCoreLoadStyle(url)
+function _MIOCoreLoadStyle(url, target?, completion?)
 {
     // Prevent loading the same css files
     if (_stylesCache[url] != null) return;
@@ -89,6 +73,30 @@ function MIOCoreLoadStyle(url)
     ss.href = url;
     document.getElementsByTagName("head")[0].appendChild(ss);
 }
+
+interface StyleSheet {
+    cssRules;
+}
+
+function MIOCoreLoadStyle(url, target?, completion?)
+{
+    var style = document.createElement('style');
+    style.textContent = '@import "' + url + '"';
+ 
+    var fi = setInterval(function() {
+    try {
+        style.sheet.cssRules; // <--- MAGIC: only populated when file is loaded
+        clearInterval(fi);
+        if (target != null && completion != null)
+            completion.call(target);
+        
+    } catch (e){}
+    }, 10);  
+    
+    var head = document.getElementsByTagName("head")[0];
+    head.appendChild(style);
+}
+
 
 function MIOGetDefaultLanguage()
 {

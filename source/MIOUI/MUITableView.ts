@@ -242,9 +242,9 @@ class MUITableView extends MUIView
     {
         this.headerView = new MUIView();
         this.headerView.initWithLayer(subLayer);
-        //var h = this.headerView.getHeight();
-        //var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
-        //this.headerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
+        // var h = this.headerView.getHeight();
+        // var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        // this.headerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     }
 
     private _addFooterWithLayer(subLayer)
@@ -286,7 +286,7 @@ class MUITableView extends MUIView
 
         this._cellPrototypes[identifier] = item;
         var mainBundle = MIOBundle.mainBundle();
-        mainBundle.loadLayoutFromURL(url, elementID, this, function (data) {
+        mainBundle.loadHTMLNamed(url, elementID, this, function (data) {
 
             var result = data;
             var cssFiles = result.styles;

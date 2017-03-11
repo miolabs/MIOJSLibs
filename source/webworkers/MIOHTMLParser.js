@@ -2,7 +2,7 @@
  * Created by godshadow on 26/07/16.
  */
 
-function MIOHTMLParser(string, layerID)
+function MIOHTMLParser(string, layerID, relativePath, callback)
 {
     var tag = "";
     var attribute = "";
@@ -75,7 +75,10 @@ function MIOHTMLParser(string, layerID)
                 else if (ch2 == ">") {
 
                     if (currentStyle != null)
+                    {
                         styles.push(currentStyle);
+                        FoundLink(currentStyle, callback);
+                    }
 
                     currentStyle = null;
                     break;
@@ -210,4 +213,15 @@ function MIOHTMLParser(string, layerID)
         styles: styleFiles,
         layout: layout
     };
+}
+
+function FoundLink(link, callback)
+{
+    if (link["rel"] == "stylesheet")
+    {
+        // Add style
+        var css_url = link["href"];
+        callback(css_url);
+        console.log("Send CSS: " + css_url);
+    }
 }

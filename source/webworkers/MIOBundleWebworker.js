@@ -16,18 +16,19 @@ self.addEventListener('message', function(e) {
     {
         _languageStrings = item["LanguageStrings"];
     }
-    else if (cmd == "DownloadResource")
+    else if (cmd == "DownloadHTML")
     {
         var url = item["URL"];
         var layerID = item["LayerID"];
+        var path = item["Path"];
 
-        downloadHTML(url, layerID);
+        downloadHTML(url, layerID, path);
     }
 
 }, false);
 
 
-function downloadHTML(url, layerID) {
+function downloadHTML(url, layerID, path) {
 
     var instance = this;
 
@@ -37,7 +38,7 @@ function downloadHTML(url, layerID) {
         if(this.status == 200 && this.responseText != null)
         {
             // success!
-            instance.parseHTML.call(instance, this.responseText, layerID);
+            instance.parseHTML.call(instance, url, this.responseText, layerID, path);
         }
         else
         {
@@ -50,16 +51,28 @@ function downloadHTML(url, layerID) {
     xhr.send();
 }
 
-function parseHTML(data, layerID)
+function parseHTML(url, data, layerID, path)
 {
     if (data == null) {
         self.postMessage({"Error" : "Couldn't download resource"});
     }
     else
     {
-        var result = MIOHTMLParser(data, layerID);
-        //var result = data;
-        self.postMessage(result);
+        var result = MIOHTMLParser(data, layerID, path, function(cssURL) {
+
+            // Found link
+            var item = [];
+            item["Type"] = "CSS";
+            item["CSSURL"] = cssURL;
+            item["BaseURL"] = url;
+            item["Path"] = path;
+            self.postMessage(item);
+        });
+
+        var item = [];
+        item["Type"] = "HTML";
+        item["Result"] = result;
+        self.postMessage(item);
     }
 }
 

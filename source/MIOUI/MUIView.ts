@@ -65,20 +65,20 @@ function MUILayerGetFirstElementWithTag(layer, tag)
     return foundLayer;
 }
 
-function MUILayerFromResource(url, css, elementID)
-{
-    var htmlString = MIOCCoreLoadTextFile(url);
+// function MUILayerFromResource(url, css, elementID)
+// {
+//     var htmlString = MIOCCoreLoadTextFile(url);
 
-    var parser = new DOMParser();
-    var html = parser.parseFromString(htmlString, "text/html");
+//     var parser = new DOMParser();
+//     var html = parser.parseFromString(htmlString, "text/html");
 
-    //var styles = html.styleSheets;
+//     //var styles = html.styleSheets;
 
-    //if (css != null)
-        //MIOCoreLoadStyle(css);
+//     //if (css != null)
+//         //MIOCoreLoadStyle(css);
 
-    return(html.getElementById(elementID));
-}
+//     return(html.getElementById(elementID));
+// }
 
 class MUIView extends MIOObject
 {
@@ -324,9 +324,10 @@ class MUIView extends MIOObject
     }
 
     getWidth()
-    {
-        //var w = this.layer.clientWidth;
-        var w = this._getIntValueFromCSSProperty("width");
+    {        
+        var w1 = this.layer.clientWidth;
+        var w2 = this._getIntValueFromCSSProperty("width");
+        var w = Math.max(w1, w2);
         return w;
     }
 
@@ -339,8 +340,9 @@ class MUIView extends MIOObject
 
     getHeight()
     {
-        //var h = this.layer.clientHeight;
-        var h = this._getIntValueFromCSSProperty("height");
+        var h1 = this.layer.clientHeight;
+        var h2 = this._getIntValueFromCSSProperty("height");
+        var h = Math.max(h1, h2);
         return h;
     }
 
