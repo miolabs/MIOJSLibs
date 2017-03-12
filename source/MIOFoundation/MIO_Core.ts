@@ -57,11 +57,9 @@ function MIOCoreLoadScript(url)
     head.appendChild(script);
 }
 
-// ignore app.css beause it's already downloaded
-// TODO: Check the last item only not the full path, could be different
-var _stylesCache = {"app.css" : true};
+var _stylesCache = {};
 
-function _MIOCoreLoadStyle(url, target?, completion?)
+function _MIOCoreLoadStyle_test1(url, target?, completion?)
 {
     // Prevent loading the same css files
     if (_stylesCache[url] != null) return;
@@ -78,8 +76,12 @@ interface StyleSheet {
     cssRules;
 }
 
-function MIOCoreLoadStyle(url, target?, completion?)
+function _MIOCoreLoadStyle_test2(url, target?, completion?)
 {
+     // Prevent loading the same css files
+    if (_stylesCache[url] != null) return;
+    _stylesCache[url] = true;
+
     var style = document.createElement('style');
     style.textContent = '@import "' + url + '"';
  
@@ -97,6 +99,35 @@ function MIOCoreLoadStyle(url, target?, completion?)
     head.appendChild(style);
 }
 
+function MIOCoreLoadStyle(url, target?, completion?)
+{
+    // Prevent loading the same css files
+    if (_stylesCache[url] != null) 
+    {
+        if (target != null && completion != null)
+            completion.call(target);
+        return;
+    }
+    _stylesCache[url] = true;
+
+    var link = document.createElement('link');
+    link.type = 'text/css';
+    link.rel = 'stylesheet';
+    link.href = url;
+
+    var head = document.getElementsByTagName('head')[0];
+    head.appendChild(link);
+
+    if (target == null && completion == null) return;
+
+    // Creating the callback trying to load an img which is gona fail, calling the callback. 
+    // WTF?? Seriosly I have to do this for get a load callback??
+    var img = document.createElement('img');
+    img.onerror = function(){
+        completion.call(target);
+    }
+    img.src = url;
+}
 
 function MIOGetDefaultLanguage()
 {
