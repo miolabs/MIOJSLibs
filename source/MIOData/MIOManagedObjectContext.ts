@@ -46,12 +46,18 @@ class MIOManagedObject extends MIOObject
 
     setValue(propertyName, value)
     {
-        var oldValue = this.getValue(propertyName);//this[propertyName];
-        if (oldValue != value) {
+        if(this[propertyName] === value) {
+            if(this._trackChanges[propertyName] != undefined)
+                delete this._trackChanges[propertyName];
+        }
+        else {
+            var oldValue = this.getValue(propertyName);
+            if (oldValue != value) {
 
-            this._trackChanges[propertyName] = value;
-            if (this.managedObjectContext != null)
-                this.managedObjectContext.updateObject(this);
+                this._trackChanges[propertyName] = value;
+                if (this.managedObjectContext != null)
+                    this.managedObjectContext.updateObject(this);
+            }
         }
     }
 
