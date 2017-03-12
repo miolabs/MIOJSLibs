@@ -46,6 +46,7 @@ class MUIAlertViewController extends MUIViewController
     private _message:string = null;
     private _style = MUIAlertViewStyle.Default;
 
+    private _backgroundView:MUIView = null;
     private _tableView:MUITableView = null;
 
     private _headerCell = null;
@@ -69,12 +70,22 @@ class MUIAlertViewController extends MUIViewController
     {
         super.viewDidLoad();
 
+        this._backgroundView = new MUIView();
+        this._backgroundView.init();
+        this._backgroundView.layer.style.background = "";
+        this._backgroundView.layer.classList.add("alertview_background");
+        this.view.addSubview(this._backgroundView);
+
         this._tableView = new MUITableView();
         this._tableView.init();
         this._tableView.dataSource = this;
         this._tableView.delegate = this;
+        this._tableView.layer.style.background = "";
 
         this.view.addSubview(this._tableView);
+
+        this.view.layer.style.background = "";
+        this.view.layer.classList.add("alertview_window");
     }
 
     viewWillAppear()
@@ -97,7 +108,7 @@ class MUIAlertViewController extends MUIViewController
 
     private _calculateContentSize()
     {
-        var h = 50 + (this._actions.length * 30) + 1;
+        var h = 80 + (this._actions.length * 50) + 1;
         this._alertViewSize = new MIOSize(320, h);
     }
 
@@ -113,7 +124,7 @@ class MUIAlertViewController extends MUIViewController
 
     cellAtIndexPath(tableview, row, section)
     {
-        var cell = null;
+        var cell:MUITableViewCell = null;
         if (row == 0)
         {
             cell = this._createHeaderCell();
@@ -124,13 +135,15 @@ class MUIAlertViewController extends MUIViewController
             if (action.style == MUIAlertActionStyle.Default)
                 cell = this._createDefaultCellWithTitle(action.title);                
         }
+
+        cell.separatorStyle = MUITableViewCellSeparatorStyle.None;
         return cell;
     }
 
     heightForRowAtIndexPath(taleview, row, section)
     {
-        if (row == 0) return 50;
-        else return 30;
+        if (row == 0) return 80;
+        else return 50;
     }
 
     canSelectCellAtIndexPath(tableview, row, section)
@@ -159,25 +172,29 @@ class MUIAlertViewController extends MUIViewController
         var titleLabel = new MUILabel();
         titleLabel.init();
         titleLabel.text = this._title;
-        titleLabel.setTextAlignment("center");
-        titleLabel.layer.style.left = "10px";
-        titleLabel.layer.style.top = "5px";
-        titleLabel.layer.style.right = "10px";
-        titleLabel.layer.style.height = "20px";
-        titleLabel.layer.style.width = "";
-        cell.addSubview(titleLabel);        
+        titleLabel.layer.style.left = "";
+        titleLabel.layer.style.top = "";
+        titleLabel.layer.style.right = "";
+        titleLabel.layer.style.height = "";
+        titleLabel.layer.style.width = ""; 
+        titleLabel.layer.style.background = "";
+        titleLabel.layer.classList.add("alertview_title");
+        cell.addSubview(titleLabel);
 
         var messageLabel = new MUILabel();
         messageLabel.init();
         messageLabel.text = this._message;
-        messageLabel.setTextAlignment("center");
-        messageLabel.layer.style.left = "10px";
-        messageLabel.layer.style.top = "30px";
-        messageLabel.layer.style.right = "10px";
-        messageLabel.layer.style.height = "20px";
+        messageLabel.layer.style.left = "";
+        messageLabel.layer.style.top = "";
+        messageLabel.layer.style.right = "";
+        messageLabel.layer.style.height = "";
         messageLabel.layer.style.width = "";
+        messageLabel.layer.style.background = "";
+        messageLabel.layer.classList.add("alertview_subtitle");
         cell.addSubview(messageLabel);          
         
+        cell.layer.style.background = "transparent";
+
         return cell;
     }
 
@@ -189,15 +206,17 @@ class MUIAlertViewController extends MUIViewController
         var buttonLabel = new MUILabel();
         buttonLabel.init();
         buttonLabel.text = title;
-        buttonLabel.setTextAlignment("center");
-        buttonLabel.layer.style.left = "10px";
-        buttonLabel.layer.style.top = "5px";
-        buttonLabel.layer.style.right = "10px";
-        buttonLabel.layer.style.height = "20px";
+        buttonLabel.layer.style.left = "";
+        buttonLabel.layer.style.top = "";
+        buttonLabel.layer.style.right = "";
+        buttonLabel.layer.style.height = "";
         buttonLabel.layer.style.width = "";
+        buttonLabel.layer.style.background = "";
+        buttonLabel.layer.classList.add("alertview_cell_default_title");
         cell.addSubview(buttonLabel);  
 
-        cell.layer.style.borderTop = "1px solid rgb(0,0,0)";                   
+        cell.layer.style.background = "transparent";
+        cell.layer.classList.add("alertview_cell_default");
 
         return cell;        
     }
