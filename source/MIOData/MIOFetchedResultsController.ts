@@ -50,8 +50,10 @@ class MIOFetchedResultsController extends MIOObject
         {
             MIONotificationCenter.defaultCenter().addObserver(this, "MIO" + this._request.entityName, function(notification){
 
-                var array = notification.object;
-                this.updateContent(array);
+                var objs = notification.object;
+                var type = notification.userInfo;
+
+                this.updateContent(objs);
             });
         }
         else
