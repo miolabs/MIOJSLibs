@@ -23,7 +23,7 @@ function MUIOutlet(owner, elementID, className?, options?)
         className = layer.getAttribute("data-class");
 
     if (className == null)
-        className = "MIOView";
+        className = "MUIView";
 
     var c = MIOClassFromString(className);
     c.initWithLayer(layer, options);
