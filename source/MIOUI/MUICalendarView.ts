@@ -26,7 +26,7 @@ class MUICalendarCell extends MUIView
     }
 }
 
-class MIOCalendarView extends MUIView
+class MUICalendarView extends MUIView
 {
     startDate = null;
     endDate = null;

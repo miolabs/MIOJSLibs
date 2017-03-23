@@ -25,6 +25,7 @@
 /// <reference path="MUIMenu.ts" />
 /// <reference path="MUISegmentedControl.ts" />
 /// <reference path="MUIPageControl.ts" />
+/// <reference path="MUIToolbar.ts" />
 
 /// <reference path="MUIViewController.ts" />
 /// <reference path="MUINavigationController.ts" />

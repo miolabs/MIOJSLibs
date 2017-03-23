@@ -15,7 +15,7 @@ class MUIToolbarButton extends MUIButton
     }
 }
 
-class MIOToolbar extends MUIView
+class MUIToolbar extends MUIView
 {
     buttons = [];
 
