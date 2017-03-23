@@ -454,6 +454,13 @@ class MUIViewController extends MIOObject
         return this._contentSize;
     }
 
+    public set preferredContentSize(size)
+    {
+        this.willChangeValue("preferredContentSize");
+        this._preferredContentSize = size;
+        this.didChangeValue("preferredContentSize");
+    }
+
     public get preferredContentSize()
     {
         return this._preferredContentSize;

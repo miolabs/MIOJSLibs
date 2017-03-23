@@ -181,16 +181,18 @@ class MUIPresentationController extends MIOObject
         // Track view frame changes
         if (MIOCoreIsMobile() == false && vc.modalPresentationStyle != MUIModalPresentationStyle.CurrentContext)
         {
-            vc.addObserver(this, "contentSize");
+            vc.addObserver(this, "preferredContentSize");
         }
     }
 
     observeValueForKeyPath(key, type, object) {
 
-        if (key == "contentSize" && type == "did")
+        if (key == "preferredContentSize" && type == "did")
         {
-            this._calculateFrame();
-            this.window.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+            var vc = this.presentedView;
+            //this.window.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+            vc.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
+            this._calculateFrame();            
         }
     }
 
