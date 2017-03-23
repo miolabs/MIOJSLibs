@@ -138,16 +138,26 @@ function MIOGetDefaultLanguage()
 function MIOClassFromString(className)
 {
     //instance creation here
-    var object = Object.create(window[className].prototype);
-    object.constructor.apply(object);
+    try {
+        var object = Object.create(window[className].prototype);
+        object.constructor.apply(object);
+
+    }
+    catch (e){
+        throw 'Error, class (' + className + ') not found.';
+        //if(e instanceof RangeError){
+        //    console.log('out of range');
+        //}
+    }
+
 
     return object;
 }
 
 function MIOCoreIsMobile()
 {
-    if (_mc_force_mobile == true)
-        return true;
+   // if (_mc_force_mobile == true)
+   //     return true;
 
     ///<summary>Detecting whether the browser is a mobile browser or desktop browser</summary>
     ///<returns>A boolean value indicating whether the browser is a mobile browser or not</returns>

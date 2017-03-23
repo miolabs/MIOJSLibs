@@ -154,6 +154,26 @@ class MIOManagedObjectContext extends MIOObject
         }
     }
 
+    removeObject(obj)
+    {
+        //obj.saveChanges();
+
+        var entityName = obj.entityName;
+        var array = this._deletedObjects[entityName];
+        if (array == null)
+        {
+            array = [];
+            array.push(obj);
+            this._deletedObjects[entityName] = array;
+        }
+        else
+        {
+            var index = array.indexOf(obj);
+            if (index == -1)
+                array.push(obj);
+        }
+    }
+
     removeAllObjectsForEntityName(entityName)
     {
         var objs = this._objects [entityName];
@@ -271,6 +291,29 @@ class MIOManagedObjectContext extends MIOObject
 
         // Clear array
         this._updateObjects = [];
+
+        // Remove objects
+        for (var key in this._deletedObjects)
+        {
+            var objs = this._deletedObjects[key];
+
+            // save changes
+            for (var i = 0; i < objs.length; i++)
+            {
+                var o = objs[i];
+                var objects = this._objects[o.entityName];
+                var index = objects.indexOf(o);
+
+                if(index > -1) {
+                    objects.splice(index, 1);
+                }
+            }
+
+            MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "DELETED");
+        }
+
+        // Clear array
+        this._deletedObjects = [];
     }
 
     queryObject(entityName, predicateFormat?)
