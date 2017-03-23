@@ -1,6 +1,7 @@
 
 /// <reference path="MIOUI_CoreAnimation.ts" />
 /// <reference path="MUIView.ts" />
+/// <reference path="MUIViewController.ts" />
 
 interface Window {
     prototype;
