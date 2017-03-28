@@ -29,28 +29,28 @@ class MUIPageController extends MUIViewController
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewWillAppear();
-        vc._childControllersWillAppear();
+        //vc._childControllersWillAppear();
     }
 
     viewDidAppear()
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewDidAppear();
-        vc._childControllersDidAppear();
+        //vc._childControllersDidAppear();
     }
 
     viewWillDisappear()
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewWillDisappear();
-        vc._childControllersWillDisappear();
+        //vc._childControllersWillDisappear();
     }
 
     viewDidDisappear()
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewDidDisappear();
-        vc._childControllersDidDisappear();
+        //vc._childControllersDidDisappear();
     }
 
     showPageAtIndex(index)
