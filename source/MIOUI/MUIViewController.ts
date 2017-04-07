@@ -398,7 +398,7 @@ class MUIViewController extends MIOObject
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewWillAppear();
+            vc.viewWillAppear(animate);
         }
     }
 
@@ -407,7 +407,7 @@ class MUIViewController extends MIOObject
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewDidAppear();
+            vc.viewDidAppear(animate);
         }
     }
 
