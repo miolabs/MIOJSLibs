@@ -29,8 +29,7 @@ enum MUITableViewCellSeparatorStyle {
     SingleLineEtched // TODO
 }
 
-class MUITableViewCell extends MUIView
-{
+class MUITableViewCell extends MUIView {
     selected = false;
 
     textLabel = null;
@@ -44,8 +43,7 @@ class MUITableViewCell extends MUIView
     private _row = 0;
     private _section = 0;
 
-    initWithStyle(style:MUITableViewCellStyle)
-    {
+    initWithStyle(style: MUITableViewCellStyle) {
         super.init();
 
         if (style == MUITableViewCellStyle.Default) {
@@ -63,40 +61,34 @@ class MUITableViewCell extends MUIView
         this._setupLayer();
     }
 
-    initWithLayer(layer, options)
-    {
+    initWithLayer(layer, options) {
         super.initWithLayer(layer, options);
 
         this._setupLayer();
     }
 
-    private _setupLayer()
-    {
+    private _setupLayer() {
         this.layer.style.background = "";
 
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
 
-        this.layer.onclick = function()
-        {
+        this.layer.onclick = function () {
             if (instance._onClickFn != null)
                 instance._onClickFn.call(instance._target, instance);
         };
 
-        this.layer.ondblclick = function()
-        {
+        this.layer.ondblclick = function () {
             if (instance._onDblClickFn != null)
                 instance._onDblClickFn.call(instance._target, instance);
         };
     }
 
-    setAccessoryType(type)
-    {
+    setAccessoryType(type) {
         if (type == this.accessoryType)
             return;
 
-        if (this.accesoryView == null)
-        {
+        if (this.accesoryView == null) {
             this.textLabel.layer.style.right = "25px";
 
             var layer = document.createElement("div");
@@ -104,7 +96,7 @@ class MUITableViewCell extends MUIView
             layer.style.top = "15px";
             layer.style.right = "5px";
             layer.style.width = "15px";
-            layer.style.height= "15px";
+            layer.style.height = "15px";
 
             this.accesoryView = new MUIView("accessory_view");
             this.accesoryView.initWithLayer(layer);
@@ -112,12 +104,10 @@ class MUITableViewCell extends MUIView
             this.addSubview(this.accesoryView);
         }
 
-        if (type == MUITableViewCellAccessoryType.Checkmark)
-        {
+        if (type == MUITableViewCellAccessoryType.Checkmark) {
             this.accesoryView.layer.classList.add("tableviewcell_accessory_checkmark");
         }
-        else  if (type == MUITableViewCellAccessoryType.None)
-        {
+        else if (type == MUITableViewCellAccessoryType.None) {
             if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
                 this.accesoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
         }
@@ -125,26 +115,22 @@ class MUITableViewCell extends MUIView
         this.accessoryType = type;
     }
 
-    setPaddingIndex(value)
-    {
+    setPaddingIndex(value) {
         var offset = (value + 1) * 10;
         this.textLabel.setX(offset);
     }
 
-    setHeight(h)
-    {
+    setHeight(h) {
         super.setHeight(h);
 
         var offsetY = (h - 15) / 2;
 
-        if (this.accesoryView != null)
-        {
+        if (this.accesoryView != null) {
             this.accesoryView.layer.style.top = offsetY + "px";
         }
     }
 
-    setSelected(value)
-    {
+    setSelected(value) {
         this.willChangeValue("selected");
         this.selected = value;
 
@@ -152,8 +138,7 @@ class MUITableViewCell extends MUIView
             this.layer.classList.remove("tableviewcell_deselected_color");
             this.layer.classList.add("tableviewcell_selected_color");
         }
-        else
-        {
+        else {
             this.layer.classList.remove("tableviewcell_selected_color");
             this.layer.classList.add("tableviewcell_deselected_color");
         }
@@ -163,10 +148,8 @@ class MUITableViewCell extends MUIView
         this.didChangeValue("selected");
     }
 
-    _setHightlightedSubviews(value)
-    {
-        for (var count = 0; count < this.subviews.length; count++)
-        {
+    _setHightlightedSubviews(value) {
+        for (var count = 0; count < this.subviews.length; count++) {
             var v = this.subviews[count];
             if (v instanceof MUILabel)
                 v.setHightlighted(value);
@@ -174,14 +157,12 @@ class MUITableViewCell extends MUIView
     }
 }
 
-class MUITableViewSection extends MIOObject
-{
+class MUITableViewSection extends MIOObject {
     header = null;
     cells = [];
 }
 
-class MUITableView extends MUIView
-{
+class MUITableView extends MUIView {
     dataSource = null;
     delegate = null;
 
@@ -208,15 +189,12 @@ class MUITableView extends MUIView
     private _needReloadData = false;
     private _cellPrototypes = {};
 
-    initWithLayer(layer, options)
-    {
+    initWithLayer(layer, options) {
         super.initWithLayer(layer, options);
 
         // Check if we have prototypes
-        if (this.layer.childNodes.length > 0)
-        {
-            for(var index = 0; index < this.layer.childNodes.length; index++)
-            {
+        if (this.layer.childNodes.length > 0) {
+            for (var index = 0; index < this.layer.childNodes.length; index++) {
                 var subLayer = this.layer.childNodes[index];
 
                 if (subLayer.tagName != "DIV")
@@ -226,20 +204,17 @@ class MUITableView extends MUIView
                     this._addCellPrototypeWithLayer(subLayer);
                     subLayer.style.display = "none";
                 }
-                else if (subLayer.getAttribute("data-tableview-header") != null)
-                {
+                else if (subLayer.getAttribute("data-tableview-header") != null) {
                     this._addHeaderWithLayer(subLayer);
                 }
-                else if (subLayer.getAttribute("data-tableview-footer") != null)
-                {
+                else if (subLayer.getAttribute("data-tableview-footer") != null) {
                     this._addFooterWithLayer(subLayer);
                 }
             }
         }
     }
 
-    private _addHeaderWithLayer(subLayer)
-    {
+    private _addHeaderWithLayer(subLayer) {
         this.headerView = new MUIView();
         this.headerView.initWithLayer(subLayer);
         // var h = this.headerView.getHeight();
@@ -247,16 +222,14 @@ class MUITableView extends MUIView
         // this.headerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     }
 
-    private _addFooterWithLayer(subLayer)
-    {
+    private _addFooterWithLayer(subLayer) {
         this.footerView = new MUIView();
         this.footerView.initWithLayer(subLayer);
         // var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         // this.footerView.setFrame(MIOFrame.frameWithRect(0, 0, size.width, size.height));
     }
 
-    private _addCellPrototypeWithLayer(subLayer)
-    {
+    private _addCellPrototypeWithLayer(subLayer) {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
         if (cellClassname == null) cellClassname = "MIOCollectionViewCell";
@@ -304,29 +277,27 @@ class MUITableView extends MUIView
             this._cellPrototypes[identifier] = item;
 
             this._cellPrototypesDownloadedCount++;
-            if (this._cellPrototypesDownloadedCount == this._cellPrototypesCount)
-            {
+            if (this._cellPrototypesDownloadedCount == this._cellPrototypesCount) {
                 this._isDownloadingCells = false;
                 if (this._needReloadData)
                     this.reloadData();
             }
 
-/*            var cells = item["cells"];
-            if (cells != null)
-            {
-                for (var index = 0; index < cells.length; index++)
-                {
-                    var cell = cells[index];
-                    cell.addSubLayersFromLayer(layer.cloneNode(true));
-                    cell.awakeFromHTML();
-                }
-            }
-            delete item["cells"];*/
+            /*            var cells = item["cells"];
+                        if (cells != null)
+                        {
+                            for (var index = 0; index < cells.length; index++)
+                            {
+                                var cell = cells[index];
+                                cell.addSubLayersFromLayer(layer.cloneNode(true));
+                                cell.awakeFromHTML();
+                            }
+                        }
+                        delete item["cells"];*/
         });
     }
 
-    dequeueReusableCellWithIdentifier(identifier)
-    {
+    dequeueReusableCellWithIdentifier(identifier) {
         var item = this._cellPrototypes[identifier];
 
         //instance creation here
@@ -364,30 +335,26 @@ class MUITableView extends MUIView
         return cell;
     }
 
-    setHeaderView(view)
-    {
+    setHeaderView(view) {
         this.headerView = view;
         this.addSubview(this.headerView);
     }
 
-    reloadData()
-    {
+    reloadData() {
         // Remove all subviews
-        for (var index = 0; index < this.sections.length; index++)
-        {
+        for (var index = 0; index < this.sections.length; index++) {
             var sectionView = this.sections[index];
             if (sectionView.header != null)
                 sectionView.header.removeFromSuperview();
 
-            for (var count = 0; count < sectionView.cells.length; count++){
+            for (var count = 0; count < sectionView.cells.length; count++) {
                 var cell = sectionView.cells[count];
                 cell.removeFromSuperview();
             }
         }
 
         // Is ready to reaload or the are still donwloading
-        if (this._isDownloadingCells == true)
-        {
+        if (this._isDownloadingCells == true) {
             this._needReloadData = true;
             return;
         }
@@ -396,8 +363,7 @@ class MUITableView extends MUIView
         this._indexPathsForSelectedRows = [];
 
         var sections = this.dataSource.numberOfSections(this);
-        for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++)
-        {
+        for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
             var section = new MUITableViewSection();
             section.init();
             this.sections.push(section);
@@ -406,8 +372,7 @@ class MUITableView extends MUIView
 
             var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
 
-            if (typeof this.dataSource.titleForHeaderInSection === "function")
-            {
+            if (typeof this.dataSource.titleForHeaderInSection === "function") {
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
                 var header = new MUIView();
                 header.init();
@@ -425,15 +390,13 @@ class MUITableView extends MUIView
 
                 this.addSubview(header);
             }
-            else if (typeof this.dataSource.viewForHeaderInSection === "function")
-            {
+            else if (typeof this.dataSource.viewForHeaderInSection === "function") {
                 var view = this.dataSource.viewForHeaderInSection(this, sectionIndex);
                 section.header = view;
                 this.addSubview(view);
             }
 
-            for (var index = 0; index < rows; index++)
-            {
+            for (var index = 0; index < rows; index++) {
                 var cell = this.dataSource.cellAtIndexPath(this, index, sectionIndex);
                 cell.addObserver(this, "selected");
                 section.cells.push(cell);
@@ -450,8 +413,7 @@ class MUITableView extends MUIView
         this.layout();
     }
 
-    layout()
-    {
+    layout() {
         super.layout();
 
         if (this.sections == null)
@@ -460,8 +422,7 @@ class MUITableView extends MUIView
         var y = 0;
         var w = this.getWidth();
 
-        if (this.headerView != null)
-        {
+        if (this.headerView != null) {
             this.headerView.setY(y);
 
             if (this.headerHeight > 0) {
@@ -472,14 +433,12 @@ class MUITableView extends MUIView
                 y += this.headerView.getHeight() + 1;
         }
 
-        for (var count = 0; count < this.sections.length; count++)
-        {
+        for (var count = 0; count < this.sections.length; count++) {
             var section = this.sections[count];
 
-            if (section.header != null)
-            {
+            if (section.header != null) {
                 section.header.setY(y);
-                if (this.sectionHeaderHeight > 0){
+                if (this.sectionHeaderHeight > 0) {
                     section.header.setHeight(this.sectionHeaderHeight);
                     y += this.sectionHeaderHeight;
                 }
@@ -504,7 +463,7 @@ class MUITableView extends MUIView
                 if (h == 0)
                     h = cell.getHeight();
 
-                if (h == 0){
+                if (h == 0) {
                     h = 44;
                     cell.setHeight(h);
                 }
@@ -517,8 +476,7 @@ class MUITableView extends MUIView
             }
         }
 
-        if (this.footerView != null)
-        {
+        if (this.footerView != null) {
             this.footerView.setY(y);
 
             if (this.footerHeight > 0) {
@@ -532,8 +490,7 @@ class MUITableView extends MUIView
         this.layer.scrollHeight = y;
     }
 
-    cellOnClickFn(cell)
-    {
+    cellOnClickFn(cell) {
         var index = cell._row;
         var section = cell._section;
 
@@ -548,7 +505,7 @@ class MUITableView extends MUIView
 
             if (canSelectCell == false)
                 return;
-            if(!this.allowsMultipleSelection) {
+            if (!this.allowsMultipleSelection) {
                 if (this.selectedCellRow > -1 && this.selectedCellSection > -1)
                     this.deselectCellAtIndexPath(this.selectedCellRow, this.selectedCellSection);
             }
@@ -559,21 +516,19 @@ class MUITableView extends MUIView
             this._selectCell(cell);
         }
 
-        if (this.delegate != null){
+        if (this.delegate != null) {
             if (typeof this.delegate.didSelectCellAtIndexPath === "function")
                 this.delegate.didSelectCellAtIndexPath(this, index, section);
         }
     }
 
-    cellOnDblClickFn(cell)
-    {
+    cellOnDblClickFn(cell) {
         var index = cell._row;
         var section = cell._section;
 
         var canSelectCell = true;
 
-        if (this.delegate != null)
-        {
+        if (this.delegate != null) {
             if (typeof this.delegate.canSelectCellAtIndexPath === "function")
                 canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
         }
@@ -597,7 +552,7 @@ class MUITableView extends MUIView
 
         this._selectCell(cell);
 
-        if (this.delegate != null){
+        if (this.delegate != null) {
             if (typeof this.delegate.didSelectCellAtIndexPath === "function")
                 this.delegate.didSelectCellAtIndexPath(this, index, section);
         }
@@ -620,27 +575,23 @@ class MUITableView extends MUIView
     //     return selected;
     // }
 
-    cellAtIndexPath(row, section)
-    {
+    cellAtIndexPath(row, section) {
         var s = this.sections[section];
         var c = s.cells[row];
 
         return c;
     }
 
-    indexPathForCell(cell)
-    {
+    indexPathForCell(cell) {
         //TODO
         return null;
     }
 
-    _selectCell(cell)
-    {
+    _selectCell(cell) {
         cell.setSelected(true);
     }
 
-    selectCellAtIndexPath(row, section)
-    {
+    selectCellAtIndexPath(row, section) {
         this.selectedCellRow = row;
         this.selectedCellSection = section;
         var cell = this.sections[section].cells[row];
@@ -648,17 +599,100 @@ class MUITableView extends MUIView
         this._selectCell(cell);
     }
 
-    _deselectCell(cell)
-    {
+    _deselectCell(cell) {
         cell.setSelected(false);
     }
 
-    deselectCellAtIndexPath(row, section)
-    {
+    deselectCellAtIndexPath(row, section) {
         this.selectedCellRow = -1;
         this.selectedCellSection = -1;
         var cell = this.sections[section].cells[row];
         this._deselectCell(cell);
+    }
+
+    setEnableKeyboardFocus(enable: Boolean) {
+        
+        this.layer.setAttribute("tabindex", 1);
+
+        var tv = this;
+        this.layer.onkeydown = function (e) {
+            if (e.keyCode == '38') {
+                // up arrow
+                console.log("Keyboard up");
+                tv._selectPrevIndexPath.call(tv);
+            }
+            else if (e.keyCode == '40') {
+                // down arrow
+                console.log("Keyboard down");
+                tv._selectNextIndexPath.call(tv);
+            }
+            else if (e.keyCode == '37') {
+                // left arrow
+            }
+            else if (e.keyCode == '39') {
+                // right arrow
+            }
+
+        }
+    }
+
+    private _selectNextIndexPath()
+    {
+        var sectionIndex = this.selectedCellSection;
+        var rowIndex = this.selectedCellRow;
+
+        if (sectionIndex == -1 && rowIndex == -1)
+        {
+            sectionIndex = 0;     
+            rowIndex = 0;
+        }
+        else 
+        {
+            this.deselectCellAtIndexPath(rowIndex, sectionIndex);
+            rowIndex++;
+        }
+
+        var section = this.sections[sectionIndex];
+        if (rowIndex < section.cells.length)
+        {
+            this.selectCellAtIndexPath(rowIndex, sectionIndex);
+        }
+        else 
+        {
+            rowIndex = 0;
+            sectionIndex++;
+            if (sectionIndex < this.sections.length)
+            {
+                this.selectCellAtIndexPath(rowIndex, sectionIndex);
+            }
+        }
+    }
+
+    private _selectPrevIndexPath()
+    {
+        if (this.selectedCellSection == -1 && this.selectedCellRow == -1) return;    
+
+        var sectionIndex = this.selectedCellSection;
+        var rowIndex = this.selectedCellRow - 1;
+
+        if (rowIndex > -1)
+        {
+            this.deselectCellAtIndexPath(rowIndex + 1, sectionIndex);
+            this.selectCellAtIndexPath(rowIndex, sectionIndex);
+        }        
+        else 
+        {
+            sectionIndex--;
+            if (sectionIndex > -1)
+            {
+                this.deselectCellAtIndexPath(rowIndex + 1, sectionIndex + 1);
+                
+                var section = this.sections[sectionIndex];
+                rowIndex = section.cells.length - 1;
+                
+                this.selectCellAtIndexPath(rowIndex, sectionIndex);
+            }            
+        }
     }
 
 }

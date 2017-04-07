@@ -5,6 +5,25 @@
 /// <reference path="MUIView.ts" />
 /// <reference path="MUILabel.ts" />
 
+function _MIOCCoreLoadTextFile(href) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", href, false);
+    xmlhttp.send();
+    var response = xmlhttp.responseText;
+    return response;
+}
+
+function _MIOLayerFromResource(url, css, elementID) {
+    var htmlString = _MIOCCoreLoadTextFile(url);
+    var parser = new DOMParser();
+    var html = parser.parseFromString(htmlString, "text/html");
+    //var styles = html.styleSheets;
+    //if (css != null)
+    //MIOCoreLoadStyle(css);
+    return (html.getElementById(elementID));
+}
+
+
 class MUICalendarCell extends MUIView
 {
     date = null;
@@ -57,7 +76,7 @@ class MUICalendarView extends MUIView
         var html = item["html"];
         var css = item["css"];
         var elID = item["id"];
-        var layer = MUILayerFromResource(html, css, elID);
+        var layer = _MIOLayerFromResource(html, css, elID);
         cell.initWithLayer(layer);
 
         return cell;

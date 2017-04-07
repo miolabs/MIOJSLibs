@@ -1,6 +1,7 @@
 
 /// <reference path="MIOUI_CoreAnimation.ts" />
 /// <reference path="MUIView.ts" />
+/// <reference path="MUIViewController.ts" />
 
 interface Window {
     prototype;
@@ -54,13 +55,13 @@ function MUIWindowSize()
 function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     toVC.viewWillAppear();
-    toVC._childControllersWillAppear();
+    //toVC._childControllersWillAppear();
 
     if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
 
         fromVC.viewWillDisappear();
-        fromVC._childControllersWillDisappear();
+        //fromVC._childControllersWillDisappear();
     }
 
     var view = null;
@@ -107,13 +108,13 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
 
         toVC.viewDidAppear();
-        toVC._childControllersDidAppear();
+        //toVC._childControllersDidAppear();
 
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
             || toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
 
             fromVC.viewDidDisappear();
-            fromVC._childControllersDidDisappear();
+            //fromVC._childControllersDidDisappear();
         }
         if (pc != null)
             pc.presentationTransitionDidEnd(true);
@@ -129,13 +130,13 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
         || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
 
         toVC.viewWillAppear();
-        toVC._childControllersWillAppear();
+        //toVC._childControllersWillAppear();
 
         toVC.view.layout();
     }
 
     fromVC.viewWillDisappear();
-    fromVC._childControllersWillDisappear();
+    //fromVC._childControllersWillDisappear();
 
     var view = null;
     var pc = null;
@@ -182,11 +183,11 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
             || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
 
             toVC.viewDidAppear();
-            toVC._childControllersDidAppear();
+            //toVC._childControllersDidAppear();
         }
 
         fromVC.viewDidDisappear();
-        fromVC._childControllersDidDisappear();
+        //fromVC._childControllersDidDisappear();
 
         if (pc != null)
             pc.dismissalTransitionDidEnd(true);
@@ -199,10 +200,10 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
 function _MUITransitionFromViewControllerToViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     toVC.viewWillAppear();
-    toVC._childControllersWillAppear();
+    //toVC._childControllersWillAppear();
 
     fromVC.viewWillDisappear();                
-    fromVC._childControllersWillDisappear();
+    //fromVC._childControllersWillDisappear();
     
     toVC.view.layout();
 
@@ -226,10 +227,10 @@ function _MUITransitionFromViewControllerToViewController(fromVC, toVC, sourceVC
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
 
         toVC.viewDidAppear();
-        toVC._childControllersDidAppear();
+        //toVC._childControllersDidAppear();
 
         fromVC.viewDidDisappear();
-        fromVC._childControllersDidDisappear();
+        //fromVC._childControllersDidDisappear();
 
         if (target != null && completion != null)
             completion.call(target);

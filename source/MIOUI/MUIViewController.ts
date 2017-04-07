@@ -393,27 +393,25 @@ class MUIViewController extends MIOObject
 
     viewDidLoad(){}
 
-    viewWillAppear(){}
-    protected _childControllersWillAppear()
+    viewWillAppear(animate?)
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewWillAppear();
-        }
-    }
-    viewDidAppear(){}
-    protected _childControllersDidAppear()
-    {
-        for (var index = 0; index < this._childViewControllers.length; index++)
-        {
-            var vc = this._childViewControllers[index];
-            vc.viewDidAppear();
+            vc.viewWillAppear(animate);
         }
     }
 
-    viewWillDisappear(){}
-    protected _childControllersWillDisappear()
+    viewDidAppear(animate?)
+    {
+        for (var index = 0; index < this._childViewControllers.length; index++)
+        {
+            var vc = this._childViewControllers[index];
+            vc.viewDidAppear(animate);
+        }
+    }
+
+    viewWillDisappear(animate?)
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
@@ -422,8 +420,7 @@ class MUIViewController extends MIOObject
         }
     }
 
-    viewDidDisappear(){}
-    protected _childControllersDidDisappear()
+    viewDidDisappear(animate?)
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
