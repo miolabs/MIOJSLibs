@@ -610,30 +610,26 @@ class MUITableView extends MUIView {
         this._deselectCell(cell);
     }
 
-    setEnableKeyboardFocus(enable: Boolean) {
-        
-        this.layer.setAttribute("tabindex", 1);
+    setEnableKeyboardNavigation(enable: Boolean) {
 
-        var tv = this;
-        this.layer.onkeydown = function (e) {
-            if (e.keyCode == '38') {
-                // up arrow
-                console.log("Keyboard up");
-                tv._selectPrevIndexPath.call(tv);
-            }
-            else if (e.keyCode == '40') {
-                // down arrow
-                console.log("Keyboard down");
-                tv._selectNextIndexPath.call(tv);
-            }
-            else if (e.keyCode == '37') {
-                // left arrow
-            }
-            else if (e.keyCode == '39') {
-                // right arrow
-            }
+        if (enable == true)
+        {
+            MIOCoreRegisterObserverForKeyEvent(MIOCoreEventKey.ArrowDown, this, function(){
 
+                this._selectNextIndexPath();
+            });
+
+            MIOCoreRegisterObserverForKeyEvent(MIOCoreEventKey.ArrowUp, this, function(){
+
+                this._selectPrevIndexPath();
+            });
         }
+        else 
+        {
+            MIOCoreUnregisterObserverForKeyEvent(MIOCoreEventKey.ArrowDown);
+            MIOCoreUnregisterObserverForKeyEvent(MIOCoreEventKey.ArrowUp);
+        }
+        
     }
 
     private _selectNextIndexPath()
