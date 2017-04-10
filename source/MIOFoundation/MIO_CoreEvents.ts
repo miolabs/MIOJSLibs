@@ -23,11 +23,12 @@ window.onerror = function (e) {
 };
 
 enum MIOCoreEventKey{
+    Enter = 13,
+    Escape = 27,
     ArrowLeft = 37,
     ArrowUp = 38,
     ArrowRight = 39,
-    ArrowDown = 40,
-    Escape
+    ArrowDown = 40    
 }
 
 var _MIOCoreEventKeysObservers = {};
@@ -35,7 +36,7 @@ var _MIOCoreEventKeysObservers = {};
 
 function MIOCoreRegisterObserverForKeyEvent(eventKey:MIOCoreEventKey, observer, completion)
 {
-    var item = {"Target" : observer, "Completion" : completion};
+    var item = {"Target" : observer, "Completion" : completion, "Press" : false};
     _MIOCoreEventKeysObservers[eventKey] = item;
 }
 

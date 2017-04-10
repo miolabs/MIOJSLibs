@@ -353,6 +353,9 @@ class MUITableView extends MUIView {
             }
         }
 
+        this.selectedCellRow = -1;
+        this.selectedCellSection = -1;
+
         // Is ready to reaload or the are still donwloading
         if (this._isDownloadingCells == true) {
             this._needReloadData = true;
@@ -610,29 +613,7 @@ class MUITableView extends MUIView {
         this._deselectCell(cell);
     }
 
-    setEnableKeyboardNavigation(enable: Boolean) {
-
-        if (enable == true)
-        {
-            MIOCoreRegisterObserverForKeyEvent(MIOCoreEventKey.ArrowDown, this, function(){
-
-                this._selectNextIndexPath();
-            });
-
-            MIOCoreRegisterObserverForKeyEvent(MIOCoreEventKey.ArrowUp, this, function(){
-
-                this._selectPrevIndexPath();
-            });
-        }
-        else 
-        {
-            MIOCoreUnregisterObserverForKeyEvent(MIOCoreEventKey.ArrowDown);
-            MIOCoreUnregisterObserverForKeyEvent(MIOCoreEventKey.ArrowUp);
-        }
-        
-    }
-
-    private _selectNextIndexPath()
+    selectNextIndexPath()
     {
         var sectionIndex = this.selectedCellSection;
         var rowIndex = this.selectedCellRow;
@@ -664,7 +645,7 @@ class MUITableView extends MUIView {
         }
     }
 
-    private _selectPrevIndexPath()
+    selectPrevIndexPath()
     {
         if (this.selectedCellSection == -1 && this.selectedCellRow == -1) return;    
 
