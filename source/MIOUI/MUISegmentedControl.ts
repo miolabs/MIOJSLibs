@@ -10,9 +10,9 @@ class MUISegmentedControl extends MUIControl
     segmentedItems = [];
     selectedSegmentedIndex = -1;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         // Check for segmented items
         var opts = {};
@@ -28,6 +28,7 @@ class MUISegmentedControl extends MUIControl
                 si.initWithLayer(itemLayer, opts);
                 si.type = MUIButtonType.PushIn;
                 this._addSegmentedItem(si);
+                MUIOutletRegister(owner, si.layerID, si);
             }
         }
 

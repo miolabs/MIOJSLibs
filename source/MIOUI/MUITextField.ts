@@ -31,9 +31,9 @@ class MUITextField extends MUIControl
         this._setupLayer();
     }
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this._inputLayer = MUILayerGetFirstElementWithTag(this.layer, "INPUT");
 

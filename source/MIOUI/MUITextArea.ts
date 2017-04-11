@@ -12,9 +12,9 @@ class MUITextArea extends MUIControl
     textChangeTarget = null;
     textChangeAction = null;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this.textareaLayer = document.createElement("textarea");
         this.textareaLayer.style.width = "98%";

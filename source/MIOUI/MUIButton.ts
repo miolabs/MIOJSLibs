@@ -27,19 +27,23 @@ class MUIButton extends MUIControl
     private _selected = false;
     type = MUIButtonType.MomentaryPushIn;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
+
+        var opts = options != null ? options : {}; 
 
         var type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")
             this.type = MUIButtonType.MomentaryPushIn;
         else if (type == "PushOnPushOff")
             this.type = MUIButtonType.PushOnPushOff;
+        else if (type == "PushIn")
+            this.type = MUIButtonType.PushIn;
 
         this._statusStyle = this.layer.getAttribute("data-status-style-prefix");
-        if (this._statusStyle == null && options != null)
-            this._statusStyle = options["status-style-prefix"] + "_status";
+        if (this._statusStyle == null && opts["status-style-prefix"] != null)
+            this._statusStyle = opts["status-style-prefix"] + "_status";
 
         // Check for title layer
         this._titleLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
@@ -49,9 +53,9 @@ class MUIButton extends MUIControl
         }
 
         if (this._titleLayer != null) {
-            this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style");
-            if (this._titleStatusStyle == null && options != null)
-                this._titleStatusStyle = options["status-style-prefix"] + "_title_status";
+            this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style-prefix");
+            if (this._titleStatusStyle == null && opts["status-style-prefix"] != null)
+                this._titleStatusStyle = opts["status-style-prefix"] + "_title_status";
         }
 
          var key = this.layer.getAttribute("data-title");
@@ -62,9 +66,9 @@ class MUIButton extends MUIControl
         this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "DIV");
 
         if (this._imageLayer != null) {
-            this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style");
-            if (this._imageStatusStyle == null && options != null)
-                this._imageStatusStyle = options["status-style-prefix"] + "_image_status";
+            this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style-prefix");
+            if (this._imageStatusStyle == null && opts["status-style-prefix"] != null)
+                this._imageStatusStyle = opts["status-style-prefix"] + "_image_status";
         }
 
         // Check for status

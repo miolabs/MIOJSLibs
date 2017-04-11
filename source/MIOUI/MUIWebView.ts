@@ -18,9 +18,9 @@ class MUIWebView extends MUIView
         this.layer.appendChild(this._iframeLayer);
     }
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this._iframeLayer = MUILayerGetFirstElementWithTag(this.layer, "IFRAME");
         if (this._iframeLayer == null) {

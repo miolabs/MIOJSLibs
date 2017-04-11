@@ -40,48 +40,44 @@ class MUINavigationController extends MUIViewController
         }
     }
 
-    _childControllersWillAppear()
+    viewWillAppear(animate?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewWillAppear();
-        vc._childControllersWillAppear();
+        vc.viewWillAppear(animate);
     }
 
-    _childControllersDidAppear()
+    viewDidAppear(animate?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewDidAppear();
-        vc._childControllersDidAppear();
+        vc.viewDidAppear(animate);
     }
 
-    _childControllersWillDisappear()
+    viewWillDisappear(animate?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewWillDisappear();
-        vc._childControllersWillDisappear();
+        vc.viewWillDisappear(animate);
     }
 
-    _childControllersDidDisappear()
+    viewDidDisappear(animate?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewDidDisappear();
-        vc._childControllersDidDisappear();
+        vc.viewDidDisappear(animate);
     }
 
     pushViewController(vc, animate?)

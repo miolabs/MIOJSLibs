@@ -7,9 +7,22 @@ interface Window {
     prototype;
 }
 
+function MUIOutletRegister(owner, layerID, c)
+{
+    owner._outlets[layerID] = c;
+}
+
+function MUIOutletQuery(owner, layerID)
+{
+    return owner._outlets[layerID];
+}
+
 function MUIOutlet(owner, elementID, className?, options?)
 {
     //var layer = document.getElementById(elementID);
+    var c = MUIOutletQuery(owner, elementID);
+    if (c != null) return c;
+
     var layer = null;
 
     if (owner instanceof MUIView)
@@ -27,7 +40,9 @@ function MUIOutlet(owner, elementID, className?, options?)
         className = "MUIView";
 
     var c = MIOClassFromString(className);
-    c.initWithLayer(layer, options);
+    c.initWithLayer(layer, owner, options);
+    // Track outlets inside view controller (owner)
+    MUIOutletRegister(owner, elementID, c);
 
     if (owner instanceof MUIView)
         owner._linkViewToSubview(c);

@@ -4,28 +4,15 @@
 
 /// <reference path="MUIControl.ts" />
 
-function MIOCheckButtonFromElementID(view, elementID)
-{
-    var layer = MUILayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var button = new MUICheckButton();
-    button.initWithLayer(layer);
-    view._linkViewToSubview(button);
-
-    return button;
-}
-
 class MUICheckButton extends MUIControl
 {
     target = null;
     action = null;
     on = false; //Off
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this.layer.classList.add("check_button");
         this.layer.classList.add("check_button_state_off");

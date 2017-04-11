@@ -8,9 +8,9 @@ class MUIActivityIndicator extends MUIView
 {
     gray = false;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         if (options != null){
             this.gray = options["Gray"] == true ? true : false;

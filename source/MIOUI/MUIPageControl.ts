@@ -11,7 +11,7 @@ class MUIPageControl extends MUIControl {
     private _items = [];
     private _currentPage = -1;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
         super.initWithLayer(layer, options);
 
@@ -22,7 +22,7 @@ class MUIPageControl extends MUIControl {
             if (itemLayer.tagName == "DIV")
             {
                 var i = new MUIButton();
-                i.initWithLayer(itemLayer);
+                i.initWithLayer(itemLayer, owner, options);
                 this._items.push(i);
             }
         }

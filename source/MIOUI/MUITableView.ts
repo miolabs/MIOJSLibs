@@ -61,8 +61,8 @@ class MUITableViewCell extends MUIView {
         this._setupLayer();
     }
 
-    initWithLayer(layer, options) {
-        super.initWithLayer(layer, options);
+    initWithLayer(layer, owner, options) {
+        super.initWithLayer(layer, owner, options);
 
         this._setupLayer();
     }
@@ -189,8 +189,8 @@ class MUITableView extends MUIView {
     private _needReloadData = false;
     private _cellPrototypes = {};
 
-    initWithLayer(layer, options) {
-        super.initWithLayer(layer, options);
+    initWithLayer(layer, owner, options?) {
+        super.initWithLayer(layer, owner, options);
 
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {

@@ -12,9 +12,9 @@ class MUIPopUpButton extends MUIButton
     private _menu = null;
     private _isVisible = false;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         // Check if we have a menu
         /*if (this.layer.childNodes.length > 0)

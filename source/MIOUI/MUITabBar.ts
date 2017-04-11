@@ -6,80 +6,37 @@
 /// <reference path="MUIButton.ts" />
 
 
-class MUITabBarItem extends MUIView
+class MUITabBarItem extends MUIButton
 {
-    private _titleStatusStyle = null;
-    private _titleLayer = null;
-
-    private _imageStatusStyle = null;
-    private _imageLayer = null;
-
-    isSelected = false;
-
-    initWithLayer(layer, options?)
-    {
-        super.initWithLayer(layer, options);
-
-        if (this.layer.childNodes.length < 2)
-            throw new Error("Tab bar item broken!");
-
-        var count = 0;
-        for (var index = 0; index < this.layer.childNodes.length; index++)
-        {
-            var l = this.layer.childNodes[index];
-            if (l.tagName == "DIV") {
-                count++;
-                if (count == 1) {
-                    this._imageLayer = l;
-                    this._imageStatusStyle = l.getAttribute("data-status-style");
-                }
-                else if (count == 2) {
-                    this._titleLayer = l;
-                    this._titleStatusStyle = l.getAttribute("data-status-style");
-                    break;
-                }
-            }
-        }
-    }
-
-    setSelected(value)
-    {
-        if (value == true) {
-            this._imageLayer.classList.remove(this._imageStatusStyle + "_off");
-            this._imageLayer.classList.add(this._imageStatusStyle + "_on");
-            this._titleLayer.classList.remove(this._titleStatusStyle + "_off");
-            this._titleLayer.classList.add(this._titleStatusStyle + "_on");
-        }
-        else {
-            this._imageLayer.classList.remove(this._imageStatusStyle + "_on");
-            this._imageLayer.classList.add(this._imageStatusStyle + "_off");
-            this._titleLayer.classList.remove(this._titleStatusStyle + "_on");
-            this._titleLayer.classList.add(this._titleStatusStyle + "_off");
-        }
-
-        this.isSelected = value;
-    }
+    // TODO: Add more extra features. Comming soon
 }
 
 class MUITabBar extends MUIView
 {
-    items = [];
+    items = [];    
     selectedTabBarItemIndex = -1;
 
-    initWithLayer(layer, options)
-    {
-        super.initWithLayer(layer, options);
+    private _itemsByIdentifier = {};
 
-        // TODO: change to buttons
+    initWithLayer(layer, owner, options?)
+    {
+        super.initWithLayer(layer, owner, options);
+
         // Check for tab items
+        var opts = {};
+        var sp = layer.getAttribute("data-status-style-prefix");
+        if (sp != null) opts["status-style-prefix"] = sp;
+        
         for (var index = 0; index < this.layer.childNodes.length; index++)
         {
             var tabItemLayer = this.layer.childNodes[index];
             if (tabItemLayer.tagName == "DIV")
             {
                 var ti = new MUITabBarItem();
-                ti.initWithLayer(tabItemLayer);
+                ti.initWithLayer(tabItemLayer, owner, opts);
+                ti.type = MUIButtonType.PushIn;                
                 this._addTabBarItem(ti);
+                MUIOutletRegister(owner, ti.layerID, ti);
             }
         }
 
@@ -138,8 +95,9 @@ class MUITabBar extends MUIView
         var x = 0;
 
         for (var index = 0; index < this.items.length; index++)
-        {
+        {            
             var item = this.items[index];
+            if (item.hidden == true) continue;
             item.setFrame(MIOFrame.frameWithRect(x, 0, w, this.getHeight()));
             x += w;
         }

@@ -11,9 +11,9 @@ class MUIComboBox extends MUIControl
     target = null;
     action = null;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this._selectLayer = MUILayerGetFirstElementWithTag(this.layer, "SELECT");
         if (this._selectLayer == null) {

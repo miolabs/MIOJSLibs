@@ -6,10 +6,11 @@
 
 class MUIToolbarButton extends MUIButton
 {
-    public static buttonWithLayer(layer)
-    {
-        var tb = new MUIToolbarButton();
-        tb.initWithLayer(layer);
+    public static buttonWithLayer(layer, owner)
+    {        
+        var lid = layer.getAttribute("id");
+        var tb = new MUIToolbarButton(lid); 
+        tb.initWithLayer(layer, owner);
 
         return tb;
     }
@@ -19,9 +20,9 @@ class MUIToolbar extends MUIView
 {
     buttons = [];
 
-    initWithLayer(layer, options)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         // Check if we have sub nodes
         if (this.layer.childNodes.length > 0)
@@ -31,7 +32,9 @@ class MUIToolbar extends MUIView
                 var layer = this.layer.childNodes[index];
                 if (layer.tagName == "DIV")
                 {
-                    var button = MUIToolbarButton.buttonWithLayer(layer);
+                    var lid = layer.getAttribute("id");
+                    var tb = new MUIToolbarButton(lid); 
+                    var button = MUIToolbarButton.buttonWithLayer(layer, owner);
                     button.parent = this;
 
                     this._linkViewToSubview(button);

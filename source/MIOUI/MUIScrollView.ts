@@ -11,9 +11,9 @@ class MUIScrollView extends MUIView
 
     private _lastOffsetX = 0;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         var instance = this;
         this.layer.onscroll = function (e) {

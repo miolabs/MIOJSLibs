@@ -17,9 +17,9 @@ class MUILabel extends MUIView
         this._setupLayer();
     }
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this._textLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
         this._setupLayer();

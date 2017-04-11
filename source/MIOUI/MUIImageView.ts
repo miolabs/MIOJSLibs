@@ -4,26 +4,13 @@
 
 /// <reference path="MUIView.ts" />
 
-function MUIImageViewFromElementID(view, elementID)
-{
-    var layer = MUILayerSearchElementByID(view.layer, elementID);
-    if (layer == null)
-        return null;
-
-    var iv = new MUIImageView();
-    iv.initWithLayer(layer);
-    view._linkViewToSubview(iv);
-
-    return iv;
-}
-
 class MUIImageView extends MUIView
 {
     private _imageLayer = null;
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, options);
+        super.initWithLayer(layer, owner, options);
 
         this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "IMG");
         if (this._imageLayer == null) {

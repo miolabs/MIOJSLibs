@@ -14,7 +14,7 @@
 
 class MUIViewController extends MIOObject
 {
-    layerID:string = null;    
+    layerID:string = null;        
 
     view:MUIView = null;
 
@@ -48,6 +48,8 @@ class MUIViewController extends MIOObject
     protected _contentSize = new MIOSize(320, 200);
     protected _preferredContentSize = null;
 
+    _outlets = {};
+
     constructor(layerID?)
     {
         super();
@@ -63,12 +65,12 @@ class MUIViewController extends MIOObject
         this._layerIsReady = true;
     }
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
         super.init();
 
         this.view = new MUIView(this.layerID);
-        this.view.initWithLayer(layer, options);
+        this.view.initWithLayer(layer, owner, options);
         this._layerIsReady = true;
     }
 

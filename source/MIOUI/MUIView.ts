@@ -96,6 +96,8 @@ class MUIView extends MIOObject
 
     _window:MUIWindow = null;
 
+    _outlets = {};
+
     constructor(layerID?)
     {
         super();
@@ -125,10 +127,12 @@ class MUIView extends MIOObject
         this.layer.style.height = frame.size.height + "px";
     }
 
-    initWithLayer(layer, options?)
+    initWithLayer(layer, owner, options?)
     {
         this.layer = layer;
         this.layerOptions = options;
+        var layerID = this.layer.getAttribute("id");
+        if (layerID != null) this.layerID = layerID;
 
         this._addLayerToDOM();
     }
