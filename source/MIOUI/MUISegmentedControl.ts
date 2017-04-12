@@ -25,7 +25,7 @@ class MUISegmentedControl extends MUIControl
             if (itemLayer.tagName == "DIV")
             {
                 var si = new MUIButton();
-                si.initWithLayer(itemLayer, opts);
+                si.initWithLayer(itemLayer, owner, opts);
                 si.type = MUIButtonType.PushIn;
                 this._addSegmentedItem(si);
                 MUIOutletRegister(owner, si.layerID, si);

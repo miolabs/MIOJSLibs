@@ -47,8 +47,6 @@ class MUICalendarCell extends MUIView
 
 class MUICalendarView extends MUIView
 {
-    startDate = null;
-    endDate = null;
     dataSource = null;
     delegate = null;
 
@@ -56,7 +54,17 @@ class MUICalendarView extends MUIView
     cells = [];
     cellDates = [];
 
-    cellPrototypes = {};
+    private _cellPrototypes = {};
+    private _today = new Date();
+    private _currentM
+
+    private _visibleViews;
+        
+    initWithLayer(layer, owner, options?)
+    {
+        super.initWithLayer(layer, owner, options);
+
+    }
 
     addCellPrototypeWithIdentifier(identifier, classname,  html, css, elementID)
     {
