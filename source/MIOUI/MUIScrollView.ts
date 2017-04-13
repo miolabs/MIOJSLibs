@@ -20,11 +20,16 @@ class MUIScrollView extends MUIView
 
             instance._layerDidScroll.call(instance);
         };
+        
+        this.layer.onwheel = function (e) {
 
-        this.layer.onwheel = function () {
-
-            instance._layerDidMouseUp.call(instance);
+            instance._layerOnScrollEvent.call(instance, e);
         };
+    }
+
+    private _layerOnScrollEvent(e)
+    {
+        
     }
 
     private _layerDidMouseUp()

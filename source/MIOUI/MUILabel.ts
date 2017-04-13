@@ -17,6 +17,12 @@ class MUILabel extends MUIView
         this._setupLayer();
     }
 
+    initWithFrame(frame:MIOFrame)
+    {
+        super.initWithFrame(frame);
+        this._setupLayer();
+    }
+
     initWithLayer(layer, owner, options?)
     {
         super.initWithLayer(layer, owner, options);
