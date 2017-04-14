@@ -2,7 +2,7 @@
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MUIView.ts" />
+/// <reference path="MUIScrollView.ts" />
 /// <reference path="MUILabel.ts" />
 
 function _MIOCCoreLoadTextFile(href) {
@@ -24,110 +24,175 @@ function _MIOLayerFromResource(url, css, elementID) {
 }
 
 
-class MUICalendarCell extends MUIView
-{
+class MUICalendarCell extends MUIView {
     date = null;
 
-    initWithLayer(layer, options?)
-    {
+    initWithLayer(layer, options?) {
         super.initWithLayer(layer, options);
 
         var instance = this;
-        this.layer.onclick = function()
-        {
+        this.layer.onclick = function () {
             if (instance.parent.delegate != null)
                 instance.parent.delegate.cellDidSelectedForCalendar.call(instance.parent, instance.date);
         }
     }
 }
 
-class MUICalendarDayView extends MUIView
-{
-    weekRow:number;
+class MUICalendarDayCell extends MUIView {
+    weekRow: number;
 
-    private _date:Date = null;
-    get date():Date {return this._date;}
+    private _date: Date = null;
+    get date(): Date {
+        return this._date;
+    }
 
     private _day = null;
     private _month = null;
     private _year = null;
-    
+
     private _titleLabel = null;
 
-    initWithDate(date:Date)
-    {
+    init() {
         super.init();
 
+        this.layer.style.background = "";
+        this.layer.classList.add("calendarview_day_cell");
+
+        this._titleLabel = new MUILabel();
+        this._titleLabel.init();
+        this.addSubview(this._titleLabel);
+
+        this._titleLabel.layer.style.background = "";
+        this._titleLabel.layer.style.left = "";
+        this._titleLabel.layer.style.top = "";
+        this._titleLabel.layer.style.width = "";
+        this._titleLabel.layer.style.height= "";
+        this._titleLabel.layer.classList.add("calendarview_day_title");
+    }
+
+    setDate(date: Date) {
         this._date = new Date(date.getTime());
 
         this._day = date.getDate();
         this._month = date.getMonth();
         this._year = date.getFullYear();
 
-        this._titleLabel = new MUILabel();
-        this._titleLabel.init();
         this._titleLabel.text = date.getDate();
-        this.addSubview(this._titleLabel);
     }
-
-    layout()
-    {
-        this._titleLabel.setFrame(MIOFrame.frameWithRect(0, 0, this.frame.size.width, this.frame.size.height));
-    }       
 }
 
-class MUICalendarMonthView extends MUIView
-{
+class MUICalendarMonthView extends MUIView {
     private _month = null;
-    private _year = null;
+    get month() {
+        return this._month;
+    }
 
-    private _hearder = null;
+    private _year = null;
+    get year() {
+        return this._year;
+    }
+
+    private _header = null;
+    private _headerTitleLabel = null;
+
     private _dayViews = [];
+    private _dayViewIndex = 0;
 
     private _weekRows = 0;
-    
-    initWithMonth(month, year)
-    {
+
+    initWithMonth(month, year) {
         super.init();
 
-        this._month = month < 0 ? 11 : month;
-        this._year = month < 0 ? year - 1 : year;
+        this._header = new MUIView();
+        this._header.init();
+        this._header.layer.style.left = "";
+        this._header.layer.style.top = "";
+        this._header.layer.style.width = "";
+        this._header.layer.style.height = "";
+        this._header.layer.style.background = "";
+        this._header.layer.classList.add("calendarview_month_header");
+        this.addSubview(this._header);
+
+        this._headerTitleLabel = new MUILabel();
+        this._headerTitleLabel.init();
+        this._headerTitleLabel.layer.style.height= "";
+        this._headerTitleLabel.layer.style.background = "";
+        this._headerTitleLabel.layer.classList.add("calendarview_month_header_title");
+        this._header.addSubview(this._headerTitleLabel);
+
+        var w = 100 / 7;
+        for (var index = 0; index < 7; index++){
+
+                var dayLabel = new MUILabel();
+                dayLabel.init();
+                dayLabel.layer.style.top = "";
+                dayLabel.layer.style.height = "";
+                dayLabel.layer.style.left = (w * index) + "%";
+                dayLabel.layer.style.width = w + "%";
+                dayLabel.layer.classList.add("calendarview_month_header_day_title");
+                dayLabel.text = MIODateGetStringForDay(index).substr(0, 2);
+                this._header.addSubview(dayLabel);
+        }
+
+        this.setMonth(month, year);
+    }
+
+    setMonth(month, year) {
+        if (month < 0) {
+
+            this._month = 11;
+            this._year = year - 1;
+        }
+        else if (month > 11) {
+
+            this._month = 0;
+            this._year = year + 1;
+        }
+        else {
+
+            this._month = month;
+            this._year = year;
+        }
+
+        this._dayViewIndex = 0;
 
         this._setupHeader();
         this._setupDays();
     }
 
-    setMonth(month, year)
-    {
-        this._month = month < 0 ? 11 : month;
-        this._year = month < 0 ? year - 1 : year;
-        
-        this._hearder.text = MIODateGetStringForMonth(this._month);
+    private _setupHeader() {
+        this._headerTitleLabel.text = MIODateGetStringForMonth(this._month) + " " + this._year;
     }
 
-    private _setupHeader()
-    {
-        this._hearder = new MUILabel();
-        this._hearder.initWithFrame(MIOFrame.frameWithRect(0, 0, 100, 20));        
-        this.addSubview(this._hearder);
+    private _dequeueReusableDayView() {
+        var dv = null;
+        if (this._dayViewIndex < this._dayViews.length) {
+            dv = this._dayViews[this._dayViewIndex];
+        }
+        else {
+            dv = new MUICalendarDayCell();
+            dv.init();
+            this._dayViews.push(dv);
+            this.addSubview(dv);
+        }
+
+        this._dayViewIndex++;
+
+        return dv;
     }
 
-    private _setupDays()
-    {
+    private _setupDays() {
         var lastDate = new Date(this._year, this._month + 1, 0);
         var currentDate = new Date(this._year, this._month, 1);
-        
-        var rowIndex = MIOCalendarGetDayRowFromDate(currentDate) == 0 ? -1 : 0;
-        
-        while(lastDate >= currentDate)
-        {
-            var dayView = new MUICalendarDayView();
-            dayView.initWithDate(currentDate);
-            this._dayViews.push(dayView);
-            this.addSubview(dayView);
+
+        var rowIndex = MIODateGetDayFromDate(currentDate) == 0 ? -1 : 0;
+
+        while (lastDate >= currentDate) {
+            var dayView = this._dequeueReusableDayView();
+            dayView.setDate(currentDate);
 
             // Calculate rows
-            if (MIOCalendarGetDayRowFromDate(dayView.date) == 0)
+            if (MIODateGetDayFromDate(dayView.date) == 0)
                 rowIndex++;
 
             dayView.weekRow = rowIndex;
@@ -138,35 +203,38 @@ class MUICalendarMonthView extends MUIView
         this._weekRows = rowIndex + 1;
     }
 
-    layout()
-    {
+    layout() {
         // Layout header
-        this._hearder.setFrame(MIOFrame.frameWithRect(0, 0, this.frame.size.width, 20));
+        var headerHeight = this._header.getHeight() + 1;
 
         // Layout days
         var x = 0;
-        var y = 21;
+        var y = 0;
         var w = this.frame.size.width / 7;
-        var h = (this.getHeight() - y) / this._weekRows;
+        var h = (this.getHeight() - headerHeight) / this._weekRows;
+
         // Offset x maping by day index
-        var offsetX = [0, w, w * 2, w * 3, w * 4,  w * 5, w * 6];
+        var marginX = 4;
+        var marginW = marginX * 2;
+        var offsetX = [marginX, w + marginX, (w * 2) + marginX, (w * 3) + marginX, (w * 4) + marginX, (w * 5) + marginX, (w * 6) + marginX];
 
-        for (var index = 0; index < this._dayViews.length; index++)
-        {
+        var marginY = 4;
+        var marginH = marginY * 2;
+
+        for (var index = 0; index < this._dayViews.length; index++) {
             var dv = this._dayViews[index];
-            
-            x = offsetX[MIOCalendarGetDayRowFromDate(dv.date];
-            y = 21 + (dv.weekRow * h);
 
-            dv.setFrame(MIOFrame.frameWithRect(x, y, w, h));
+            x = offsetX[MIODateGetDayFromDate(dv.date)];
+            y = headerHeight + (dv.weekRow * h);
 
-            dv.layout();            
+            dv.setFrame(MIOFrame.frameWithRect(x, y, (w - marginW), (h - marginW)));
+
+            dv.layout();
         }
     }
 }
 
-class MUICalendarView extends MUIScrollView
-{
+class MUICalendarView extends MUIScrollView {
     dataSource = null;
     delegate = null;
 
@@ -174,33 +242,27 @@ class MUICalendarView extends MUIScrollView
     cells = [];
     cellDates = [];
 
-    public get today() {return this._today;}
+    public get today() {
+        return this._today;
+    }
+
     private _today = new Date();
     private _currentMonth = this._today.getMonth();
-    
+
     private _cellPrototypes = {};
 
     private _views = [];
     private _visibleViews = [];
-        
-    initWithLayer(layer, owner, options?)
-    {
-        super.initWithLayer(layer, owner, options);
-        
-        this.layer.onscroll = function(){
 
-            console.log("Trying to scroll");
-        };
-    }
+    private _scrollTopLimit = 0;
+    private _scrollBottomLimit = 0;
 
-    addCellPrototypeWithIdentifier(identifier, classname,  html, css, elementID)
-    {
+    addCellPrototypeWithIdentifier(identifier, classname, html, css, elementID) {
         // var item = {"html" : html, "css" : css, "id" : elementID, "class" : classname};
         // this.cellPrototypes[identifier] = item;
     }
 
-    cellWithIdentifier(identifier)
-    {
+    cellWithIdentifier(identifier) {
         var item = this.cellPrototypes[identifier];
 
         //instance creation here
@@ -217,16 +279,13 @@ class MUICalendarView extends MUIScrollView
         return cell;
     }
 
-    scrollToDate(date:Date)
-    {
+    scrollToDate(date: Date) {
         // TODO
     }
 
-    reloadData()
-    {
+    reloadData() {
         // Remove all subviews
-        for (var index = 0; index < this._views.length; index++)
-        {
+        for (var index = 0; index < this._views.length; index++) {
             var view = this._views[index];
             view.removeFromSuperview();
         }
@@ -234,11 +293,10 @@ class MUICalendarView extends MUIScrollView
         this._views = [];
 
         var currentYear = this.today.getFullYear();
-        var currentMonth = this.today.getMonth() - 1;        
+        var currentMonth = this.today.getMonth() - 1;
         var currentDate = new Date(this.today.getFullYear(), currentMonth, 1);
 
-        for (var index = 0; index < 3; index++)
-        {
+        for (var index = 0; index < 3; index++) {
             var mv = new MUICalendarMonthView();
             mv.initWithMonth(currentMonth + index - 1, currentYear);
             this.addSubview(mv);
@@ -250,33 +308,28 @@ class MUICalendarView extends MUIScrollView
         var dayIndex = 0;
         var count = 0;
 
-        while(this.endDate >= currentDate)
-        {
-            dayIndex = MIOCalendarGetDayRowFromDate(currentDate);
+        while (this.endDate >= currentDate) {
+            dayIndex = MIODateGetDayFromDate(currentDate);
 
             var month = currentDate.getMonth();
             if (month == 0 && currentMonth > 0)
                 currentMonth = -1;
-            if (month > currentMonth)
-            {
+            if (month > currentMonth) {
                 currentMonth = currentDate.getMonth();
                 var title = "";
                 var header = null;
 
-                if (typeof this.dataSource.viewTitleForHeaderAtMonthForCalendar === "function")
-                {
+                if (typeof this.dataSource.viewTitleForHeaderAtMonthForCalendar === "function") {
                     header = this.dataSource.viewTitleForHeaderAtMonthForCalendar(this, currentMonth);
                 }
-                else if (typeof this.dataSource.titleForHeaderAtMonthForCalendar === "function")
-                {
+                else if (typeof this.dataSource.titleForHeaderAtMonthForCalendar === "function") {
                     title = this.dataSource.titleForHeaderAtMonthForCalendar(this, currentMonth);
                     header = new MUILabel();
                     header.init();
                     header.setHeight(20);
                     header.setText(title);
                 }
-                else
-                {
+                else {
                     header = new MUIView();
                     header.init();
                 }
@@ -298,8 +351,7 @@ class MUICalendarView extends MUIScrollView
         this.layout();
     }
 
-    layout()
-    {
+    layout() {
         //super.layout();
 
         var marginLeft = 2;
@@ -307,21 +359,22 @@ class MUICalendarView extends MUIScrollView
         var marginTop = 0;
         var marginBotton = 0;
 
-        var y = marginTop;
-        var x = marginLeft;
         var w = this.getWidth() - (marginLeft + marginRight);
-        var h = this.getHeight() - (marginTop + marginBotton);
+        var h = this.getHeight();
 
-        for (var index = 0; index < this._views.length; index++)
-        {
+        var x = marginLeft;
+        var y = 0;
+
+        for (var index = 0; index < this._views.length; index++) {
             var mv = this._views[index];
             mv.setFrame(MIOFrame.frameWithRect(x, y, w, h));
             mv.layout();
 
             y += h;
-        }        
+        }
 
-        this.layer.scrollTop = this.getHeight();
+        this._scrollTopLimit = h / 2;
+        this._scrollBottomLimit = (h * 2) + this._scrollTopLimit;
 
         return;
 
@@ -331,8 +384,7 @@ class MUICalendarView extends MUIScrollView
         w = w / numberOfDays;
 
         var posXArray = [];
-        for (var count = 0; count < numberOfDays; count++)
-        {
+        for (var count = 0; count < numberOfDays; count++) {
             posXArray.push(x);
             x += w + 9;
         }
@@ -349,14 +401,11 @@ class MUICalendarView extends MUIScrollView
         var v = null;
         var lastDayIndex = 0;
 
-        for (var count = 0; count < this.subviews.length; count++)
-        {
+        for (var count = 0; count < this.subviews.length; count++) {
             v = this.subviews[count];
-            if (!(v instanceof MUICalendarCell))
-            {
+            if (!(v instanceof MUICalendarCell)) {
                 // Header
-                if (lastDayIndex != 0)
-                {
+                if (lastDayIndex != 0) {
                     y += w + 9;
                 }
 
@@ -365,12 +414,10 @@ class MUICalendarView extends MUIScrollView
                 v.setY(y);
                 y += 30 + 9;
             }
-            else
-            {
+            else {
                 // Cell
                 x = posXArray[v.dayIndex];
-                if (v.dayIndex == 0)
-                {
+                if (v.dayIndex == 0) {
                     y += w + 9;
                 }
                 v.setFrame(MIOFrame.frameWithRect(x, y, w, w));
@@ -378,28 +425,47 @@ class MUICalendarView extends MUIScrollView
             }
         }
     }
+
+    protected __didScroll() {
+        if (this.contentOffset.y < this._scrollTopLimit) {
+            // Going up
+            var firstMonth = this._views[0];
+            var currentMonth = this._views[1];
+            var lastMonth = this._views[2];
+
+            lastMonth.setMonth(firstMonth.month - 1, firstMonth.year);
+
+            this._views[0] = lastMonth;
+            this._views[1] = firstMonth;
+            this._views[2] = currentMonth;
+
+            this.layout();
+        }
+        else if (this.contentOffset.y > this._scrollBottomLimit) {
+            // Going down
+
+            var firstMonth = this._views[0];
+            var currentMonth = this._views[1];
+            var lastMonth = this._views[2];
+
+            firstMonth.setMonth(lastMonth.month + 1, lastMonth.year);
+
+            this._views[0] = currentMonth;
+            this._views[1] = lastMonth;
+            this._views[2] = firstMonth;
+
+            this.layout();
+        }
+    }
 }
 
-function MIOCalendarGetStringFromDate(date)
-{
+function MIOCalendarGetStringFromDate(date) {
     var yyyy = date.getFullYear().toString();
     var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
-    var dd  = date.getDate().toString();
+    var dd = date.getDate().toString();
 
-    var d = yyyy + "-" + (mm[1]?mm:"0" + mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]); // padding
+    var d = yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
 
     return d;
 }
 
-function MIOCalendarGetDayRowFromDate(date)
-{
-    // Transform to start on Monday instead of Sunday
-    // 0 - Mon, 1 - Tue, 2 - Wed, 3 - Thu, 4 - Fri, 5 - Sat, 6 - Sun
-    var row = date.getDay();
-    if (row == 0)
-        row = 6;
-    else
-        row--;
-
-    return row;
-}

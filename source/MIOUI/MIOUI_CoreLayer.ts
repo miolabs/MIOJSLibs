@@ -19,3 +19,8 @@ function MUICoreLayerIDFromObject(object) : string
 
     return layerID;
 }
+
+function MUICoreLayerAddStyle(view:MUIView, style:string)
+{
+
+}

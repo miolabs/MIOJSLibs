@@ -4,10 +4,14 @@
 
 /// <reference path="MUIView.ts" />
 
+
 class MUIScrollView extends MUIView
 {
     pagingEnabled = false;
     delegate = null;
+    scrolling = false;
+
+    private _scrollTimer = null;
 
     private _lastOffsetX = 0;
 
@@ -18,12 +22,12 @@ class MUIScrollView extends MUIView
         var instance = this;
         this.layer.onscroll = function (e) {
 
-            instance._layerDidScroll.call(instance);
+            instance._scrollEventCallback.call(instance);
         };
         
         this.layer.onwheel = function (e) {
 
-            instance._layerOnScrollEvent.call(instance, e);
+            instance._scrollEventCallback.call(instance);
         };
     }
 
@@ -54,10 +58,44 @@ class MUIScrollView extends MUIView
         // }
     }
 
-    private _layerDidScroll()
+
+    private _scrollEventCallback()
     {
+        if (this.scrolling == false)
+        {
+            this.scrolling = true;
+            this.didStartScroll();
+        }
+
+        if (this._scrollTimer != null) this._scrollTimer.invalidate();
+        this._scrollTimer = MIOTimer.scheduledTimerWithTimeInterval(150, false, this, this._scrollEventStopCallback);
+
+        this.didScroll();
+
         if (this.delegate != null && typeof this.delegate.scrollViewDidScroll === "function")
-            this.delegate.scrollViewDidScroll.call(this.delegate, this);
+            this.delegate.scrollViewDidScroll.call(this.delegate, this);        
+    }
+
+    private _scrollEventStopCallback()
+    {
+        this.scrolling = false;
+
+        this.didStopScroll();
+    }
+
+    protected didStartScroll()
+    {
+        console.log("START SCROLL");
+    }
+
+    protected didScroll()
+    {
+        console.log("DID SCROLL");
+    }
+
+    protected didStopScroll()
+    {
+        console.log("STOP SCROLL");        
     }
 
     get contentOffset()
@@ -66,7 +104,7 @@ class MUIScrollView extends MUIView
         return p;
     }
 
-    scrollToTop(animate)
+    scrollToTop(animate?)
     {
         // if (true)
         //     this.layer.style.transition = "scrollTop 0.25s";
@@ -74,7 +112,7 @@ class MUIScrollView extends MUIView
         this.layer.scrollTop = 0;
     }
 
-    scrollToBottom(animate)
+    scrollToBottom(animate?)
     {
         // if (true)
         //     this.layer.style.transition = "scrollTop 0.25s";
@@ -82,9 +120,13 @@ class MUIScrollView extends MUIView
         this.layer.scrollTop = this.layer.scrollHeight;
     }
 
-    scrollRectToVisible(rect, animate)
+    scrollToPoint(x, y, animate?)
     {
-        //TODO: Implenet this
+        this.layer.scrollTop = y;
+    }
 
+    scrollRectToVisible(rect, animate?)
+    {
+        //TODO: Implement this
     }
 }
