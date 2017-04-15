@@ -36,11 +36,6 @@ class MUICollectionViewCell extends MUIView
 
     selected = false;
 
-    constructor()
-    {
-        super(MUIViewGetNextLayerID("collectionview_cell"));
-    }
-
     initWithLayer(layer, owner, options)
     {
         super.initWithLayer(layer, owner, options);
