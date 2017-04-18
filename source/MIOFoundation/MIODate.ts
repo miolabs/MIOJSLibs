@@ -67,3 +67,10 @@ function MIODateAddDaysToDateString(dateString, days)
     return ds;
 }
 
+function MIODateFromMiliseconds(miliseconds){
+  var mEpoch = parseInt(miliseconds); 
+  if(mEpoch<10000000000) mEpoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
+  var ds = new Date();
+  ds.setTime(mEpoch)
+  return ds;
+}
