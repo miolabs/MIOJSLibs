@@ -9,7 +9,7 @@ class MIOObject
 
     init() {}
 
-    willChangeValue(key)
+    willChangeValue(key:string)
     {
         var obs = this.keyPaths[key];
         if (obs != null) {
@@ -21,7 +21,7 @@ class MIOObject
         }
     }
 
-    didChangeValue(key)
+    didChangeValue(key:string)
     {
         var obs = this.keyPaths[key];
         if (obs != null) {
@@ -33,7 +33,7 @@ class MIOObject
         }
     }
 
-    addObserver(obs, keypath)
+    addObserver(obs, keypath:string)
     {
         var observers = this.keyPaths[keypath];
         if (observers == null)
@@ -45,7 +45,7 @@ class MIOObject
         observers.push(obs);
     }
 
-    removeObserver(obs, keypath)
+    removeObserver(obs, keypath:string)
     {
         var observers = this.keyPaths[keypath];
         if (observers == null)

@@ -22,17 +22,7 @@ window.onerror = function (e) {
     console.log("window.onerror ::" + JSON.stringify(e));
 };
 
-enum MIOCoreEventKey{
-    Enter = 13,
-    Escape = 27,
-    ArrowLeft = 37,
-    ArrowUp = 38,
-    ArrowRight = 39,
-    ArrowDown = 40    
-}
-
 var _MIOCoreEventKeysObservers = {};
-
 
 function MIOCoreRegisterObserverForKeyEvent(eventKey:MIOCoreEventKey, observer, completion)
 {
@@ -68,3 +58,4 @@ window.addEventListener('keyup',
         if (keyObserver != null) keyObserver["Press"] = false;
     },
 false);
+

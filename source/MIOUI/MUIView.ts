@@ -4,24 +4,6 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
-var _MIOViewNextLayerID = 0;
-
-function MUIViewGetNextLayerID(prefix?)
-{
-    var layerID = null;
-    if (prefix == null)
-    {
-        _MIOViewNextLayerID++;
-        layerID = _MIOViewNextLayerID;
-    }
-    else
-    {
-        layerID = prefix + "_" + _MIOViewNextLayerID;
-    }
-
-    return layerID;
-}
-
 function MUILayerSearchElementByID(layer, elementID)
 {
     if (layer.tagName != "DIV" && layer.tagName != "INPUT")
@@ -65,21 +47,6 @@ function MUILayerGetFirstElementWithTag(layer, tag)
     return foundLayer;
 }
 
-// function MUILayerFromResource(url, css, elementID)
-// {
-//     var htmlString = MIOCCoreLoadTextFile(url);
-
-//     var parser = new DOMParser();
-//     var html = parser.parseFromString(htmlString, "text/html");
-
-//     //var styles = html.styleSheets;
-
-//     //if (css != null)
-//         //MIOCoreLoadStyle(css);
-
-//     return(html.getElementById(elementID));
-// }
-
 class MUIView extends MIOObject
 {
     layerID = null;
@@ -106,8 +73,7 @@ class MUIView extends MIOObject
 
     init()
     {
-        this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
+        this.layer = MUICoreLayerCreate(this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.top = "0px";
         this.layer.style.left = "0px";
@@ -118,8 +84,7 @@ class MUIView extends MIOObject
 
     initWithFrame(frame)
     {
-        this.layer = document.createElement("div");
-        this.layer.setAttribute("id", this.layerID);
+        this.layer = MUICoreLayerCreate(this.layerID);
         this.layer.style.position = "absolute";
         this.layer.style.left = frame.origin.x + "px";
         this.layer.style.top = frame.origin.y + "px";
@@ -137,10 +102,7 @@ class MUIView extends MIOObject
         this._addLayerToDOM();
     }
 
-    awakeFromHTML()
-    {
-
-    }
+    awakeFromHTML(){}
 
     setParent(view)
     {
@@ -154,15 +116,19 @@ class MUIView extends MIOObject
         this.layer.innerHTML = layer.innerHTML;
     }
 
-    addSubview(view)
+    addSubview(view, index?)
     {
         view.setParent(this);
-        this.subviews.push(view);
 
-        view._addLayerToDOM();
+        if (index == null)
+            this.subviews.push(view);
+        else 
+            this.subviews.splice(index, 0, view);
+
+        view._addLayerToDOM(index);
     }
 
-    protected _addLayerToDOM()
+    protected _addLayerToDOM(index?)
     {
         if (this._isLayerInDOM == true)
             return;
@@ -170,7 +136,10 @@ class MUIView extends MIOObject
         if (this.layer == null || this.parent == null)
             return;
 
-        this.parent.layer.appendChild(this.layer);
+        if (index == null)
+            this.parent.layer.appendChild(this.layer);
+        else
+            this.parent.layer.insertBefore(this.layer, this.parent.layer.children[0])
 
         this._isLayerInDOM = true;
     }

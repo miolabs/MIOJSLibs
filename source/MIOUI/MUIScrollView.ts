@@ -4,82 +4,158 @@
 
 /// <reference path="MUIView.ts" />
 
+
 class MUIScrollView extends MUIView
 {
     pagingEnabled = false;
     delegate = null;
+    scrolling = false;
 
-    private _lastOffsetX = 0;
+    private _showsVerticalScrollIndicator:boolean = true;
+    set showsVerticalScrollIndicator(value:boolean) {this.setShowsVerticalScrollIndicator(value);}
+    get showsVerticalScrollIndicator():boolean {return this._showsVerticalScrollIndicator;}
+
+    private _contentView = null;
+    private _scrollTimer = null;
+
+    private _lastOffsetY = 0;
+
+    init()
+    {
+        super.init();
+        this._setupLayer();
+    }
 
     initWithLayer(layer, owner, options?)
     {
-        super.initWithLayer(layer, owner, options);
+        super.initWithLayer(layer, owner, options);        
+        this._setupLayer();
+    }
+
+    private _setupLayer()
+    {
+        this.layer.style.overflow = "hidden";
+
+        var contentLayer = MUICoreLayerCreate();
+        contentLayer.style.width = "100%";
+        contentLayer.style.height = "100%";
+        contentLayer.style.overflow = "scroll";
+
+        this._contentView = new MUIView();
+        this._contentView.initWithLayer(contentLayer, this);
+        super.addSubview(this._contentView);
 
         var instance = this;
-        this.layer.onscroll = function (e) {
+        contentLayer.onscroll = function (e) {
 
-            instance._layerDidScroll.call(instance);
+            instance._scrollEventCallback.call(instance, e);
         };
+        
+        contentLayer.onwheel = function (e) {
 
-        this.layer.onwheel = function () {
-
-            instance._layerDidMouseUp.call(instance);
+            instance._scrollEventCallback.call(instance, e);
         };
     }
 
-    private _layerDidMouseUp()
+    private _scrollEventCallback(event)
     {
-        // if (this.pagingEnabled)
-        // {
-        //     var width = this.getWidth();
-        //     var offset = this.layer.scrollLeft;
-        //     if (this._lastOffsetX < offset)
-        //     {
-        //         // to the right
-        //         if (offset >= width)
-        //         {
-        //             this.layer.classList.add("scroll_left_animation");
-        //             this.layer.style.transform = "translate(" + width + "px)";
-        //         }
-        //     }
-        //     else
-        //     {
-        //         // to the left
-        //     }
-        // }
-    }
+        if (this.scrolling == false)
+        {
+            this.scrolling = true;
+            this.didStartScroll();
+        }
 
-    private _layerDidScroll()
-    {
+        if (this._scrollTimer != null) this._scrollTimer.invalidate();
+        this._scrollTimer = MIOTimer.scheduledTimerWithTimeInterval(150, false, this, this._scrollEventStopCallback);                
+
+        var offsetY = this.contentOffset.y;
+        var deltaY = 0;
+        if (offsetY < this._lastOffsetY)
+            deltaY = offsetY - this._lastOffsetY;
+        else if (offsetY > this._lastOffsetY)
+            deltaY = this._lastOffsetY + offsetY;
+
+        this.didScroll(0, deltaY);
+        this._lastOffsetY = this.contentOffset.y;
+
         if (this.delegate != null && typeof this.delegate.scrollViewDidScroll === "function")
-            this.delegate.scrollViewDidScroll.call(this.delegate, this);
+            this.delegate.scrollViewDidScroll.call(this.delegate, this);        
+    }
+
+    private _scrollEventStopCallback()
+    {
+        this.scrolling = false;
+
+        this.didStopScroll();
+    }
+
+    protected didStartScroll()
+    {
+        console.log("START SCROLL");
+    }
+
+    protected didScroll(deltaX, deltaY)
+    {
+        console.log("DID SCROLL");
+    }
+
+    protected didStopScroll()
+    {
+        console.log("STOP SCROLL");        
+    }
+
+    addSubview(view, index?){
+        this._contentView.addSubview(view, index);
+    }
+
+    removeFromSuperview(){
+        this._contentView.removeFromSuperview();
+    }
+
+    public setShowsVerticalScrollIndicator(value:boolean)
+    {
+        if (value == this._showsVerticalScrollIndicator) return;
+
+        this._showsVerticalScrollIndicator = value;
+        
+        if (value == false) {
+            this._contentView.layer.style.paddingRight = "20px";
+        }
+        else {
+            this._contentView.layer.style.paddingRight = "";
+        }
     }
 
     get contentOffset()
     {
-        var p = new MIOPoint(this.layer.scrollLeft, this.layer.scrollTop);
+        var p = new MIOPoint(this._contentView.layer.scrollLeft, this._contentView.layer.scrollTop);
         return p;
     }
 
-    scrollToTop(animate)
+    scrollToTop(animate?)
     {
         // if (true)
         //     this.layer.style.transition = "scrollTop 0.25s";
 
-        this.layer.scrollTop = 0;
+        this._contentView.layer.scrollTop = 0;
     }
 
-    scrollToBottom(animate)
+    scrollToBottom(animate?)
     {
         // if (true)
         //     this.layer.style.transition = "scrollTop 0.25s";
 
-        this.layer.scrollTop = this.layer.scrollHeight;
+        this._contentView.layer.scrollTop = this.layer.scrollHeight;
     }
 
-    scrollRectToVisible(rect, animate)
+    scrollToPoint(x, y, animate?)
     {
-        //TODO: Implenet this
+        this._contentView.layer.scrollTop = y;
+        this._lastOffsetY = y;
+    }
 
+    scrollRectToVisible(rect, animate?)
+    {
+        //TODO: Implement this
     }
 }

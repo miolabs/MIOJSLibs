@@ -2,16 +2,47 @@
  * Created by godshadow on 11/3/16.
  */
 
-function MIODateGetStringForMonth(month)
-{
-    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Dicember"];
-    return months[month];
+enum MIODateFirstWeekDay{
+    Sunday,
+    Monday
 }
 
-function MIODateGetStringForDay(day)
+var _MIODateFirstWeekDay = MIODateFirstWeekDay.Monday;
+var _MIODateStringDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+var _MIODateStringMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function MIODateSetFirstWeekDay(day:MIODateFirstWeekDay){
+
+    _MIODateFirstWeekDay = day;
+    if (day == MIODateFirstWeekDay.Sunday)
+        _MIODateStringDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    else
+        _MIODateStringDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+}
+
+function MIODateGetStringForMonth(month)
 {
-    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    return days[day];
+    return _MIODateStringMonths[month];
+}
+
+function MIODateGetStringForDay(day:number)
+{
+    return _MIODateStringDays[day];
+}
+
+function MIODateGetDayFromDate(date) 
+{
+    if (_MIODateFirstWeekDay == MIODateFirstWeekDay.Sunday) return date.getDay();    
+
+    // Transform to start on Monday instead of Sunday
+    // 0 - Mon, 1 - Tue, 2 - Wed, 3 - Thu, 4 - Fri, 5 - Sat, 6 - Sun
+    var day = date.getDay();
+    if (day == 0)
+        day = 6;
+    else
+        day--;
+
+    return day;
 }
 
 function MIODateGetString(date)

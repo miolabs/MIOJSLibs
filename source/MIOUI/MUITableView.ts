@@ -433,7 +433,7 @@ class MUITableView extends MUIView {
                 y += this.headerHeight;
             }
             else
-                y += this.headerView.getHeight() + 1;
+                y += this.headerView.getHeight();
         }
 
         for (var count = 0; count < this.sections.length; count++) {

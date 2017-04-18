@@ -406,6 +406,8 @@ class MUIViewController extends MIOObject
 
     viewDidAppear(animate?)
     {
+        this.view.layout();
+        
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];

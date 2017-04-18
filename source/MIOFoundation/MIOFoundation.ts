@@ -11,6 +11,8 @@
 /// <reference path="MIOUUID.ts" />
 /// <reference path="MIOPredicate.ts" />
 
+/// <reference path="MIOTimer.ts" />
+
 /// <reference path="MIONotificationCenter.ts" />
 /// <reference path="MIOUserDefaults.ts" />
 

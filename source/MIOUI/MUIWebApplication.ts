@@ -198,7 +198,7 @@ class MUIWebApplication {
     }
 
     showModalViewContoller(vc) {
-        var w = new MUIWindow(MUIViewGetNextLayerID("window"));
+        var w = new MUIWindow();
         w.initWithRootViewController(vc);
 
         // Add new window

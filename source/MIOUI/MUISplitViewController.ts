@@ -16,12 +16,12 @@ class MUISplitViewController extends MUIViewController
     {
         super.init();
 
-        this._masterView = new MUIView(MUIViewGetNextLayerID("split_mater_view"));
+        this._masterView = new MUIView();
         this._masterView.init();
         this._masterView.layer.style.width = "320px";
         this.view.addSubview(this._masterView);
 
-        this._detailView = new MUIView(MUIViewGetNextLayerID("split_detail_view"));
+        this._detailView = new MUIView();
         this._detailView.init();
         this._detailView.layer.style.left = "320px";
         this._detailView.layer.style.width = "auto";

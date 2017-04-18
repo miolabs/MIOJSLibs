@@ -15,11 +15,6 @@ class MUIMenuItem extends MUIView
     target = null;
     action = null;
 
-    constructor(layerID?)
-    {
-        super(layerID == null ? MUIViewGetNextLayerID("mio_menu_item") : layerID);
-    }
-
 /*    public static itemWithLayer(layer)
     {
         var layerID = layer.getAttribute("id");
@@ -120,11 +115,6 @@ class MUIMenu extends MUIView
     action = null;
 
     private _menuLayer = null;
-
-    constructor(layerID?)
-    {
-        super(layerID == null ? MUIViewGetNextLayerID("mio_menu") : layerID);
-    }
 
     init()
     {
