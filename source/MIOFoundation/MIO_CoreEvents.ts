@@ -2,6 +2,7 @@
 
 /// <reference path="MIO_Core.ts" />
 /// <reference path="MIOBundle.ts" />
+/// <reference path="MIO_CoreEventTypes.ts" />
 
 
 // Declare main funciton so we can call after intizalization
