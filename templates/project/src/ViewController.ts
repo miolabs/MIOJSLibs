@@ -6,8 +6,13 @@
 
 class ViewController extends MIOViewController
 {
+    private _label = null;
+
     viewDidLoad()
     {
         super.viewDidLoad();
+
+        this._label = MUIOutlet(this, "view_label", "MUILabel");
+        this._label.text = "Cambio";        
     }
 }

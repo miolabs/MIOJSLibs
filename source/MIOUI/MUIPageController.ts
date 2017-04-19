@@ -7,12 +7,14 @@
 class MUIPageController extends MUIViewController
 {
     selectedViewControllerIndex = 0;
+    pageControllersCount = 0;
 
     addPageViewController(vc)
     {
         this.addChildViewController(vc);
         if (vc.transitioningDelegate == null)
             vc.transitioningDelegate = this;
+        this.pageControllersCount++;
     }
 
     protected _loadChildControllers()
