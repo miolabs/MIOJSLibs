@@ -69,7 +69,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
         this._calculateFrame();
 
         this.presentedView.layer.style.borderRadius = "5px 5px 5px 5px";
-        this.presentedView.layer.style.border = "1px solid rgb(170, 170, 170)";
+        this.presentedView.layer.style.border = "1px solid rgb(208, 208, 219)";
         this.presentedView.layer.style.overflow = "hidden";
         //this.presentedView.layer.style.zIndex = 10; // To make clip the children views     
     }
@@ -131,7 +131,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
         ctx.quadraticCurveTo(x, y, x + radius, y);
         ctx.closePath();
 
-        var color = 'rgba(170, 170, 170, 1)';
+        var color = 'rgba(208, 208, 219, 1)';
         ctx.strokeStyle = color;
         ctx.lineWidth = 1;
         ctx.stroke();
