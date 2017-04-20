@@ -4,49 +4,42 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
-class MIOFetchRequest extends MIOObject
-{
+class MIOFetchRequest extends MIOObject {
     entityName = null;
     predicate = null;
     sortDescriptors = null;
 
-    static fetchRequestWithEntityName(name)
-    {
+    static fetchRequestWithEntityName(name) {
         var fetch = new MIOFetchRequest();
         fetch.initWithEntityName(name);
 
         return fetch;
     }
 
-    initWithEntityName(name)
-    {
+    initWithEntityName(name) {
         this.entityName = name;
     }
 }
 
-class MIOEntityDescription extends MIOObject
-{
+class MIOEntityDescription extends MIOObject {
     private entityName = null;
 
-    public static insertNewObjectForEntityForName(entityName, context)
-    {
+    public static insertNewObjectForEntityForName(entityName, context) {
         var object = context.insertNewObjectForEntityName(entityName);
 
         return object;
     }
 }
 
-class MIOManagedObject extends MIOObject
-{
+class MIOManagedObject extends MIOObject {
     entityName = null;
     managedObjectContext = null;
 
     private _trackChanges = {};
 
-    setValue(propertyName, value)
-    {
-        if(this[propertyName] === value) {
-            if(this._trackChanges[propertyName] != undefined)
+    setValue(propertyName, value) {
+        if (this[propertyName] === value) {
+            if (this._trackChanges[propertyName] != undefined)
                 delete this._trackChanges[propertyName];
         }
         else {
@@ -60,8 +53,7 @@ class MIOManagedObject extends MIOObject
         }
     }
 
-    getValue(propertyName)
-    {
+    getValue(propertyName) {
         var value = this._trackChanges[propertyName];
         if (value == null)
             value = this[propertyName];
@@ -69,27 +61,60 @@ class MIOManagedObject extends MIOObject
         return value;
     }
 
-    get hasChanges()
-    {
+    addObject(propertyName, object) {
+        var array = this._trackChanges[propertyName];
+
+        if (array == null) {
+
+            var oldArray = this[propertyName];
+            if (oldArray != null)
+                array = oldArray.slice(0);
+            else
+                array = [];
+        }
+
+        array.push(object);
+
+        this._trackChanges[propertyName] = array;
+        if (this.managedObjectContext != null)
+            this.managedObjectContext.updateObject(this);
+    }
+
+    removeObject(propertyName, object) {
+        var array = this._trackChanges[propertyName];
+        if (array == null) {
+            var oldArray = this[propertyName];
+            if (oldArray == null) return;
+
+            array = oldArray.slice(0);        
+        }
+
+        var index = array.indexof(object);
+        if (index == -1) return;
+
+        array.splice(index, 1);
+            
+        this._trackChanges[propertyName] = array;
+        if (this.managedObjectContext != null)
+            this.managedObjectContext.updateObject(this);
+    }
+
+    get hasChanges() {
         return (Object.keys(this._trackChanges).length > 0);
     }
 
-    getChanges()
-    {
+    getChanges() {
         return this._trackChanges;
     }
 
-    saveChanges()
-    {
-        for (var propertyName in this._trackChanges)
-        {
+    saveChanges() {
+        for (var propertyName in this._trackChanges) {
             this[propertyName] = this._trackChanges[propertyName];
         }
         this._trackChanges = {};
     }
 
-    discardChanges()
-    {
+    discardChanges() {
         this._trackChanges = {};
     }
 }
