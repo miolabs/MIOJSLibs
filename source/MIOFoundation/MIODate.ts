@@ -102,7 +102,7 @@ function MIODateAddDaysToDateString(dateString, days)
 {
     var d = MIODateFromString(dateString);
     d.setDate(d.getDate() + parseInt(days));
-    var ds = MIODateGetString(d);
+    var ds = MIODateGetDateString(d);
 
     return ds;
 }

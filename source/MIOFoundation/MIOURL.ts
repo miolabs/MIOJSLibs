@@ -95,14 +95,11 @@ class MIOURL extends MIOObject
 
                 token = "";                    
             }
-            else if (ch == ".")
+            else if (ch == "." && step == MIOURLTokenType.Path)
             {
-                if (step == MIOURLTokenType.Path)
-                {
-                    this.file = token;
-                    foundExt = true;
-                    token = "";
-                }
+                this.file = token;
+                foundExt = true;
+                token = "";
             }
             else if (ch == "?")
             {
