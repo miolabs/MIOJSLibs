@@ -62,8 +62,8 @@ class MUIWebApplication {
         
         this.delegate.window.rootViewController.onLoadView(this, function () {
             
-            this.delegate.window.rootViewController.viewWillAppear();
-            this.delegate.window.rootViewController.viewDidAppear();
+            this.delegate.window.rootViewController.viewWillAppear(false);
+            this.delegate.window.rootViewController.viewDidAppear(false);
 
             this.ready = true;
         });
@@ -292,17 +292,17 @@ class MUIWebApplication {
 
         this._popOverWindow.rootViewController.onLoadView(this, function () {
 
-            this._popOverWindow.rootViewController.viewWillAppear();
-            this._popOverWindow.rootViewController.viewDidAppear();
+            this._popOverWindow.rootViewController.viewWillAppear(true);
+            this._popOverWindow.rootViewController.viewDidAppear(true);
         });
 
         this._popOverWindowFirstClick = true;
     }
 
     hidePopOverController() {
-        this._popOverWindow.rootViewController.viewWillDisappear();
+        this._popOverWindow.rootViewController.viewWillDisappear(true);
         this._popOverWindow.removeFromSuperview();
-        this._popOverWindow.rootViewController.viewDidDisappear();
+        this._popOverWindow.rootViewController.viewDidDisappear(true);
 
         this._popOverWindow = null;
     }

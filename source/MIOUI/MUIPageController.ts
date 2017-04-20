@@ -27,31 +27,31 @@ class MUIPageController extends MUIViewController
         });
     }
 
-    viewWillAppear()
+    viewWillAppear(animated?)
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
-        vc.viewWillAppear();
+        vc.viewWillAppear(animated);
         //vc._childControllersWillAppear();
     }
 
-    viewDidAppear()
+    viewDidAppear(animated?)
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
-        vc.viewDidAppear();
+        vc.viewDidAppear(animated);
         //vc._childControllersDidAppear();
     }
 
-    viewWillDisappear()
+    viewWillDisappear(animated?)
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
-        vc.viewWillDisappear();
+        vc.viewWillDisappear(animated);
         //vc._childControllersWillDisappear();
     }
 
-    viewDidDisappear()
+    viewDidDisappear(animated?)
     {
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
-        vc.viewDidDisappear();
+        vc.viewDidDisappear(animated);
         //vc._childControllersDidDisappear();
     }
 

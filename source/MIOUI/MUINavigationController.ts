@@ -40,47 +40,47 @@ class MUINavigationController extends MUIViewController
         }
     }
 
-    viewWillAppear(animate?)
+    viewWillAppear(animated?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewWillAppear(animate);
+        vc.viewWillAppear(animated);
     }
 
-    viewDidAppear(animate?)
+    viewDidAppear(animated?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewDidAppear(animate);
+        vc.viewDidAppear(animated);
     }
 
-    viewWillDisappear(animate?)
+    viewWillDisappear(animated?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewWillDisappear(animate);
+        vc.viewWillDisappear(animated);
     }
 
-    viewDidDisappear(animate?)
+    viewDidDisappear(animated?)
     {
         if (this.currentViewControllerIndex < 0)
             return;
 
         var vc = this.viewControllersStack[this.currentViewControllerIndex];
 
-        vc.viewDidDisappear(animate);
+        vc.viewDidDisappear(animated);
     }
 
-    pushViewController(vc, animate?)
+    pushViewController(vc, animated?)
     {
         var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
 
@@ -103,7 +103,7 @@ class MUINavigationController extends MUIViewController
         });
     }
 
-    popViewController(animate?)
+    popViewController(animated?)
     {
         if (this.currentViewControllerIndex == 0)
             return;
@@ -128,7 +128,7 @@ class MUINavigationController extends MUIViewController
         });
     }
 
-    popToRootViewController(animate?)
+    popToRootViewController(animated?)
     {
         if(this.viewControllersStack.length == 1) return;
         

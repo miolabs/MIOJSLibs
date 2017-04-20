@@ -275,6 +275,9 @@ class MUICalendarView extends MUIScrollView {
     minDate:Date = null;
     maxDate:Date = null;
 
+    selectedDate = null;
+    private _selectedDayCell = null;
+
     private _today = new Date();
     public get today() { return this._today;}
 
@@ -347,11 +350,18 @@ class MUICalendarView extends MUIScrollView {
             this.addSubview(mv);
             this._views.push(mv);
         }
+
+        this.setNeedsDisplay();
     }
 
     layout() {
         //super.layout();
 
+        if (this._viewIsVisible == false) return;
+        if (this.hidden == true) return;
+        if (this._needDisplay == false) return;
+        this._needDisplay = false;
+        
         var marginLeft = 2;
         var marginRight = 2;
         var marginTop = 0;
@@ -377,7 +387,7 @@ class MUICalendarView extends MUIScrollView {
         this._scrollBottomLimit = h + middle;
 
         this.scrollToDate(this.today);
-    }    
+    }        
 
     protected didScroll(deltaX, deltaY) {
         
@@ -437,11 +447,14 @@ class MUICalendarView extends MUIScrollView {
 
             var canSelect = true;
             if (typeof this.delegate.canSelectDate === "function"){            
-                canSelect = this.delegate.canSelectDate.call(this.delegate, dayCell.date);
+                canSelect = this.delegate.canSelectDate.call(this, dayCell.date);
             }
 
+            this.selectedDate = dayCell.date;
+            this._selectedDayCell = dayCell;
+
             if (canSelect == true && typeof this.delegate.didSelectDayCellAtDate === "function"){
-                this.delegate.didSelectDayCellAtDate(this.delegate, dayCell, dayCell.date);
+                this.delegate.didSelectDayCellAtDate(this, dayCell, dayCell.date);
             }    
         }
     }
@@ -459,6 +472,12 @@ class MUICalendarView extends MUIScrollView {
             var y = h * count;
             this.scrollToPoint(0, y);
         }
+    }
+
+    deselectCellAtDate(date:Date){
+
+        if (this.selectedDate == date)
+            this._selectedDayCell.setSelected(false);
     }
 
 }

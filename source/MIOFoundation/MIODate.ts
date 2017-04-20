@@ -47,13 +47,21 @@ function MIODateGetDayFromDate(date)
 
 function MIODateGetString(date)
 {
+    var d = MIODateGetDateString(date);
+    var t = MIODateGetTimeString(date);
+
+    return d + " " + t;
+}
+
+function MIODateGetDateString(date)
+{
     var yyyy = date.getFullYear().toString();
     var mm = (date.getMonth()+1).toString(); // getMonth() is zero-based
     var dd  = date.getDate().toString();
     return yyyy + "-" +(mm[1]?mm:"0"+mm[0]) + "-" +  (dd[1]?dd:"0"+dd[0]); // padding
 }
 
-function MIODateGetStringForHour(date)
+function MIODateGetTimeString(date)
 {
     var hh = date.getHours().toString();
     var mm = date.getMinutes().toString();
@@ -62,13 +70,13 @@ function MIODateGetStringForHour(date)
 
 function MIODateGetUTCString(date)
 {
-    var d = MIODateGetUTCStringForDate(date);
-    var t = MIODateGetUTCStringForHour(date);
+    var d = MIODateGetUTCDateString(date);
+    var t = MIODateGetUTCTimeString(date);
 
     return d + " " + t;
 }
 
-function MIODateGetUTCStringForDate(date)
+function MIODateGetUTCDateString(date)
 {
     var yyyy = date.getUTCFullYear().toString();
     var mm = (date.getUTCMonth()+1).toString(); // getMonth() is zero-based
@@ -76,11 +84,12 @@ function MIODateGetUTCStringForDate(date)
     return yyyy + "-" +(mm[1]?mm:"0"+mm[0]) + "-" +  (dd[1]?dd:"0"+dd[0]); // padding
 }
 
-function MIODateGetUTCStringForHour(date)
+function MIODateGetUTCTimeString(date)
 {
     var hh = date.getUTCHours().toString();
     var mm = date.getUTCMinutes().toString();
-    return (hh[1]?hh:"0"+hh[0]) + ":" + (mm[1]?mm:"0"+mm[0]);
+    var ss = date.getUTCSeconds().toString();
+    return (hh[1]?hh:"0" + hh[0]) + ":" + (mm[1]?mm:"0" + mm[0]) + ":" + (ss[1]?ss:"0" + ss[0]);
 }
 
 function MIODateFromString(string)

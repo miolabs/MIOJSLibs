@@ -58,7 +58,8 @@ class MUIView extends MIOObject
     parent = null;
     tag = null;
 
-    _needDisplay = false;
+    protected _viewIsVisible = false;
+    protected _needDisplay = true;
     _isLayerInDOM = false;
 
     _window:MUIWindow = null;
@@ -116,8 +117,17 @@ class MUIView extends MIOObject
         this.layer.innerHTML = layer.innerHTML;
     }
 
+    _linkViewToSubview(view)
+    {
+        if ((view instanceof MUIView) == false) throw ("_linkViewToSubview: Trying to add an object that is not a view");
+        
+        this.subviews.push(view);
+    }
+
     addSubview(view, index?)
     {
+        if ((view instanceof MUIView) == false) throw ("addSubview: Trying to add an object that is not a view");
+
         view.setParent(this);
 
         if (index == null)
@@ -159,11 +169,6 @@ class MUIView extends MIOObject
         this._isLayerInDOM = false;
     }
 
-    _linkViewToSubview(view)
-    {
-        this.subviews.push(view);
-    }
-
     private _removeView(view)
     {
         var index = this.subviews.indexOf(view);
@@ -188,21 +193,45 @@ class MUIView extends MIOObject
         }
     }
 
+    setViewIsVisible(value:boolean){
+
+        this._viewIsVisible = true;
+        for(var index = 0; index < this.subviews.length; index++){
+            var v = this.subviews[index];
+            v.setViewIsVisible(value);
+        }
+    }
+
     layout()
     {
-        if (this.hidden == true)
-            return;
+        if (this._viewIsVisible == false) return;
+        if (this.hidden == true) return;
+        if (this._needDisplay == false) return;
+        this._needDisplay = false;
+        
+        for(var index = 0; index < this.subviews.length; index++)
+        {
+            var v = this.subviews[index];
+            if ((v instanceof MUIView) == false) throw ("layout: Trying to layout an object that is not a view");
+            v.layout();
+        }
+    }
+
+    setNeedsDisplay(){
+
+        this._needDisplay = true;
+        this.layout();
 
         for(var index = 0; index < this.subviews.length; index++)
         {
             var v = this.subviews[index];
             if (!(v instanceof MUIView))
             {
-                console.log("ERROR Laying out not a view");
+                console.log("ERROR: trying to call setNeedsDisplay: in object that it's not a view");
             }
             else
-                v.layout();
-        }
+                v.setNeedsDisplay();
+        }        
     }
 
     layerWithItemID(itemID)
