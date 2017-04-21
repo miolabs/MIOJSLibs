@@ -4,8 +4,7 @@
 
 /// <reference path="MIOObject.ts" />
 
-enum MIOPredicateComparatorType
-{
+enum MIOPredicateComparatorType {
     Equal,
     Less,
     Greater,
@@ -13,49 +12,41 @@ enum MIOPredicateComparatorType
     Contains
 }
 
-enum MIOPredicateOperatorType
-{
+enum MIOPredicateOperatorType {
     OR,
     AND
 }
 
-enum MIOPredicateType
-{
+enum MIOPredicateType {
     Predicate,
     Item,
     Operation
 }
 
-class MIOPredicateOperator
-{
+class MIOPredicateOperator {
     type = null;
 
-    public static andPredicateOperatorType()
-    {
+    public static andPredicateOperatorType() {
         var op = new MIOPredicateOperator(MIOPredicateOperatorType.AND);
         return op;
     }
 
-    public static orPredicateOperatorType()
-    {
+    public static orPredicateOperatorType() {
         var op = new MIOPredicateOperator(MIOPredicateOperatorType.OR);
         return op;
     }
 
-    constructor(type)
-    {
+    constructor(type) {
         this.type = type;
     }
 }
 
-class MIOPredicateItem
-{
+class MIOPredicateItem {
     key = null;
     comparator = null;
     value = null;
 
-    setComparator(comparator)
-    {
+    setComparator(comparator) {
         if (comparator == "==")
             this.comparator = MIOPredicateComparatorType.Equal;
         else if (comparator == ">")
@@ -70,8 +61,7 @@ class MIOPredicateItem
             throw ("MIOPredicate: Invalid comparator!");
     }
 
-    evaluateObject(object)
-    {
+    evaluateObject(object) {
         if (this.comparator == MIOPredicateComparatorType.Equal)
             return (object[this.key] == this.value);
         else if (this.comparator == MIOPredicateComparatorType.Not)
@@ -80,8 +70,7 @@ class MIOPredicateItem
             return (object[this.key] < this.value);
         else if (this.comparator == MIOPredicateComparatorType.Greater)
             return (object[this.key] > this.value);
-        if (this.comparator == MIOPredicateComparatorType.Contains)
-        {
+        if (this.comparator == MIOPredicateComparatorType.Contains) {
             var value = object[this.key];
             if (value == null)
                 return false;
@@ -95,25 +84,21 @@ class MIOPredicateItem
     }
 }
 
-class MIOPredicate extends MIOObject
-{
+class MIOPredicate extends MIOObject {
     predicates = [];
 
-    public static predicateWithFormat(format)
-    {
+    public static predicateWithFormat(format) {
         var p = new MIOPredicate();
         p.initWithFormat(format);
 
         return p;
     }
 
-    initWithFormat(format)
-    {
+    initWithFormat(format) {
         this._parse(format);
     }
 
-    private _parse(format)
-    {
+    private _parse(format) {
         var token = "";
 
         var key = "";
@@ -122,38 +107,32 @@ class MIOPredicate extends MIOObject
 
         var lastCharIsSpace = false;
 
-        for (var index = 0; index < format.length; index++)
-        {
+        for (var index = 0; index < format.length; index++) {
             var ch = format.charAt(index);
 
-            if (ch == " ")
-            {
+            if (ch == " ") {
                 if (lastCharIsSpace == true)
                     continue;
 
                 lastCharIsSpace = true;
 
-                if (token.toLocaleLowerCase() == "and" || token == "&&")
-                {
+                if (token.toLocaleLowerCase() == "and" || token == "&&") {
                     this.predicates.push(MIOPredicateOperator.andPredicateOperatorType());
                 }
-                else if (token.toLocaleLowerCase() == "or" || token == "||")
-                {
+                else if (token.toLocaleLowerCase() == "or" || token == "||") {
                     this.predicates.push(MIOPredicateOperator.orPredicateOperatorType());
                 }
-                else if (token != "")
-                {
+                else if (token != "") {
                     stepIndex++;
                     if (stepIndex == 1)
                         key = token;
                     else if (stepIndex == 2)
                         cmp = token;
-                    else if (stepIndex == 3)
-                    {
+                    else if (stepIndex == 3) {
                         var i = new MIOPredicateItem();
                         i.key = key;
                         i.setComparator(cmp);
-                        i.value = token;
+                        i.value = this._getValueFromToken(token);
                         this.predicates.push(i);
 
                         key = "";
@@ -163,31 +142,25 @@ class MIOPredicate extends MIOObject
                 }
                 token = "";
             }
-            else if (ch == "(")
-            {
+            else if (ch == "(") {
                 // Create new predicate
                 var string = "";
                 index++;
-                for (var count = index; count < format.length; count++, index++)
-                {
+                for (var count = index; count < format.length; count++ , index++) {
                     var ch2 = format.charAt(index);
-                    if (ch2 == ")")
-                    {
+                    if (ch2 == ")") {
                         var p = MIOPredicate.predicateWithFormat(string);
                         this.predicates.push(p);
                         break;
                     }
-                    else
-                    {
+                    else {
                         string += ch2;
                     }
                 }
             }
-            else if (ch == "\"")
-            {
+            else if (ch == "\"") {
                 index++;
-                for (var count = index; count < format.length; count++, index++)
-                {
+                for (var count = index; count < format.length; count++ , index++) {
                     var ch2 = format.charAt(index);
                     if (ch2 == "\"")
                         break;
@@ -196,60 +169,61 @@ class MIOPredicate extends MIOObject
                 }
                 lastCharIsSpace = false;
             }
-            else
-            {
+            else {
                 token += ch;
                 lastCharIsSpace = false;
             }
         }
 
         // Last check
-        if (token.length > 0)
-        {
+        if (token.length > 0) {
             var i = new MIOPredicateItem();
             i.key = key;
             i.setComparator(cmp);
-            i.value = token;
+            i.value = this._getValueFromToken(token);
             this.predicates.push(i);
         }
     }
 
-    evaluateObject(object)
-    {
+    private _getValueFromToken(token) {
+
+        var normalizeToken = token.toLowerCase();
+        if (token.toLocaleLowerCase() == "true")
+            return true;
+        else if (token.toLocaleLowerCase() == "false")
+            return false;
+        else
+            return token;
+    }
+
+    evaluateObject(object) {
         var result = false;
         var op = null;
         var lastResult = null;
 
-        for (var count = 0; count < this.predicates.length; count++)
-        {
+        for (var count = 0; count < this.predicates.length; count++) {
             var o = this.predicates[count];
 
-            if (o instanceof MIOPredicate)
-            {
+            if (o instanceof MIOPredicate) {
                 result = o.evaluateObject(object);
             }
-            else if (o instanceof MIOPredicateItem)
-            {
+            else if (o instanceof MIOPredicateItem) {
                 result = o.evaluateObject(object);
             }
-            else if (o instanceof MIOPredicateOperator)
-            {
+            else if (o instanceof MIOPredicateOperator) {
                 op = o.type;
                 lastResult = result;
                 result = null;
             }
 
-            if (op != null && result != null)
-            {
-                if (op == MIOPredicateOperatorType.AND)
-                {
+            if (op != null && result != null) {
+                if (op == MIOPredicateOperatorType.AND) {
                     result = result && lastResult;
                     op = null;
                     if (result == false)
                         break;
                 }
-                else if (op == MIOPredicateOperatorType.OR)
-                {
+                else if (op == MIOPredicateOperatorType.OR) {
                     result = result || lastResult;
                     op = null;
                 }
