@@ -29,13 +29,16 @@ enum MUITableViewCellSeparatorStyle {
     SingleLineEtched // TODO
 }
 
-class MUITableViewCell extends MUIView {
-    selected = false;
+class MUITableViewCell extends MUIView {    
 
+    style = MUITableViewCellStyle.Custom;
+    
     textLabel = null;
     accessoryType = MUITableViewCellAccessoryType.None;
     accesoryView = null;
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
+
+    selected = false;
 
     private _target = null;
     private _onClickFn = null;
@@ -45,6 +48,8 @@ class MUITableViewCell extends MUIView {
 
     initWithStyle(style: MUITableViewCellStyle) {
         super.init();
+
+        this.style = style;
 
         if (style == MUITableViewCellStyle.Default) {
             this.textLabel = new MUILabel();
@@ -89,7 +94,7 @@ class MUITableViewCell extends MUIView {
             return;
 
         if (this.accesoryView == null) {
-            this.textLabel.layer.style.right = "25px";
+            if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.right = "25px";
 
             var layer = document.createElement("div");
             layer.style.position = "absolute";
@@ -116,8 +121,9 @@ class MUITableViewCell extends MUIView {
     }
 
     setPaddingIndex(value) {
+
         var offset = (value + 1) * 10;
-        this.textLabel.setX(offset);
+        if (this.style == MUITableViewCellStyle.Default) this.textLabel.setX(offset);
     }
 
     setHeight(h) {
@@ -232,7 +238,7 @@ class MUITableView extends MUIView {
     private _addCellPrototypeWithLayer(subLayer) {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
-        if (cellClassname == null) cellClassname = "MIOCollectionViewCell";
+        if (cellClassname == null) cellClassname = "MIOTableViewCell";
 
         var item = {};
         item["class"] = cellClassname;
