@@ -46,14 +46,17 @@ function MUIOutlet(owner, elementID, className?, options?)
 
     if (owner instanceof MUIView)
         owner._linkViewToSubview(c);
-    else if (owner instanceof MUIViewController)
-        owner.view._linkViewToSubview(c);
+    else if (owner instanceof MUIViewController){
+
+        if (c instanceof MUIView)
+            owner.view._linkViewToSubview(c);
+        else if (c instanceof MUIViewController)
+            owner.addChildViewController(c);
+        else throw ("MUIOutlet: Wrong type");        
+    }
 
     if (c instanceof MUIView)
         c.awakeFromHTML();
-
-    if (c instanceof MUIViewController)
-        owner.addChildViewController(c);
 
     return c;
 }

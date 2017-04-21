@@ -88,9 +88,9 @@ class MUIAlertViewController extends MUIViewController
         this.view.layer.classList.add("alertview_window");
     }
 
-    viewWillAppear()
+    viewWillAppear(animated?)
     {
-        super.viewWillAppear();
+        super.viewWillAppear(animated);
         
         this._tableView.reloadData();
     }

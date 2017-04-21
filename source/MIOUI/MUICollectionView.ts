@@ -257,7 +257,6 @@ class MUICollectionView extends MUIView
         return c;
     }
 
-
     public reloadData()
     {
         if (this.dataSource == null) return;
@@ -316,7 +315,7 @@ class MUICollectionView extends MUIView
             }
         }
 
-        this.layout();
+        this.setNeedsDisplay();
     }
 
     cellOnClickFn(cell)
@@ -381,7 +380,9 @@ class MUICollectionView extends MUIView
 
     layout()
     {
-        super.layout();
+        if (this.hidden == true) return;
+        if (this._needDisplay == false) return;
+        this._needDisplay = false;
 
         if (this._collectionViewLayout == null)
             this._collectionViewLayout = new MUICollectionViewFlowLayout();

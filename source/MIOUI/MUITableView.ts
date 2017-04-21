@@ -310,6 +310,7 @@ class MUITableView extends MUIView {
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
+            //newLayer.setAttribute("id", MUICoreLayerIDFromClassname(className));
             var size = item["size"];
             // if (size != null) {
             //     cell.setWidth(size.width);
@@ -413,11 +414,17 @@ class MUITableView extends MUIView {
             }
         }
 
-        this.layout();
+        this.setNeedsDisplay();
     }
 
     layout() {
-        super.layout();
+        
+        //super.layout();
+
+        if (this._viewIsVisible == false) return;
+        if (this.hidden == true) return;
+        if (this._needDisplay == false) return;
+        this._needDisplay = false;
 
         if (this.sections == null)
             return;

@@ -395,41 +395,45 @@ class MUIViewController extends MIOObject
 
     viewDidLoad(){}
 
-    viewWillAppear(animate?)
+    viewWillAppear(animated?)
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewWillAppear(animate);
+            vc.viewWillAppear(animated);
         }
+        
+        this.view.setViewIsVisible(true);
     }
 
-    viewDidAppear(animate?)
+    viewDidAppear(animated?)
     {
         this.view.layout();
         
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewDidAppear(animate);
+            vc.viewDidAppear(animated);
         }
     }
 
-    viewWillDisappear(animate?)
+    viewWillDisappear(animated?)
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewWillDisappear();
+            vc.viewWillDisappear(animated);
         }
+        
+        this.view.setViewIsVisible(false);
     }
 
-    viewDidDisappear(animate?)
+    viewDidDisappear(animated?)
     {
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
             var vc = this._childViewControllers[index];
-            vc.viewDidDisappear();
+            vc.viewDidDisappear(animated);
         }
     }
 
