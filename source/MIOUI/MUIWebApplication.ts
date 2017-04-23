@@ -25,7 +25,7 @@ class MUIWebApplication {
     private constructor() {
 
         if (MUIWebApplication._sharedInstance != null) {
-            throw new Error("Error: Instantiation failed: Use sharedInstance() instead of new.");
+            throw new Error("MUIWebApplication: Instantiation failed: Use sharedInstance() instead of new.");
         }
     }
 
@@ -66,55 +66,11 @@ class MUIWebApplication {
             this.delegate.window.rootViewController.viewDidAppear(false);
 
             this.ready = true;
+
+            MIOCoreEventRegisterObserverForType(MIOCoreEventType.Click, this, this._clickEvent);
+            MIOCoreEventRegisterObserverForType(MIOCoreEventType.Resize, this, this._resizeEvent);
         });
     }
-
-    // private _decodeParams() {
-    //     MIOLibDecodeParams(window.location.search, this, function (param, value) {
-
-    //         if (param == "lang" || param == "language") {
-    //             this.currentLanguage = value;
-    //         }
-    //     });
-    // }
-
-
-    // run() {
-    //     // Check languages
-    //     if (this.currentLanguage == null)
-    //         this.currentLanguage = this.defaultLanguage;
-
-    //     if (_MIOLocalizedStrings == null && this.currentLanguage != null) {
-    //         // Download language
-    //         this.downloadLanguage(this.currentLanguage, function () {
-
-    //             this._run();
-    //         });
-    //     }
-    //     else
-    //         this._run();
-
-    // }
-
-    // private _run() {
-    //     this.canvas = document.body;
-
-    //     this.delegate.didFinishLaunching();
-    //     //this.canvas.appendChild(this.delegate.window.layer);
-
-    //     if (this.downloadCoreFileCount == 0)
-    //         this._showViews();
-    // }
-
-    // private _showViews() {
-    //     this.delegate.window.rootViewController.onLoadView(this, function () {
-
-    //         this.delegate.window.rootViewController.viewWillAppear();
-    //         this.delegate.window.rootViewController.viewDidAppear();
-
-    //         this.ready = true;
-    //     });
-    // }
 
     setLanguageURL(key, url) {
         if (this.languages == null)
@@ -142,59 +98,6 @@ class MUIWebApplication {
 
             fn.call(this);
         });
-    }
-
-    beginSheetViewController(vc) {
-        /*        var window = this.delegate.window;
-        
-                this._sheetViewController = vc;
-                this._sheetViewController.presentationStyle = MIOPresentationStyle.PageSheet;
-                this._sheetViewController.presentationType = MIOPresentationType.Sheet;
-        
-                var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
-                this._sheetViewController.view.setFrame(frame);
-                this._sheetViewController.view.layer.style.borderLeft = "1px solid rgb(170, 170, 170)";
-                this._sheetViewController.view.layer.style.borderBottom = "1px solid rgb(170, 170, 170)";
-                this._sheetViewController.view.layer.style.borderRight = "1px solid rgb(170, 170, 170)";
-                this._sheetViewController.view.layer.style.zIndex = 200;
-        
-                window.rootViewController.addChildViewController(vc);
-                window.rootViewController.view.addSubview(vc.view);
-                window.rootViewController.showViewController(vc, true);
-        
-                this._sheetSize = vc.contentSize;
-                this._sheetViewController.addObserver(this, "contentSize");*/
-    }
-
-    endSheetViewController() {
-        if (this._sheetViewController == null) return;
-
-        var window = this.delegate.window;
-
-        this._sheetViewController.removeObserver(this, "contentSize");
-
-        this._sheetViewController.dismissViewController(true);
-        window.rootViewController.removeChildViewController(this._sheetViewController);
-        this._sheetViewController = null;
-    }
-
-    observeValueForKeyPath(key, type, object) {
-        /*        if (type == "will")
-                {
-                    this._sheetSize = this._sheetViewController.contentSize;
-                }
-                else if (type == "did")
-                {
-                    var newSize = this._sheetViewController.contentSize;
-                    if (!newSize.isEqualTo(this._sheetSize))
-                    {
-                        // Animate the frame
-                        this._sheetViewController.view.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
-                        var window = this.delegate.window;
-                        var frame = FrameWithStyleForViewControllerInView(window.rootViewController.view, this._sheetViewController);
-                        this._sheetViewController.view.setFrame(frame);
-                    }
-                }*/
     }
 
     showModalViewContoller(vc) {
@@ -234,15 +137,18 @@ class MUIWebApplication {
         }
     }
 
-    forwardResizeEvent(e) {
-        if (this.ready == true)
-            this.delegate.window.layout();
+    private _resizeEvent(event:MIOCoreEvent) {
+        
+        this.delegate.window.layout();
     }
 
-    forwardClickEvent(target, x, y) {
-        if (this.ready == false)
-            return;
-
+    private _clickEvent(event:MIOCoreEventInput)
+    {
+        var target = event.coreEvent.target;
+        var x = event.x;
+        var y = event.y;
+    
+        // Checking popup menus
         if (this._popUpMenu != null) {
             var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
 
@@ -255,6 +161,8 @@ class MUIWebApplication {
                 this._popUpMenu.hide();
             }
         }
+
+        // Checking windows
 
         if (this._keyWindow != null) 
         {        

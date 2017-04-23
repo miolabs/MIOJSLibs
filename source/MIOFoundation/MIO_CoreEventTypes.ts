@@ -1,5 +1,5 @@
-enum MIOCoreEventKey{
-    
+enum MIOCoreEventKeyCode
+{    
     Enter = 13,
     Escape = 27,
     ArrowLeft = 37,
@@ -8,14 +8,98 @@ enum MIOCoreEventKey{
     ArrowDown = 40
 }
 
-enum MIOCoreEventType{
-
+enum MIOCoreEventType
+{
     KeyUp,
     KeyDown,
+    
     MouseUp,
-    MouseDown
+    MouseDown,
+    TouchStart,
+    TouchEnd,
+    Click,
+    
+    Resize
 }
 
-let _mio_core_events = ["keyup", "keydown", "mouseup", "mousedown"];
+class MIOCoreEvent
+{
+    coreEvent:Event;
+    eventType = null;
+    target = null;
+    completion = null;
+
+    initWithType(eventType:MIOCoreEventType, coreEvent:Event) {
+
+        this.coreEvent = coreEvent;
+        this.eventType = eventType;
+    }
+
+    cancel(){
+        
+        this.coreEvent.preventDefault();
+    }
+}
+
+class MIOCoreKeyEvent extends MIOCoreEvent 
+{
+    keyCode = null;
+
+    initWithKeyCode(eventType:MIOCoreEventType,  eventKeyCode:MIOCoreEventKeyCode, event:Event){
+
+        super.initWithType(eventType, event);
+        this.keyCode = eventKeyCode;
+    }
+}
+
+class MIOCoreEventInput extends MIOCoreEvent
+{
+    target = null;
+    x = 0;
+    y = 0;
+    deltaX = 0;
+    deltaY = 0;
+}
+
+enum MIOCoreEventMouseButtonType{
+    
+    None,
+    Left,
+    Right,
+    Middle
+}
+
+class MIOCoreEventMouse extends MIOCoreEventInput
+{
+    button = MIOCoreEventMouseButtonType.None;
+
+    initWithType(eventType:MIOCoreEventType, coreEvent:MouseEvent) {
+
+        super.initWithType(eventType, event);
+        //Get the button clicked
+        this.button = MIOCoreEventMouseButtonType.Left;
+        this.target = coreEvent.target;
+        this.x = coreEvent.clientX;
+        this.y = coreEvent.clientY;
+    }
+}
+
+// Declare changedTouches interface for typescript
+// interface Event {
+//     touches:TouchList;
+//     targetTouches:TouchList;
+//     changedTouches:TouchList;
+// };
+
+class MIOCoreEventTouch extends MIOCoreEventInput
+{
+    initWithType(eventType:MIOCoreEventType, coreEvent:TouchEvent) {   
+
+        var touch = coreEvent.changedTouches[0] // reference first touch point for this event
+        this.target = coreEvent.target;
+        this.x = touch.clientX;
+        this.y = touch.clientY;
+    }
+}
 
 

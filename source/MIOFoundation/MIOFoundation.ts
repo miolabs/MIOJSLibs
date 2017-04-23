@@ -1,6 +1,8 @@
 
 /// <reference path="MIO_Core.ts" />
 /// <reference path="MIO_CoreTypes.ts" />
+/// <reference path="MIO_CoreEvents.ts" />
+/// <reference path="MIO_CoreEventTypes.ts" />
 
 /// <reference path="MIOBundle.ts" />
 
