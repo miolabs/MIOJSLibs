@@ -82,7 +82,7 @@ class MUIScrollView extends MUIView
             this.delegate.scrollViewDidScroll.call(this.delegate, this);        
     }
 
-    private _scrollEventStopCallback()
+    private _scrollEventStopCallback(timer)
     {
         this.scrolling = false;
 

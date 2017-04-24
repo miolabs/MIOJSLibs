@@ -59,6 +59,6 @@ class MIOTimer extends MIOObject
     private _timerCallback()
     {
         if (this._target != null && this._completion != null)
-            this._completion.call(this._target);
+            this._completion.call(this._target, this);
     }
 }
