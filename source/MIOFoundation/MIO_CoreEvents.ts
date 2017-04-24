@@ -9,6 +9,7 @@
 
 declare function main(args);
 
+
 window.onload = function() {
     
     var mb = MIOBundle.mainBundle();
