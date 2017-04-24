@@ -46,10 +46,14 @@ function MIOCoreEventUnregisterObserverForType(eventType:MIOCoreEventType, obser
     if (obs == null) return;
 
     var index = -1;
-    for (index = 0; index < obs.length; index++){
+    for (var count = 0; count < obs.length; count++){
     
-        var item = obs[index];        
-        if (item === observer) break;            
+        var item = obs[count];
+        var target = item["Target"];        
+        if (target === observer) {
+            index = count;
+            break;
+        }
     }
 
     if (index > -1) obs.splice(index, 1);
