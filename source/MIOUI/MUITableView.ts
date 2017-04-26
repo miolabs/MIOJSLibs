@@ -29,6 +29,12 @@ enum MUITableViewCellSeparatorStyle {
     SingleLineEtched // TODO
 }
 
+enum MUITableViewCellSelectionStyle {
+    
+    None,
+    Default
+}
+
 class MUITableViewCell extends MUIView {    
 
     style = MUITableViewCellStyle.Custom;
@@ -45,6 +51,8 @@ class MUITableViewCell extends MUIView {
     private _onDblClickFn = null;
     private _row = 0;
     private _section = 0;
+
+    selectionStyle = MUITableViewCellSelectionStyle.Default;
 
     initWithStyle(style: MUITableViewCellStyle) {
         super.init();
@@ -137,19 +145,21 @@ class MUITableViewCell extends MUIView {
     }
 
     setSelected(value) {
+        
         this.willChangeValue("selected");
         this.selected = value;
 
-        if (value == true) {
-            this.layer.classList.remove("tableviewcell_deselected_color");
-            this.layer.classList.add("tableviewcell_selected_color");
+        if (this.selectionStyle == MUITableViewCellSelectionStyle.Default) {
+            if (value == true) {
+                this.layer.classList.remove("tableviewcell_deselected_color");
+                this.layer.classList.add("tableviewcell_selected_color");
+            }
+            else {
+                this.layer.classList.remove("tableviewcell_selected_color");
+                this.layer.classList.add("tableviewcell_deselected_color");
+            }
+            this._setHightlightedSubviews(value);
         }
-        else {
-            this.layer.classList.remove("tableviewcell_selected_color");
-            this.layer.classList.add("tableviewcell_deselected_color");
-        }
-
-        this._setHightlightedSubviews(value);
 
         this.didChangeValue("selected");
     }
