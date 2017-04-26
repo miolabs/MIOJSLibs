@@ -151,7 +151,7 @@ class MUITextField extends MUIControl
         return color;
     }
 
-    becameFirstResponder()
+    becomeFirstResponder()
     {
         this._inputLayer.focus();
     }
