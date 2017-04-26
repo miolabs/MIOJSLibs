@@ -75,7 +75,9 @@ class MUIAlertAction extends MUIAlertItem
 
 class MUIAlertViewController extends MUIViewController
 {
-    private _items = [];
+    textFields = [];
+
+    private _items = [];        
 
     private _title:string = null;
     private _message:string = null;
@@ -150,6 +152,7 @@ class MUIAlertViewController extends MUIViewController
     {
         var ai = new MUIAlertTextField();
         ai.initWithConfigurationHandler(target, handler);
+        this.textFields.push(ai.textField);
         this._addItem(ai);
     }
 
