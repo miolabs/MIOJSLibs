@@ -30,7 +30,7 @@ class MUIAlertItem extends MIOObject
 
 class MUIAlertTextField extends MUIAlertItem
 {
-    textField = null;
+    textField:MUITextField = null;
 
     initWithConfigurationHandler(target, handler) {
 
