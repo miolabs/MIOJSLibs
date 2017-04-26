@@ -11,7 +11,42 @@ enum MUIAlertActionStyle
     Default
 }
 
-class MUIAlertAction extends MIOObject
+enum MUIAlertItemType {
+
+    None,
+    Action,
+    TextField
+}
+
+class MUIAlertItem extends MIOObject
+{
+    type = MUIAlertItemType.None;
+
+    initWithType(type:MUIAlertItemType) {
+
+        this.type = type;
+    }
+}
+
+class MUIAlertTextField extends MUIAlertItem
+{
+    textField = null;
+
+    initWithConfigurationHandler(target, handler) {
+
+        super.initWithType(MUIAlertItemType.TextField);
+
+        this.textField = new MUITextField();
+        this.textField.init();
+
+        if (target != null && handler != null) {
+
+            handler.call(target, this.textField);
+        }
+    }
+}
+
+class MUIAlertAction extends MUIAlertItem
 {
     title = null;
     style = MUIAlertActionStyle.Default;
@@ -31,7 +66,7 @@ class MUIAlertAction extends MIOObject
 
     initWithTitle(title, style)
     {
-        super.init();
+        super.initWithType(MUIAlertItemType.Action);
 
         this.title = title;
         this.style = style;
@@ -40,7 +75,7 @@ class MUIAlertAction extends MIOObject
 
 class MUIAlertViewController extends MUIViewController
 {
-    private _actions = [];
+    private _items = [];
 
     private _title:string = null;
     private _message:string = null;
@@ -100,15 +135,27 @@ class MUIAlertViewController extends MUIViewController
         return this._alertViewSize;
     }
 
+    private _addItem(item:MUIAlertItem)
+    {
+        this._items.push(item);
+        this._calculateContentSize();
+    }
+
     addAction(action:MUIAlertAction)
     {
-        this._actions.push(action);
-        this._calculateContentSize();
+        this._addItem(action);
+    }
+
+    addTextFieldWithConfigurationHandler(target, handler)
+    {
+        var ai = new MUIAlertTextField();
+        ai.initWithConfigurationHandler(target, handler);
+        this._addItem(ai);
     }
 
     private _calculateContentSize()
     {
-        var h = 80 + (this._actions.length * 50) + 1;
+        var h = 80 + (this._items.length * 50) + 1;
         this._alertViewSize = new MIOSize(320, h);
     }
 
@@ -119,7 +166,7 @@ class MUIAlertViewController extends MUIViewController
 
     numberOfRowsInSection(tableview, section)
     {
-        return this._actions.length + 1;
+        return this._items.length + 1;
     }
 
     cellAtIndexPath(tableview, row, section)
@@ -131,9 +178,16 @@ class MUIAlertViewController extends MUIViewController
         }
         else
         {
-            var action:MUIAlertAction = this._actions[row - 1];
-            if (action.style == MUIAlertActionStyle.Default)
-                cell = this._createDefaultCellWithTitle(action.title);                
+            var item = this._items[row - 1];
+            if (item.type == MUIAlertItemType.Action) {
+        
+                if (item.style == MUIAlertActionStyle.Default)
+                    cell = this._createDefaultCellWithTitle(item.title);           
+            }
+            else if (item.type == MUIAlertItemType.TextField) {
+
+                cell = this._createTextFieldCell(item.textField);
+            }
         }
 
         cell.separatorStyle = MUITableViewCellSeparatorStyle.None;
@@ -155,7 +209,7 @@ class MUIAlertViewController extends MUIViewController
 
     didSelectCellAtIndexPath(tableView, row, section)
     {
-        var action:MUIAlertAction = this._actions[row - 1];
+        var action:MUIAlertAction = this._items[row - 1];
         
         action.completion.call(action.target);
 
@@ -219,6 +273,24 @@ class MUIAlertViewController extends MUIViewController
         cell.layer.classList.add("alertview_cell_default");
 
         return cell;        
+    }
+
+    private _createTextFieldCell(textField:MUITextField):MUITableViewCell
+    {
+        var cell = new MUITableViewCell();
+        cell.initWithStyle(MUITableViewCellStyle.Custom);        
+
+        textField.layer.style.left = "";
+        textField.layer.style.top = "";
+        textField.layer.style.right = "";
+        textField.layer.style.height = "";
+        textField.layer.style.width = "";
+        textField.layer.style.background = "";
+        textField.layer.classList.add("alertview_cell_textfield");
+
+        cell.addSubview(textField);
+
+        return cell;
     }
     
     // Transitioning delegate
