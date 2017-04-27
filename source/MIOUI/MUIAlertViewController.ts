@@ -8,7 +8,9 @@ enum MUIAlertViewStyle
 
 enum MUIAlertActionStyle
 {
-    Default
+    Default,
+    Cancel,
+    Destructive
 }
 
 enum MUIAlertItemType {
@@ -183,12 +185,9 @@ class MUIAlertViewController extends MUIViewController
         {
             var item = this._items[row - 1];
             if (item.type == MUIAlertItemType.Action) {
-        
-                if (item.style == MUIAlertActionStyle.Default)
-                    cell = this._createDefaultCellWithTitle(item.title);           
+                cell = this._createActionCellWithTitle(item.title, item.style);
             }
             else if (item.type == MUIAlertItemType.TextField) {
-
                 cell = this._createTextFieldCell(item.textField);
             }
         }
@@ -218,7 +217,9 @@ class MUIAlertViewController extends MUIViewController
         var item = this._items[row - 1];
         if (item.type == MUIAlertItemType.Action) {
             
-            item.completion.call(item.target);
+            if (item.target != null && item.completion != null)
+                item.completion.call(item.target);
+            
             this.dismissViewController(true);
         }
     }
@@ -259,7 +260,7 @@ class MUIAlertViewController extends MUIViewController
         return cell;
     }
 
-    private _createDefaultCellWithTitle(title:string):MUITableViewCell
+    private _createActionCellWithTitle(title:string, style:MUIAlertActionStyle):MUITableViewCell
     {
         var cell = new MUITableViewCell();
         cell.initWithStyle(MUITableViewCellStyle.Custom);
@@ -272,12 +273,28 @@ class MUIAlertViewController extends MUIViewController
         buttonLabel.layer.style.right = "";
         buttonLabel.layer.style.height = "";
         buttonLabel.layer.style.width = "";
-        buttonLabel.layer.style.background = "";
-        buttonLabel.layer.classList.add("alertview_cell_default_title");
+        buttonLabel.layer.style.background = "";        
         cell.addSubview(buttonLabel);  
 
-        cell.layer.style.background = "transparent";
-        cell.layer.classList.add("alertview_cell_default");
+        cell.layer.style.background = "transparent";        
+
+        switch(style){
+
+            case MUIAlertActionStyle.Default:
+                cell.layer.classList.add("alertview_default_action");
+                buttonLabel.layer.classList.add("alertview_default_action_title");                
+                break;
+
+            case MUIAlertActionStyle.Cancel:
+                cell.layer.classList.add("alertview_cancel_action");            
+                buttonLabel.layer.classList.add("alertview_cancel_action_title");                
+                break;
+
+            case MUIAlertActionStyle.Destructive:
+                cell.layer.classList.add("alertview_destructive_action");            
+                buttonLabel.layer.classList.add("alertview_destructive_action_title");                
+                break;
+        }
 
         return cell;        
     }
