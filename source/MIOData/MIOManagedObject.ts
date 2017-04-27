@@ -86,12 +86,14 @@ class MIOManagedObject extends MIOObject {
             var oldArray = this[propertyName];
             if (oldArray == null) return;
 
+            // Clone the array to not touch the original ones
             array = oldArray.slice(0);        
         }
 
-        var index = array.indexof(object);
+        var index = array.indexOf(object);        
         if (index == -1) return;
 
+        // Remove the item in the array
         array.splice(index, 1);
             
         this._trackChanges[propertyName] = array;
