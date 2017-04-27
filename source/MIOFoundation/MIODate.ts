@@ -114,3 +114,8 @@ function MIODateFromMiliseconds(miliseconds){
   ds.setTime(mEpoch)
   return ds;
 }
+
+function isDate (x) 
+{ 
+  return (null != x) && !isNaN(x) && ("undefined" !== typeof x.getDate); 
+}

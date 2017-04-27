@@ -208,7 +208,7 @@ class MUIAlertViewController extends MUIViewController
         if (row == 0) return false;
 
         var item = this._items[row - 1];
-        if (item.type = MUIAlertItemType.TextField) return false;
+        if (item.type == MUIAlertItemType.TextField) return false;
 
         return true;
     }
@@ -216,7 +216,7 @@ class MUIAlertViewController extends MUIViewController
     didSelectCellAtIndexPath(tableView, row, section)
     {
         var item = this._items[row - 1];
-        if (item.type = MUIAlertItemType.Action) {
+        if (item.type == MUIAlertItemType.Action) {
             
             item.completion.call(item.target);
             this.dismissViewController(true);
