@@ -17,7 +17,8 @@ enum MUIAlertItemType {
 
     None,
     Action,
-    TextField
+    TextField,
+    ComboBox
 }
 
 class MUIAlertItem extends MIOObject
@@ -44,6 +45,24 @@ class MUIAlertTextField extends MUIAlertItem
         if (target != null && handler != null) {
 
             handler.call(target, this.textField);
+        }
+    }
+}
+
+class MUIAlertComboBox extends MUIAlertItem
+{
+    comboBox:MUIComboBox = null;
+
+    initWithConfigurationHandler(target, handler) {
+
+        super.initWithType(MUIAlertItemType.ComboBox);
+
+        this.comboBox = new MUIComboBox();
+        this.comboBox.init();
+
+        if (target != null && handler != null) {
+
+            handler.call(target, this.comboBox);
         }
     }
 }
@@ -78,6 +97,7 @@ class MUIAlertAction extends MUIAlertItem
 class MUIAlertViewController extends MUIViewController
 {
     textFields = [];
+    comboBoxes = [];
 
     private _items = [];        
 
@@ -158,6 +178,14 @@ class MUIAlertViewController extends MUIViewController
         this._addItem(ai);
     }
 
+    addComboBoxWithConfigurationHandler(target, handler)
+    {
+        var ac = new MUIAlertComboBox();
+        ac.initWithConfigurationHandler(target, handler);
+        this.comboBoxes.push(ac.comboBox);
+        this._addItem(ac);
+    }    
+
     private _calculateContentSize()
     {
         var h = 80 + (this._items.length * 50) + 1;
@@ -190,6 +218,9 @@ class MUIAlertViewController extends MUIViewController
             else if (item.type == MUIAlertItemType.TextField) {
                 cell = this._createTextFieldCell(item.textField);
             }
+            else if (item.type == MUIAlertItemType.ComboBox) {
+                cell = this._createComboBoxCell(item.comboBox);
+            }
         }
 
         cell.separatorStyle = MUITableViewCellSeparatorStyle.None;
@@ -207,9 +238,9 @@ class MUIAlertViewController extends MUIViewController
         if (row == 0) return false;
 
         var item = this._items[row - 1];
-        if (item.type == MUIAlertItemType.TextField) return false;
+        if (item.type == MUIAlertItemType.Action) return true;
 
-        return true;
+        return false;
     }
 
     didSelectCellAtIndexPath(tableView, row, section)
@@ -313,6 +344,24 @@ class MUIAlertViewController extends MUIViewController
         textField.layer.classList.add("alertview_cell_textfield");
 
         cell.addSubview(textField);
+
+        return cell;
+    }
+
+    private _createComboBoxCell(comboBox:MUIComboBox):MUITableViewCell
+    {
+        var cell = new MUITableViewCell();
+        cell.initWithStyle(MUITableViewCellStyle.Custom);        
+
+        comboBox.layer.style.left = "";
+        comboBox.layer.style.top = "";
+        comboBox.layer.style.right = "";
+        comboBox.layer.style.height = "";
+        comboBox.layer.style.width = "";
+        comboBox.layer.style.background = "";
+        comboBox.layer.classList.add("alertview_cell_combobox");
+
+        cell.addSubview(comboBox);
 
         return cell;
     }
