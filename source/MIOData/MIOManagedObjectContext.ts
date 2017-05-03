@@ -29,7 +29,7 @@ class MIOManagedObjectContext extends MIOObject
 
     insertNewObject(obj)
     {
-        obj.saveChanges();
+        //obj.saveChanges();
 
         var entityName = obj.entityName;
         var array = this._insertedObjects[entityName];
@@ -170,14 +170,18 @@ class MIOManagedObjectContext extends MIOObject
         {
             var objs = this._insertedObjects[key];
 
+            // save changes and add to context
             var array = this._objects[key];
-            if (array == null)
-            {
+            if (array == null) {
                 array = [];
                 this._objects[key] = array;
             }
-
-            array.push.apply(array, objs);
+            for (var i = 0; i < objs.length; i++)
+            {
+                var o = objs[i];
+                o.saveChanges();
+                array.push(o);
+            }
 
             MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "INSERTED");
         }
