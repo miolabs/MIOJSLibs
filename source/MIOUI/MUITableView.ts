@@ -44,7 +44,7 @@ class MUITableViewCell extends MUIView {
     accesoryView = null;
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
 
-    selected = false;
+    private _selected = false;
 
     private _target = null;
     private _onClickFn = null;
@@ -147,7 +147,7 @@ class MUITableViewCell extends MUIView {
     setSelected(value) {
         
         this.willChangeValue("selected");
-        this.selected = value;
+        this._selected = value;
 
         if (this.selectionStyle == MUITableViewCellSelectionStyle.Default) {
             if (value == true) {
@@ -162,6 +162,14 @@ class MUITableViewCell extends MUIView {
         }
 
         this.didChangeValue("selected");
+    }
+
+    set selected(value) {
+        this.setSelected(value);
+    }
+
+    get selected() {
+        return this._selected;
     }
 
     _setHightlightedSubviews(value) {
@@ -366,6 +374,7 @@ class MUITableView extends MUIView {
 
             for (var count = 0; count < sectionView.cells.length; count++) {
                 var cell = sectionView.cells[count];
+                cell.removeObserver(this, "selected");
                 cell.removeFromSuperview();
             }
         }
@@ -418,6 +427,12 @@ class MUITableView extends MUIView {
 
             for (var index = 0; index < rows; index++) {
                 var cell = this.dataSource.cellAtIndexPath(this, index, sectionIndex);
+                
+                if (cell.selected) {
+                    this.selectedCellRow = index;
+                    this.selectedCellSection = sectionIndex;
+                }
+                
                 cell.addObserver(this, "selected");
                 section.cells.push(cell);
                 this.addSubview(cell);
