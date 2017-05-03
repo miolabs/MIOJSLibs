@@ -24,6 +24,9 @@ class MUITextField extends MUIControl
     enterPressTarget = null;
     enterPressAction = null;
 
+    keyPressTarget   = null;
+    keyPressAction   = null;
+
     init()
     {
         super.init();
@@ -130,6 +133,20 @@ class MUITextField extends MUIControl
             if (instance.enabled) {
                 if (e.keyCode == 13)
                     instance.enterPressAction.call(target, instance, instance._inputLayer.value);
+            }
+        }
+    }
+
+    setOnKeyPress(target, action)
+    {
+        this.keyPressTarget = target;
+        this.keyPressAction = action;
+        var instance = this;
+
+        this.layer.onkeydown = function(e)
+        {
+            if (instance.enabled) {
+                instance.keyPressAction.call(target, instance, e.keyCode);
             }
         }
     }
