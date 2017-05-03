@@ -11,11 +11,22 @@ class MUIComboBox extends MUIControl
     target = null;
     action = null;
 
+    init()
+    {
+        super.init();
+        this._setup_layers();
+    }
+
     initWithLayer(layer, owner, options?)
     {
         super.initWithLayer(layer, owner, options);
-
         this._selectLayer = MUILayerGetFirstElementWithTag(this.layer, "SELECT");
+
+        this._setup_layers();
+    }
+
+    private _setup_layers()
+    {
         if (this._selectLayer == null) {
             this._selectLayer = document.createElement("select");
             this.layer.appendChild(this._selectLayer);

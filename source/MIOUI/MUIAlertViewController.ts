@@ -55,7 +55,7 @@ class MUIAlertComboBox extends MUIAlertItem
 
     initWithConfigurationHandler(target, handler) {
 
-        super.initWithType(MUIAlertItemType.TextField);
+        super.initWithType(MUIAlertItemType.ComboBox);
 
         this.comboBox = new MUIComboBox();
         this.comboBox.init();
@@ -219,7 +219,7 @@ class MUIAlertViewController extends MUIViewController
                 cell = this._createTextFieldCell(item.textField);
             }
             else if (item.type == MUIAlertItemType.ComboBox) {
-                cell = this._createTextFieldCell(item.comboBox);
+                cell = this._createComboBoxCell(item.comboBox);
             }
         }
 
