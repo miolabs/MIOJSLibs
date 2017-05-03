@@ -42,8 +42,11 @@ class MUIComboBox extends MUIControl
         this._selectLayer.style.marginTop = "4px";
         this._selectLayer.style.height = (h - 8) + "px";
 
-        var color = this.getBackgroundColor();
-        this._selectLayer.style.backgroundColor = color;
+        //var color = this.getBackgroundColor();
+        //this._selectLayer.style.backgroundColor = color;
+
+        this._selectLayer.style.backgroundColor = "rgb(255, 255, 255)"
+
     }
 
     addItem(text, value?)

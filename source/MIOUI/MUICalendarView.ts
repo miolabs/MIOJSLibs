@@ -134,6 +134,7 @@ class MUICalendarMonthView extends MUIView {
         this._delegate = delegate;
 
         this.layer.style.position = "relative";
+        this.layer.style.background = "";
 
         this._header = new MUIView();
         this._header.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header"), this);        
@@ -247,11 +248,11 @@ class MUICalendarMonthView extends MUIView {
         var h = (this.getHeight() - headerHeight) / this._weekRows;
 
         // Offset x maping by day index
-        var marginX = 4;
+        var marginX = 0;
         var marginW = marginX * 2;
         var offsetX = [marginX, w + marginX, (w * 2) + marginX, (w * 3) + marginX, (w * 4) + marginX, (w * 5) + marginX, (w * 6) + marginX];
 
-        var marginY = 4;
+        var marginY = 0;
         var marginH = marginY * 2;
 
         for (var index = 0; index < this._dayViews.length; index++) {
@@ -362,8 +363,8 @@ class MUICalendarView extends MUIScrollView {
         if (this._needDisplay == false) return;
         this._needDisplay = false;
         
-        var marginLeft = 2;
-        var marginRight = 2;
+        var marginLeft = 0;
+        var marginRight = 0;
         var marginTop = 0;
         var marginBotton = 0;
 
@@ -454,7 +455,7 @@ class MUICalendarView extends MUIScrollView {
             this._selectedDayCell = dayCell;
 
             if (canSelect == true && typeof this.delegate.didSelectDayCellAtDate === "function"){
-                this.delegate.didSelectDayCellAtDate(this, dayCell, dayCell.date);
+                this.delegate.didSelectDayCellAtDate(this, dayCell.date);
             }    
         }
     }
