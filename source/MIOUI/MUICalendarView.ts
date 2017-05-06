@@ -118,6 +118,9 @@ class MUICalendarMonthView extends MUIView {
     firstDate = null;
     lastDate = null;
 
+    cellSpacingX = 0;
+    cellSpacingY = 0;
+
     private _header = null;
     private _headerTitleLabel = null;
 
@@ -137,18 +140,18 @@ class MUICalendarMonthView extends MUIView {
         this.layer.style.background = "";
 
         this._header = new MUIView();
-        this._header.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header"), this);        
+        this._header.initWithLayer(MUICoreLayerCreateWithStyle("muicalendarview_month_header"), this);        
         this.addSubview(this._header);
 
         this._headerTitleLabel = new MUILabel();
-        this._headerTitleLabel.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header_title"), this);
+        this._headerTitleLabel.initWithLayer(MUICoreLayerCreateWithStyle("muicalendarview_month_header_title"), this);
         this._header.addSubview(this._headerTitleLabel);
 
         var w = 100 / 7;
         for (var index = 0; index < 7; index++){
 
                 var dayLabel = new MUILabel();
-                dayLabel.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header_day_title"), this);
+                dayLabel.initWithLayer(MUICoreLayerCreateWithStyle("muicalendarview_month_header_day_title"), this);
                 dayLabel.layer.style.left = (w * index) + "%";
                 dayLabel.layer.style.width = w + "%";
                 dayLabel.text = MIODateGetStringForDay(index).substr(0, 2);
@@ -245,23 +248,23 @@ class MUICalendarMonthView extends MUIView {
         var x = 0;
         var y = 0;
         var w = this.frame.size.width / 7;
-        var h = (this.getHeight() - headerHeight) / this._weekRows;
+        var h = (this.getHeight() - headerHeight - this.cellSpacingY) / this._weekRows;
 
-        // Offset x maping by day index
-        var marginX = 0;
+        // Offset x mapping index by day
+        var marginX = this.cellSpacingX / 2;
         var marginW = marginX * 2;
         var offsetX = [marginX, w + marginX, (w * 2) + marginX, (w * 3) + marginX, (w * 4) + marginX, (w * 5) + marginX, (w * 6) + marginX];
 
-        var marginY = 0;
+        var marginY = this.cellSpacingY / 2;
         var marginH = marginY * 2;
 
         for (var index = 0; index < this._dayViews.length; index++) {
             var dv = this._dayViews[index];
 
             x = offsetX[MIODateGetDayFromDate(dv.date)];
-            y = headerHeight + (dv.weekRow * h);
+            y = headerHeight + (dv.weekRow * h) + marginY;
 
-            dv.setFrame(MIOFrame.frameWithRect(x, y, (w - marginW), (h - marginW)));
+            dv.setFrame(MIOFrame.frameWithRect(x, y, (w - marginW), (h - marginH)));
 
             dv.layout();
         }
@@ -275,6 +278,9 @@ class MUICalendarView extends MUIScrollView {
 
     minDate:Date = null;
     maxDate:Date = null;
+
+    horizontalCellSpacing = 0;
+    verticalCellSpacing = 0;
 
     selectedDate = null;
     private _selectedDayCell = null;
@@ -348,6 +354,8 @@ class MUICalendarView extends MUIScrollView {
         for (var index = 0; index < 3; index++) {
             var mv = new MUICalendarMonthView();
             mv.initWithMonth(currentMonth + index, currentYear, this);
+            mv.cellSpacingX = this.horizontalCellSpacing;
+            mv.cellSpacingY = this.verticalCellSpacing;
             this.addSubview(mv);
             this._views.push(mv);
         }
@@ -363,15 +371,10 @@ class MUICalendarView extends MUIScrollView {
         if (this._needDisplay == false) return;
         this._needDisplay = false;
         
-        var marginLeft = 0;
-        var marginRight = 0;
-        var marginTop = 0;
-        var marginBotton = 0;
-
-        var w = this.getWidth() - (marginLeft + marginRight);
+        var w = this.getWidth() - this.horizontalCellSpacing;
         var h = this.getHeight();
 
-        var x = marginLeft;
+        var x = 0;
         var y = 0;
 
         for (var index = 0; index < this._views.length; index++) {
