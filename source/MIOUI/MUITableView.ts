@@ -256,7 +256,7 @@ class MUITableView extends MUIView {
     private _addCellPrototypeWithLayer(subLayer) {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
-        if (cellClassname == null) cellClassname = "MIOTableViewCell";
+        if (cellClassname == null) cellClassname = "MUITableViewCell";
 
         var item = {};
         item["class"] = cellClassname;

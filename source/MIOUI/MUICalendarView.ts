@@ -5,21 +5,16 @@
 /// <reference path="MUIScrollView.ts" />
 /// <reference path="MUILabel.ts" />
 
-class MUICalendarCell extends MUIView {
-    date = null;
-
-    initWithLayer(layer, options?) {
-        super.initWithLayer(layer, options);
-
-        var instance = this;
-        this.layer.onclick = function () {
-            if (instance.parent.delegate != null)
-                instance.parent.delegate.cellDidSelectedForCalendar.call(instance.parent, instance.date);
-        }
-    }
+enum MUICalendarDayCellType
+{
+    Default,
+    Custom
 }
 
 class MUICalendarDayCell extends MUIView {
+    
+    type = MUICalendarDayCellType.Default;
+    identifier = null;
     weekRow: number;
 
     private _date: Date = null;
@@ -42,6 +37,7 @@ class MUICalendarDayCell extends MUIView {
     init() {
         super.init();
 
+        this.type = MUICalendarDayCellType.Default;
         this.layer.style.background = "";
 
         this._titleLabel = new MUILabel();
@@ -54,6 +50,18 @@ class MUICalendarDayCell extends MUIView {
         this._titleLabel.layer.style.width = "";
         this._titleLabel.layer.style.height= "";
 
+        this._setupLayer();
+    }
+
+    initWithLayer(layer, owner, options?)
+    {
+        super.initWithLayer(layer, owner, options);
+        this.type = MUICalendarDayCellType.Custom;
+        this._setupLayer();
+    }
+
+    private _setupLayer()
+    {
         var instance = this;
         this.layer.onclick = function () {
                 instance._onClick.call(instance);
@@ -71,17 +79,26 @@ class MUICalendarDayCell extends MUIView {
         this._month = date.getMonth();
         this._year = date.getFullYear();
 
-        this._titleLabel.text = date.getDate();
-
         var today = new Date();
         var d = today.getDate();
         var m = today.getMonth();
         var y = today.getFullYear();
 
-        if (this._day == d && this._month == m && this._year == y)
+        if (this.type == MUICalendarDayCellType.Default)
+            this._titleLabel.text = date.getDate();
+
+        var isToday = (this._day == d && this._month == m && this._year == y);
+        this.setToday(isToday);
+    }
+
+    setToday(value:boolean)
+    {
+        if (this.type == MUICalendarDayCellType.Custom) return;
+
+        if (value)
         {
             this.layer.classList.remove("muicalendarview_day_cell");
-            this._titleLabel.layer.classList.remove("muicalendarview_day_title");            
+            this._titleLabel.layer.classList.remove("muicalendarview_day_title");
             this.layer.classList.add("muicalendarview_today_day_cell");
             this._titleLabel.layer.classList.add("muicalendarview_today_day_title");
         }
@@ -91,7 +108,8 @@ class MUICalendarDayCell extends MUIView {
             this._titleLabel.layer.classList.add("muicalendarview_day_title");
             this.layer.classList.remove("muicalendarview_today_day_cell");
             this._titleLabel.layer.classList.remove("muicalendarview_today_day_title");            
-        }
+        }        
+
     }
 
     setSelected(value:boolean){
@@ -178,6 +196,16 @@ class MUICalendarMonthView extends MUIView {
             this._year = year;
         }
 
+        for(var count = 0; count < this._dayViews.length; count++)
+        {
+            var dayCell = this._dayViews[count];
+            var identifier = dayCell.identifier
+
+            this._delegate._reuseDayCell(dayCell, identifier);
+            dayCell.removeFromSuperview();
+        }
+    
+        this._dayViews = [];
         this._dayViewIndex = 0;
 
         this._setupHeader();
@@ -188,25 +216,11 @@ class MUICalendarMonthView extends MUIView {
         this._headerTitleLabel.text = MIODateGetStringForMonth(this._month) + " " + this._year;
     }
 
-    private _dequeueReusableDayView() {
+    private _dayCellAtDate(date) {
 
-        var dv = null;
-        if (this._dayViewIndex < this._dayViews.length) {
-            dv = this._dayViews[this._dayViewIndex];
-        }
-        else {
-            dv = new MUICalendarDayCell();
-            dv.init();
-            this._dayViews.push(dv);
-            this.addSubview(dv);
-
-            // Register for selection
-            dv.addObserver(this._delegate, "selected");
-        }
-
+        var dv = this._delegate._cellDayAtDate(date);
         this._dayViewIndex++;
 
-        dv.setHidden(false);
         return dv;
     }
 
@@ -219,7 +233,9 @@ class MUICalendarMonthView extends MUIView {
         var rowIndex = MIODateGetDayFromDate(currentDate) == 0 ? -1 : 0;
 
         while (this.lastDate >= currentDate) {
-            var dayView = this._dequeueReusableDayView();
+            var dayView = this._dayCellAtDate(currentDate);
+            this._dayViews.push(dayView);
+            this.addSubview(dayView);
             dayView.setDate(currentDate);
 
             // Calculate rows
@@ -229,12 +245,6 @@ class MUICalendarMonthView extends MUIView {
             dayView.weekRow = rowIndex;
 
             currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        for (var index = this._dayViewIndex; index < this._dayViews.length; index++){
-
-            var v = this._dayViews[index];
-            v.setHidden(true);
         }
 
         this._weekRows = rowIndex + 1;
@@ -291,6 +301,8 @@ class MUICalendarView extends MUIScrollView {
     private _currentMonth = this._today.getMonth();
 
     private _cellPrototypes = {};
+    private _reusablePrototypeDayCells = {};
+    private _reusableDayCells = [];
 
     private _views = [];
 
@@ -307,6 +319,21 @@ class MUICalendarView extends MUIScrollView {
 
         super.initWithLayer(layer, owner, options);
         this._setup();
+
+                // Check if we have prototypes
+        if (this.layer.childNodes.length > 0) {
+            for (var index = 0; index < this.layer.childNodes.length; index++) {
+                var subLayer = this.layer.childNodes[index];
+
+                if (subLayer.tagName != "DIV")
+                    continue;
+
+                if (subLayer.getAttribute("data-cell-identifier") != null) {
+                    this._addCellPrototypeWithLayer(subLayer);
+                    subLayer.style.display = "none";
+                }
+            }
+        }
     }
 
     private _setup(){
@@ -314,22 +341,102 @@ class MUICalendarView extends MUIScrollView {
         this.showsVerticalScrollIndicator = false;
     }
 
-    cellWithIdentifier(identifier) {
+    private _addCellPrototypeWithLayer(subLayer) 
+    {
+        var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
+        var cellClassname = subLayer.getAttribute("data-class");
+        if (cellClassname == null) cellClassname = "MUICalendarCell";
 
-        var item = this.cellPrototypes[identifier];
+        var item = {};
+        item["class"] = cellClassname;
+        item["layer"] = subLayer;
 
-        //instance creation here
-        var className = item["class"];
-        var cell = Object.create(window[className].prototype);
-        cell.constructor.apply(cell, new Array("World"));
+        this._cellPrototypes[cellIdentifier] = item;
+    }
 
-        var html = item["html"];
-        var css = item["css"];
-        var elID = item["id"];
-        var layer = _MIOLayerFromResource(html, css, elID);
-        cell.initWithLayer(layer);
+    _reuseDayCell(cell, identifier?:string)
+    {
+        if (identifier == null)
+            this._reusableDayCells.push(cell);
+        else 
+        {
+            var array = this._reusablePrototypeDayCells[identifier];
+            if (array == null)
+            {
+                array = [];
+                this._reusablePrototypeDayCells[identifier] = array;
+            }
 
-        return cell;
+            array.push(cell);
+        }
+    }
+
+    _cellDayAtDate(date)
+    {
+        var dayCell = null;
+        if (typeof this.dataSource.dayCellAtDate === "function")
+            dayCell = this.dataSource.dayCellAtDate(this, date);
+        
+        if (dayCell == null)
+        {
+            // Standard
+            dayCell = this.dequeueReusableDayCellWithIdentifier();
+        }
+
+        return dayCell;
+    }
+
+    dequeueReusableDayCellWithIdentifier(identifier?:string)
+    {
+        var dv = null;
+
+        if (identifier != null)
+        {
+            var cells = this._reusablePrototypeDayCells[identifier];
+            if (cells != null && cells.length > 0)
+            {
+                dv = cells[0];
+                cells.splice(0, 1);
+            }
+            else
+            {
+                //instance creation here
+                var item = this._cellPrototypes[identifier];
+                if (item == null) throw ("Calendar day identifier doesn't exist.");
+                
+                var className = item["class"];
+                dv = Object.create(window[className].prototype);
+                dv.constructor.apply(dv);
+
+                var layer = item["layer"];
+                if (layer != null) {
+                    var newLayer = layer.cloneNode(true);                
+                    newLayer.style.display = "";
+                    dv.initWithLayer(newLayer);
+                    dv.awakeFromHTML();            
+                }
+                // Register for selection
+                dv.addObserver(this, "selected");            
+            }
+        }
+        else 
+        {
+            if (this._reusableDayCells.length > 0)
+            {
+                dv = this._reusableDayCells[0];
+                this._reusableDayCells.splice(0, 1);
+            }
+            else 
+            {
+                dv = new MUICalendarDayCell();
+                dv.init();
+                
+                // Register for selection
+                dv.addObserver(this, "selected");                        
+            }                        
+        }
+
+        return dv;
     }
 
     reloadData() {
