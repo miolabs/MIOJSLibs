@@ -118,5 +118,5 @@ class MIOManagedObject extends MIOObject {
 
     discardChanges() {
         this._trackChanges = {};
-    }
+    }    
 }
