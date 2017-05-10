@@ -353,11 +353,11 @@ class MUIAlertViewController extends MUIViewController
         var cell = new MUITableViewCell();
         cell.initWithStyle(MUITableViewCellStyle.Custom);        
 
-        comboBox.layer.style.left = "";
-        comboBox.layer.style.top = "";
-        comboBox.layer.style.right = "";
-        comboBox.layer.style.height = "";
-        comboBox.layer.style.width = "";
+        // comboBox.layer.style.left = "";
+        // comboBox.layer.style.top = "";
+        // comboBox.layer.style.right = "";
+        // comboBox.layer.style.height = "";
+        // comboBox.layer.style.width = "";
         comboBox.layer.style.background = "";
         comboBox.layer.classList.add("alertview_cell_combobox");
 
