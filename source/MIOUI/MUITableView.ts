@@ -22,6 +22,13 @@ enum MUITableViewCellAccessoryType {
     Checkmark
 }
 
+enum MIOTableViewCellEditingStyle {
+
+    None,
+    Delete,
+    Insert
+}
+
 enum MUITableViewCellSeparatorStyle {
 
     None,
@@ -40,19 +47,21 @@ class MUITableViewCell extends MUIView {
     style = MUITableViewCellStyle.Custom;
     
     textLabel = null;
+    
     accessoryType = MUITableViewCellAccessoryType.None;
     accesoryView = null;
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
 
-    private _selected = false;
+    selectionStyle = MUITableViewCellSelectionStyle.Default;
+    private _selected = false;    
+
+    private _editing = false;
 
     private _target = null;
     private _onClickFn = null;
     private _onDblClickFn = null;
     private _row = 0;
     private _section = 0;
-
-    selectionStyle = MUITableViewCellSelectionStyle.Default;
 
     initWithStyle(style: MUITableViewCellStyle) {
         super.init();
@@ -186,6 +195,18 @@ class MUITableViewCell extends MUIView {
             if (v instanceof MUILabel)
                 v.setHightlighted(value);
         }
+    }
+
+    setEditing(editing, animated?){
+        this._editing = editing;
+    }
+
+    set editing(value:boolean) {
+        this.setEditing(value, false);
+    }
+
+    get isEditing():boolean {
+        return this._editing;
     }
 }
 
@@ -676,7 +697,7 @@ class MUITableView extends MUIView {
         }
 
         if (this.sections.length == 0) return;
-        
+
         var section = this.sections[sectionIndex];
         if (rowIndex < section.cells.length)
         {
