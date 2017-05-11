@@ -675,6 +675,8 @@ class MUITableView extends MUIView {
             rowIndex++;
         }
 
+        if (this.sections.length == 0) return;
+        
         var section = this.sections[sectionIndex];
         if (rowIndex < section.cells.length)
         {
