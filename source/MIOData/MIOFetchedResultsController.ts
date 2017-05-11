@@ -25,7 +25,7 @@ class MIOFetchedResultsController extends MIOObject
     resultObjects = [];
     objects = [];
 
-    private _request = null;
+    private _request:MIOFetchRequest = null;
     private _moc = null;
     private _sectionNameKeyPath = null;
 
@@ -51,10 +51,14 @@ class MIOFetchedResultsController extends MIOObject
         {
             MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification){
 
-                var objs = notification.object;
-                var type = notification.userInfo;
-
-                this.updateContent(objs);
+                var ins_objs = notification.object[MIOInsertedObjectsKey];
+                var upd_objs = notification.object[MIOUpdatedObjectsKey];
+                var del_objs = notification.object[MIODeletedObjectsKey];
+                
+                var entityName = this._request.entityName;
+                
+                if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
+                    this.updateContent(notification.object);
             });
         }
         else

@@ -2,6 +2,7 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
 class MIOFetchRequest extends MIOObject {
+    
     entityName = null;
     predicate = null;
     sortDescriptors = null;
