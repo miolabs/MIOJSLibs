@@ -17,8 +17,8 @@ enum MUITableViewCellStyle {
 enum MUITableViewCellAccessoryType {
 
     None,
-    Detail,
-    DetailDisclosoure,
+    DisclosureIndicator,
+    DetailDisclosureButton,
     Checkmark
 }
 
@@ -117,13 +117,21 @@ class MUITableViewCell extends MUIView {
             this.addSubview(this.accesoryView);
         }
 
-        if (type == MUITableViewCellAccessoryType.Checkmark) {
+        // Remove the previous accessory
+        if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
+            this.accesoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
+        else if (this.accessoryType == MUITableViewCellAccessoryType.DisclosureIndicator)
+            this.accesoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
+        else if (this.accessoryType == MUITableViewCellAccessoryType.DetailDisclosureButton)
+            this.accesoryView.layer.classList.remove("tableviewcell_accessory_detail_disclosure_button");            
+
+        // Add the new one
+        if (type == MUITableViewCellAccessoryType.Checkmark)
             this.accesoryView.layer.classList.add("tableviewcell_accessory_checkmark");
-        }
-        else if (type == MUITableViewCellAccessoryType.None) {
-            if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
-                this.accesoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
-        }
+        else if (type == MUITableViewCellAccessoryType.DisclosureIndicator)
+            this.accesoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
+        else if (type == MUITableViewCellAccessoryType.DetailDisclosureButton)
+            this.accesoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");            
 
         this.accessoryType = type;
     }

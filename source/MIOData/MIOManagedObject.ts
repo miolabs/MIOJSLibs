@@ -9,7 +9,7 @@
 
 class MIOManagedObject extends MIOObject {
     
-    entity = null;
+    entity:MIOEntityDescription = null;
     managedObjectContext = null;
 
     private _trackChanges = {};
@@ -133,6 +133,15 @@ class MIOManagedObject extends MIOObject {
     }
 
     discardChanges() {
+        
         this._trackChanges = {};
+
+        this._setIsInserted(false);
+        this._setIsUpdated(false);
+        this._setIsDeleted(false);        
     }    
+
+    _markForDeletion() {
+        this._setIsDeleted(true);
+    }
 }

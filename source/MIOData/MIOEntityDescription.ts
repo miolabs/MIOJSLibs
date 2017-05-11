@@ -9,16 +9,19 @@ class MIOEntityDescription extends MIOObject {
 
     public static entityForNameInManagedObjectContext(entityName:string, context:MIOManagedObjectContext):MIOEntityDescription {
 
-        var mom = context.persistentStoreCoordinator.managedObjectModel;
-        var entity = mom.entitiesByName[entityName];
+        //var mom = context.persistentStoreCoordinator.managedObjectModel;
+        //var entity = mom.entitiesByName[entityName];
+
+        var entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, context);
         return entity;
     }
 
     public static insertNewObjectForEntityForName(entityName:string, context:MIOManagedObjectContext) {
         
-        var mom = context.persistentStoreCoordinator.managedObjectModel;
-        var entity = mom.entitiesByName[entityName];
-        
+        // var mom = context.persistentStoreCoordinator.managedObjectModel;
+        // var entity = mom.entitiesByName[entityName];
+                
+        var entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, context);
         var obj = MIOClassFromString(entityName);
         obj.initWithEntityAndInsertIntoManagedObjectContext(entity, context);
 

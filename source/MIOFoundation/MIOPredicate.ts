@@ -192,6 +192,8 @@ class MIOPredicate extends MIOObject {
             return true;
         else if (token.toLocaleLowerCase() == "false")
             return false;
+        else if (token.toLocaleLowerCase() == "null")            
+            return null;
         else
             return token;
     }

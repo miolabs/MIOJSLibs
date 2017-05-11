@@ -18,7 +18,7 @@ class MIOManagedObjectContext extends MIOObject
 
     insertObject(obj)
     {
-        var entityName = obj.entityName;
+        var entityName = obj.entity.managedObjectClassName;
         var array = this._insertedObjects[entityName];
         if (array == null)
         {
@@ -34,7 +34,7 @@ class MIOManagedObjectContext extends MIOObject
 
     updateObject(obj)
     {
-        var entityName = obj.entityName;
+        var entityName = obj.entity.managedObjectClassName;
         var array = this._updateObjects[entityName];
         if (array == null)
         {
@@ -52,7 +52,7 @@ class MIOManagedObjectContext extends MIOObject
 
     deleteObject(obj)
     {
-        var entityName = obj.entityName;
+        var entityName = obj.entity.managedObjectClassName;
         var array = this._deletedObjects[entityName];
         if (array == null)
         {
@@ -66,6 +66,9 @@ class MIOManagedObjectContext extends MIOObject
             if (index == -1)
                 array.push(obj);
         }
+
+        // TODO: Hack.
+        obj._markForDeletion();
     }
 
     removeAllObjectsForEntityName(entityName)
@@ -146,6 +149,11 @@ class MIOManagedObjectContext extends MIOObject
 
     }
 
+    // DEPRECATED: -> Change to save();
+    saveContext() {
+        this.save();
+    }
+    
     save()
     {
         // Inserted objects
@@ -199,7 +207,7 @@ class MIOManagedObjectContext extends MIOObject
             for (var i = 0; i < objs.length; i++)
             {
                 var o = objs[i];
-                var objects = this._objects[o.entityName];
+                var objects = this._objects[o.entity.managedObjectClassName];
                 var index = objects.indexOf(o);
 
                 if(index > -1) {
