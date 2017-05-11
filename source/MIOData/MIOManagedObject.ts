@@ -19,7 +19,11 @@ class MIOManagedObject extends MIOObject {
     get isInserted():boolean {return this._isInserted};
     
     private _isUpdated = false;
-    private _setIsUpdated(value) {this.willChangeValue("_isUpdated");this._isUpdated=value;this.didChangeValue("_isUpdated")};
+    private _setIsUpdated(value) {
+        if (this.isInserted) return;
+        this.willChangeValue("_isUpdated");
+        this._isUpdated=value;
+        this.didChangeValue("_isUpdated")};
     get isUpdated():boolean {return this._isUpdated};
 
     private _isDeleted = false;
