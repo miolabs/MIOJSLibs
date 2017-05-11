@@ -5,32 +5,19 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 /// <reference path="MIOManagedObject.ts" />
 
-
 class MIOManagedObjectContext extends MIOObject
 {
+    parentContext:MIOManagedObjectContext = null;
+    persistentStoreCoordinator:MIOPersistentStoreCoordinator = null;
+
     private _objects = {};
 
     private _insertedObjects = {};
     private _deletedObjects = {};
     private _updateObjects = {};
 
-    _persistentStoreCoordinator = null;
-
-    insertNewObjectForEntityName(entityName)
+    insertObject(obj)
     {
-        var obj = MIOClassFromString(entityName);
-        obj.entityName = entityName;
-        obj.managedObjectContext = this;
-
-        this.insertNewObject(obj);
-
-        return obj;
-    }
-
-    insertNewObject(obj)
-    {
-        //obj.saveChanges();
-
         var entityName = obj.entityName;
         var array = this._insertedObjects[entityName];
         if (array == null)
@@ -47,8 +34,6 @@ class MIOManagedObjectContext extends MIOObject
 
     updateObject(obj)
     {
-        //obj.saveChanges();
-
         var entityName = obj.entityName;
         var array = this._updateObjects[entityName];
         if (array == null)
@@ -65,10 +50,8 @@ class MIOManagedObjectContext extends MIOObject
         }
     }
 
-    removeObject(obj)
+    deleteObject(obj)
     {
-        //obj.saveChanges();
-
         var entityName = obj.entityName;
         var array = this._deletedObjects[entityName];
         if (array == null)
@@ -163,7 +146,7 @@ class MIOManagedObjectContext extends MIOObject
 
     }
 
-    saveContext()
+    save()
     {
         // Inserted objects
         for (var key in this._insertedObjects)
@@ -240,32 +223,5 @@ class MIOManagedObjectContext extends MIOObject
 
         return this.executeFetch(request);
     }
-
-    setPersistentStoreCoordinator(coordinator)
-    {
-
-    }
 }
 
-class MIOManagedObjectModel extends MIOObject
-{
-
-}
-
-class MIOPersistentStoreCoordinator extends MIOObject
-{
-    _managedObjectModel = null;
-
-    get managedObjectModel()
-    {
-        if (this._managedObjectModel != null)
-            return this._managedObjectModel;
-
-        return this._managedObjectModel;
-    }
-}
-
-class  MIOPersistentStore extends MIOObject
-{
-
-}

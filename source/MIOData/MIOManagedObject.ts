@@ -4,38 +4,44 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
-class MIOFetchRequest extends MIOObject {
-    entityName = null;
-    predicate = null;
-    sortDescriptors = null;
-
-    static fetchRequestWithEntityName(name) {
-        var fetch = new MIOFetchRequest();
-        fetch.initWithEntityName(name);
-
-        return fetch;
-    }
-
-    initWithEntityName(name) {
-        this.entityName = name;
-    }
-}
-
-class MIOEntityDescription extends MIOObject {
-    private entityName = null;
-
-    public static insertNewObjectForEntityForName(entityName, context) {
-        var object = context.insertNewObjectForEntityName(entityName);
-
-        return object;
-    }
-}
+/// <reference path="MIOEntityDescription.ts" />
+/// <reference path="MIOFetchRequest.ts" />
 
 class MIOManagedObject extends MIOObject {
-    entityName = null;
+    
+    entity = null;
     managedObjectContext = null;
 
     private _trackChanges = {};
+
+    private _isInserted = false;
+    private _setIsInserted(value) {this.willChangeValue("isInserted");this._isInserted=value;this.didChangeValue("isInserted")};
+    get isInserted():boolean {return this._isInserted};
+    
+    private _isUpdated = false;
+    private _setIsUpdated(value) {this.willChangeValue("_isUpdated");this._isUpdated=value;this.didChangeValue("_isUpdated")};
+    get isUpdated():boolean {return this._isUpdated};
+
+    private _isDeleted = false;
+    private _setIsDeleted(value) {this.willChangeValue("_isDeleted");this._isDeleted=value;this.didChangeValue("_isDeleted")};
+    get isDeleted():boolean {return this._isDeleted};
+
+    initWithEntityAndInsertIntoManagedObjectContext(entityDescription:MIOEntityDescription, context?:MIOManagedObjectContext){
+
+        super.init();
+
+        this.entity = entityDescription;
+        this.managedObjectContext = context;
+
+        if (context != null) {
+            this.managedObjectContext.insertObject(this);
+            this._setIsInserted(true);
+            this.awakeFromInsert();
+        }
+    }
+
+    awakeFromInsert() {}
+    awakeFromFetch() {}
 
     setValue(propertyName, value) {
         if (this[propertyName] === value) {
@@ -51,6 +57,8 @@ class MIOManagedObject extends MIOObject {
                     this.managedObjectContext.updateObject(this);
             }
         }
+
+        this._setIsUpdated(true);
     }
 
     getValue(propertyName) {
@@ -59,7 +67,7 @@ class MIOManagedObject extends MIOObject {
             value = this[propertyName];
 
         return value;
-    }
+    }    
 
     addObject(propertyName, object) {
         var array = this._trackChanges[propertyName];
@@ -78,6 +86,8 @@ class MIOManagedObject extends MIOObject {
         this._trackChanges[propertyName] = array;
         if (this.managedObjectContext != null)
             this.managedObjectContext.updateObject(this);
+
+        this._setIsUpdated(true);
     }
 
     removeObject(propertyName, object) {
@@ -99,10 +109,12 @@ class MIOManagedObject extends MIOObject {
         this._trackChanges[propertyName] = array;
         if (this.managedObjectContext != null)
             this.managedObjectContext.updateObject(this);
+
+        this._setIsUpdated(true);
     }
 
     get hasChanges() {
-        return (Object.keys(this._trackChanges).length > 0);
+        return (this.isInserted || this.isUpdated || this.isDeleted);
     }
 
     getChanges() {
@@ -114,6 +126,10 @@ class MIOManagedObject extends MIOObject {
             this[propertyName] = this._trackChanges[propertyName];
         }
         this._trackChanges = {};
+
+        this._setIsInserted(false);
+        this._setIsUpdated(false);
+        this._setIsDeleted(false);
     }
 
     discardChanges() {

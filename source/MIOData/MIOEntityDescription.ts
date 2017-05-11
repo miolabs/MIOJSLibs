@@ -1,0 +1,33 @@
+
+/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
+class MIOEntityDescription extends MIOObject {
+    
+    name = null;
+    private _managedObjectClassName = "MIOManagedObject";
+    get managedObjectClassName():string {return this._managedObjectClassName;}
+
+    public static entityForNameInManagedObjectContext(entityName:string, context:MIOManagedObjectContext):MIOEntityDescription {
+
+        var mom = context.persistentStoreCoordinator.managedObjectModel;
+        var entity = mom.entitiesByName[entityName];
+        return entity;
+    }
+
+    public static insertNewObjectForEntityForName(entityName:string, context:MIOManagedObjectContext) {
+        
+        var mom = context.persistentStoreCoordinator.managedObjectModel;
+        var entity = mom.entitiesByName[entityName];
+        
+        var obj = MIOClassFromString(entityName);
+        obj.initWithEntityAndInsertIntoManagedObjectContext(entity, context);
+
+        return obj;
+    }
+
+    initWithEntityName(entityName:string) {
+
+        super.init();
+        this._managedObjectClassName = entityName;
+    }
+}

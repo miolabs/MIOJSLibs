@@ -3,7 +3,8 @@
  */
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
-    
+
+/// <reference path="MIOFetchRequest.ts" />    
 /// <reference path="MIOManagedObjectContext.ts" />
 
 class MIOFetchSection extends MIOObject
