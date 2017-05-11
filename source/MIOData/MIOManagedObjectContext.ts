@@ -40,8 +40,10 @@ class MIOManagedObjectContext extends MIOObject
         }
     }
 
-    updateObject(obj)
+    updateObject(obj:MIOManagedObject)
     {
+        if (obj.isInserted || obj.isDeleted) return;
+        
         var entityName = obj.entity.managedObjectClassName;
         var array = this._updateObjects[entityName];
         if (array == null)
