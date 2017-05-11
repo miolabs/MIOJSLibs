@@ -5,6 +5,12 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 /// <reference path="MIOManagedObject.ts" />
 
+let MIOManagedObjectContextDidSaveNotification = "MIOManagedObjectContextDidSaveNotification";
+
+let MIOInsertedObjectsKey = "MIOInsertedObjectsKey";
+let MIOUpdatedObjectsKey = "MIOUpdatedObjectsKey";
+let MIODeletedObjectsKey = "MIODeletedObjectsKey";
+
 class MIOManagedObjectContext extends MIOObject
 {
     parentContext:MIOManagedObjectContext = null;
@@ -28,7 +34,9 @@ class MIOManagedObjectContext extends MIOObject
         }
         else
         {
-            array.push(obj);
+            var index = array.indexOf(obj);
+            if (index == -1)
+                array.push(obj);            
         }
     }
 
@@ -74,8 +82,12 @@ class MIOManagedObjectContext extends MIOObject
     removeAllObjectsForEntityName(entityName)
     {
         var objs = this._objects [entityName];
-        if (objs != null)
-            objs.length = 0;
+        if (objs != null) {
+            for(var index = 0; index < objs.length; index++){
+                var o = objs[index];
+                this.deleteObject(o);
+            }
+        }
     }
 
     executeFetch(request)
@@ -156,10 +168,29 @@ class MIOManagedObjectContext extends MIOObject
     
     save()
     {
-        // Inserted objects
+        // Remove objects
+        for (var key in this._deletedObjects)
+        {
+            var del_objs = this._deletedObjects[key];
+            var objects = this._objects[key];
+
+            // save changes
+            for (var i = 0; i < del_objs.length; i++)
+            {
+                var o = del_objs[i];
+                
+                var index = objects.indexOf(o);
+
+                if(index > -1) {
+                    objects.splice(index, 1);
+                }
+            }
+        }
+
+        // Inserted objects        
         for (var key in this._insertedObjects)
         {
-            var objs = this._insertedObjects[key];
+            var ins_objs = this._insertedObjects[key];
 
             // save changes and add to context
             var array = this._objects[key];
@@ -167,59 +198,39 @@ class MIOManagedObjectContext extends MIOObject
                 array = [];
                 this._objects[key] = array;
             }
-            for (var i = 0; i < objs.length; i++)
+
+            for (var i = 0; i < ins_objs.length; i++)
             {
-                var o = objs[i];
+                var o = ins_objs[i];
                 o.saveChanges();
                 array.push(o);
-            }
-
-            MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "INSERTED");
+            }            
         }
-
-        // Clear array
-        this._insertedObjects = [];
 
         // Update objects
         for (var key in this._updateObjects)
         {
-            var objs = this._updateObjects[key];
+            var upd_objs = this._updateObjects[key];
 
             // save changes
-            for (var i = 0; i < objs.length; i++)
+            for (var i = 0; i < upd_objs.length; i++)
             {
-                var o = objs[i];
+                var o = upd_objs[i];
                 o.saveChanges();
             }
-
-            MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "UPDATED");
         }
 
-        // Clear array
+        var objsChanges = {};        
+        objsChanges[MIOInsertedObjectsKey] = this._insertedObjects;
+        objsChanges[MIOUpdatedObjectsKey] = this._updateObjects;
+        objsChanges[MIODeletedObjectsKey] = this._deletedObjects;
+
+        MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, objsChanges);
+
+        // Clear arrays
+        this._insertedObjects = [];
         this._updateObjects = [];
-
-        // Remove objects
-        for (var key in this._deletedObjects)
-        {
-            var objs = this._deletedObjects[key];
-
-            // save changes
-            for (var i = 0; i < objs.length; i++)
-            {
-                var o = objs[i];
-                var objects = this._objects[o.entity.managedObjectClassName];
-                var index = objects.indexOf(o);
-
-                if(index > -1) {
-                    objects.splice(index, 1);
-                }
-            }
-
-            MIONotificationCenter.defaultCenter().postNotification("MIO" + key, objs, "DELETED");
-        }
-
-        // Clear array
-        this._deletedObjects = [];
+        this._deletedObjects = [];        
     }
 
     queryObject(entityName, predicateFormat?)

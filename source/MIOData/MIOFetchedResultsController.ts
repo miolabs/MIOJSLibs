@@ -49,7 +49,7 @@ class MIOFetchedResultsController extends MIOObject
 
         if (delegate != null)
         {
-            MIONotificationCenter.defaultCenter().addObserver(this, "MIO" + this._request.entityName, function(notification){
+            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification){
 
                 var objs = notification.object;
                 var type = notification.userInfo;
@@ -59,7 +59,7 @@ class MIOFetchedResultsController extends MIOObject
         }
         else
         {
-            MIONotificationCenter.defaultCenter().removeObserver(this, "MIO" + this._request.entityName);
+            MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextDidSaveNotification);
         }
     }
 
