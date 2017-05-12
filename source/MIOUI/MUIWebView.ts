@@ -11,11 +11,7 @@ class MUIWebView extends MUIView
     init()
     {
         super.init();
-
-        this._iframeLayer = document.createElement("iframe");
-        this._iframeLayer.setAttribute("scrolling", "auto");
-        this._iframeLayer.setAttribute("frameborder", "0");
-        this.layer.appendChild(this._iframeLayer);
+        this._setupLayer();
     }
 
     initWithLayer(layer, owner, options?)
@@ -23,17 +19,22 @@ class MUIWebView extends MUIView
         super.initWithLayer(layer, owner, options);
 
         this._iframeLayer = MUILayerGetFirstElementWithTag(this.layer, "IFRAME");
+        this._setupLayer();
+    }
+
+    private _setupLayer(){
+
         if (this._iframeLayer == null) {
+            this._iframeLayer = document.createElement("iframe");
             this._iframeLayer.setAttribute("scrolling", "auto");
             this._iframeLayer.setAttribute("frameborder", "0");
+            this._iframeLayer.setAttribute("width", "100%");
+            this._iframeLayer.setAttribute("height", "100%");            
             this.layer.appendChild(this._iframeLayer);
         }
     }
 
-    setURL(url)
-    {
+    setURL(url) {
         this._iframeLayer.setAttribute("src", url);
-        this._iframeLayer.setAttribute("width", "100%");
-        this._iframeLayer.setAttribute("height", "100%");
     }
 }

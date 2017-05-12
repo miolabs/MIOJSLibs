@@ -163,11 +163,6 @@ class MIOManagedObjectContext extends MIOObject
 
     }
 
-    // DEPRECATED: -> Change to save();
-    saveContext() {
-        this.save();
-    }
-    
     save()
     {
         // Remove objects
