@@ -44,6 +44,7 @@ enum MUITableViewCellSelectionStyle {
 
 class MUITableViewCell extends MUIView {    
 
+    contentView:MUIView = null;
     style = MUITableViewCellStyle.Custom;
     
     textLabel = null;
@@ -56,16 +57,19 @@ class MUITableViewCell extends MUIView {
     private _selected = false;    
 
     private _editing = false;
+    editingAccessoryType = MUITableViewCellAccessoryType.None;    
+    editingAccesoryView:MUIView = null;
 
     private _target = null;
     private _onClickFn = null;
     private _onDblClickFn = null;
+    private _onAccessoryClickFn = null;
     private _row = 0;
     private _section = 0;
 
     initWithStyle(style: MUITableViewCellStyle) {
+        
         super.init();
-
         this.style = style;
 
         if (style == MUITableViewCellStyle.Default) {
@@ -198,7 +202,42 @@ class MUITableViewCell extends MUIView {
     }
 
     setEditing(editing, animated?){
+
+        if (editing == this._editing) return;
+
         this._editing = editing;
+
+        if (this.editingAccesoryView == null) {
+            if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.left = "25px";
+
+            var layer = document.createElement("div");
+            layer.style.position = "absolute";
+
+            var btn = new MUIView();
+            btn.init();
+
+            btn.layer.style.top = "";
+            btn.layer.style.right = "";
+            btn.layer.style.width = "";
+            btn.layer.style.height = "100%";
+            
+            // TODO: Call delegate
+            btn.layer.classList.add("tableviewcell_accessory_delete");
+
+            var instance = this;
+            btn.layer.onclick = function () {
+            if (instance._onAccessoryClickFn != null)
+                instance._onAccessoryClickFn.call(instance._target, instance);
+            };
+
+            this.editingAccesoryView = btn;
+            this.addSubview(this.editingAccesoryView);
+        }
+        else 
+        {
+            this.editingAccesoryView.removeFromSuperview();
+        }
+        
     }
 
     set editing(value:boolean) {
@@ -469,6 +508,7 @@ class MUITableView extends MUIView {
                 cell._target = this;
                 cell._onClickFn = this.cellOnClickFn;
                 cell._onDblClickFn = this.cellOnDblClickFn;
+                cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
                 cell._row = index;
                 cell._section = sectionIndex;
             }
@@ -630,6 +670,18 @@ class MUITableView extends MUIView {
         if (this.delegate != null)
             if (typeof this.delegate.didMakeDoubleClick === "function")
                 this.delegate.didMakeDoubleClick(this, index, section);
+    }
+
+    cellOnAccessoryClickFn(cell) {
+
+        var index = cell._row;
+        var section = cell._section;
+
+        if (this.delegate != null) {
+            if (typeof this.delegate.commitEditingStyleForRowAtIndexPath === "function")
+                this.delegate.commitEditingStyleForRowAtIndexPath(this, MIOTableViewCellEditingStyle.Delete, index, section);
+        }
+
     }
 
     // get indexPathsForSelectedRows()
