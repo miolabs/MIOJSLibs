@@ -45,6 +45,12 @@ function MIODateGetDayFromDate(date)
     return day;
 }
 
+function MIODateGetDayStringFromDate(date) 
+{
+    var day = MIODateGetDayFromDate(date);
+    return MIODateGetStringForDay(day);
+}
+
 function MIODateGetString(date)
 {
     var d = MIODateGetDateString(date);
