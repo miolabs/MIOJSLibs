@@ -42,7 +42,7 @@ func CopyFiles(atPath path:String, toPath:String) {
         let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
         for item in directoryContents{
             
-            let itemPath = path + "/" + item;
+            let itemPath = path + "/" + item.lowercased();
             var isDir:ObjCBool = false
             FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir)
             if (isDir.boolValue){
@@ -53,8 +53,7 @@ func CopyFiles(atPath path:String, toPath:String) {
             }
             else {
                 
-                CopyFile(filename: item, fromPath: itemPath, toPath: toPath + "/" + item)
-                //try FileManager.default.copyItem(atPath: itemPath, toPath: toPath + "/" + item);
+                CopyFile(filename: item.lowercased(), fromPath: itemPath, toPath: toPath + "/" + item.lowercased())
             }
         }
     }

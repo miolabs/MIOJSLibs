@@ -47,7 +47,7 @@ function downloadHTML(url, layerID, path) {
         }
     };
 
-    xhr.open("GET", url);
+    xhr.open("GET", url.toLowerCase());
     xhr.send();
 }
 
