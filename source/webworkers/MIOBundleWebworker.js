@@ -2,7 +2,7 @@
  * Created by godshadow on 25/07/16.
  */
 
-importScripts("MIOHTMLParser.js");
+importScripts("miohtmlparser.js");
 
 var _languageStrings = null;
 
