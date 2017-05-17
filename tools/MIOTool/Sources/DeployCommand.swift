@@ -80,7 +80,7 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
         return;
     }
     
-    if (fn.hasSuffix(".css")) {
+    if (fn.hasSuffix(".css") && fn != "animate.min.css") {
         CopyCSSFile(filename: fn, fromPath: sp, toPath: dp)
         return;
     }
@@ -138,6 +138,5 @@ func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
     catch{
         print("Cann't open file")
     }
-    
     
 }
