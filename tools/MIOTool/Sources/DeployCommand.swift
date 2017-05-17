@@ -110,23 +110,28 @@ func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
             
             let l = lines[index]
             
-            let r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
+            var r = l.range(of: "https://fonts.googleapis.com/css?")
+            if (r == nil) {
+                dstString.append(lines[index] + "\n")
+                continue
+            }
+            
+            r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
             if (r == nil){
                 dstString.append(lines[index] + "\n")
+                continue
             }
-            else {
+
+            let urlString = l.substring(with: r!)
                 
-                let urlString = l.substring(with: r!)
-                
-                var lowerLine = "";
-                lowerLine.append(l.substring(to: r!.lowerBound))
-                lowerLine.append(urlString.lowercased())
-                lowerLine.append(l.substring(from: r!.upperBound) + "\n")
-                
-                print("CSS old URL: \(l)")
-                print("CSS new URL: \(lowerLine)")
-                dstString.append(lowerLine)
-            }
+            var lowerLine = "";
+            lowerLine.append(l.substring(to: r!.lowerBound))
+            lowerLine.append(urlString.lowercased())
+            lowerLine.append(l.substring(from: r!.upperBound) + "\n")
+            
+            print("CSS old URL: \(l)")
+            print("CSS new URL: \(lowerLine)")
+            dstString.append(lowerLine)
             
             index += 1
         }
