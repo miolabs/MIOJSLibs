@@ -88,9 +88,6 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
     print("Copying: \(fn)");
     do{
         let content:Data? = try Data.init(contentsOf: URL.init(fileURLWithPath: sp))
-        //let content = try String.init(contentsOfFile: sp, encoding: .utf8)
-        
-        //let fd : Data? = content.data(using: .utf8)
         try content!.write(to: URL.init(fileURLWithPath: dp))
     }
     catch{
@@ -104,6 +101,36 @@ func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
     
     do{
         let content = try String.init(contentsOfFile: sp, encoding: .utf8)
+        
+        let lines = content.components(separatedBy: "\n")
+        
+        var dstString = ""
+        var index = 0
+        while index < lines.count {
+            
+            let l = lines[index]
+            
+            let r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
+            if (r == nil){
+                dstString.append(lines[index] + "\n")
+            }
+            else {
+                
+                let urlString = l.substring(with: r!)
+                
+                var lowerLine = "";
+                lowerLine.append(l.substring(to: r!.lowerBound))
+                lowerLine.append(urlString.lowercased())
+                lowerLine.append(l.substring(from: r!.upperBound) + "\n")
+                
+                print("CSS old URL: \(l)")
+                print("CSS new URL: \(lowerLine)")
+                dstString.append(lowerLine)
+            }
+            
+            index += 1
+        }
+
         
         let fd : Data? = content.lowercased().data(using: .utf8)
         try fd!.write(to: URL.init(fileURLWithPath: dp))
