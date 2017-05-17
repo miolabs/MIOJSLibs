@@ -23,6 +23,17 @@ func DeployCommand() {
     CopyFiles(atPath:appPath, toPath:deployPath)
 }
 
+func RemoveFolder(atPath path:String) {
+    
+    print("Removing folder: \(path)")
+    do{
+        try FileManager.default.removeItem(atPath: path);
+    }
+    catch{
+        print("Couldn't remove folder: \(path)");
+    }
+}
+
 func CreateFolder(atPath path:String) {
     
     print("Creating folder: \(path)")
@@ -64,9 +75,13 @@ func CopyFiles(atPath path:String, toPath:String) {
 
 func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
 {
-    
     if (fn.hasPrefix(".")) {
         print("Ignoring file: \(fn)");
+        return;
+    }
+    
+    if (fn.hasSuffix(".css")) {
+        CopyCSSFile(filename: fn, fromPath: sp, toPath: dp)
         return;
     }
     
@@ -83,13 +98,19 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
     }
 }
 
-func RemoveFolder(atPath path:String) {
+func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
+
+    print("Copying CCS file: \(fn)");
     
-    print("Removing folder: \(path)")
     do{
-        try FileManager.default.removeItem(atPath: path);
+        let content = try String.init(contentsOfFile: sp, encoding: .utf8)
+        
+        let fd : Data? = content.lowercased().data(using: .utf8)
+        try fd!.write(to: URL.init(fileURLWithPath: dp))
     }
     catch{
-        print("Couldn't remove folder: \(path)");
+        print("Cann't open file")
     }
+    
+    
 }
