@@ -8,47 +8,29 @@
 
 //import Foundation
 
-enum CommandType {
+if (ArgsCount() == 1) {
     
-    case none
-    case createProject
-    case createFile
-    case addLib
-    case addFramework
-    case buildDebug
-    case buildRelease
-    case update
+    print("Not enough params!");
 }
 
-let len = CommandLine.arguments.count
-var cmdType = CommandType.none
-
-// Proccess arguments
-var index = 1
-
-while index < len {
+while let param = NextArg() {
+    
+    switch (param) {
         
-    var arg = CommandLine.arguments[index];index += 1
-    var arg2 = CommandLine.arguments[index]
-    switch (arg,arg2) {
+        case "create":
+            CreateCommand();
         
-        case ("create", "project"):
-            cmdType = .createProject
+        case "deploy":
+            DeployCommand();
+        
+        case "--path":
+            let path = NextArg();
+            if (path != nil) {
+                SetPath(path: path!);
+            }
         
         default:
             print("Argument not implemented!!")
     }
-    
-    index += 1;
-}
-
-switch cmdType {
-
-    case .createProject:
-        CreateProject()
-    
-    default:
-        print("Command error");
-    
 }
 

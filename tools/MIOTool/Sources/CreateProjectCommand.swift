@@ -8,7 +8,7 @@
 
 //import Foundation
 
-func CreateProject() {
+func CreateProjectCommand() {
     
     print("CREATE PROJECT")
 }
