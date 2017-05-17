@@ -47,7 +47,7 @@ func CopyFiles(atPath path:String, toPath:String) {
             FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir)
             if (isDir.boolValue){
                 
-                let newDir = toPath + "/" + item;
+                let newDir = toPath + "/" + item.lowercased();
                 CreateFolder(atPath: newDir)
                 CopyFiles(atPath: itemPath, toPath: newDir);
             }
