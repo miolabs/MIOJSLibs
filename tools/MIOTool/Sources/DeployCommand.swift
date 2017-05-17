@@ -66,12 +66,18 @@ func CopyFiles(atPath path:String, toPath:String) {
 func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
 {
     
+    if (fn.hasPrefix(".")) {
+        print("Ignoring file: \(fn)");
+        return;
+    }
+    
     print("Copying: \(fn)");
     do{
-        let content = try String.init(contentsOfFile: sp, encoding: .utf8)
+        let content:Data? = try Data.init(contentsOf: URL.init(fileURLWithPath: sp))
+        //let content = try String.init(contentsOfFile: sp, encoding: .utf8)
         
-        let fd : Data? = content.data(using: .utf8)
-        try fd?.write(to: URL.init(fileURLWithPath: dp))
+        //let fd : Data? = content.data(using: .utf8)
+        try content!.write(to: URL.init(fileURLWithPath: dp))
     }
     catch{
         print("Cann't open file")
