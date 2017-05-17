@@ -111,14 +111,16 @@ func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
             let l = lines[index]
             
             var r = l.range(of: "https://fonts.googleapis.com/css?")
-            if (r == nil) {
+            if (r != nil) {
                 dstString.append(lines[index] + "\n")
+                index += 1
                 continue
             }
             
             r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
             if (r == nil){
                 dstString.append(lines[index] + "\n")
+                index += 1
                 continue
             }
 
