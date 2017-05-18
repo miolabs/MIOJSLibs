@@ -26,9 +26,7 @@ class MIOBundle_Webworker
         {            
             urlString = MIOStringAppendPathComponent(basePath, path);
             urlString = MIOStringStandardizingPath(urlString);
-        }
-        
-        urlString = urlString.toLocaleLowerCase();
+        }                
 
         console.log("BUNDLE_WEBWORKER: Adding CSS: " + urlString);
         MIOCoreLoadStyle(urlString, this, function (){

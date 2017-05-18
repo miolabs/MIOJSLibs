@@ -2,7 +2,7 @@
  * Created by godshadow on 25/07/16.
  */
 
-importScripts("miohtmlparser.js");
+importScripts("MIOHTMLParser.js");
 
 var _languageStrings = null;
 
@@ -47,7 +47,7 @@ function downloadHTML(url, layerID, path) {
         }
     };
 
-    xhr.open("GET", url.toLowerCase());
+    xhr.open("GET", url);
     xhr.send();
 }
 

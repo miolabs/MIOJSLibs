@@ -53,18 +53,18 @@ func CopyFiles(atPath path:String, toPath:String) {
         let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
         for item in directoryContents{
             
-            let itemPath = path + "/" + item.lowercased();
+            let itemPath = path + "/" + item;
             var isDir:ObjCBool = false
             FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir)
             if (isDir.boolValue){
                 
-                let newDir = toPath + "/" + item.lowercased();
+                let newDir = toPath + "/" + item;
                 CreateFolder(atPath: newDir)
                 CopyFiles(atPath: itemPath, toPath: newDir);
             }
             else {
                 
-                CopyFile(filename: item.lowercased(), fromPath: itemPath, toPath: toPath + "/" + item.lowercased())
+                CopyFile(filename: item, fromPath: itemPath, toPath: toPath + "/" + item)
             }
         }
     }
@@ -80,10 +80,10 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
         return;
     }
     
-    if (fn.hasSuffix(".css") && fn != "animate.min.css") {
-        CopyCSSFile(filename: fn, fromPath: sp, toPath: dp)
-        return;
-    }
+//    if (fn.hasSuffix(".css") && fn != "animate.min.css") {
+//        CopyCSSFile(filename: fn, fromPath: sp, toPath: dp)
+//        return;
+//    }
     
     print("Copying: \(fn)");
     do{
@@ -95,55 +95,55 @@ func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
     }
 }
 
-func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
-
-    print("Copying CCS file: \(fn)");
-    
-    do{
-        let content = try String.init(contentsOfFile: sp, encoding: .utf8)
-        
-        let lines = content.components(separatedBy: "\n")
-        
-        var dstString = ""
-        var index = 0
-        while index < lines.count {
-            
-            let l = lines[index]
-            
-            var r = l.range(of: "https://fonts.googleapis.com/css?")
-            if (r != nil) {
-                dstString.append(lines[index] + "\n")
-                index += 1
-                continue
-            }
-            
-            r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
-            if (r == nil){
-                dstString.append(lines[index] + "\n")
-                index += 1
-                continue
-            }
-
-            let urlString = l.substring(with: r!)
-                
-            var lowerLine = "";
-            lowerLine.append(l.substring(to: r!.lowerBound))
-            lowerLine.append(urlString.lowercased())
-            lowerLine.append(l.substring(from: r!.upperBound) + "\n")
-            
-            print("CSS old URL: \(l)")
-            print("CSS new URL: \(lowerLine)")
-            dstString.append(lowerLine)
-            
-            index += 1
-        }
-
-        
-        let fd : Data? = content.lowercased().data(using: .utf8)
-        try fd!.write(to: URL.init(fileURLWithPath: dp))
-    }
-    catch{
-        print("Cann't open file")
-    }
-    
-}
+//func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
+//
+//    print("Copying CCS file: \(fn)");
+//    
+//    do{
+//        let content = try String.init(contentsOfFile: sp, encoding: .utf8)
+//        
+//        let lines = content.components(separatedBy: "\n")
+//        
+//        var dstString = ""
+//        var index = 0
+//        while index < lines.count {
+//            
+//            let l = lines[index]
+//            
+//            var r = l.range(of: "https://fonts.googleapis.com/css?")
+//            if (r != nil) {
+//                dstString.append(lines[index] + "\n")
+//                index += 1
+//                continue
+//            }
+//            
+//            r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
+//            if (r == nil){
+//                dstString.append(lines[index] + "\n")
+//                index += 1
+//                continue
+//            }
+//
+//            let urlString = l.substring(with: r!)
+//                
+//            var lowerLine = "";
+//            lowerLine.append(l.substring(to: r!.lowerBound))
+//            lowerLine.append(urlString.lowercased())
+//            lowerLine.append(l.substring(from: r!.upperBound) + "\n")
+//            
+//            print("CSS old URL: \(l)")
+//            print("CSS new URL: \(lowerLine)")
+//            dstString.append(lowerLine)
+//            
+//            index += 1
+//        }
+//
+//        
+//        let fd : Data? = content.lowercased().data(using: .utf8)
+//        try fd!.write(to: URL.init(fileURLWithPath: dp))
+//    }
+//    catch{
+//        print("Cann't open file")
+//    }
+//    
+//}
