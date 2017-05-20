@@ -39,7 +39,7 @@ class MIOBundle_Webworker
     {
         if (this._layoutWorker == null)
         {
-            this._layoutWorker = new Worker("webworkers/miobundlewebworker.js");
+            this._layoutWorker = new Worker("webworkers/MIOBundleWebworker.js");
             // TODO: Set language so we can translate every html file in backgorund
             //this._layoutWorker.postMessage({"CMD" : "SetLanguage", "LanguageStrings" : _MIOLocalizedStrings});
             
