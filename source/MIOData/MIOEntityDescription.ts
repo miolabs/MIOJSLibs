@@ -33,4 +33,8 @@ class MIOEntityDescription extends MIOObject {
         super.init();
         this._managedObjectClassName = entityName;
     }
+
+    addAttribute(name:string, type:MIOAttributeType) {
+        
+    }
 }
