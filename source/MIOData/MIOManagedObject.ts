@@ -116,6 +116,20 @@ class MIOManagedObject extends MIOObject {
         this._setIsUpdated(true);
     }
 
+    addObjects(propertyName, objects){
+
+        objects.forEach(element => {
+            this.addObject(propertyName, element);
+        });
+    }
+
+    removeObjects(propertyName, objects){
+        
+        objects.forEach(element => {
+            this.removeObject(propertyName, element);
+        });        
+    }
+
     get hasChanges() {
         return (this.isInserted || this.isUpdated || this.isDeleted);
     }

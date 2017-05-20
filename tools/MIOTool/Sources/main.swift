@@ -6,31 +6,40 @@
 //  Copyright © 2017 MIO Research Labs. All rights reserved.
 //
 
-//import Foundation
+import Foundation
 
 if (ArgsCount() == 1) {
     
     print("Not enough params!");
 }
 
-while let param = NextArg() {
+var cmd:Command? = nil;
+
+while let token = NextArg() {
     
-    switch (param) {
+    switch (token) {
         
         case "create":
-            CreateCommand();
+            cmd = Create();
         
         case "deploy":
-            DeployCommand();
-        
-        case "--path":
-            let path = NextArg();
-            if (path != nil) {
-                SetPath(path: path!);
-            }
+            cmd = Deploy();
         
         default:
-            print("Argument not implemented!!")
+            if (token.hasPrefix("--")){
+                let value = NextArg();
+                if (value != nil) {
+                    SetOption(token: token, value: value!);
+                }
+            }
+            else {
+                print("Argument not implemented!!")
+        }
     }
 }
+
+if (cmd != nil) {
+    cmd?.execute();
+}
+
 

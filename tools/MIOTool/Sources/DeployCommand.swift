@@ -8,142 +8,22 @@
 
 import Foundation
 
-func DeployCommand() {
+class DeployCommand : Command {
     
-    let path = GetPath();
-    let appPath = GetPath() + "/app"
-    let deployPath = GetPath() + "/deploy"
-    
-    print("Folder: \(path)")
-    print("Deploying ...")
-    
-    RemoveFolder(atPath:deployPath)
-    CreateFolder(atPath:deployPath)
-    
-    CopyFiles(atPath:appPath, toPath:deployPath)
-}
-
-func RemoveFolder(atPath path:String) {
-    
-    print("Removing folder: \(path)")
-    do{
-        try FileManager.default.removeItem(atPath: path);
-    }
-    catch{
-        print("Couldn't remove folder: \(path)");
-    }
-}
-
-func CreateFolder(atPath path:String) {
-    
-    print("Creating folder: \(path)")
-    do {
-        try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
-    }
-    catch {
-        print("Couldn't create deploy folder")
-    }
-}
-
-func CopyFiles(atPath path:String, toPath:String) {
-    
-    do{
-        print("Path: \(path)")
+    override func execute() {
+     
+        let path = CurrentPath()
+        let appPath = path + "/app"
+        let deployPath = path + "/deploy"
         
-        let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
-        for item in directoryContents{
-            
-            let itemPath = path + "/" + item;
-            var isDir:ObjCBool = false
-            FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir)
-            if (isDir.boolValue){
-                
-                let newDir = toPath + "/" + item;
-                CreateFolder(atPath: newDir)
-                CopyFiles(atPath: itemPath, toPath: newDir);
-            }
-            else {
-                
-                CopyFile(filename: item, fromPath: itemPath, toPath: toPath + "/" + item)
-            }
-        }
-    }
-    catch let error as NSError{
-        print(error.localizedDescription)
+        print("Folder: \(path)")
+        print("Deploying ...")
+        
+        RemoveFolder(atPath:deployPath)
+        CreateFolder(atPath:deployPath)
+        
+        CopyFiles(atPath:appPath, toPath:deployPath)
+        
     }
 }
 
-func CopyFile(filename fn: String, fromPath sp: String, toPath dp: String)
-{
-    if (fn.hasPrefix(".")) {
-        print("Ignoring file: \(fn)");
-        return;
-    }
-    
-//    if (fn.hasSuffix(".css") && fn != "animate.min.css") {
-//        CopyCSSFile(filename: fn, fromPath: sp, toPath: dp)
-//        return;
-//    }
-    
-    print("Copying: \(fn)");
-    do{
-        let content:Data? = try Data.init(contentsOf: URL.init(fileURLWithPath: sp))
-        try content!.write(to: URL.init(fileURLWithPath: dp))
-    }
-    catch{
-        print("Cann't open file")
-    }
-}
-
-//func CopyCSSFile(filename fn: String, fromPath sp: String, toPath dp: String) {
-//
-//    print("Copying CCS file: \(fn)");
-//    
-//    do{
-//        let content = try String.init(contentsOfFile: sp, encoding: .utf8)
-//        
-//        let lines = content.components(separatedBy: "\n")
-//        
-//        var dstString = ""
-//        var index = 0
-//        while index < lines.count {
-//            
-//            let l = lines[index]
-//            
-//            var r = l.range(of: "https://fonts.googleapis.com/css?")
-//            if (r != nil) {
-//                dstString.append(lines[index] + "\n")
-//                index += 1
-//                continue
-//            }
-//            
-//            r = l.range(of: "url\\(.*?\\)", options: .regularExpression)
-//            if (r == nil){
-//                dstString.append(lines[index] + "\n")
-//                index += 1
-//                continue
-//            }
-//
-//            let urlString = l.substring(with: r!)
-//                
-//            var lowerLine = "";
-//            lowerLine.append(l.substring(to: r!.lowerBound))
-//            lowerLine.append(urlString.lowercased())
-//            lowerLine.append(l.substring(from: r!.upperBound) + "\n")
-//            
-//            print("CSS old URL: \(l)")
-//            print("CSS new URL: \(lowerLine)")
-//            dstString.append(lowerLine)
-//            
-//            index += 1
-//        }
-//
-//        
-//        let fd : Data? = content.lowercased().data(using: .utf8)
-//        try fd!.write(to: URL.init(fileURLWithPath: dp))
-//    }
-//    catch{
-//        print("Cann't open file")
-//    }
-//    
-//}
