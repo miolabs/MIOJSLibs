@@ -50,6 +50,12 @@ class MUIViewController extends MIOObject
 
     _outlets = {};
 
+    constructor(layerID?) 
+    {
+        super();
+        this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
+    }
+
     init()
     {
         super.init();
