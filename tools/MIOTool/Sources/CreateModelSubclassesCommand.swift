@@ -140,6 +140,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    get \(name)()\(t) {\n";
         fileContent += "        return this.getValue('_\(name)');\n";
         fileContent += "    }\n";
+        
+        // Getter raw value
+        fileContent += "    get \(name)RawValue()\(t) {\n";
+        fileContent += "        return this._\(name);\n";
+        fileContent += "    }\n";
     }
     
     private func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:String) {

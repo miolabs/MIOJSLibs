@@ -40,7 +40,7 @@ class CreateModelTemplateCommand: Command {
         content += "   <entity name='Entity1' representedClassName='Entity1'>\n"
         content += "       <attribute name='name' optional='YES' attributeType='String'/>\n"
         content += "       <attribute name='number' optional='YES' attributeType='Number'/>\n"
-        content += "       <relationship name='newRelationship' optional='YES' maxCount='1' deletionRule='Nullify' destinationEntity='Entity1' inverseName='newRelationship' inverseEntity='Entity1'/>\n"
+        content += "       <relationship name='newRelationship' optional='YES' toMany='YES'/>\n"
         content += "   </entity>\n"
         content += "</model>\n"
         
