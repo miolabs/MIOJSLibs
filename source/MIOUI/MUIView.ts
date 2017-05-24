@@ -80,7 +80,7 @@ class MUIView extends MIOObject
         this.layer.style.left = "0px";
         this.layer.style.width = "100%";
         this.layer.style.height = "100%";
-        this.layer.style.background = "rgb(255, 255, 255)";
+        //this.layer.style.background = "rgb(255, 255, 255)";
     }
 
     initWithFrame(frame)

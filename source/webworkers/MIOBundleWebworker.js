@@ -43,10 +43,12 @@ function downloadHTML(url, layerID, path) {
         else
         {
             // something went wrong
+            console.log("BUNDLE_WORKER: Error downloading resource at " + url + " (Code: " + this.status + ")");
             instance.parseHTML.call(instance);
         }
     };
 
+    console.log("BUNDLE_WORKER: Downloading resource at " + url);
     xhr.open("GET", url);
     xhr.send();
 }
