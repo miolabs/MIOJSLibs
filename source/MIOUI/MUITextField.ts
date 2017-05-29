@@ -20,12 +20,15 @@ class MUITextField extends MUIControl
 
     textChangeTarget = null;
     textChangeAction = null;
+    private _textChangeFn = null;
 
     enterPressTarget = null;
     enterPressAction = null;
 
     keyPressTarget   = null;
     keyPressAction   = null;
+
+    formatter:MIOFormatter = null;
 
     init()
     {
@@ -113,12 +116,43 @@ class MUITextField extends MUIControl
     {
         this.textChangeTarget = target;
         this.textChangeAction = action;
-        var instance = this;
 
-        this.layer.oninput = function()
-        {
+        this._registerInputEvent();
+    }    
+
+    private _registerInputEvent(){
+
+        var instance = this;
+        this._textChangeFn = function() {
             if (instance.enabled)
-                instance.textChangeAction.call(target, instance, instance._inputLayer.value);
+                instance._textDidChange.call(instance);
+        }
+
+        this.layer.addEventListener("input", this._textChangeFn);
+    }
+
+    private _unregisterInputEvent(){
+        this.layer.removeEventListener("input", this._textChangeFn);
+    }
+
+    private _textDidChange(){
+
+        if (this.enabled == false) return;
+
+        // Check the formater
+        var value = this._inputLayer.value;
+        if (this.formatter == null) {
+            this.textChangeAction.call(this.textChangeTarget, this, value);
+        }
+        else {
+            var result, newStr;
+            [result, newStr] = this.formatter.isPartialStringValid(value);
+
+            if (result == false) {
+                this._unregisterInputEvent();
+                this._inputLayer.value = newStr;
+                this._registerInputEvent();
+            }
         }
     }
 

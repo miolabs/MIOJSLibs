@@ -6,49 +6,40 @@
 //  Copyright © 2017 MIO Research Labs. All rights reserved.
 //
 
-//import Foundation
+import Foundation
 
-enum CommandType {
+if (ArgsCount() == 1) {
     
-    case none
-    case createProject
-    case createFile
-    case addLib
-    case addFramework
-    case buildDebug
-    case buildRelease
-    case update
+    print("Not enough params!");
 }
 
-let len = CommandLine.arguments.count
-var cmdType = CommandType.none
+var cmd:Command? = nil;
 
-// Proccess arguments
-var index = 1
-
-while index < len {
+while let token = NextArg() {
+    
+    switch (token) {
         
-    var arg = CommandLine.arguments[index];index += 1
-    var arg2 = CommandLine.arguments[index]
-    switch (arg,arg2) {
+        case "create":
+            cmd = Create();
         
-        case ("create", "project"):
-            cmdType = .createProject
+        case "deploy":
+            cmd = Deploy();
         
         default:
-            print("Argument not implemented!!")
+            if (token.hasPrefix("--")){
+                let value = NextArg();
+                if (value != nil) {
+                    SetOption(token: token, value: value!);
+                }
+            }
+            else {
+                print("Argument not implemented!!")
+        }
     }
-    
-    index += 1;
 }
 
-switch cmdType {
-
-    case .createProject:
-        CreateProject()
-    
-    default:
-        print("Command error");
-    
+if (cmd != nil) {
+    cmd?.execute();
 }
+
 

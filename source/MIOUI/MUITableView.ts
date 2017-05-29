@@ -33,7 +33,7 @@ enum MUITableViewCellSeparatorStyle {
 
     None,
     SingleLine,
-    SingleLineEtched // TODO
+    SingleLineEtched // TODO 
 }
 
 enum MUITableViewCellSelectionStyle {

@@ -50,7 +50,7 @@ class MUIViewController extends MIOObject
 
     _outlets = {};
 
-    constructor(layerID?)
+    constructor(layerID?) 
     {
         super();
         this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
@@ -59,10 +59,8 @@ class MUIViewController extends MIOObject
     init()
     {
         super.init();
-
-        this.view = new MUIView(this.layerID);
-        this.view.init();
-        this._layerIsReady = true;
+        
+        this.loadView();
     }
 
     initWithLayer(layer, owner, options?)
@@ -71,15 +69,8 @@ class MUIViewController extends MIOObject
 
         this.view = new MUIView(this.layerID);
         this.view.initWithLayer(layer, owner, options);
-        this._layerIsReady = true;
-    }
-
-    initWithView(view)
-    {
-        super.init();
-
-        this.view = view;
-        this._layerIsReady = true;
+        
+        this.loadView();
     }
 
     initWithResource(path)
@@ -119,9 +110,19 @@ class MUIViewController extends MIOObject
 
     loadView()
     {
-        this.view = new MUIView(this.layerID);
-        //this.view.init();
+        if (this.view != null) {
+            this._didLoadView();
+            return;
+        }
 
+        this.view = new MUIView(this.layerID);
+        
+        if (this._htmlResourcePath == null) {
+            this.view.init();
+            this._didLoadView();
+            return;
+        }
+        
         var mainBundle = MIOBundle.mainBundle();
         mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layerData) {
 
@@ -145,11 +146,11 @@ class MUIViewController extends MIOObject
             //this.view.addSubLayer(layer);
             this.view.initWithLayer(layer);
             this.view.awakeFromHTML();
-            this._didLayerDownloaded();
+            this._didLoadView();
         });        
     }
 
-    _didLayerDownloaded()
+    _didLoadView()
     {
         this._layerIsReady = true;
 
@@ -162,7 +163,6 @@ class MUIViewController extends MIOObject
 
         if (this._onViewLoadedAction != null && this._onViewLoadedTarget != null)
         {
-            //this.loadView();
             this.viewDidLoad();
             this._loadChildControllers();
         }
@@ -218,7 +218,6 @@ class MUIViewController extends MIOObject
         }
         else if (this._layerIsReady == true)
         {
-            //this.loadView();
             this.viewDidLoad();
             this._loadChildControllers();
         }

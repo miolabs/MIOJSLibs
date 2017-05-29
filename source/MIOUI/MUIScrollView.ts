@@ -15,6 +15,10 @@ class MUIScrollView extends MUIView
     set showsVerticalScrollIndicator(value:boolean) {this.setShowsVerticalScrollIndicator(value);}
     get showsVerticalScrollIndicator():boolean {return this._showsVerticalScrollIndicator;}
 
+    private _scrollEnable = true;
+    set scrollEnable(value:boolean) {this.setScrollEnable(value);}
+    get scrollEnable():boolean {return this._scrollEnable;}
+
     private _contentView = null;
     private _scrollTimer = null;
 
@@ -110,6 +114,20 @@ class MUIScrollView extends MUIView
 
     removeFromSuperview(){
         this._contentView.removeFromSuperview();
+    }
+
+    public setScrollEnable(value:boolean) {
+
+        if (this._scrollEnable == value) return;
+        this._scrollEnable = value;
+        if (this._contentView == null) return;
+        
+        if (value == true) {
+            this._contentView.layer.style.overflow = "scroll";
+        } 
+        else {
+            this._contentView.layer.style.overflow = "hidden";
+        }
     }
 
     public setShowsVerticalScrollIndicator(value:boolean)

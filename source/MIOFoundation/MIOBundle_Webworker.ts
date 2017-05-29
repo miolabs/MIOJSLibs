@@ -26,8 +26,8 @@ class MIOBundle_Webworker
         {            
             urlString = MIOStringAppendPathComponent(basePath, path);
             urlString = MIOStringStandardizingPath(urlString);
-        }
-        
+        }                
+
         console.log("BUNDLE_WEBWORKER: Adding CSS: " + urlString);
         MIOCoreLoadStyle(urlString, this, function (){
             this._loadingCSSCount--;

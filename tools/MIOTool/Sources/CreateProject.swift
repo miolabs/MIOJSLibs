@@ -6,9 +6,11 @@
 //
 //
 
-//import Foundation
+import Foundation
 
-func CreateProject() {
+func CreateProject() -> Command? {
     
-    print("CREATE PROJECT")
+    print("CREATE PROJECT not implemented")
+    
+    return nil;
 }
