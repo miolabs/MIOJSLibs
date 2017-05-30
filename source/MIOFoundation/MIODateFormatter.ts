@@ -16,12 +16,24 @@ class MIODateFormatter extends MIOFormatter {
 
     dateFromString(str:string):Date {
 
+        var result, value, dateString;
+        [result, value, dateString] = this._parse(str);
+        if (result == true) {
+            return new Date(dateString);
+        }
+
         return null;
     }
 
     stringFromDate(date:Date):string {
 
-        return null;
+        if (date == null) return null;
+
+        var dd = date.getDate();
+        var mm = date.getMonth() + 1;
+        var yy = date.getFullYear();        
+
+        return dd + "/" + mm + "/" + yy;
     }
 
     isPartialStringValid(str:string):[boolean, string]{
@@ -34,7 +46,7 @@ class MIODateFormatter extends MIOFormatter {
         return [result, newStr];
     }
 
-    private _parse(str:string):[boolean, string]{
+    private _parse(str:string):[boolean, string, string]{
 
         var parseString = "";
         var step = 0;
@@ -50,7 +62,7 @@ class MIODateFormatter extends MIOFormatter {
             if (ch == "-" || ch == "." || ch == "/")
             {
                 // Next step
-                if (parseString.length == 0) return [false, parseString];
+                if (parseString.length == 0) return [false, parseString, ""];
                 parseString += "/";
                 step++;
             }
@@ -76,13 +88,12 @@ class MIODateFormatter extends MIOFormatter {
                 if (result == true)
                     parseString += ch;
                 else 
-                    return [false, parseString];
+                    return [false, parseString, ""];
             }            
         }
 
-        //var res = MIODateFromString(yy + "-" + mm + "-" + dd);
-
-        return [true, parseString];
+        var dateString = (yy[3]? yy : "20") + yy + "-" + mm + "-" + dd;
+        return [true, parseString, dateString];
     }
 
     private _parseDay(ch, dd):[boolean, string] {

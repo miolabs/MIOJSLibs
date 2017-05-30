@@ -15,6 +15,7 @@
 /// <reference path="MIOLocale.ts" />
 /// <reference path="MIOFormatter.ts" />
 /// <reference path="MIODateFormatter.ts" />
+/// <reference path="MIOISO8601DateFormatter.ts" />
 /// <reference path="MIONumberFormatter.ts" />
 
 /// <reference path="MIOTimer.ts" />
