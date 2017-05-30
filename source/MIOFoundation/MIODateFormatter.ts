@@ -92,7 +92,7 @@ class MIODateFormatter extends MIOFormatter {
             }            
         }
 
-        var dateString = (yy[3]? yy : "20") + yy + "-" + mm + "-" + dd;
+        var dateString = (yy[3]? yy : "20") + "-" + mm + "-" + dd;
         return [true, parseString, dateString];
     }
 

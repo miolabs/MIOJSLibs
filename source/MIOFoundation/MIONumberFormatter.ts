@@ -104,7 +104,7 @@ class MIONumberFormatter extends MIOFormatter {
                 numberString += ".";
                 type = _MIONumberFormatterType.Decimal;
             }
-            else if (parseInt(ch)) {
+            else if (!isNaN(parseInt(ch))) {
                 parseString += ch;
                 numberString += ch;
             }

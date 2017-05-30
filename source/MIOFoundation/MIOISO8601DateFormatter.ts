@@ -9,7 +9,11 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
     dateFromString(str:string):Date {
 
         if (str == null) return null; 
-        return new Date(str);
+        var d = new Date(str);
+        if (d == null) 
+            console.log("DATE FORMATTER: Error, invalid date");
+
+        return d;
     }
 
     stringFromDate(date:Date):string {
