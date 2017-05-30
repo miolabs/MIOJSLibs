@@ -67,8 +67,58 @@ class MIOURLConnection
                 // success!
                 if (instance.delegate != null)
                     instance.delegate.connectionDidReceiveData(instance, this.responseText);
-                else if (instance.blockFN != null)
-                    instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
+                else if (instance.blockFN != null) {
+                    var type = instance.xmlHttpRequest.getResponseHeader('Content-Type');
+                    if( type.substring(0,16) != 'application/json') {
+
+                        var filename = "test.xls";
+                        var disposition = instance.xmlHttpRequest.getResponseHeader('Content-Disposition');
+                        if (disposition && disposition.indexOf('attachment') !== -1) {
+                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var matches = filenameRegex.exec(disposition);
+                            if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                        }
+
+/*var csvString = this.response;//'ı;ü;ü;ğ;ş';
+var universalBOM = "\uFEFF";
+var a = window.document.createElement('a');
+a.setAttribute('href', type + encodeURIComponent(universalBOM+csvString));
+a.setAttribute('download', 'example.csv');
+window.document.body.appendChild(a);
+a.click();
+return;*/
+                        var blob = new Blob(['\ufeff'+this.response], { type: 'application/vnd.ms-excel', endings:'native'} );
+                        //var blob = new Blob([new Uint8Array(this.response)] );
+
+                        if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                            // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                            window.navigator.msSaveBlob(blob, filename);
+                        } else {
+                            var URL = window.URL || window.webkitURL;
+                            var downloadUrl = URL.createObjectURL(blob);
+
+                            if (filename) {
+                                // use HTML5 a[download] attribute to specify filename
+                                var a = document.createElement("a");
+                                // safari doesn't support this yet
+                                if (typeof a.download === 'undefined') {
+                                    window.location = downloadUrl;
+                                } else {
+                                    a.href = downloadUrl;
+                                    a.download = filename;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                }
+                            } else {
+                                window.location = downloadUrl;
+                            }
+
+                            setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                        }
+                    }
+                    else
+                        instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
+                }
             }
             else
             {
