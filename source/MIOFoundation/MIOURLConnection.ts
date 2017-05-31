@@ -58,6 +58,8 @@ class MIOURLConnection
     start()
     {
         this.xmlHttpRequest = new XMLHttpRequest();
+       // this.xmlHttpRequest.responseType = "arraybuffer";
+       
 
         var instance = this;
         this.xmlHttpRequest.onload = function(){
@@ -70,7 +72,7 @@ class MIOURLConnection
                 else if (instance.blockFN != null) {
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type');
                     if( type.substring(0,16) != 'application/json') {
-
+                        //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
                         var filename = "test.xls";
                         var disposition = instance.xmlHttpRequest.getResponseHeader('Content-Disposition');
                         if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -79,16 +81,7 @@ class MIOURLConnection
                             if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
                         }
 
-/*var csvString = this.response;//'ı;ü;ü;ğ;ş';
-var universalBOM = "\uFEFF";
-var a = window.document.createElement('a');
-a.setAttribute('href', type + encodeURIComponent(universalBOM+csvString));
-a.setAttribute('download', 'example.csv');
-window.document.body.appendChild(a);
-a.click();
-return;*/
-                        var blob = new Blob(['\ufeff'+this.response], { type: 'application/vnd.ms-excel', endings:'native'} );
-                        //var blob = new Blob([new Uint8Array(this.response)] );
+                        var blob = new Blob([new Uint8Array(this.response)] , { type: type});
 
                         if (typeof window.navigator.msSaveBlob !== 'undefined') {
                             // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
@@ -142,7 +135,11 @@ return;*/
 
         if (this.request.httpMethod == "GET" || this.request.body == null)
             this.xmlHttpRequest.send();
-        else
+        else {
+            //HACK to allow binary downloads
+            if(this.request.url.path.endsWith('/export'))
+                this.xmlHttpRequest.responseType = "arraybuffer";
             this.xmlHttpRequest.send(this.request.body);
+        }
     }
 }
