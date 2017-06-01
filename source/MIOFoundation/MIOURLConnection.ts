@@ -11,6 +11,7 @@ class MIOURLRequest extends MIOObject
     httpMethod = "GET";
     body = null;
     headers = [];
+    binary = false;
 
     static requestWithURL(url:MIOURL):MIOURLRequest
     {
@@ -73,7 +74,7 @@ class MIOURLConnection
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type');
                     if( type.substring(0,16) != 'application/json') {
                         //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
-                        var filename = "test.xls";
+                        var filename = "manager_document.xls";
                         var disposition = instance.xmlHttpRequest.getResponseHeader('Content-Disposition');
                         if (disposition && disposition.indexOf('attachment') !== -1) {
                             var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
@@ -132,14 +133,12 @@ class MIOURLConnection
             var item = this.request.headers[count];
             this.xmlHttpRequest.setRequestHeader(item["Field"], item["Value"]);
         }
-
+        if (this.request.binary == true)
+            this.xmlHttpRequest.responseType = "arraybuffer";
         if (this.request.httpMethod == "GET" || this.request.body == null)
             this.xmlHttpRequest.send();
-        else {
-            //HACK to allow binary downloads
-            if(this.request.url.path.endsWith('/export'))
-                this.xmlHttpRequest.responseType = "arraybuffer";
+        else             
             this.xmlHttpRequest.send(this.request.body);
-        }
+        
     }
 }
