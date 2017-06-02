@@ -76,6 +76,8 @@ class MUITextField extends MUIControl
         var placeholderKey = this.layer.getAttribute("data-placeholder");
         if (placeholderKey != null)
             this._inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
+
+        this._registerInputEvent();            
     }
 
     layout()
@@ -116,8 +118,6 @@ class MUITextField extends MUIControl
     {
         this.textChangeTarget = target;
         this.textChangeAction = action;
-
-        this._registerInputEvent();
     }    
 
     private _registerInputEvent(){
@@ -142,18 +142,25 @@ class MUITextField extends MUIControl
         // Check the formater
         var value = this._inputLayer.value;
         if (this.formatter == null) {
-            this.textChangeAction.call(this.textChangeTarget, this, value);
+            this._textDidChangeDelegate(value);
         }
         else {
             var result, newStr;
             [result, newStr] = this.formatter.isPartialStringValid(value);
 
-            if (result == false) {
-                this._unregisterInputEvent();
-                this._inputLayer.value = newStr;
-                this._registerInputEvent();
+            this._unregisterInputEvent();
+            this._inputLayer.value = newStr;
+            this._registerInputEvent();
+
+            if (result == true) {
+                this._textDidChangeDelegate(value);
             }
         }
+    }
+
+    private _textDidChangeDelegate(value){
+        if (this.textChangeAction != null && this.textChangeTarget != null)
+            this.textChangeAction.call(this.textChangeTarget, this, value);
     }
 
     setOnEnterPress(target, action)

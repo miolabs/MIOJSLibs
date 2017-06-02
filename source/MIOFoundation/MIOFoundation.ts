@@ -7,11 +7,16 @@
 /// <reference path="MIOBundle.ts" />
 
 /// <reference path="MIOObject.ts" />
-/// <reference path="MIOLocale.ts" />
 /// <reference path="MIOString.ts" />
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />
 /// <reference path="MIOPredicate.ts" />
+
+/// <reference path="MIOLocale.ts" />
+/// <reference path="MIOFormatter.ts" />
+/// <reference path="MIODateFormatter.ts" />
+/// <reference path="MIOISO8601DateFormatter.ts" />
+/// <reference path="MIONumberFormatter.ts" />
 
 /// <reference path="MIOTimer.ts" />
 
