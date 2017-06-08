@@ -43,6 +43,7 @@ class MIONumberFormatter extends MIOFormatter {
 
     stringFromNumber(number:number){
 
+        if(!number) return '0';
         var str = number.toString();
         var intValue = null;
         var floatValue = null;

@@ -74,7 +74,12 @@ class MIOURLConnection
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type');
                     if( type.substring(0,16) != 'application/json') {
                         //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
-                        var filename = "manager_document.xls";
+                        var filename;
+                        if(type == 'application/pdf')
+                            filename = 'document.pdf';
+                        else
+                            filename = "manager_document.xls";
+
                         var disposition = instance.xmlHttpRequest.getResponseHeader('Content-Disposition');
                         if (disposition && disposition.indexOf('attachment') !== -1) {
                             var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
@@ -108,6 +113,7 @@ class MIOURLConnection
                             }
 
                             setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                            instance.blockFN.call(instance.blockTarget, this.status, null);
                         }
                     }
                     else
