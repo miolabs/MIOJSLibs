@@ -96,6 +96,7 @@ class MIONumberFormatter extends MIOFormatter {
         var parseString = "";
         var numberString = "";
         var type = _MIONumberFormatterType.Int;
+        var minusSymbol = false;
 
         for (var index = 0; index < str.length; index++) {
          
@@ -104,6 +105,11 @@ class MIONumberFormatter extends MIOFormatter {
                 parseString += ch;
                 numberString += ".";
                 type = _MIONumberFormatterType.Decimal;
+            }
+            else if (ch == "-" && minusSymbol == false) {
+                parseString += ch;
+                numberString += ch;
+                minusSymbol = true;                
             }
             else if (!isNaN(parseInt(ch))) {
                 parseString += ch;
