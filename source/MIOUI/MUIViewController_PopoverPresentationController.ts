@@ -44,7 +44,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
         
         this._calculateFrame();
 
-        this.presentedView.layer.classList.add("popover_background");
+        this.presentedView.layer.classList.add("popover_window");
     }
 
     _calculateFrame()

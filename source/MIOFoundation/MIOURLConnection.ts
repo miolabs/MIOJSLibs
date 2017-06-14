@@ -126,7 +126,7 @@ class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidFail(instance);
                 else if (instance.blockFN != null)
-                    instance.blockFN.call(instance.blockTarget, this.status, null);
+                    instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
             }
         };
 
