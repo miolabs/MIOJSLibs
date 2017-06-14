@@ -17,6 +17,9 @@ class MIODateFormatter extends MIOFormatter {
     dateFromString(str:string):Date {
 
         var result, value, dateString;
+
+        if(!str || str.length <= 0) return null;
+        
         [result, value, dateString] = this._parse(str);
         if (result == true) {
             return new Date(dateString);
