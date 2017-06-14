@@ -82,9 +82,8 @@ class MUIPresentationController extends MIOObject
 
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
         {
-            view.layer.style.borderLeft = "1px solid rgb(208, 208, 219)";
-            view.layer.style.borderBottom = "1px solid rgb(208, 208, 219)";
-            view.layer.style.borderRight = "1px solid rgb(208, 208, 219)";
+            view.layer.style.overflow = "auto"
+            view.layer.style.borderRadius = "10px 10px 10px 10px";
         }       
     }
 
@@ -121,9 +120,7 @@ class MUIPresentationController extends MIOObject
             view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
             this.window.setFrame(MIOFrame.frameWithRect(x, 0, w, h))
 
-            view.layer.style.borderLeft = "1px solid rgb(208, 208, 219)";
-            view.layer.style.borderBottom = "1px solid rgb(208, 208, 219)";
-            view.layer.style.borderRight = "1px solid rgb(208, 208, 219)";
+            view.layer.style.borderRadius = "10px 10px 10px 10px";
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
         {
@@ -141,8 +138,7 @@ class MUIPresentationController extends MIOObject
             view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
             this.window.setFrame(MIOFrame.frameWithRect(x, y, w, h))
 
-            view.layer.style.borderRadius = "5px 5px 5px 5px";
-            view.layer.style.border = "1px solid rgb(208, 208, 219)";
+            view.layer.style.borderRadius = "10px 10px 10px 10px";
         }
         else
         {
