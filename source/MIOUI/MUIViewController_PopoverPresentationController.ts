@@ -26,30 +26,6 @@ class MUIPopoverPresentationController extends MUIPresentationController
     private _canvasLayer = null;
     private _contentView = null;
 
-    // setPresentedViewController(vc) {
-
-    //     this._presentedViewController = vc;
-
-    //     var size = vc.preferredContentSize;
-
-    //     var w = size.width + 2;
-    //     var h = size.height + 2;
-
-    //     var window = new MUIWindow();
-    //     window.initWithFrame(MIOFrame.frameWithRect(0, 0, w, h));
-
-    //     window.rootViewController = vc;
-    //     window.addSubview(vc.view);
-                
-    //     this.presentedView = window;
-
-    //     if (vc.transitioningDelegate == null)
-    //     {
-    //         vc.transitioningDelegate = new MIOModalPopOverTransitioningDelegate();
-    //         vc.transitioningDelegate.init();
-    //     }
-    // }
-
     get transitioningDelegate()
     {
         if (this._transitioningDelegate == null)
@@ -68,10 +44,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
         
         this._calculateFrame();
 
-        this.presentedView.layer.style.borderRadius = "10px 10px 10px 10px";
-        this.presentedView.layer.style.boxShadow = "0px 8px 30px 0px rgba(0,0,0,0.5);"
-        this.presentedView.layer.style.overflow = "auto"
-        //this.presentedView.layer.style.zIndex = 10; // To make clip the children views     
+        this.presentedView.layer.classList.add("popover_window");
     }
 
     _calculateFrame()

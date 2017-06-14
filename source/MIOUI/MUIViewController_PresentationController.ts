@@ -82,8 +82,7 @@ class MUIPresentationController extends MIOObject
 
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
         {
-            view.layer.style.overflow = "auto"
-            view.layer.style.borderRadius = "10px 10px 10px 10px";
+            view.layer.classList.add("modal_window");
         }       
     }
 
@@ -120,7 +119,7 @@ class MUIPresentationController extends MIOObject
             view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
             this.window.setFrame(MIOFrame.frameWithRect(x, 0, w, h))
 
-            view.layer.style.borderRadius = "10px 10px 10px 10px";
+            view.layer.classList.add("modal_background");
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
         {
@@ -138,7 +137,7 @@ class MUIPresentationController extends MIOObject
             view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
             this.window.setFrame(MIOFrame.frameWithRect(x, y, w, h))
 
-            view.layer.style.borderRadius = "10px 10px 10px 10px";
+            view.layer.classList.add("modal_background");
         }
         else
         {
