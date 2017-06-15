@@ -72,7 +72,7 @@ class MIOURLConnection
                     instance.delegate.connectionDidReceiveData(instance, this.responseText);
                 else if (instance.blockFN != null) {
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type');
-                    if( type.substring(0,16) != 'application/json') {
+                    if( type.substring(0,16) != 'application/json' && type.substring(0,9) != 'text/html') {
                         //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
                         var filename;
                         if(type == 'application/pdf')
