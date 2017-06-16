@@ -281,6 +281,8 @@ class MUITableView extends MUIView {
     private _needReloadData = false;
     private _cellPrototypes = {};
 
+    private _reusableCells = {}
+
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
@@ -390,6 +392,7 @@ class MUITableView extends MUIView {
     }
 
     dequeueReusableCellWithIdentifier(identifier) {
+
         var item = this._cellPrototypes[identifier];
 
         //instance creation here
