@@ -14,7 +14,6 @@
 /// <reference path="MUIScrollView.ts" />
 /// <reference path="MUITableView.ts" />
 /// <reference path="MUICollectionView.ts" />
-/// <reference path="MUICalendarView.ts" />
 /// <reference path="MUIWebView.ts" />
 
 /// <reference path="MUIControl.ts" />

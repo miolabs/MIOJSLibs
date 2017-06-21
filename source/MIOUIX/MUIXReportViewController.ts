@@ -1,7 +1,7 @@
 
 /// <reference path="../MIOUI/MIOUI.ts" />
 
-class MUIXReportController extends MUIViewController 
+class MUIXReportViewController extends MUIViewController
 {
     private _tableView = null;
 }
