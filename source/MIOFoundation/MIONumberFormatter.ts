@@ -98,7 +98,7 @@ class MIONumberFormatter extends MIOFormatter {
             res += this.locale.decimalSeparator;
         
             if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits)
-                floatValue = floatValue.substring(this.maximumFractionDigits);
+                floatValue = floatValue.substring(0, this.maximumFractionDigits);
 
             for (var index = 0; index < this.minimumFractionDigits; index++){
 
