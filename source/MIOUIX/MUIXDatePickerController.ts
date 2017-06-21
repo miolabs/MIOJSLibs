@@ -51,10 +51,10 @@ class MUIXDatePickerController extends MUIViewController
     // Calendar Delegate methods
     didSelectDayCellAtDate(calendarView, date) {
         
-        if (this.delegate == null) return;
-
-        if (typeof this.delegate.didSelectDate === "function")
+        if (this.delegate != null && typeof this.delegate.didSelectDate === "function")
             this.delegate.didSelectDate(this, date);
+
+        this.dismissViewController(true);
     }
 
      public get preferredContentSize()
