@@ -384,6 +384,14 @@ class MUIXCalendarView extends MUIScrollView {
 
         return dayCell;
     }
+/*
+    registerClassForIndentifier(classname:string, identifier:string){
+
+        var item = {};
+        item["class"] = classname;
+
+        this._cellPrototypes[identifier] = item;
+    }*/
 
     dequeueReusableDayCellWithIdentifier(identifier?:string)
     {
@@ -412,7 +420,7 @@ class MUIXCalendarView extends MUIScrollView {
                     var newLayer = layer.cloneNode(true);                
                     newLayer.style.display = "";
                     dv.initWithLayer(newLayer);
-                    dv.awakeFromHTML();            
+                    dv.awakeFromHTML();
                 }
                 // Register for selection
                 dv.addObserver(this, "selected");            
@@ -556,12 +564,14 @@ class MUIXCalendarView extends MUIScrollView {
         if (dayCell.selected == true) {
 
             var canSelect = true;
-            if (typeof this.delegate.canSelectDate === "function"){            
+            if (this.delegate != null && typeof this.delegate.canSelectDate === "function"){            
                 canSelect = this.delegate.canSelectDate.call(this, dayCell.date);
             }
 
             this.selectedDate = dayCell.date;
             this._selectedDayCell = dayCell;
+
+            if (this.delegate == null) return;
 
             if (canSelect == true && typeof this.delegate.didSelectDayCellAtDate === "function"){
                 this.delegate.didSelectDayCellAtDate(this, dayCell.date);
