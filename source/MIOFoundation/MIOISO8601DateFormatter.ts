@@ -24,7 +24,7 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
         var mm = date.getMonth() + 1;
         var yy = date.getFullYear();        
 
-        return yy + "-" + mm + "-" + dd;
+        return yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
     }
 
 }
