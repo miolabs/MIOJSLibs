@@ -4,7 +4,8 @@
 
 class MUIXDatePickerController extends MUIViewController
 {
-    private calendarView = null;
+    delegate = null;
+    private calendarView = null;    
     
     viewDidLoad(){
         
@@ -44,54 +45,16 @@ class MUIXDatePickerController extends MUIViewController
     {
         var cell = calendar.dequeueReusableDayCellWithIdentifier(null);
 
-//        var title = currentDate.getDate();
-//        cell.dayLabel.setText(title);
-
-        //var day = this.fetchedResultsController.objectAtIndexPath(index, 0);
-        // var did = MIOCalendarGetStringFromDate(date);
-        // var day = this._days[did];
-        // cell.setDayOptions(day, date);
-/*
-        var mainPAX =  parseInt(day["paxMain"]) - parseInt(day["paxMainUsed"]);
-        var premiumPAX = parseInt(day["paxPremium"]) - parseInt(day["paxPremiumUsed"]);
-        var kitchenPAX = parseInt(day["paxKitchen"]) - parseInt(day["paxKitchenUsed"]);
-        cell.mainZoneLabel.setText(mainPAX);
-        cell.mainZoneLabel2.setText("/ " + day["paxMain"]);
-        cell.premiumZoneLabel.setText(premiumPAX);
-        cell.premiumZoneLabel2.setText("/ " + day["paxPremium"]);
-        cell.kitchenZoneLabel.setText(kitchenPAX);
-        cell.kitchenZoneLabel2.setText( "/ " + day["paxKitchen"]);
-*/
-        // if (day == null || day.status == "blocked")
-        // {
-        //     cell.setHeaderColor(255, 200, 200);
-        // }
-        // else if (day.status == "reserved")
-        // {
-        //     cell.setHeaderColor(200, 200, 255);
-        // }
-        // else
-        //     cell.setHeaderColor(238, 238, 238);
-
         return cell;
     }
 
     // Calendar Delegate methods
     didSelectDayCellAtDate(calendarView, date) {
         
-        // var day = this._getDayForDate(date);
+        if (this.delegate == null) return;
 
-        // if (day == null) return;
-
-        // var vc = this.calendarDetailViewController;
-        // vc.selectedDay = day;
-        // this.navigationController.pushViewController(vc);
-
-        // MUIWebApplication.sharedInstance().delegate.selectedDate = date;
-
-        // MIONotificationCenter.defaultCenter().postNotification("CalendarCellDidSelected", date);
-
-        // calendarView.deselectCellAtDate(date);
+        if (typeof this.delegate.didSelectDate === "function")
+            this.delegate.didSelectDate(this, date);
     }
 
      public get preferredContentSize()
