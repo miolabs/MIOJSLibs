@@ -34,7 +34,7 @@ class MIOEntityDescription extends MIOObject {
         this._managedObjectClassName = entityName;
     }
 
-    addAttribute(name:string, type:MIOAttributeType) {
+    addAttribute(name:string, type:MIOAttributeType, serverName?:string) {
         
     }
 }

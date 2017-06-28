@@ -1,8 +1,7 @@
 
-/// <reference path="../MIOUI/MIOUI.ts" />
-/// <reference path="../MIOUIX/MUIXCalendarView.ts" />
+/// <reference path="MUIViewController.ts" />
 
-class MUIXDatePickerController extends MUIViewController
+class MUIDatePickerController extends MUIViewController
 {
     delegate = null;
     private calendarView = null;    
@@ -11,7 +10,7 @@ class MUIXDatePickerController extends MUIViewController
         
         this.view.setBackgroundRGBColor(255, 255, 255);
 
-        this.calendarView = new MUIXCalendarView();
+        this.calendarView = new MUICalendarView();
         this.calendarView.init();
         this.calendarView.dataSource = this;        
         this.calendarView.delegate = this;        

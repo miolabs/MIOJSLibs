@@ -2,17 +2,17 @@
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="../MIOUI/MIOUI.ts" />
+/// <reference path="MUIView.ts" />
 
-enum MUIXCalendarDayCellType
+enum MUICalendarDayCellType
 {
     Default,
     Custom
 }
 
-class MUIXCalendarDayCell extends MUIView {
+class MUICalendarDayCell extends MUIView {
     
-    type = MUIXCalendarDayCellType.Default;
+    type = MUICalendarDayCellType.Default;
     identifier = null;
     weekRow: number;
 
@@ -36,7 +36,7 @@ class MUIXCalendarDayCell extends MUIView {
     init() {
         super.init();
 
-        this.type = MUIXCalendarDayCellType.Default;
+        this.type = MUICalendarDayCellType.Default;
         this.layer.style.background = "";
 
         this._titleLabel = new MUILabel();
@@ -55,7 +55,7 @@ class MUIXCalendarDayCell extends MUIView {
     initWithLayer(layer, owner, options?)
     {
         super.initWithLayer(layer, owner, options);
-        this.type = MUIXCalendarDayCellType.Custom;
+        this.type = MUICalendarDayCellType.Custom;
         this._setupLayer();
     }
 
@@ -83,7 +83,7 @@ class MUIXCalendarDayCell extends MUIView {
         var m = today.getMonth();
         var y = today.getFullYear();
 
-        if (this.type == MUIXCalendarDayCellType.Default)
+        if (this.type == MUICalendarDayCellType.Default)
             this._titleLabel.text = date.getDate();
 
         var isToday = (this._day == d && this._month == m && this._year == y);
@@ -92,7 +92,7 @@ class MUIXCalendarDayCell extends MUIView {
 
     setToday(value:boolean)
     {
-        if (this.type == MUIXCalendarDayCellType.Custom) return;
+        if (this.type == MUICalendarDayCellType.Custom) return;
 
         if (value)
         {
@@ -121,7 +121,7 @@ class MUIXCalendarDayCell extends MUIView {
     }
 }
 
-class MUIXCalendarMonthView extends MUIView {
+class MUICalendarMonthView extends MUIView {
     private _month = null;
     get month() {
         return this._month;
@@ -280,7 +280,7 @@ class MUIXCalendarMonthView extends MUIView {
     }
 }
 
-class MUIXCalendarView extends MUIScrollView {
+class MUICalendarView extends MUIScrollView {
     
     dataSource = null;
     delegate = null;
@@ -344,7 +344,7 @@ class MUIXCalendarView extends MUIScrollView {
     {
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
-        if (cellClassname == null) cellClassname = "MUIXCalendarCell";
+        if (cellClassname == null) cellClassname = "MUICalendarCell";
 
         var item = {};
         item["class"] = cellClassname;
@@ -435,7 +435,7 @@ class MUIXCalendarView extends MUIScrollView {
             }
             else 
             {
-                dv = new MUIXCalendarDayCell();
+                dv = new MUICalendarDayCell();
                 dv.init();
                 
                 // Register for selection
@@ -466,7 +466,7 @@ class MUIXCalendarView extends MUIScrollView {
         }
 
         for (var index = 0; index < 3; index++) {
-            var mv = new MUIXCalendarMonthView();
+            var mv = new MUICalendarMonthView();
             mv.initWithMonth(currentMonth + index, currentYear, this);
             mv.cellSpacingX = this.horizontalCellSpacing;
             mv.cellSpacingY = this.verticalCellSpacing;
@@ -559,7 +559,7 @@ class MUIXCalendarView extends MUIScrollView {
         }
     }
 
-    private _didChangeDayCellSelectedValue(dayCell:MUIXCalendarDayCell) {
+    private _didChangeDayCellSelectedValue(dayCell:MUICalendarDayCell) {
 
         if (dayCell.selected == true) {
 
