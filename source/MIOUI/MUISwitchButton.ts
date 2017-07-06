@@ -55,7 +55,7 @@ class MUISwitchButton extends MUIControl
     setOn(on)
     {
         if (on == this.on) return;
-        //this._inputLayer.checked = on;
+        this._inputLayer.checked = on;
         this.on = on;
     }
 
