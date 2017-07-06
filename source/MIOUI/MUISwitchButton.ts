@@ -24,6 +24,7 @@ class MUISwitchButton extends MUIControl
         if (this._inputLayer == null) {
             this._inputLayer = document.createElement("input");
             this._inputLayer.setAttribute("type", "checkbox");
+            this._inputLayer.setAttribute("id", "switch_button_checkbox");
             this._inputLayer.classList.add("switch_button_input_toggle");
             layer.appendChild(this._inputLayer);
         }        
@@ -31,7 +32,7 @@ class MUISwitchButton extends MUIControl
         this._labelLayer = MUILayerGetFirstElementWithTag(this.layer, "LABEL");
         if (this._labelLayer == null) {
             this._labelLayer = document.createElement("label");
-            this._labelLayer.setAttribute("for", "checkbox");
+            this._labelLayer.setAttribute("for", "switch_button_checkbox");
             this._labelLayer.classList.add("switch_button_label");
             layer.appendChild(this._labelLayer);
         }        
