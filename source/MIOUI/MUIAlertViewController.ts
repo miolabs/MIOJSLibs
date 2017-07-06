@@ -132,7 +132,10 @@ class MUIAlertViewController extends MUIViewController
         this._backgroundView = new MUIView();
         this._backgroundView.init();
         this._backgroundView.layer.style.background = "";
-        this._backgroundView.layer.classList.add("alertview_background");
+        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari)
+            this._backgroundView.layer.classList.add("alertview_background_safari");
+        else 
+            this._backgroundView.layer.classList.add("alertview_background");            
         this.view.addSubview(this._backgroundView);
 
         this._tableView = new MUITableView();

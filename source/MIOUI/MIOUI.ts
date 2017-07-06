@@ -19,6 +19,7 @@
 /// <reference path="MUIControl.ts" />
 /// <reference path="MUIButton.ts" />
 /// <reference path="MUICheckButton.ts" />
+/// <reference path="MUISwitchButton.ts" />
 /// <reference path="MUIPopUpButton.ts" />
 /// <reference path="MUIComboBox.ts" />
 /// <reference path="MUIMenu.ts" />
