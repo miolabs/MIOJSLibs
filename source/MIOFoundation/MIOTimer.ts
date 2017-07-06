@@ -60,5 +60,8 @@ class MIOTimer extends MIOObject
     {
         if (this._target != null && this._completion != null)
             this._completion.call(this._target, this);
+
+        if (this._repeat == true)
+            this.invalidate();
     }
 }

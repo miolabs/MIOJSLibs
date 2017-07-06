@@ -2,8 +2,7 @@
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MUIScrollView.ts" />
-/// <reference path="MUILabel.ts" />
+/// <reference path="MUIView.ts" />
 
 enum MUICalendarDayCellType
 {
@@ -97,17 +96,17 @@ class MUICalendarDayCell extends MUIView {
 
         if (value)
         {
-            this.layer.classList.remove("muicalendarview_day_cell");
-            this._titleLabel.layer.classList.remove("muicalendarview_day_title");
-            this.layer.classList.add("muicalendarview_today_day_cell");
-            this._titleLabel.layer.classList.add("muicalendarview_today_day_title");
+            this.layer.classList.remove("calendarview_day_cell");
+            this._titleLabel.layer.classList.remove("calendarview_day_title");
+            this.layer.classList.add("calendarview_today_day_cell");
+            this._titleLabel.layer.classList.add("calendarview_today_day_title");
         }
         else 
         {
-            this.layer.classList.add("muicalendarview_day_cell");
-            this._titleLabel.layer.classList.add("muicalendarview_day_title");
-            this.layer.classList.remove("muicalendarview_today_day_cell");
-            this._titleLabel.layer.classList.remove("muicalendarview_today_day_title");            
+            this.layer.classList.add("calendarview_day_cell");
+            this._titleLabel.layer.classList.add("calendarview_day_title");
+            this.layer.classList.remove("calendarview_today_day_cell");
+            this._titleLabel.layer.classList.remove("calendarview_today_day_title");            
         }        
 
     }
@@ -158,18 +157,18 @@ class MUICalendarMonthView extends MUIView {
         this.layer.style.background = "";
 
         this._header = new MUIView();
-        this._header.initWithLayer(MUICoreLayerCreateWithStyle("muicalendarview_month_header"), this);        
+        this._header.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header"), this);        
         this.addSubview(this._header);
 
         this._headerTitleLabel = new MUILabel();
-        this._headerTitleLabel.initWithLayer(MUICoreLayerCreateWithStyle("muicalendarview_month_header_title"), this);
+        this._headerTitleLabel.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header_title"), this);
         this._header.addSubview(this._headerTitleLabel);
 
         var w = 100 / 7;
         for (var index = 0; index < 7; index++){
 
                 var dayLabel = new MUILabel();
-                dayLabel.initWithLayer(MUICoreLayerCreateWithStyle("muicalendarview_month_header_day_title"), this);
+                dayLabel.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header_day_title"), this);
                 dayLabel.layer.style.left = (w * index) + "%";
                 dayLabel.layer.style.width = w + "%";
                 dayLabel.text = MIODateGetStringForDay(index).substr(0, 2);
@@ -385,6 +384,14 @@ class MUICalendarView extends MUIScrollView {
 
         return dayCell;
     }
+/*
+    registerClassForIndentifier(classname:string, identifier:string){
+
+        var item = {};
+        item["class"] = classname;
+
+        this._cellPrototypes[identifier] = item;
+    }*/
 
     dequeueReusableDayCellWithIdentifier(identifier?:string)
     {
@@ -413,7 +420,7 @@ class MUICalendarView extends MUIScrollView {
                     var newLayer = layer.cloneNode(true);                
                     newLayer.style.display = "";
                     dv.initWithLayer(newLayer);
-                    dv.awakeFromHTML();            
+                    dv.awakeFromHTML();
                 }
                 // Register for selection
                 dv.addObserver(this, "selected");            
@@ -557,12 +564,14 @@ class MUICalendarView extends MUIScrollView {
         if (dayCell.selected == true) {
 
             var canSelect = true;
-            if (typeof this.delegate.canSelectDate === "function"){            
+            if (this.delegate != null && typeof this.delegate.canSelectDate === "function"){            
                 canSelect = this.delegate.canSelectDate.call(this, dayCell.date);
             }
 
             this.selectedDate = dayCell.date;
             this._selectedDayCell = dayCell;
+
+            if (this.delegate == null) return;
 
             if (canSelect == true && typeof this.delegate.didSelectDayCellAtDate === "function"){
                 this.delegate.didSelectDayCellAtDate(this, dayCell.date);

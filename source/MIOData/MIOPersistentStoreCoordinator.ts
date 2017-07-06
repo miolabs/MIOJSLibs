@@ -16,8 +16,3 @@ class MIOPersistentStoreCoordinator extends MIOObject
         return this._managedObjectModel;
     }
 }
-
-class  MIOPersistentStore extends MIOObject
-{
-
-}

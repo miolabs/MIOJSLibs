@@ -14,12 +14,12 @@
 /// <reference path="MUIScrollView.ts" />
 /// <reference path="MUITableView.ts" />
 /// <reference path="MUICollectionView.ts" />
-/// <reference path="MUICalendarView.ts" />
 /// <reference path="MUIWebView.ts" />
 
 /// <reference path="MUIControl.ts" />
 /// <reference path="MUIButton.ts" />
 /// <reference path="MUICheckButton.ts" />
+/// <reference path="MUISwitchButton.ts" />
 /// <reference path="MUIPopUpButton.ts" />
 /// <reference path="MUIComboBox.ts" />
 /// <reference path="MUIMenu.ts" />
@@ -36,4 +36,11 @@
 
 /// <reference path="MUIWebApplication.ts" />
 
+
+// EXTRAS
+
+/// <reference path="MUICalendarView.ts" />
+/// <reference path="MUIDatePickerController.ts" />
+
+/// <reference path="MUIReportViewController.ts" />
 

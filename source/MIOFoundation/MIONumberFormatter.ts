@@ -19,10 +19,13 @@ class MIONumberFormatter extends MIOFormatter {
     locale = null;
     minimumFractionDigits = 0;
     maximumFractionDigits = 0;
+    groupingSeparator;
 
     init(){
         super.init();
         this.locale = MIOLocale.currentLocale();
+
+        this.groupingSeparator = this.locale.groupingSeparator;
     }
 
     numberFromString(str:string){
@@ -57,7 +60,36 @@ class MIONumberFormatter extends MIOFormatter {
             floatValue = array[1];
         }
         
-        var res = intValue;
+        var res = "";
+        var minusOffset = intValue.charAt(0) == "-" ? 1 : 0;
+    
+        if (intValue.length > (3 + minusOffset)) {
+
+            var offset = Math.floor((intValue.length - minusOffset) / 3);
+            if (((intValue.length - minusOffset) % 3) == 0)
+                offset--;
+            var posArray = [];
+            var intLen = intValue.length;
+            for (var index = offset; index > 0; index--){
+                posArray.push(intLen - (index * 3));
+            }
+
+            var posArrayIndex = 0;
+            var groupPos = posArray[0];
+            for (var index = 0; index < intLen; index++)
+            {
+                if (index == groupPos) {
+                    res += this.groupingSeparator;
+                    posArrayIndex++;                    
+                    groupPos = posArrayIndex < posArray.length ? posArray[posArrayIndex] : -1;
+                }
+                var ch = intValue[index];
+                res += ch;
+            }                        
+        }
+        else {
+            res = intValue;
+        }
 
         if (this.minimumFractionDigits > 0 && floatValue == null)
             floatValue = "";
@@ -66,7 +98,7 @@ class MIONumberFormatter extends MIOFormatter {
             res += this.locale.decimalSeparator;
         
             if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits)
-                floatValue = floatValue.substring(this.maximumFractionDigits);
+                floatValue = floatValue.substring(0, this.maximumFractionDigits);
 
             for (var index = 0; index < this.minimumFractionDigits; index++){
 
@@ -96,6 +128,7 @@ class MIONumberFormatter extends MIOFormatter {
         var parseString = "";
         var numberString = "";
         var type = _MIONumberFormatterType.Int;
+        var minusSymbol = false;
 
         for (var index = 0; index < str.length; index++) {
          
@@ -104,6 +137,11 @@ class MIONumberFormatter extends MIOFormatter {
                 parseString += ch;
                 numberString += ".";
                 type = _MIONumberFormatterType.Decimal;
+            }
+            else if (ch == "-" && minusSymbol == false) {
+                parseString += ch;
+                numberString += ch;
+                minusSymbol = true;                
             }
             else if (!isNaN(parseInt(ch))) {
                 parseString += ch;

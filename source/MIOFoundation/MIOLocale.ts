@@ -74,6 +74,23 @@ class MIOLocale extends MIOObject
         return cs;
     }
 
+    get groupingSeparator():string {
+
+        var gs;
+
+        switch(this.countryIdentifier){
+
+            case "ES":
+                gs = ".";
+                break;
+
+            case "US":
+                gs = ",";
+                break;
+        }
+
+        return gs;
+    }
 }
 
 

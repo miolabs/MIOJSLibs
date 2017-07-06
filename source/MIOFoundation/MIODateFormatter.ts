@@ -32,11 +32,30 @@ class MIODateFormatter extends MIOFormatter {
 
         if (date == null) return null;
 
-        var dd = date.getDate();
-        var mm = date.getMonth() + 1;
-        var yy = date.getFullYear();        
+        var str = "";
+        
+        switch (this.dateStyle) {
 
-        return dd + "/" + mm + "/" + yy;
+            case MIODateFormatterStyle.ShortStyle:
+                str = this._shortDateStyle(date);
+                break;
+
+            case MIODateFormatterStyle.FullStyle:
+                str = this._fullDateStyle(date);
+                break;
+        }        
+
+        if (this.dateStyle != MIODateFormatterStyle.NoStyle && this.timeStyle != MIODateFormatterStyle.NoStyle)
+            str += " ";
+
+        switch (this.timeStyle) {
+            
+            case MIODateFormatterStyle.ShortStyle:
+                str += this._shortTimeStyle(date);
+                break;
+        }
+
+        return str;
     }
 
     isPartialStringValid(str:string):[boolean, string]{
@@ -95,7 +114,7 @@ class MIODateFormatter extends MIOFormatter {
             }            
         }
 
-        var dateString = (yy[3]? yy : "20") + "-" + mm + "-" + dd;
+        var dateString = (yy[3]? yy : ("20" + yy)) + "-" + mm + "-" + dd;
         return [true, parseString, dateString];
     }
 
@@ -125,4 +144,33 @@ class MIODateFormatter extends MIOFormatter {
         if (v > 3000) return [false, yy];
         return [true, yy + ch];
     }
+
+    private _shortDateStyle(date:Date){
+        
+        var d = date.getDate();
+        var m = date.getMonth() + 1;
+        var y = date.getFullYear();        
+
+        return d + "/" + m + "/" + y;
+    }
+
+    private _shortTimeStyle(date:Date) {
+
+        var h = date.getHours();
+        var m = date.getMinutes();
+
+        return h + ":" + m;
+    }
+
+    private _fullDateStyle(date:Date){
+
+        var day = _MIODateFormatterStringDays[date.getDay()];
+        var month = _MIODateFormatterStringMonths[date.getMonth()];
+
+        return day + ", " + date.getDate() + " of " + month + " of " + date.getFullYear();
+    }
+
 }
+
+var _MIODateFormatterStringDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var _MIODateFormatterStringMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

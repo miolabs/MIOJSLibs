@@ -8,7 +8,7 @@ class MIOManagedObjectModel extends MIOObject
     static entityForNameInManagedObjectContext(entityName, context:MIOManagedObjectContext):MIOEntityDescription{
         
         // HACK!
-        // TODO: We need to build a object model file to read tihs values
+        // TODO: We need to build a object model file to read this values
 
         var mom = context.persistentStoreCoordinator.managedObjectModel;
         var entity = mom.entitiesByName[entityName];

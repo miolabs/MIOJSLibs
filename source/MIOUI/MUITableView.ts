@@ -50,7 +50,7 @@ class MUITableViewCell extends MUIView {
     textLabel = null;
     
     accessoryType = MUITableViewCellAccessoryType.None;
-    accesoryView = null;
+    accessoryView = null;
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
 
     selectionStyle = MUITableViewCellSelectionStyle.Default;
@@ -114,7 +114,7 @@ class MUITableViewCell extends MUIView {
         if (type == this.accessoryType)
             return;
 
-        if (this.accesoryView == null) {
+        if (this.accessoryView == null) {
             if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.right = "25px";
 
             var layer = document.createElement("div");
@@ -124,27 +124,27 @@ class MUITableViewCell extends MUIView {
             layer.style.width = "15px";
             layer.style.height = "15px";
 
-            this.accesoryView = new MUIView("accessory_view");
-            this.accesoryView.initWithLayer(layer);
+            this.accessoryView = new MUIView("accessory_view");
+            this.accessoryView.initWithLayer(layer);
 
-            this.addSubview(this.accesoryView);
+            this.addSubview(this.accessoryView);
         }
 
         // Remove the previous accessory
         if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
-            this.accesoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
+            this.accessoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
         else if (this.accessoryType == MUITableViewCellAccessoryType.DisclosureIndicator)
-            this.accesoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
+            this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
         else if (this.accessoryType == MUITableViewCellAccessoryType.DetailDisclosureButton)
-            this.accesoryView.layer.classList.remove("tableviewcell_accessory_detail_disclosure_button");            
+            this.accessoryView.layer.classList.remove("tableviewcell_accessory_detail_disclosure_button");            
 
         // Add the new one
         if (type == MUITableViewCellAccessoryType.Checkmark)
-            this.accesoryView.layer.classList.add("tableviewcell_accessory_checkmark");
+            this.accessoryView.layer.classList.add("tableviewcell_accessory_checkmark");
         else if (type == MUITableViewCellAccessoryType.DisclosureIndicator)
-            this.accesoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
+            this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
         else if (type == MUITableViewCellAccessoryType.DetailDisclosureButton)
-            this.accesoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");            
+            this.accessoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");            
 
         this.accessoryType = type;
     }
@@ -160,8 +160,8 @@ class MUITableViewCell extends MUIView {
 
         var offsetY = (h - 15) / 2;
 
-        if (this.accesoryView != null) {
-            this.accesoryView.layer.style.top = offsetY + "px";
+        if (this.accessoryView != null) {
+            this.accessoryView.layer.style.top = offsetY + "px";
         }
     }
 
@@ -197,8 +197,32 @@ class MUITableViewCell extends MUIView {
         for (var count = 0; count < this.subviews.length; count++) {
             var v = this.subviews[count];
             if (v instanceof MUILabel)
-                v.setHightlighted(value);
+                v.setHightlighted(value);            
         }
+        if (this.accessoryView == null) return;
+
+        if (value == true) {
+
+            switch(this.accessoryType){
+
+                case MUITableViewCellAccessoryType.DisclosureIndicator:
+                    this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");                    
+                    this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator_highlighted");
+                break;
+            }
+        }
+        else {
+
+            switch(this.accessoryType){
+
+                case MUITableViewCellAccessoryType.DisclosureIndicator:
+                    this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator_highlighted");
+                    this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
+                break;
+            }
+            
+        }
+
     }
 
     setEditing(editing, animated?){
@@ -280,6 +304,8 @@ class MUITableView extends MUIView {
     private _isDownloadingCells = false;
     private _needReloadData = false;
     private _cellPrototypes = {};
+
+    private _reusableCells = {}
 
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
@@ -390,6 +416,7 @@ class MUITableView extends MUIView {
     }
 
     dequeueReusableCellWithIdentifier(identifier) {
+
         var item = this._cellPrototypes[identifier];
 
         //instance creation here
