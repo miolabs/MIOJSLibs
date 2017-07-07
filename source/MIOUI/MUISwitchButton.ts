@@ -24,24 +24,33 @@ class MUISwitchButton extends MUIControl
         if (this._inputLayer == null) {
             this._inputLayer = document.createElement("input");
             this._inputLayer.setAttribute("type", "checkbox");
-            this._inputLayer.setAttribute("id", "switch_button_checkbox");
-            this._inputLayer.classList.add("switch_button_input_toggle");
+            this._inputLayer.setAttribute("id", this.layerID + "_input");
+            this._inputLayer.classList.add("switch_button_input");
             layer.appendChild(this._inputLayer);
-        }        
+        }       
 
+        // var div1 = document.createElement("div");
+        // this.layer.appendChild(div1);
+
+        // var div2 = document.createElement("div");
+        // div1.appendChild(div2); 
+
+/*
         this._labelLayer = MUILayerGetFirstElementWithTag(this.layer, "LABEL");
         if (this._labelLayer == null) {
             this._labelLayer = document.createElement("label");
-            this._labelLayer.setAttribute("for", "switch_button_checkbox");
-            this._labelLayer.classList.add("switch_button_label");
+            this._labelLayer.setAttribute("for", this.layerID + "_input");
+            //this._labelLayer.classList.add("switch_button_label");
             layer.appendChild(this._labelLayer);
-        }        
+        }
+
+        */
 
         var instance = this;
         this.layer.onclick = function() {
 
             if (instance.enabled) {
-                instance.toggleValue.call(instance);
+                instance._toggleValue.call(instance);
             }
         }
     }
@@ -59,9 +68,9 @@ class MUISwitchButton extends MUIControl
         this.on = on;
     }
 
-    toggleValue()
+    private _toggleValue()
     {
-        this.setOn(!this.on);
+        this.on = !this.on;
 
         if (this.target != null && this.action != null)
             this.action.call(this.target, this, this.on);
