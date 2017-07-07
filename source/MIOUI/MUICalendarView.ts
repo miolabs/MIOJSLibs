@@ -565,7 +565,7 @@ class MUICalendarView extends MUIScrollView {
 
             var canSelect = true;
             if (this.delegate != null && typeof this.delegate.canSelectDate === "function"){            
-                canSelect = this.delegate.canSelectDate.call(this, dayCell.date);
+                canSelect = this.delegate.canSelectDate.call(this.delegate, this, dayCell.date);
             }
 
             this.selectedDate = dayCell.date;
@@ -574,7 +574,7 @@ class MUICalendarView extends MUIScrollView {
             if (this.delegate == null) return;
 
             if (canSelect == true && typeof this.delegate.didSelectDayCellAtDate === "function"){
-                this.delegate.didSelectDayCellAtDate(this, dayCell.date);
+                this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell.date);
             }    
         }
     }
