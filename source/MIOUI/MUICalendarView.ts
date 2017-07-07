@@ -114,7 +114,7 @@ class MUICalendarDayCell extends MUIView {
     setSelected(value:boolean){
 
         if (this._selected == value) return;
-
+        
         this.willChangeValue("selected");
         this._selected = value;
         this.didChangeValue("selected");
@@ -568,13 +568,16 @@ class MUICalendarView extends MUIScrollView {
                 canSelect = this.delegate.canSelectDate.call(this.delegate, this, dayCell.date);
             }
 
-            this.selectedDate = dayCell.date;
-            this._selectedDayCell = dayCell;
-
             if (this.delegate == null) return;
 
             if (canSelect == true && typeof this.delegate.didSelectDayCellAtDate === "function"){
-                this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell.date);
+                if(this._selectedDayCell != null)
+                    this._selectedDayCell.setSelected(false);
+                
+                this.selectedDate = dayCell.date;
+                this._selectedDayCell = dayCell;
+                
+                this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell, dayCell.date);
             }    
         }
     }
