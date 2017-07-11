@@ -1,4 +1,6 @@
 
+/// <reference path="../MIOCore/MIOCore.ts" />
+
 /// <reference path="MIO_Core.ts" />
 /// <reference path="MIO_CoreTypes.ts" />
 /// <reference path="MIO_CoreEvents.ts" />

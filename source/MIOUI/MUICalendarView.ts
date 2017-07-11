@@ -304,6 +304,7 @@ class MUICalendarView extends MUIScrollView {
     private _reusableDayCells = [];
 
     private _views = [];
+    private _visibleDayCells = {};
 
     private _scrollTopLimit = 0;
     private _scrollBottomLimit = 0;
@@ -367,10 +368,12 @@ class MUICalendarView extends MUIScrollView {
             }
 
             array.push(cell);
+
+            delete this._visibleDayCells[cell.date];
         }
     }
 
-    _cellDayAtDate(date)
+    private _cellDayAtDate(date)
     {
         var dayCell = null;
         if (typeof this.dataSource.dayCellAtDate === "function")
@@ -382,6 +385,8 @@ class MUICalendarView extends MUIScrollView {
             dayCell = this.dequeueReusableDayCellWithIdentifier();
         }
 
+        this._visibleDayCells[date] = dayCell;
+
         return dayCell;
     }
 /*
@@ -392,6 +397,11 @@ class MUICalendarView extends MUIScrollView {
 
         this._cellPrototypes[identifier] = item;
     }*/
+
+    cellDayAtDate(date)
+    {
+        return this._visibleDayCells[date];
+    }
 
     dequeueReusableDayCellWithIdentifier(identifier?:string)
     {
@@ -577,7 +587,7 @@ class MUICalendarView extends MUIScrollView {
                 this.selectedDate = dayCell.date;
                 this._selectedDayCell = dayCell;
                 
-                this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell, dayCell.date);
+                this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell.date);
             }    
         }
     }
