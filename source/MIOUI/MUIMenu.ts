@@ -15,7 +15,7 @@ class MUIMenuItem extends MUIView
     target = null;
     action = null;
 
-/*    public static itemWithLayer(layer)
+/*  public static itemWithLayer(layer)
     {
         var layerID = layer.getAttribute("id");
         var mi = new MIOMenuItem(layerID);
@@ -81,7 +81,17 @@ class MUIMenuItem extends MUIView
             instance.layer.classList.remove("menu_item_on_hover");
         };
 
-        this.layer.onclick = function(e)
+        this.layer.ontouchend = function(e)
+        {
+            e.stopPropagation();
+            if (instance.action != null && instance.target != null) {
+
+                instance.layer.classList.remove("menu_item_on_hover");
+                instance.action.call(instance.target, instance);
+            }
+        }
+
+        this.layer.onmouseup = function(e)
         {
             e.stopPropagation();
             if (instance.action != null && instance.target != null) {
