@@ -201,9 +201,11 @@ function MIOHTMLParser(string, layerID, relativePath, callback)
         if (s["rel"] == "stylesheet")
         {
             // Add style
-            var css_url = s["href"];
-            styleFiles.push(css_url);
-            console.log("CSS: " + css_url);
+            var css ={"url": s["href"]};
+            var media = s["media"];
+            if (media != null) css["media"] = media;
+            styleFiles.push(css);
+            console.log("CSS: " + css);
         }
     }
 
@@ -220,8 +222,10 @@ function FoundLink(link, callback)
     if (link["rel"] == "stylesheet")
     {
         // Add style
-        var css_url = link["href"];
-        callback(css_url);
-        console.log("Send CSS: " + css_url);
+        var css ={"url": link["href"]};
+        var media = link["media"];
+        if (media != null) css["media"] = media;        
+        callback(css);
+        console.log("Send CSS: " + css);
     }
 }

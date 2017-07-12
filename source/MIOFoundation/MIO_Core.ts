@@ -99,7 +99,7 @@ function _MIOCoreLoadStyle_test2(url, target?, completion?)
     head.appendChild(style);
 }
 
-function MIOCoreLoadStyle(url, target?, completion?)
+function MIOCoreLoadStyle(url, media, target?, completion?)
 {
     // Prevent loading the same css files
     if (_stylesCache[url] != null) 
@@ -114,6 +114,7 @@ function MIOCoreLoadStyle(url, target?, completion?)
     link.type = 'text/css';
     link.rel = 'stylesheet';
     link.href = url;
+    if (media != null) link.media = media;
 
     var head = document.getElementsByTagName('head')[0];
     head.appendChild(link);

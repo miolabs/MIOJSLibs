@@ -11,7 +11,7 @@ class MIOBundle_Webworker
 
     private _loadingCSSCount = 0;
 
-    private _loadCSS(basePath, path)
+    private _loadCSS(basePath, path, media?)
     {
         this._loadingCSSCount++;
 
@@ -29,7 +29,7 @@ class MIOBundle_Webworker
         }                
 
         console.log("BUNDLE_WEBWORKER: Adding CSS: " + urlString);
-        MIOCoreLoadStyle(urlString, this, function (){
+        MIOCoreLoadStyle(urlString, media, this, function (){
             this._loadingCSSCount--;
             this._checkDownloadCount();
         })
@@ -50,7 +50,7 @@ class MIOBundle_Webworker
                 if (item["Type"] == "CSS")
                 {
                     var basePath = MIOStringDeletingLastPathComponent(path);
-                    instance._loadCSS(item["Path"], item["CSSURL"]);
+                    instance._loadCSS(item["Path"], item["CSSURL"], item["Media"]);
                     
                     // var len = cssURL.lastIndexOf('/');
                     // var cssFile = cssURL.substring(len + 1);

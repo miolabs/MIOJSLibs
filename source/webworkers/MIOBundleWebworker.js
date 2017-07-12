@@ -60,14 +60,15 @@ function parseHTML(url, data, layerID, path)
     }
     else
     {
-        var result = MIOHTMLParser(data, layerID, path, function(cssURL) {
+        var result = MIOHTMLParser(data, layerID, path, function(css) {
 
             // Found link
             var item = [];
             item["Type"] = "CSS";
-            item["CSSURL"] = cssURL;
+            item["CSSURL"] = css["url"];
             item["BaseURL"] = url;
             item["Path"] = path;
+            item["Media"] = css["media"];
             self.postMessage(item);
         });
 
