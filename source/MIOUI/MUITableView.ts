@@ -486,6 +486,8 @@ class MUITableView extends MUIView {
         this.sections = [];
         this._indexPathsForSelectedRows = [];
 
+        //if (this.dataSource == null) return;
+
         var sections = this.dataSource.numberOfSections(this);
         for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
             var section = new MUITableViewSection();

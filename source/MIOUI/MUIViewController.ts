@@ -14,7 +14,7 @@
 
 class MUIViewController extends MIOObject
 {
-    layerID:string = null;        
+    layerID:string = null;
 
     view:MUIView = null;
 
