@@ -167,9 +167,9 @@ enum MIOCoreBrowserType
 function MIOCoreGetBrowser():MIOCoreBrowserType
 {
     var agent = navigator.userAgent.toLowerCase();
-    var browserType:MIOCoreBrowserType;
-    if (agent.indexOf("safari") != -1) browserType = MIOCoreBrowserType.Safari;
-    else if (agent.indexOf("chorme") != -1) browserType = MIOCoreBrowserType.Chrome;
+    var browserType:MIOCoreBrowserType;    
+    if (agent.indexOf("chrome") != -1) browserType = MIOCoreBrowserType.Chrome;
+    else if (agent.indexOf("safari") != -1) browserType = MIOCoreBrowserType.Safari;    
     else browserType = MIOCoreBrowserType.Other;
 
     return browserType;
