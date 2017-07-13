@@ -12,6 +12,7 @@ class MIOURLRequest extends MIOObject
     body = null;
     headers = [];
     binary = false;
+    download = false;
 
     static requestWithURL(url:MIOURL):MIOURLRequest
     {
@@ -89,34 +90,44 @@ class MIOURLConnection
                             if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
                         }
 
-                        var blob = new Blob([new Uint8Array(this.response)] , { type: type});
+                        var data = new Uint8Array(this.response);                        
 
-                        if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                            // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                            window.navigator.msSaveBlob(blob, filename);
-                        } else {
-                            var URL = window.URL || window.webkitURL;
-                            var downloadUrl = URL.createObjectURL(blob);
+                        if (instance.request.download == true) {
 
-                            if (filename) {
-                                // use HTML5 a[download] attribute to specify filename
-                                var a = document.createElement("a");
-                                // safari doesn't support this yet
-                                if (typeof a.download === 'undefined') {
-                                    window.location = downloadUrl;
-                                } else {
-                                    a.href = downloadUrl;
-                                    a.download = filename;
-                                    document.body.appendChild(a);
-                                    a.click();
-                                }
+                            var blob = new Blob([data] , { type: type});
+                            if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                                // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                                window.navigator.msSaveBlob(blob, filename);
                             } else {
-                                window.location = downloadUrl;
-                            }
+                                var URL = window.URL || window.webkitURL;
+                                var downloadUrl = URL.createObjectURL(blob);
 
-                            setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
-                            instance.blockFN.call(instance.blockTarget, this.status, null);
+                                if (filename) {
+                                    // use HTML5 a[download] attribute to specify filename
+                                    var a = document.createElement("a");
+                                    // safari doesn't support this yet
+                                    if (typeof a.download === 'undefined') {
+                                        window.location = downloadUrl;
+                                    } else {
+                                        a.href = downloadUrl;
+                                        a.download = filename;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                    }
+                                } else {
+                                    window.location = downloadUrl;
+                                }
+
+                                setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                                instance.blockFN.call(instance.blockTarget, this.status, null, null);                                
+                            }
                         }
+                        else {
+                            var arr = new Array();
+                            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                            var bstr = arr.join("");
+                            instance.blockFN.call(instance.blockTarget, this.status, null, bstr);                                
+                        }                            
                     }
                     else
                         instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
