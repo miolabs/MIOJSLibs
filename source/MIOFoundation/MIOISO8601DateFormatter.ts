@@ -30,8 +30,8 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
             str += yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
         }
 
-        if (this.dateStyle != MIODateFormatterStyle.NoStyle && this.timeStyle != MIODateFormatterStyle.NoStyle)
-            str += "";
+        if (str.length > 0)
+            str += " ";
 
         if (this.timeStyle != MIODateFormatterStyle.NoStyle){
 
