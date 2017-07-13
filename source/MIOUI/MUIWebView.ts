@@ -37,4 +37,12 @@ class MUIWebView extends MUIView
     setURL(url) {
         this._iframeLayer.setAttribute("src", url);
     }
+
+    setHTML(html) {
+        var iframe = this._iframeLayer.contentWindow || ( this._iframeLayer.contentDocument.document || this._iframeLayer.contentDocument);
+        
+        iframe.document.open();
+        iframe.document.write(html);
+        iframe.document.close();        
+    }
 }
