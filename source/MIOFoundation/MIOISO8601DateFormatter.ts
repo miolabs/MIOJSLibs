@@ -18,27 +18,30 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
 
     stringFromDate(date:Date):string {
 
-        if (date == null) return null;
-
-        var dd = date.getDate().toString();
-        var mm = (date.getMonth() + 1).toString();
-        var yy = date.getFullYear().toString();        
-
-        return yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
-    }
-
-    stringFromDateTime(date:Date):string {
+        var str = "";
 
         if (date == null) return null;
 
-        var dd = date.getDate().toString();
-        var mm = (date.getMonth() + 1).toString();
-        var yy = date.getFullYear().toString();        
+        if (this.dateStyle != MIODateFormatterStyle.NoStyle) {
+            var dd = date.getDate().toString();
+            var mm = (date.getMonth() + 1).toString();
+            var yy = date.getFullYear().toString();        
 
-        var hh = date.getHours().toString();
-        var ii = date.getMinutes().toString();
-        var ss = date.getSeconds().toString();
-    
-        return yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]) + ' ' + (hh[1]?hh:"0" + hh[0]) + ":" + (ii[1]?ii:"0" + ii[0]) + ":" + (ss[1]?ss:"0" + ss[0]);
+            str += yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
+        }
+
+        if (this.dateStyle != MIODateFormatterStyle.NoStyle && this.timeStyle != MIODateFormatterStyle.NoStyle)
+            str += "";
+
+        if (this.timeStyle != MIODateFormatterStyle.NoStyle){
+
+            var hh = date.getHours().toString();
+            var mm = date.getMinutes().toString();
+            var ss = date.getSeconds().toString();
+
+            str += (hh[1]?hh:"0" + hh[0]) + ":" + (mm[1]?mm:"0" + mm[0]) + ":" + (ss[1]?ss:"0" + ss[0]);
+        }
+
+        return str;
     }
 }
