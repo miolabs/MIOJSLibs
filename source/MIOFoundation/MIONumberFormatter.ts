@@ -110,6 +110,8 @@ class MIONumberFormatter extends MIOFormatter {
             }
         }
         
+        if (this.numberStyle == MIONumberFormatterStyle.PercentStyle) res += "%";
+
         return res;
     }
 
