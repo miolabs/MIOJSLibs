@@ -383,7 +383,7 @@ class MUITableView extends MUIView {
             var cssFiles = result.styles;
             var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
             for (var index = 0; index < cssFiles.length; index++)
-                MIOCoreLoadStyle(baseURL + cssFiles[index]);
+                MIOCoreLoadStyle(baseURL + cssFiles[index], null);
 
             var domParser = new DOMParser();
             var items = domParser.parseFromString(result.layout, "text/html");

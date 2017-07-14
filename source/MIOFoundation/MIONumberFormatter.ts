@@ -4,7 +4,8 @@
 enum MIONumberFormatterStyle {
     NoStyle,
     DecimalStyle,
-    CurrencyStyle
+    CurrencyStyle,
+    PercentStyle
 }
 
 enum _MIONumberFormatterType {
@@ -109,6 +110,8 @@ class MIONumberFormatter extends MIOFormatter {
             }
         }
         
+        if (this.numberStyle == MIONumberFormatterStyle.PercentStyle) res += "%";
+
         return res;
     }
 
@@ -129,6 +132,7 @@ class MIONumberFormatter extends MIOFormatter {
         var numberString = "";
         var type = _MIONumberFormatterType.Int;
         var minusSymbol = false;
+        var percentSymbol = false;
 
         for (var index = 0; index < str.length; index++) {
          
@@ -142,6 +146,13 @@ class MIONumberFormatter extends MIOFormatter {
                 parseString += ch;
                 numberString += ch;
                 minusSymbol = true;                
+            }
+            else if (ch == "%"
+                     && this.numberStyle == MIONumberFormatterStyle.PercentStyle
+                     && percentSymbol == false){
+                
+                percentSymbol = true;
+                parseString += ch;                
             }
             else if (!isNaN(parseInt(ch))) {
                 parseString += ch;
