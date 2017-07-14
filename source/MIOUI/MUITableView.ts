@@ -75,11 +75,11 @@ class MUITableViewCell extends MUIView {
         if (style == MUITableViewCellStyle.Default) {
             this.textLabel = new MUILabel();
             this.textLabel.init();
-            this.textLabel.layer.style.left = "10px";
-            this.textLabel.layer.style.top = "10px";
-            this.textLabel.layer.style.right = "10px";
-            this.textLabel.layer.style.bottom = "10px";
-
+            this.textLabel.layer.style.top = "";
+            this.textLabel.layer.style.left = "";
+            this.textLabel.layer.style.width = "";
+            this.textLabel.layer.style.height = "";
+            this.textLabel.layer.classList.add("tableviewcell_default_textlabel");
             this.addSubview(this.textLabel);
             this.layer.style.height = "44px";
         }
