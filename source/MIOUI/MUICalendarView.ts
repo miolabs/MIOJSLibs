@@ -534,12 +534,16 @@ class MUICalendarView extends MUIScrollView {
             this._views[1] = firstMonth;
             this._views[2] = currentMonth;
 
+            console.log("Offset y: " + this.contentOffset.y);
+
             lastMonth.removeFromSuperview();
             this.addSubview(lastMonth, 0);
 
+            console.log("Offset y: " + this.contentOffset.y);
+
             lastMonth.layout();
 
-            if (MIOCoreGetBrowser() != MIOCoreBrowserType.Chrome) {
+            if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari) {
                 var offsetY = this.getHeight() + this.contentOffset.y;
                 this.scrollToPoint(0, offsetY);
             }
@@ -566,7 +570,7 @@ class MUICalendarView extends MUIScrollView {
 
             firstMonth.layout();
 
-            if (MIOCoreGetBrowser() != MIOCoreBrowserType.Chrome) {
+            if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari) {
                 this.scrollToPoint(0, offsetY);
             }
         }
