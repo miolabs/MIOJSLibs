@@ -22,7 +22,8 @@ class MIODateFormatter extends MIOFormatter {
         
         [result, value, dateString] = this._parse(str);
         if (result == true) {
-            return new Date(dateString);
+            var date = Date.parse(dateString);
+            return  isNaN(date) == false? new Date(dateString) : null;
         }
 
         return null;
@@ -69,6 +70,32 @@ class MIODateFormatter extends MIOFormatter {
     }
 
     private _parse(str:string):[boolean, string, string]{
+
+        var result, newStr, value;
+        var dateString = "";
+
+        if (this.dateStyle != MIODateFormatterStyle.NoStyle) {
+            [result, newStr, value] = this._parseDate(str);   
+            if (result == false) 
+                return [result, newStr, value];            
+        }
+        else {
+            let today = new Date();
+            dateString = this.iso8601DateStyle(today);
+        }                                     
+
+        if (this.timeStyle != MIODateFormatterStyle.NoStyle) {
+            [result, newStr, value] = this._parseTime(str);
+            if (result == false) {
+                return [result, newStr, value];
+            }
+            dateString += " " + value;
+        }
+        
+        return [result, newStr, dateString];
+    }
+
+    private _parseDate(str:string):[boolean, string, string]{
 
         var parseString = "";
         var step = 0;
@@ -145,21 +172,24 @@ class MIODateFormatter extends MIOFormatter {
         return [true, yy + ch];
     }
 
-    private _shortDateStyle(date:Date){
-        
-        var d = date.getDate();
-        var m = date.getMonth() + 1;
-        var y = date.getFullYear();        
+    protected iso8601DateStyle(date:Date)
+    {
+        let dd = date.getDate().toString();
+        let mm = (date.getMonth() + 1).toString();
+        let yy = date.getFullYear().toString();        
 
-        return d + "/" + m + "/" + y;
+        return yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
     }
 
-    private _shortTimeStyle(date:Date) {
+    private _shortDateStyle(date:Date, separatorString?:string){
+        
+        let separator = separatorString ? separatorString : "/";
 
-        var h = date.getHours();
-        var m = date.getMinutes();
+        let d = date.getDate().toString();
+        let m = (date.getMonth() + 1).toString();
+        let y = date.getFullYear().toString();        
 
-        return h + ":" + m;
+        return (d[1]?d:0+d) + separator + (m[1]?m:"0"+m) + separator + y;
     }
 
     private _fullDateStyle(date:Date){
@@ -168,6 +198,110 @@ class MIODateFormatter extends MIOFormatter {
         var month = _MIODateFormatterStringMonths[date.getMonth()];
 
         return day + ", " + date.getDate() + " of " + month + " of " + date.getFullYear();
+    }
+
+    private _parseTime(str:string):[boolean, string, string]{
+
+        var parseString = "";
+        var step = 0;
+
+        var hh = "";
+        var mm = "";
+        var ss = "";
+
+        // Check dd-mm-yy or dd-mm-yyyy
+        for (var index = 0; index < str.length; index++) {
+            var ch = str[index];
+
+            if (ch == ":" || ch == ".")
+            {
+                // Next step
+                if (parseString.length == 0) return [false, parseString, ""];
+                parseString += ":";
+                step++;
+            }
+            else 
+            {
+                var result, value;
+                
+                switch(step) {
+
+                    case 0: //hh
+                        [result, hh] = this._parseHour(ch, hh);
+                        break;
+
+                    case 1: // mm
+                        [result, mm] = this._parseMinute(ch, mm);
+                        break;
+
+                    case 2: // ss
+                        [result, ss] = this._parseSecond(ch, ss);
+                        break;
+                }
+
+                if (result == true)
+                    parseString += ch;
+                else 
+                    return [false, parseString, ""];
+            }            
+        }
+
+        var hourString = (hh[1]? hh : ("0" + hh));
+        if (mm.length > 0)
+            hourString += ":" + (mm[1]?mm:("0"+mm));
+        else 
+            hourString += ":00";
+        
+        if (ss.length > 0)
+            hourString += ":" + (ss[1]?ss:("0"+ss));
+        else 
+            hourString += ":00";
+        
+        return [true, parseString, hourString];
+    }
+
+    private _parseHour(ch, hh):[boolean, string] {
+
+        var c = parseInt(ch);
+        if (isNaN(c)) return [false, hh];
+        var v = parseInt(hh + ch);
+        if (v < 0 || v > 23) return [false, hh];
+        return [true, hh + ch];
+    }
+
+    private _parseMinute(ch, mm):[boolean, string] {
+
+        var c = parseInt(ch);
+        if (isNaN(c)) return [false, mm];
+        var v = parseInt(mm + ch);
+        if (v < 0 || v > 59) return [false, mm];
+        return [true, mm + ch];
+    }
+
+    private _parseSecond(ch, ss):[boolean, string] {
+
+        var c = parseInt(ch);
+        if (isNaN(c)) return [false, ss];
+        var v = parseInt(ss + ch);
+        if (v < 0 || v > 59) return [false, ss];
+        return [true, ss + ch];
+    }
+
+    protected iso8601TimeStyle(date:Date){
+        
+        let hh = date.getHours().toString();
+        let mm = date.getMinutes().toString();
+        let ss = date.getSeconds().toString();
+
+        return (hh[1]?hh:"0" + hh[0]) + ":" + (mm[1]?mm:"0" + mm[0]) + ":" + (ss[1]?ss:"0" + ss[0]);
+    }
+
+    private _shortTimeStyle(date:Date) {
+
+        var h = date.getHours();
+        var m = date.getMinutes();
+
+        return h + ":" + m;
     }
 
 }
