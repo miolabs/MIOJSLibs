@@ -77,7 +77,8 @@ class MIODateFormatter extends MIOFormatter {
         if (this.dateStyle != MIODateFormatterStyle.NoStyle) {
             [result, newStr, value] = this._parseDate(str);   
             if (result == false) 
-                return [result, newStr, value];            
+                return [result, newStr, value];   
+            dateString = value;         
         }
         else {
             let today = new Date();
@@ -141,7 +142,7 @@ class MIODateFormatter extends MIOFormatter {
             }            
         }
 
-        var dateString = (yy[3]? yy : ("20" + yy)) + "-" + mm + "-" + dd;
+        var dateString = (yy[3]? yy : ("20" + yy)) + "-" + (mm[1]?mm:"0"+mm) + "-" + (dd[1]?dd:"0"+dd);
         return [true, parseString, dateString];
     }
 
