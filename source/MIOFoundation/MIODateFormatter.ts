@@ -14,6 +14,18 @@ class MIODateFormatter extends MIOFormatter {
     dateStyle = MIODateFormatterStyle.ShortStyle;
     timeStyle = MIODateFormatterStyle.ShortStyle;    
 
+    private browserDateSeparatorSymbol:string = null;
+
+    init(){
+        super.init();
+
+        let browser = MIOCoreGetBrowser();
+        if (browser == MIOCoreBrowserType.Safari)
+            this.browserDateSeparatorSymbol = "/";
+        else 
+            this.browserDateSeparatorSymbol = "-";
+    }
+
     dateFromString(str:string):Date {
 
         var result, value, dateString;
@@ -142,7 +154,7 @@ class MIODateFormatter extends MIOFormatter {
             }            
         }
 
-        var dateString = (yy[3]? yy : ("20" + yy)) + "-" + (mm[1]?mm:"0"+mm) + "-" + (dd[1]?dd:"0"+dd);
+        var dateString = (yy[3]? yy : ("20" + yy)) + this.browserDateSeparatorSymbol + (mm[1]?mm:"0"+mm) + this.browserDateSeparatorSymbol + (dd[1]?dd:"0"+dd);
         return [true, parseString, dateString];
     }
 

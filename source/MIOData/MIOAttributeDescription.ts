@@ -4,16 +4,17 @@
 
 enum MIOAttributeType {
 
-    UndefinedAttributeType,
-    BooleanAttributeType,
-    NumberAttributeType,
-    StringAttributeType    
+    Undefined,
+    Boolean,
+    Integer,
+    Float,    
+    String    
 }
 
 class MIOAttributeDescription extends MIOObject
 {
     private _name:string = null;
-    private _attributeType = MIOAttributeType.UndefinedAttributeType;
+    private _attributeType = MIOAttributeType.Undefined;
     private _defaultValue = null;
     private _serverName:string = null;
 

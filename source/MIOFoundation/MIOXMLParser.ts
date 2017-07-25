@@ -8,6 +8,7 @@ enum MIOXMLTokenType{
     OpenTag,
     CloseTag,
     Slash,
+    Quote,
     End
 }
 
@@ -77,9 +78,7 @@ class MIOXMLParser extends MIOObject
 
         let exit = false;
         let token = MIOXMLTokenType.Identifier;
-        let value = this.readToken();        
-        
-        this.currentTokenValue = token;
+        let value = this.readToken();                        
 
         if (value == null) return [MIOXMLTokenType.End, null];
 
@@ -102,6 +101,8 @@ class MIOXMLParser extends MIOObject
                 break;
         }
 
+        this.currentTokenValue = token;
+        
         return [token, value];
     }
 
@@ -253,6 +254,7 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.CloseTag:
                 this.closeTag();
+                this.didEndElement();
                 break;
 
             default:
@@ -261,11 +263,11 @@ class MIOXMLParser extends MIOObject
         }
     }
 
-    private attribute(value){
+    private attribute(attr){
 
-        console.log("Attribute: " + value);
+        console.log("Attribute: " + attr);
 
-        this.attributes[value] = value;
+        this.decodeAttribute(attr);
 
         var token, value;
         [token, value] = this.nextToken();
@@ -286,8 +288,43 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.CloseTag:
                 this.closeTag();
+                this.didStartElement();                
                 break;
         }
+    }
+
+    private decodeAttribute(attr){
+
+        var key = null;
+        var value = null;        
+        var token = "";
+
+        for (var index = 0; index < attr.length; index++){
+
+            let ch = attr[index];
+            if (ch == "=") {
+                key = token;
+                token = "";
+            }
+            else if (ch == "\"" || ch == "'") {
+                
+                index++;
+                let ch2 = attr[index];
+                while(ch2 != ch){
+                    token += ch2;
+                    index++;
+                    ch2 = attr[index];
+                }
+            }
+            else {
+                token += ch;
+            }
+        }
+        
+        if (key != null && token.length > 0) value = token;
+        else if (key == null && token.length > 0) key = token;
+
+        this.attributes[key] = value;        
     }
 
     private slash(){
@@ -299,6 +336,8 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.CloseTag:                    
                 this.closeTag();
+                this.didStartElement();
+                this.didEndElement();                
                 break;            
 
             case MIOXMLTokenType.Identifier:
@@ -309,14 +348,7 @@ class MIOXMLParser extends MIOObject
 
     private closeTag(){        
         
-        console.log("Close Tag");        
-        
-        if (this.prevToken() == MIOXMLTokenType.Slash){
-            this.didEndElement();            
-        }
-        else {
-            this.didStartElement();
-        }
+        console.log("Close Tag");
     }
 
     private didStartElement(){        
@@ -334,7 +366,7 @@ class MIOXMLParser extends MIOObject
         
         let element = this.elements.pop();
         console.log("End Element " + element);        
-        if (typeof this.delegate.parserDidStartElement === "function")
+        if (typeof this.delegate.parserDidEndElement === "function")
             this.delegate.parserDidEndElement(this, element);
     }
 
