@@ -8,8 +8,13 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
 
     dateFromString(str:string):Date {
 
-        if (str == null) return null; 
-        var d = new Date(str);
+        if (str == null) return null;
+        let dateString;
+        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari)
+            dateString = str.split('-').join( "/");
+        else 
+            dateString = str;
+        var d = new Date(dateString);
         if (d == null) 
             console.log("DATE FORMATTER: Error, invalid date");
 
