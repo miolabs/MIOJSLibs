@@ -8,8 +8,13 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
 
     dateFromString(str:string):Date {
 
-        if (str == null) return null; 
-        var d = new Date(str);
+        if (str == null) return null;
+        let dateString;
+        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari)
+            dateString = str.split('-').join( "/");
+        else 
+            dateString = str;
+        var d = new Date(dateString);
         if (d == null) 
             console.log("DATE FORMATTER: Error, invalid date");
 
@@ -23,23 +28,15 @@ class MIOISO8601DateFormatter extends MIODateFormatter {
         if (date == null) return null;
 
         if (this.dateStyle != MIODateFormatterStyle.NoStyle) {
-            var dd = date.getDate().toString();
-            var mm = (date.getMonth() + 1).toString();
-            var yy = date.getFullYear().toString();        
-
-            str += yy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]);
+            str += this.iso8601DateStyle(date);
         }
-
-        if (str.length > 0)
-            str += " ";
 
         if (this.timeStyle != MIODateFormatterStyle.NoStyle){
 
-            var hh = date.getHours().toString();
-            var mm = date.getMinutes().toString();
-            var ss = date.getSeconds().toString();
-
-            str += (hh[1]?hh:"0" + hh[0]) + ":" + (mm[1]?mm:"0" + mm[0]) + ":" + (ss[1]?ss:"0" + ss[0]);
+            if (str.length > 0)
+            str += " ";
+            
+            str += this.iso8601TimeStyle(date);
         }
 
         return str;

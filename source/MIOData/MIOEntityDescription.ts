@@ -4,6 +4,8 @@
 class MIOEntityDescription extends MIOObject {
     
     name = null;
+    attributes = [];
+
     private _managedObjectClassName = "MIOManagedObject";
     get managedObjectClassName():string {return this._managedObjectClassName;}
 
@@ -34,7 +36,11 @@ class MIOEntityDescription extends MIOObject {
         this._managedObjectClassName = entityName;
     }
 
-    addAttribute(name:string, type:MIOAttributeType, serverName?:string) {
+    addAttribute(name:string, type:MIOAttributeType, defaultValue, serverName?:string) {
         
+        var attr = new MIOAttributeDescription();
+        attr.initWithName(name, type, defaultValue, serverName);
+
+        this.attributes.push(attr);
     }
 }

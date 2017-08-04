@@ -7,7 +7,9 @@
 enum MIOPredicateComparatorType {
     Equal,
     Less,
+    LessOrEqual,
     Greater,
+    GreaterOrEqual,
     Not,
     Contains
 }
@@ -51,8 +53,12 @@ class MIOPredicateItem {
             this.comparator = MIOPredicateComparatorType.Equal;
         else if (comparator == ">")
             this.comparator = MIOPredicateComparatorType.Greater;
+        else if (comparator == ">=")
+            this.comparator = MIOPredicateComparatorType.GreaterOrEqual;        
         else if (comparator == "<")
             this.comparator = MIOPredicateComparatorType.Less;
+        else if (comparator == "<=")
+            this.comparator = MIOPredicateComparatorType.LessOrEqual;        
         else if (comparator == "!=")
             this.comparator = MIOPredicateComparatorType.Not;
         else if (comparator.toLowerCase() == "contains")
@@ -68,8 +74,12 @@ class MIOPredicateItem {
             return (object[this.key] != this.value);
         else if (this.comparator == MIOPredicateComparatorType.Less)
             return (object[this.key] < this.value);
+        else if (this.comparator == MIOPredicateComparatorType.LessOrEqual)
+            return (object[this.key] <= this.value);        
         else if (this.comparator == MIOPredicateComparatorType.Greater)
             return (object[this.key] > this.value);
+        else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
+            return (object[this.key] >= this.value);        
         if (this.comparator == MIOPredicateComparatorType.Contains) {
             var value = object[this.key];
             if (value == null)

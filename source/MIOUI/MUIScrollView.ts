@@ -79,6 +79,8 @@ class MUIScrollView extends MUIView
         else if (offsetY > this._lastOffsetY)
             deltaY = this._lastOffsetY + offsetY;
 
+        console.log("Content Offset y: " + offsetY + " - delta y: " + deltaY);
+
         this.didScroll(0, deltaY);
         this._lastOffsetY = this.contentOffset.y;
 

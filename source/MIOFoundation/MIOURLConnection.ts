@@ -70,7 +70,7 @@ class MIOURLConnection
             {
                 // success!
                 if (instance.delegate != null)
-                    instance.delegate.connectionDidReceiveData(instance, this.responseText);
+                    instance.delegate.connectionDidReceiveText(instance, this.responseText);
                 else if (instance.blockFN != null) {
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type').split(';')[0];
                     if( type != 'application/json' && type != 'text/html') {

@@ -26,4 +26,5 @@
 /// <reference path="MIOUserDefaults.ts" />
 
 /// <reference path="MIOURLConnection.ts" />
+/// <reference path="MIOXMLParser.ts" />
 
