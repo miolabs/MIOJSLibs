@@ -15,18 +15,30 @@ class MIOManagedObject extends MIOObject {
     private _trackChanges = {};
 
     private _isInserted = false;
-    private _setIsInserted(value) {this.willChangeValue("isInserted");this._isInserted=value;this.didChangeValue("isInserted")};
+    private _setIsInserted(value) {
+        this.willChangeValue("isInserted");
+        this.willChangeValue("hasChanges");
+        this._isInserted=value;
+        this.didChangeValue("isInserted");
+        this.didChangeValue("hasChanges");}
     get isInserted():boolean {return this._isInserted};
     
     private _isUpdated = false;
     private _setIsUpdated(value) {
         this.willChangeValue("_isUpdated");
+        this.willChangeValue("hasChanges");
         this._isUpdated=value;
-        this.didChangeValue("_isUpdated")};
+        this.didChangeValue("_isUpdated");
+        this.didChangeValue("hasChanges");}
     get isUpdated():boolean {return this._isUpdated};
 
     private _isDeleted = false;
-    private _setIsDeleted(value) {this.willChangeValue("_isDeleted");this._isDeleted=value;this.didChangeValue("_isDeleted")};
+    private _setIsDeleted(value) {
+        this.willChangeValue("_isDeleted");
+        this.willChangeValue("hasChanges");
+        this._isDeleted=value;
+        this.didChangeValue("_isDeleted");
+        this.didChangeValue("hasChanges");};
     get isDeleted():boolean {return this._isDeleted};
 
     initWithEntityAndInsertIntoManagedObjectContext(entityDescription:MIOEntityDescription, context?:MIOManagedObjectContext){
