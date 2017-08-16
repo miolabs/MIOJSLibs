@@ -1,0 +1,312 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1412EFA81F3322FC006E09BF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1412EFA21F3322FC006E09BF /* AppDelegate.swift */; };
+		1412EFA91F3322FC006E09BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1412EFA31F3322FC006E09BF /* Assets.xcassets */; };
+		1412EFAB1F3322FC006E09BF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1412EFA71F3322FC006E09BF /* ViewController.swift */; };
+		1412EFAE1F33230F006E09BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1412EFAC1F33230F006E09BF /* Main.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1412EF901F3321DD006E09BF /* cross-project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "cross-project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1412EF9C1F3321DD006E09BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = app/macOS/Info.plist; sourceTree = "<group>"; };
+		1412EFA21F3322FC006E09BF /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = app/macOS/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		1412EFA31F3322FC006E09BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = app/macOS/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		1412EFA71F3322FC006E09BF /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = app/macOS/ViewController.swift; sourceTree = SOURCE_ROOT; };
+		1412EFAD1F33230F006E09BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = app/macOS/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1412EF8D1F3321DD006E09BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1412EF871F3321DD006E09BF = {
+			isa = PBXGroup;
+			children = (
+				1412EFAF1F3323B3006E09BF /* Web */,
+				1412EF921F3321DD006E09BF /* macOS */,
+				1412EF911F3321DD006E09BF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1412EF911F3321DD006E09BF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1412EF901F3321DD006E09BF /* cross-project.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1412EF921F3321DD006E09BF /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				1412EFAC1F33230F006E09BF /* Main.storyboard */,
+				1412EFA21F3322FC006E09BF /* AppDelegate.swift */,
+				1412EFA31F3322FC006E09BF /* Assets.xcassets */,
+				1412EFA71F3322FC006E09BF /* ViewController.swift */,
+				1412EF9C1F3321DD006E09BF /* Info.plist */,
+			);
+			name = macOS;
+			path = "cross-project";
+			sourceTree = "<group>";
+		};
+		1412EFAF1F3323B3006E09BF /* Web */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Web;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1412EF8F1F3321DD006E09BF /* cross-project */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1412EF9F1F3321DD006E09BF /* Build configuration list for PBXNativeTarget "cross-project" */;
+			buildPhases = (
+				1412EF8C1F3321DD006E09BF /* Sources */,
+				1412EF8D1F3321DD006E09BF /* Frameworks */,
+				1412EF8E1F3321DD006E09BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cross-project";
+			productName = "cross-project";
+			productReference = 1412EF901F3321DD006E09BF /* cross-project.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1412EF881F3321DD006E09BF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "MIO Research Labs";
+				TargetAttributes = {
+					1412EF8F1F3321DD006E09BF = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 53X2422NYU;
+						LastSwiftMigration = 0830;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1412EF8B1F3321DD006E09BF /* Build configuration list for PBXProject "cross-project" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1412EF871F3321DD006E09BF;
+			productRefGroup = 1412EF911F3321DD006E09BF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1412EF8F1F3321DD006E09BF /* cross-project */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1412EF8E1F3321DD006E09BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1412EFA91F3322FC006E09BF /* Assets.xcassets in Resources */,
+				1412EFAE1F33230F006E09BF /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1412EF8C1F3321DD006E09BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1412EFAB1F3322FC006E09BF /* ViewController.swift in Sources */,
+				1412EFA81F3322FC006E09BF /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		1412EFAC1F33230F006E09BF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1412EFAD1F33230F006E09BF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1412EF9D1F3321DD006E09BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1412EF9E1F3321DD006E09BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		1412EFA01F3321DD006E09BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 53X2422NYU;
+				INFOPLIST_FILE = "$(SRCROOT)/app/macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miolabs.cross-project";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		1412EFA11F3321DD006E09BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 53X2422NYU;
+				INFOPLIST_FILE = "$(SRCROOT)/app/macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.miolabs.cross-project";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1412EF8B1F3321DD006E09BF /* Build configuration list for PBXProject "cross-project" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1412EF9D1F3321DD006E09BF /* Debug */,
+				1412EF9E1F3321DD006E09BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1412EF9F1F3321DD006E09BF /* Build configuration list for PBXNativeTarget "cross-project" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1412EFA01F3321DD006E09BF /* Debug */,
+				1412EFA11F3321DD006E09BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1412EF881F3321DD006E09BF /* Project object */;
+}

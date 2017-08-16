@@ -46,5 +46,7 @@ class MIOPersistentStoreCoordinator extends MIOObject
             let ps:MIOPersistentStore = this._stores[index];
             var result = ps.executeRequest(persistentStoreRequest, context);
         }
+
+        return [];
     }
 }

@@ -57,5 +57,6 @@ class  MIOPersistentStore extends MIOObject
 
     executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){
         
+        return [];
     }
 }

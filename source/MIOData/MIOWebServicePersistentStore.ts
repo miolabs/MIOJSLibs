@@ -35,7 +35,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                return this.fetchObjects(request, context);
             }
         }
-        return null;
+        return [];
     }
 
     private fetchObjects(request:MIOFetchRequest, context:MIOManagedObjectContext){
@@ -60,7 +60,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         // TODO: Check with the server the last update fo the entity!
 
         // Means the status is Ready
-        var objs = entity["Objects"];        
+        var objs = entity["Objects"];
         objs = this.filterObjects(objs, request.predicate);
         objs = this.sortObjects(objs, request.sortDescriptors);
         
