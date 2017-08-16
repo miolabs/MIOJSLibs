@@ -156,14 +156,22 @@ class MIOPredicate extends MIOObject {
                 // Create new predicate
                 var string = "";
                 index++;
+                var parenthesisCount = 1;
                 for (var count = index; count < format.length; count++ , index++) {
                     var ch2 = format.charAt(index);
-                    if (ch2 == ")") {
-                        var p = MIOPredicate.predicateWithFormat(string);
-                        this.predicates.push(p);
+                    
+                    if (ch2 == "(") parenthesisCount++;                                        
+                    if (ch2 == ")" && parenthesisCount == 1) {
+
+                        if (parenthesisCount > 1) parenthesisCount--;
+                        else {
+                            var p = MIOPredicate.predicateWithFormat(string);
+                            this.predicates.push(p);
+                        }
                         break;
                     }
                     else {
+                        if (ch2 == ")" && parenthesisCount > 1) parenthesisCount--;
                         string += ch2;
                     }
                 }

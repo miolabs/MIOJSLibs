@@ -56,7 +56,7 @@ class MUIComboBox extends MUIControl
         //var color = this.getBackgroundColor();
         //this._selectLayer.style.backgroundColor = color;
 
-        this._selectLayer.style.backgroundColor = "rgb(255, 255, 255)"
+        // this._selectLayer.style.backgroundColor = "rgb(255, 255, 255)"
 
     }
 

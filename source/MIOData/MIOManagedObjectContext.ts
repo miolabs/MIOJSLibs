@@ -94,10 +94,10 @@ class MIOManagedObjectContext extends MIOObject
 
     executeFetch(request)
     {
-        var objs = this.persistentStoreCoordinator.executeRequest(request, this);
-        //var objs = this._objects[request.entityName];
-        //objs = this._filterObjects(objs, request.predicate);
-        //objs = this._sortObjects(objs, request.sortDescriptors);
+        //var objs = this.persistentStoreCoordinator.executeRequest(request, this);
+        var objs = this._objects[request.entityName];
+        objs = this._filterObjects(objs, request.predicate);
+        objs = this._sortObjects(objs, request.sortDescriptors);
 
         return objs;
     }
