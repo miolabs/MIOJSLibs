@@ -2,7 +2,7 @@
 /// <reference path="MIOPersistentStore.ts" />
 /// <reference path="MIOFetchRequest.ts" />
 
-const MIOWebServicePersistentStoreType = "kMIOWebServicePersistentStoreType";
+let MIOWebServicePersistentStoreType = "kMIOWebServicePersistentStoreType";
 
 enum MIOWebServicePersistentStoreStatus{
     None,

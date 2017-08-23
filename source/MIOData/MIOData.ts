@@ -9,3 +9,4 @@
 /// <reference path="MIOFetchRequest.ts" />
 /// <reference path="MIOFetchedResultsController.ts" />
 
+/// <reference path="MIOWebServicePersistentStore.ts" />

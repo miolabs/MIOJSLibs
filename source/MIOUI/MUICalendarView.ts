@@ -376,7 +376,7 @@ class MUICalendarView extends MUIScrollView {
     private _cellDayAtDate(date)
     {
         var dayCell = null;
-        if (typeof this.dataSource.dayCellAtDate === "function")
+        if (this.dataSource != null && typeof this.dataSource.dayCellAtDate === "function")
             dayCell = this.dataSource.dayCellAtDate(this, date);
         
         if (dayCell == null)

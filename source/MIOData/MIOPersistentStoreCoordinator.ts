@@ -7,7 +7,7 @@ class MIOPersistentStoreCoordinator extends MIOObject
 {
     private _managedObjectModel:MIOManagedObjectModel = null;
     private _stores = [];
-    static storeClasses = {MIOWebServicePersistentStoreType:"MIOWebServicePersistentStore"};
+    static storeClasses = {"kMIOWebServicePersistentStoreType":"MIOWebServicePersistentStore"};
 
     get managedObjectModel() { return this._managedObjectModel;}
     get persistentStores() {return this._stores;}
