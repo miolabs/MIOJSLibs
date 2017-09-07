@@ -121,6 +121,10 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         case "Boolean":
              t += type.lowercased()
             
+        case "Array",
+             "Dictionary":
+            t = ""
+            
         default:
             t += type
         }
@@ -151,7 +155,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "\n";
         fileContent += "    // Property: \(name)\n";
         // Var
-        fileContent += "    private _\(name)\(t)\(dv)\n";
+        fileContent += "    protected _\(name)\(t)\(dv)\n";
         // Setter
         fileContent += "    set \(name)(value\(t)) {\n";
         fileContent += "        this.setValue('_\(name)', value);\n";
@@ -182,7 +186,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             
             fileContent += "    // Relationship: \(name)\n";
             // Var
-            fileContent += "    private _\(name) = [\(destinationEntity)];\n";
+            fileContent += "    protected _\(name):Array<\(destinationEntity)> = [];\n";
             // Getter
             fileContent += "    get \(name)():[\(destinationEntity)]  {\n";
             fileContent += "        return this.getValue('_\(name)');\n";
@@ -200,7 +204,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             fileContent += "        this.addObjects('_\(name)', value);\n";
             fileContent += "    }\n";
             // Remove objects
-            fileContent += "    remove\(cname)(value:\(destinationEntity)) {\n";
+            fileContent += "    remove\(cname)(value:[\(destinationEntity)]) {\n";
             fileContent += "        this.removeObjects('_\(name)', value);\n";
             fileContent += "    }\n";
         }
