@@ -208,17 +208,20 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         //Write to disc
         WriteTextFile(content:fileContent, path:path)
         
-        // Create Subclass in case that is not already create
-        var content = ""
-        content += "//\n"
-        content += "// Generated class \(self.currentClassName)\n"
-        content += "//\n"
-        content += "\n/// <reference path=\"\(self.currentClassEntityName).ts\" />\n"
-        content += "\nclass \(self.currentClassName) extends \(self.currentClassEntityName)\n"
-        content += "{\n"
-        content += "\n}\n";
+        let fp = modelPath! + "/" + self.currentClassName + ".ts"
+        if (FileManager.default.fileExists(atPath:fp) == false) {
+            // Create Subclass in case that is not already create
+            var content = ""
+            content += "//\n"
+            content += "// Generated class \(self.currentClassName)\n"
+            content += "//\n"
+            content += "\n/// <reference path=\"\(self.currentClassEntityName).ts\" />\n"
+            content += "\nclass \(self.currentClassName) extends \(self.currentClassEntityName)\n"
+            content += "{\n"
+            content += "\n}\n";
 
-        WriteTextFile(content: content, path: modelPath! + "/" + self.currentClassName + ".ts")
+            WriteTextFile(content: content, path: fp)
+        }
     }
 
 }
