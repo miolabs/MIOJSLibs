@@ -10,9 +10,9 @@ import Foundation
 
 func CreateProjectTemplate() -> Command? {
     
-    var libPath:String? = NextArg()
+    let libPath:String? = NextArg()
     
-    if (fileName == nil) {
+    if (libPath == nil) {
         return nil;
     }
     

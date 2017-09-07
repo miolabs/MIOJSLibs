@@ -24,6 +24,9 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     var fileContent:String = "";
     var filename:String = "";
     
+    var currentClassName:String = "";
+    var currentClassEntityName:String = "";
+    
     var modelPath:String?;
     var modelFilename:String;
     
@@ -90,8 +93,10 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     
     private func openModelEntity(filename:String, classname:String) {
     
-        self.filename = "/\(filename)ManagedObject.ts";
-        let cn = classname + "ManagedObject";
+        self.filename = "/\(filename)_ManagedObject.ts";
+        let cn = classname + "_ManagedObject";
+        self.currentClassEntityName = cn;
+        self.currentClassName = classname;
         
         fileContent = "\n";
         fileContent += "// Generated class \(cn)\n";
@@ -102,7 +107,16 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     private func appendAttribute(name:String, type:String, optional:String, defaultValue:String?) {
 
         var dv:String;
-        var t = ":" + type;
+        var t = ":"
+        
+        switch type {
+        case "Integer",
+             "Float":
+            t += "Number"
+            
+        default:
+            t += type
+        }
         
         if (defaultValue == nil) {
             dv = " = null;";
@@ -192,7 +206,19 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         
         let path = modelPath! + filename;
         //Write to disc
-        WriteTextFile(content:fileContent, path:path);
+        WriteTextFile(content:fileContent, path:path)
+        
+        // Create Subclass in case that is not already create
+        var content = ""
+        content += "//\n"
+        content += "// Generated class \(self.currentClassName)\n"
+        content += "//\n"
+        content += "\n/// <reference path=\"\(self.currentClassEntityName).ts\" />\n"
+        content += "\nclass \(self.currentClassName) extends \(self.currentClassEntityName)\n"
+        content += "{\n"
+        content += "\n}\n";
+
+        WriteTextFile(content: content, path: modelPath! + "/" + self.currentClassName + ".ts")
     }
 
 }
