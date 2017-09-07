@@ -63,7 +63,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             let optional = attributeDict["optional"] ?? "YES";
             let defaultValue = attributeDict["defaultValueString"];
             
-            appendAttribute(name:name!, type:type!.lowercased(), optional:optional, defaultValue: defaultValue)
+            appendAttribute(name:name!, type:type!, optional:optional, defaultValue: defaultValue)
         }
         else if (elementName == "relationship") {
             
@@ -111,8 +111,15 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         
         switch type {
         case "Integer",
-             "Float":
-            t += "Number"
+             "Float",
+             "Number":
+            t += "number"
+            
+        case "String":
+            t += type.lowercased()
+            
+        case "Boolean":
+             t += type.lowercased()
             
         default:
             t += type
