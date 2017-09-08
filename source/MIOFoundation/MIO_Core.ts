@@ -142,6 +142,7 @@ function MIOClassFromString(className)
     try {
         var object = Object.create(window[className].prototype);
         object.constructor.apply(object);
+        object.className = className;
 
     }
     catch (e){

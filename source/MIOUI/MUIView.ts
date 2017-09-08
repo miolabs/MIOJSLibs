@@ -103,6 +103,16 @@ class MUIView extends MIOObject
         this._addLayerToDOM();
     }
 
+    copy() {
+
+        var objLayer = this.layer.cloneNode(true);
+        
+        var obj = MIOClassFromString(this.className);
+        obj.initWithLayer(objLayer);
+
+        return obj;
+    }
+
     awakeFromHTML(){}
 
     setParent(view)

@@ -5,6 +5,7 @@
 
 class MIOObject
 {
+    className = "MIOObject";
     keyPaths = {};
 
     init() {}
@@ -53,5 +54,12 @@ class MIOObject
 
         var index = observers.indexOf(obs);
         observers.splice(index, 1);
+    }
+
+    copy() {
+        var obj = MIOClassFromString(this.className);
+        obj.init();
+        
+        return obj;
     }
 }
