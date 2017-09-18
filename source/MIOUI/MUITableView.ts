@@ -518,8 +518,10 @@ class MUITableView extends MUIView {
             }
             else if (typeof this.dataSource.viewForHeaderInSection === "function") {
                 var view = this.dataSource.viewForHeaderInSection(this, sectionIndex);
-                section.header = view;
-                this.addSubview(view);
+                if (view != null) {
+                    section.header = view;
+                    this.addSubview(view);
+                }
             }
 
             for (var index = 0; index < rows; index++) {
@@ -577,12 +579,14 @@ class MUITableView extends MUIView {
 
             if (section.header != null) {
                 section.header.setY(y);
-                if (this.sectionHeaderHeight > 0) {
+                var sh = section.header.getHeight();
+                if (sh > 0) {
+                    y += sh;
+                }
+                else {
                     section.header.setHeight(this.sectionHeaderHeight);
                     y += this.sectionHeaderHeight;
-                }
-                else
-                    y += section.header.getHeight();
+                }                    
             }
 
             for (var index = 0; index < section.cells.length; index++) {
