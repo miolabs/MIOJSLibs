@@ -60,6 +60,11 @@ class MIOManagedObjectModel extends MIOObject
             
             this._addAttribute(name, type, serverName);
         }        
+        else if (element == "relationship") {
+        
+            let name = attributes["name"];
+            this._addRelationship(name);
+        }
     }
 
     parserDidEndElement(parser:MIOXMLParser, element:string){
@@ -93,6 +98,12 @@ class MIOManagedObjectModel extends MIOObject
         
         this.currentEntity.addAttribute(name, attrType, null, serverName);
     }
+
+    private _addRelationship(name){
+
+        this.currentEntity.addRelationship(name);
+    }
+
     //TODO: Remove this function
     _setEntity(entity:MIOEntityDescription) {
 

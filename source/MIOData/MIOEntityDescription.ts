@@ -43,4 +43,8 @@ class MIOEntityDescription extends MIOObject {
 
         this.attributes.push(attr);
     }
+
+    addRelationship(name:string) {
+
+    }
 }

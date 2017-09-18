@@ -7,7 +7,8 @@ enum MIOAttributeType {
     Undefined,
     Boolean,
     Integer,
-    Float,    
+    Float,
+    Number,
     String    
 }
 
