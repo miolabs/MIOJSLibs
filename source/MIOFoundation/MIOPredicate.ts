@@ -95,6 +95,7 @@ class MIOPredicateItem {
 }
 
 class MIOPredicate extends MIOObject {
+    
     predicates = [];
 
     public static predicateWithFormat(format) {

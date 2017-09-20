@@ -56,14 +56,19 @@ class MIOManagedObjectModel extends MIOObject
 
             let name = attributes["name"];
             let type = attributes["attributeType"];
-            let serverName = attributes["serverName"];
-            
-            this._addAttribute(name, type, serverName);
+            let serverName = attributes["serverName"];            
+            let optional = attributes["optional"] != null ? attributes["optional"].toLowerCase() : "yes";            
+            let optionalValue = optional == "no" ? false : true;
+
+            this._addAttribute(name, type, optionalValue, serverName);
         }        
         else if (element == "relationship") {
         
             let name = attributes["name"];
-            this._addRelationship(name);
+            let destinationEntityName = attributes["destinationEntity"];
+            let toMany = attributes["toMany"];
+            let serverName = attributes["serverName"];            
+            this._addRelationship(name, destinationEntityName, toMany, serverName);
         }
     }
 
@@ -78,13 +83,40 @@ class MIOManagedObjectModel extends MIOObject
         }
     }
 
-    private _addAttribute(name, type, serverName){
+    parserDidEndDocument(parser:MIOXMLParser){
+
+        // Check every relation ship and assign the right destination entity
+        for (var entityName in this._entitiesByName) {
+
+            let e:MIOEntityDescription = this._entitiesByName[entityName];
+            for (var index = 0; index < e.relationships.length; index++) {
+                let r:MIORelationshipDescription = e.relationships[index];
+                
+                if (r.destinationEntity == null){
+                    let de = this._entitiesByName[r.destinationEntityName];
+                    r.destinationEntity = de;
+                }
+            }
+        }
+
+        console.log("datamodel.xml parser finished");
+    }
+
+    private _addAttribute(name, type, optional, serverName){
 
         var attrType = null;
         switch(type){
 
             case "Boolean":
                 attrType = MIOAttributeType.Boolean;
+                break;
+
+            case "Integer":
+                attrType = MIOAttributeType.Integer;
+                break;
+
+            case "Float":
+                attrType = MIOAttributeType.Float;
                 break;
 
             case "Number":
@@ -96,12 +128,16 @@ class MIOManagedObjectModel extends MIOObject
                 break;
         }
         
-        this.currentEntity.addAttribute(name, attrType, null, serverName);
+        this.currentEntity.addAttribute(name, attrType, null, optional, serverName);
     }
 
-    private _addRelationship(name){
+    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string){
 
-        this.currentEntity.addRelationship(name);
+        var isToMany = false;
+        if (toMany.toLocaleLowerCase() == "yes" || toMany.toLocaleLowerCase() == "true"){
+            isToMany = true;
+        }
+        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName);
     }
 
     //TODO: Remove this function

@@ -1,14 +1,17 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
-const MIOPersistentStoreType = "MIOPersistentStore";
-
 class  MIOPersistentStore extends MIOObject
 {    
     private _persistentStoreCoordinator:MIOPersistentStoreCoordinator = null;
     private _configurationName:string = null;
     private _url:MIOURL = null;
     private _options = null;
+
+    // To override per class
+    static get type ():string {
+        return "MIOPersistentStoreType";
+    }
 
     initWithPersistentStoreCoordinator(root:MIOPersistentStoreCoordinator, configurationName:string, url:MIOURL, options) {
 
@@ -17,11 +20,6 @@ class  MIOPersistentStore extends MIOObject
         this._url = url;
         this._options = options;
     }    
-
-    get type(){
-        // To override
-        return MIOPersistentStoreType;
-    }
 
     get persistentStoreCoordinator():MIOPersistentStoreCoordinator{
         return this._persistentStoreCoordinator;
@@ -43,20 +41,18 @@ class  MIOPersistentStore extends MIOObject
         return false;
     }
 
-    didAddToPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){
+    didAddToPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){}
+    willRemoveFromPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){}
 
-    }
-
-    willRemoveFromPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){
-
-    }
-
-    loadMetadata(){
-
-    }
+    loadMetadata(){}
 
     executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){
         
         return [];
+    }
+
+    newObjectIDForEntityWithReferenceObject(entity, referenceObject){
+        
+        
     }
 }

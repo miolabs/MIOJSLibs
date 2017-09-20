@@ -1,10 +1,17 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
+/// <reference path="MIORelationshipDescription.ts" />
+
+
 class MIOEntityDescription extends MIOObject {
     
-    name = null;
+    name = null;    
     attributes = [];
+    relationships = [];
+
+    private serverAttributes = {};
+    private serverRelationships = {};
 
     private _managedObjectClassName = "MIOManagedObject";
     get managedObjectClassName():string {return this._managedObjectClassName;}
@@ -36,15 +43,33 @@ class MIOEntityDescription extends MIOObject {
         this._managedObjectClassName = entityName;
     }
 
-    addAttribute(name:string, type:MIOAttributeType, defaultValue, serverName?:string) {
+    addAttribute(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string) {
         
         var attr = new MIOAttributeDescription();
-        attr.initWithName(name, type, defaultValue, serverName);
-
+        attr.initWithName(name, type, defaultValue, optional, serverName);
         this.attributes.push(attr);
+
+        // Cache
+        this.serverAttributes[name] = serverName ? serverName : name;
     }
 
-    addRelationship(name:string) {
+    serverAttributeName(name){
 
+        return this.serverAttributes[name];
+    }
+
+    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string) {
+
+        var rel = new MIORelationshipDescription();
+        rel.initWithName(name, destinationEntityName, toMany, serverName);
+        this.relationships.push(rel);
+
+        // Cache
+        this.serverRelationships[name] = serverName ? serverName : name;                
+    }
+
+    serverRelationshipName(name){
+
+        return this.serverRelationships[name];
     }
 }

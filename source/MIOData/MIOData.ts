@@ -7,6 +7,8 @@
 /// <reference path="MIOManagedObjectContext.ts" />
 
 /// <reference path="MIOFetchRequest.ts" />
+/// <reference path="MIOSaveChangesRequest.ts" />
+
 /// <reference path="MIOFetchedResultsController.ts" />
 
 /// <reference path="MIOWebServicePersistentStore.ts" />

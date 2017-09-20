@@ -158,12 +158,12 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    protected _\(name)\(t)\(dv)\n";
         // Setter
         fileContent += "    set \(name)(value\(t)) {\n";
-        fileContent += "        this.setValue('_\(name)', value);\n";
+        fileContent += "        this.setValue('\(name)', value);\n";
         fileContent += "    }\n";
     
         // Getter
         fileContent += "    get \(name)()\(t) {\n";
-        fileContent += "        return this.getValue('_\(name)');\n";
+        fileContent += "        return this.getValue('\(name)');\n";
         fileContent += "    }\n";
         
         // Getter raw value
@@ -189,23 +189,23 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             fileContent += "    protected _\(name):Array<\(destinationEntity)> = [];\n";
             // Getter
             fileContent += "    get \(name)():[\(destinationEntity)]  {\n";
-            fileContent += "        return this.getValue('_\(name)');\n";
+            fileContent += "        return this.getValue('\(name)');\n";
             fileContent += "    }\n";
             // Add
             fileContent += "    add\(cname)Object(value:\(destinationEntity)) {\n";
-            fileContent += "        this.addObject('_\(name)', value);\n";
+            fileContent += "        this.addObject('\(name)', value);\n";
             fileContent += "    }\n";
             // Remove
             fileContent += "    remove\(cname)Object(value:\(destinationEntity)) {\n";
-            fileContent += "        this.removeObject('_\(name)', value);\n";
+            fileContent += "        this.removeObject('\(name)', value);\n";
             fileContent += "    }\n";
             // Add objects
             fileContent += "    add\(cname)(value:[\(destinationEntity)]) {\n";
-            fileContent += "        this.addObjects('_\(name)', value);\n";
+            fileContent += "        this.addObjects('\(name)', value);\n";
             fileContent += "    }\n";
             // Remove objects
             fileContent += "    remove\(cname)(value:[\(destinationEntity)]) {\n";
-            fileContent += "        this.removeObjects('_\(name)', value);\n";
+            fileContent += "        this.removeObjects('\(name)', value);\n";
             fileContent += "    }\n";
         }
         

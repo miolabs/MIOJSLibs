@@ -11,16 +11,36 @@ let MIOInsertedObjectsKey = "MIOInsertedObjectsKey";
 let MIOUpdatedObjectsKey = "MIOUpdatedObjectsKey";
 let MIODeletedObjectsKey = "MIODeletedObjectsKey";
 
+enum MIOManagedObjectContextConcurrencyType {    
+    PrivateQueue,
+    MainQueue
+}
+
+enum NSMergePolicy {
+
+}
+
 class MIOManagedObjectContext extends MIOObject
 {
     parentContext:MIOManagedObjectContext = null;
     persistentStoreCoordinator:MIOPersistentStoreCoordinator = null;
+
+    concurrencyType = MIOManagedObjectContextConcurrencyType.MainQueue;
+    mergePolicy = "";
+
+    private _managedObjectChanges = {};
 
     private _objects = {};
 
     private _insertedObjects = {};
     private _deletedObjects = {};
     private _updateObjects = {};
+
+    initWithConcurrencyType(ct:MIOManagedObjectContextConcurrencyType) {
+
+        super.init();
+        this.concurrencyType = ct;
+    }
 
     insertObject(obj)
     {
@@ -77,7 +97,7 @@ class MIOManagedObjectContext extends MIOObject
                 array.push(obj);
         }
 
-        // TODO: Hack.
+        // TODO: Delete this hack.
         obj._markForDeletion();
     }
 
@@ -94,10 +114,10 @@ class MIOManagedObjectContext extends MIOObject
 
     executeFetch(request)
     {
-        //var objs = this.persistentStoreCoordinator.executeRequest(request, this);
-        var objs = this._objects[request.entityName];
-        objs = this._filterObjects(objs, request.predicate);
-        objs = this._sortObjects(objs, request.sortDescriptors);
+        var objs = this.persistentStoreCoordinator.executeRequest(request, this);
+        //var objs = this._objects[request.entityName];
+        //objs = this._filterObjects(objs, request.predicate);
+        //objs = this._sortObjects(objs, request.sortDescriptors);
 
         return objs;
     }
@@ -218,6 +238,10 @@ class MIOManagedObjectContext extends MIOObject
             }
         }
 
+        let saveRequest = new MIOSaveChangesRequest();
+        saveRequest.initWithObjects(this._insertedObjects, this._updateObjects, this._deletedObjects);
+        this.persistentStoreCoordinator.executeRequest(saveRequest, this);
+
         var objsChanges = {};        
         objsChanges[MIOInsertedObjectsKey] = this._insertedObjects;
         objsChanges[MIOUpdatedObjectsKey] = this._updateObjects;
@@ -231,14 +255,16 @@ class MIOManagedObjectContext extends MIOObject
         this._deletedObjects = [];        
     }
 
-    queryObject(entityName, predicateFormat?)
+    queryObject(entityName, predicate?)
     {
-        var request = MIOFetchRequest.fetchRequestWithEntityName(entityName);
+        let request = MIOFetchRequest.fetchRequestWithEntityName(entityName);
 
-        if (predicateFormat != null)
-            request.predicate = MIOPredicate.predicateWithFormat(predicateFormat);
+        if (predicate != null)
+            request.predicate = predicate;
 
-        return this.executeFetch(request);
+        let objs = this.executeFetch(request);
+
+        return objs.length > 0 ? objs[0] : null;
     }
 }
 

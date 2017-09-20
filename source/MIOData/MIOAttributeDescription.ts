@@ -9,7 +9,8 @@ enum MIOAttributeType {
     Integer,
     Float,
     Number,
-    String    
+    String,
+    Date   
 }
 
 class MIOAttributeDescription extends MIOObject
@@ -19,7 +20,9 @@ class MIOAttributeDescription extends MIOObject
     private _defaultValue = null;
     private _serverName:string = null;
 
-    initWithName(name:string, type:MIOAttributeType, defaultValue, serverName?:string){
+    optional = true;
+
+    initWithName(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string){
 
         super.init();
 
@@ -27,6 +30,7 @@ class MIOAttributeDescription extends MIOObject
         this._attributeType = type;
         this._defaultValue = defaultValue;
         this._serverName = serverName;
+        this.optional = optional;
     }
 
     get name(){
@@ -42,6 +46,10 @@ class MIOAttributeDescription extends MIOObject
     }
 
     get serverName(){
+        if (this._serverName == null) {    
+            return this._name;
+        }
+        
         return this._serverName;
     }
 }

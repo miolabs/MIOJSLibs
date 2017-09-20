@@ -163,6 +163,9 @@ class MIOURL extends MIOObject
     {                
         var urlString = this.scheme + "://" + this.host + this.path;
         
+        if (urlString.charAt(urlString.length - 1) != "/")
+            urlString += "/";
+
         if (path.charAt(0) != "/")
             urlString += path;
         else

@@ -9,5 +9,4 @@ enum MIORequestType{
 class MIOPersistentStoreRequest extends MIOObject
 {    
     requestType:MIORequestType;
-    
 }

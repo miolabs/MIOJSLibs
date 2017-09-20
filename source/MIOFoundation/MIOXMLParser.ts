@@ -119,6 +119,9 @@ class MIOXMLParser extends MIOObject
 
         console.log("**** Start parser")
 
+        if (typeof this.delegate.parserDidStartDocument === "function")
+            this.delegate.parserDidStartDocument(this);
+
         var token, value;
         [token, value] = this.nextToken();
                 
@@ -139,6 +142,9 @@ class MIOXMLParser extends MIOObject
         }
 
         console.log("**** End parser")
+
+        if (typeof this.delegate.parserDidEndDocument === "function")
+            this.delegate.parserDidEndDocument(this);
     }
 
     private openTag(){
