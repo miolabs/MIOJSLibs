@@ -254,3 +254,27 @@ class MIOPredicate extends MIOObject {
         return result;
     }
 }
+
+//
+// For internal purposes: Don't use it, could change
+//
+
+function _MIOPredicateFilterObjects(objs, predicate)
+{
+    var resultObjects = null;
+
+    if (objs.length == 0 || predicate == null) {
+        resultObjects = objs.slice(0);        
+    } 
+    else {    
+        
+        resultObjects = objs.filter(function(obj){
+
+            var result = predicate.evaluateObject(obj);
+            if (result)
+                return obj;
+        });
+    }
+
+    return resultObjects;
+}

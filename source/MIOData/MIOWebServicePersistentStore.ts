@@ -87,8 +87,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
         // return the cache objects
         var objs = entity["Objects"];
-        objs = this.filterObjects(objs, request.predicate);
-        objs = this.sortObjects(objs, request.sortDescriptors);
+        objs = _MIOPredicateFilterObjects(objs, request.predicate);
+        objs = _MIOSortDescriptorSortObjects(objs, request.sortDescriptors);
         
         return objs;
     }
@@ -133,7 +133,10 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             for (var i = 0; i < ins_objs.length; i++)
             {
                 var o = ins_objs[i];
-                o.saveChanges();
+                if (o.isFault == false) continue;
+
+                // TODO: Save data to server
+                //o.saveChanges();
                 array.push(o);
                 this.objects.push(o);
                 this.objectsByID[o.identifier] = o;
@@ -155,68 +158,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 */
     }
 
-    private filterObjects(objs, predicate)
-    {
-        if (objs == null)
-            return [];
-
-        var resultObjects = null;
-
-        if (predicate == null)
-            resultObjects = objs;
-        else
-        {
-            resultObjects = objs.filter(function(obj){
-
-                var result = predicate.evaluateObject(obj);
-                if (result)
-                    return obj;
-            });
-        }
-
-        return resultObjects;
-    }
-
-    private sortObjects(objs, sortDescriptors)
-    {
-        if (sortDescriptors == null)
-            return objs;
-
-        var instance = this;
-        var resultObjects = objs.sort(function(a, b){
-
-            return instance.sortObjects2(a, b, sortDescriptors, 0);
-        });
-
-        return resultObjects;
-    }
-
-    private sortObjects2(a, b, sortDescriptors, index)
-    {
-        if (index >= sortDescriptors.length)
-            return 0;
-
-        var sd = sortDescriptors[index];
-        var key = sd.key;
-
-        if (a[key] == b[key]) {
-
-            if (a[key]== b[key])
-            {
-                return this.sortObjects2(a, b, sortDescriptors, ++index);
-            }
-            else if (a[key] < b[key])
-                return sd.ascending ? -1 : 1;
-            else
-                return sd.ascending ? 1 : -1;
-        }
-        else if (a[key] < b[key])
-            return sd.ascending ? -1 : 1;
-        else
-            return sd.ascending ? 1 : -1;
-
-    }
-
     private downloadObjectsByEntity(entity, predicate:MIOPredicate, context:MIOManagedObjectContext){
 
         if (entity["status"] == MIOWebServicePersistentStoreStatus.Downloading) {
@@ -228,7 +169,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         let entityName = entity["Name"];        
 
         if (this.ignoreEntities.indexOf(entityName) != -1) {
-            return [];
+            return;
         }
 
         if (entityName == null || this.url == null || this.type == null || this.identifier == null) {
@@ -364,13 +305,19 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         var items = json["data"];
         for(var i = 0; i < items.length; i++) {
             var item = items[i];
-            var mo:MIOManagedObject = this.objectsByID[item["id"]];
+            var objID = item["id"]; //TODO: Add var to get from the server the objID
+            if (objID == null) throw ("MIOWebServicePersistentStore: Downloaded object without object ID");
+            var mo:MIOManagedObject = this.objectsByID[objID];
             if (mo == null) {                
                 mo = MIOEntityDescription.insertNewObjectForEntityForName(entityName, context);
-                objs.push(mo);                                     
+                mo.objectID = objID;
                 this.parseAttributes(ed.attributes, item, mo);
                 this.parseRelationships(ed.relationships, item, mo);
-                this.updateRelationshipsForObject(mo);
+                this.updateRelationshipsForObject(mo);                
+                objs.push(mo);          // Update entity objects
+                this.objects.push(mo);  // update objects array
+                this.objectsByID[objID] = mo; 
+                mo.isFault = false;
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);
             }
             else {
@@ -382,6 +329,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                     this.parseAttributes(ed.attributes, item, mo);
                     this.parseRelationships(ed.relationships, item, mo);
                     this.updateRelationshipsForObject(mo);
+                    mo.isFault = false;
                     MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);    
                 }
             }                        
@@ -496,5 +444,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 parent.setValue(propertyName, obj);
             }            
         }
+
+        delete this.entityRelationshipNotifcations[objID];
     }
 }

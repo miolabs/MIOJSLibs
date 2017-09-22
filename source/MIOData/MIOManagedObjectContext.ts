@@ -122,70 +122,23 @@ class MIOManagedObjectContext extends MIOObject
         return objs;
     }
 
-    private _filterObjects(objs, predicate)
-    {
-        if (objs == null)
-            return [];
-
-        var resultObjects = null;
-
-        if (predicate == null)
-            resultObjects = objs;
-        else
-        {
-            resultObjects = objs.filter(function(obj){
-
-                var result = predicate.evaluateObject(obj);
-                if (result)
-                    return obj;
-            });
-        }
-
-        return resultObjects;
-    }
-
-    private _sortObjects(objs, sortDescriptors)
-    {
-        if (sortDescriptors == null)
-            return objs;
-
-        var instance = this;
-        var resultObjects = objs.sort(function(a, b){
-
-            return instance._sortObjects2(a, b, sortDescriptors, 0);
-        });
-
-        return resultObjects;
-    }
-
-    private _sortObjects2(a, b, sortDescriptors, index)
-    {
-        if (index >= sortDescriptors.length)
-            return 0;
-
-        var sd = sortDescriptors[index];
-        var key = sd.key;
-
-        if (a[key] == b[key]) {
-
-            if (a[key]== b[key])
-            {
-                return this._sortObjects2(a, b, sortDescriptors, ++index);
-            }
-            else if (a[key] < b[key])
-                return sd.ascending ? -1 : 1;
-            else
-                return sd.ascending ? 1 : -1;
-        }
-        else if (a[key] < b[key])
-            return sd.ascending ? -1 : 1;
-        else
-            return sd.ascending ? 1 : -1;
-
-    }
-
     save()
     {
+        // Save to persistent store
+        
+        let insertedCount = Object.keys(this._insertedObjects).length;
+        let updatedCount = Object.keys(this._updateObjects).length;        
+        let deletedCount = Object.keys(this._deletedObjects).length;
+
+        // Check if nothing changed... to avoid unnecessay methods calls
+        if (insertedCount == 0 && updatedCount == 0 && deletedCount == 0) return;
+
+        let saveRequest = new MIOSaveChangesRequest();
+        saveRequest.initWithObjects(this._insertedObjects, this._updateObjects, this._deletedObjects);
+        this.persistentStoreCoordinator.executeRequest(saveRequest, this);
+
+        // Update managed object context
+
         // Remove objects
         for (var key in this._deletedObjects)
         {
@@ -237,10 +190,6 @@ class MIOManagedObjectContext extends MIOObject
                 o.saveChanges();
             }
         }
-
-        let saveRequest = new MIOSaveChangesRequest();
-        saveRequest.initWithObjects(this._insertedObjects, this._updateObjects, this._deletedObjects);
-        this.persistentStoreCoordinator.executeRequest(saveRequest, this);
 
         var objsChanges = {};        
         objsChanges[MIOInsertedObjectsKey] = this._insertedObjects;

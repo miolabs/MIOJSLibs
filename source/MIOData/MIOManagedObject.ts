@@ -9,19 +9,31 @@
 
 class MIOManagedObject extends MIOObject {
     
+    objectID:string;
     entity:MIOEntityDescription = null;
-    managedObjectContext = null;   
+    managedObjectContext = null;       
 
     private _trackChanges = {};  
 
+    private _isFault = true;
+    private setIsFault(value) {
+        this.willChangeValue("isFault");
+        this._isFault=value;
+        this.didChangeValue("isFault");        
+    }       
+    set isFault(value:boolean) {this.setIsFault(value);}
+    get isFault():boolean {return this._isFault;}
+    
     private _isInserted = false;
     private _setIsInserted(value) {
         this.willChangeValue("isInserted");
         this.willChangeValue("hasChanges");
         this._isInserted=value;
         this.didChangeValue("isInserted");
-        this.didChangeValue("hasChanges");}
-    get isInserted():boolean {return this._isInserted};
+        this.didChangeValue("hasChanges");
+        this.isFault = true;
+    }
+    get isInserted():boolean {return this._isInserted;}
     
     private _isUpdated = false;
     private _setIsUpdated(value) {
@@ -29,8 +41,10 @@ class MIOManagedObject extends MIOObject {
         this.willChangeValue("hasChanges");
         this._isUpdated=value;
         this.didChangeValue("isUpdated");
-        this.didChangeValue("hasChanges");}
-    get isUpdated():boolean {return this._isUpdated};
+        this.didChangeValue("hasChanges");
+        this.isFault = true;
+    }
+    get isUpdated():boolean {return this._isUpdated;}
 
     private _isDeleted = false;
     private _setIsDeleted(value) {
@@ -38,8 +52,10 @@ class MIOManagedObject extends MIOObject {
         this.willChangeValue("hasChanges");
         this._isDeleted=value;
         this.didChangeValue("isDeleted");
-        this.didChangeValue("hasChanges");};
-    get isDeleted():boolean {return this._isDeleted};
+        this.didChangeValue("hasChanges");
+        this.isFault = true;
+    };
+    get isDeleted():boolean {return this._isDeleted;}
 
     initWithEntityAndInsertIntoManagedObjectContext(entityDescription:MIOEntityDescription, context?:MIOManagedObjectContext){
 
@@ -77,7 +93,7 @@ class MIOManagedObject extends MIOObject {
                 if (this.managedObjectContext != null)
                     this.managedObjectContext.updateObject(this);
             }
-        }
+        }        
 
         this._setIsUpdated(true);
     }
@@ -172,6 +188,8 @@ class MIOManagedObject extends MIOObject {
         this._setIsInserted(false);
         this._setIsUpdated(false);
         this._setIsDeleted(false);
+
+        this.isFault = false;
     }
 
     discardChanges() {

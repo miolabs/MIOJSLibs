@@ -55,10 +55,12 @@ class MIOFetchedResultsController extends MIOObject
                 var upd_objs = notification.object[MIOUpdatedObjectsKey];
                 var del_objs = notification.object[MIODeletedObjectsKey];
                 
-                var entityName = this._request.entityName;
+                var entityName = this._request.entityName;                
                 
                 if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
-                    this.updateContent(notification.object);
+                    this.updateContent( ins_objs[entityName]?ins_objs[entityName]:[], 
+                                        upd_objs[entityName]?upd_objs[entityName]:[], 
+                                        del_objs[entityName]?del_objs[entityName]:[]);
             });
         }
         else
@@ -80,13 +82,30 @@ class MIOFetchedResultsController extends MIOObject
         }
     }
 
-    updateContent(objects)
+    updateContent(inserted, updated, deleted)
     {
-        //this.objects = objects;
+        // Process inserted objects
+        for(var i = 0; i < inserted.length; i++) {
+            let o = inserted[i];
+            this.objects.push(o);
+        }
 
-        this.objects = this._moc.executeFetch(this._request);
+        // Process updated objects
+        // TODO: Check if the sort descriptor keys changed. If not do nothing becuse the objects are already
+        //       in the fetched objects array
+
+        // Process delete objects
+        for(var i = 0; i < deleted.length; i++) {
+            let o = deleted[i];
+            let index = this.objects.indexOf(o);
+            if (index != -1){
+                this.objects.splice(index, 1);
+            }
+        }        
+
+        this.objects = _MIOPredicateFilterObjects(this.objects, this._request.predicate);
+        this.objects = _MIOSortDescriptorSortObjects(this.objects, this._request.sortDescriptors);
         this.resultObjects = this.objects;
-
         this._splitInSections();
 
         this._notify();
