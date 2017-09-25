@@ -388,26 +388,51 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         for (var i = 0; i < relationships.length; i++){
             let rel:MIORelationshipDescription = relationships[i];
 
-            let objID:string = item[rel.serverName];            
-            if (objID == null) continue;
+            if (rel.isToMany == false) {
 
-            let obj = this.fetchObjectByID(objID, rel.destinationEntityName, mo.managedObjectContext);
-            if (obj == null) {
-                
-                var objsNotes = this.entityRelationshipNotifcations[objID];
-                if (objsNotes == null) {
-                    objsNotes = [];
-                    this.entityRelationshipNotifcations[objID] = objsNotes;
-                }
-
-                objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
-            }
-            else {
-                if (rel.isToMany){
-                    mo.addObject(rel.name, obj);
+                // spected object
+                let objID:string = item[rel.serverName];
+                if (objID == null) continue;
+    
+                let obj = this.fetchObjectByID(objID, rel.destinationEntityName, mo.managedObjectContext);
+                if (obj == null) {
+                    
+                    var objsNotes = this.entityRelationshipNotifcations[objID];
+                    if (objsNotes == null) {
+                        objsNotes = [];
+                        this.entityRelationshipNotifcations[objID] = objsNotes;
+                    }
+    
+                    objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
                 }
                 else {
                     mo.setValue(rel.name, obj);
+                }
+            }
+            else {
+
+                let ids = item[rel.serverName];
+                if (ids == null) continue;
+                
+                for (var j = 0; j < ids.length; j++) {
+
+                    let objID:string = ids[j];
+                    if (objID == null) continue;
+
+                    let obj = this.fetchObjectByID(objID, rel.destinationEntityName, mo.managedObjectContext);
+                    if (obj == null) {
+                
+                        var objsNotes = this.entityRelationshipNotifcations[objID];
+                        if (objsNotes == null) {
+                            objsNotes = [];
+                            this.entityRelationshipNotifcations[objID] = objsNotes;
+                        }
+
+                        objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
+                    }
+                    else {
+                        mo.addObject(rel.name, obj);
+                    }
                 }
             }
         }
