@@ -47,8 +47,7 @@ class MIOFetchedResultsController extends MIOObject
 
         // TODO: Add and remove notification observer
 
-        if (delegate != null)
-        {
+        if (delegate != null) {
             MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification){
 
                 var ins_objs = notification.object[MIOInsertedObjectsKey];
@@ -63,8 +62,7 @@ class MIOFetchedResultsController extends MIOObject
                                         del_objs[entityName]?del_objs[entityName]:[]);
             });
         }
-        else
-        {
+        else {
             MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextDidSaveNotification);
         }
     }
