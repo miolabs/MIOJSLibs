@@ -103,7 +103,7 @@ class MIOManagedObjectContext extends MIOObject
 
     removeAllObjectsForEntityName(entityName)
     {
-        var objs = this._objects [entityName];
+        var objs = this._objects[entityName];
         if (objs != null) {
             for(var index = 0; index < objs.length; index++){
                 var o = objs[index];
