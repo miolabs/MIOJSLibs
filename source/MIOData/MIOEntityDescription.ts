@@ -31,7 +31,7 @@ class MIOEntityDescription extends MIOObject {
         // var entity = mom.entitiesByName[entityName];
                 
         var entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, context);
-        var obj = MIOClassFromString(entityName);
+        var obj:MIOManagedObject = MIOClassFromString(entityName);
         obj.initWithEntityAndInsertIntoManagedObjectContext(entity, context);
 
         return obj;

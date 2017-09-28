@@ -1,6 +1,7 @@
 
 /// <reference path="MIOPersistentStore.ts" />
 /// <reference path="MIOFetchRequest.ts" />
+/// <reference path="MIOWebService.ts" />
 
 enum MIOWebServicePersistentStoreStatus{
     None,
@@ -16,24 +17,30 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     }
   
     // HACK: token must be removed and change for setMedata function instead
-    token = null;  
     type = null;
     identifier = null;
     ignoreEntities = [];
     ignoreFiltersEntities = [];
     
+    serverDeleteDateName = "deletedAt";
+    serverReferenceIDName="id";
+    referenceIDName = "identifier";
 
     private entities = {};
     // Cache structures
-    private objectsByID = {};
+    private objectsByReferenceID = {};
     private objects = [];
 
     private entityRelationshipNotifcations = [];
 
+    private webservice:MIOWebService = null;
     private serverDateFormatter:MIOISO8601DateFormatter = null;
 
     didAddToPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){
         
+        this.webservice = new MIOWebService();
+        this.webservice.init();
+
         this.serverDateFormatter = new MIOISO8601DateFormatter();
         this.serverDateFormatter.init();
         
@@ -42,9 +49,14 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
     removePersistentStore(psc:MIOPersistentStoreCoordinator){
         
+        this.webservice = null;
         this.serverDateFormatter = null;
 
         //TODO: Close miorpc
+    }
+
+    set token(value){
+        this.webservice.token = value;
     }
 
     executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){
@@ -76,14 +88,21 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         return entity;
     }
 
-    private fetchObjects(request:MIOFetchRequest, context:MIOManagedObjectContext){
+    private entityInfoFromName(entityName:string) {
 
-        var entity = this.entities[request.entityName];
-
+        var entity = this.entities[entityName];
+        
         if (entity == null){
             // Create empty entity
-            entity = this.createEntity(request.entityName);            
-        }
+            entity = this.createEntity(entityName);            
+        }        
+
+        return entity;
+    }
+
+    private fetchObjects(request:MIOFetchRequest, context:MIOManagedObjectContext){
+
+        let entity = this.entityInfoFromName(request.entityName);
 
         // TODO: Check with the server the last update fo the entity!        
         this.downloadObjectsByEntity(entity, request.predicate, context);
@@ -96,32 +115,37 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         return objs;
     }
 
-    private downloadObjectsByEntity(entity, predicate:MIOPredicate, context:MIOManagedObjectContext){
+    private canDownloadEntityByName(entityName:string) {
+
+        let entity = this.entityInfoFromName(entityName);
 
         if (entity["status"] == MIOWebServicePersistentStoreStatus.Downloading
             || entity["status"] == MIOWebServicePersistentStoreStatus.Uploading) {
-            return;
-        }
-        
-        entity["Status"] = MIOWebServicePersistentStoreStatus.Downloading;
-
-        let entityName = entity["Name"];        
+            return false;
+        }        
 
         if (this.ignoreEntities.indexOf(entityName) != -1) {
-            return;
+            return false;
         }
 
         if (entityName == null || this.url == null || this.type == null || this.identifier == null) {
             throw ("MIOWebPersistentStore: Some of the properties are invalid");
         }
 
-        let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());
-        let request = MIOURLRequest.requestWithURL(url);        
-        
-        // HACK: token must be removed and change for setMedata function instead
-        if (this.token != null)
-            request.setHeaderField("Authorization", "Bearer " + this.token);
-        request.setHeaderField("Content-Type", "application/json");
+        return true;
+    }
+
+    private downloadObjectsByEntity(entity, predicate:MIOPredicate, context:MIOManagedObjectContext){
+
+        let entityName = entity["Name"];
+
+        if (this.canDownloadEntityByName(entityName) == false) return;
+
+        entity["Status"] = MIOWebServicePersistentStoreStatus.Downloading;
+
+        let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());        
+        var body = null;
+        var httpMethod = "GET";
 
         if (predicate != null && this.ignoreFiltersEntities.indexOf(entityName) == -1) {
 
@@ -129,50 +153,31 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             let mom = psc.managedObjectModel;
             let ed:MIOEntityDescription = mom.entitiesByName[entityName];    
             let filters = this.parsePredictates(predicate.predicates, ed);
-            let body = {"where" : [filters]};
+            
+            body = {"where" : [filters]};
             let ts = entity["Timestamp"];
             if (ts > 0) {
                 body["lastupdate"] = ts;
-            }
-            
-            request.body = JSON.stringify(body);        
-            request.httpMethod = "POST";
+            }            
+            httpMethod = "POST";
         }                
-        else {
-            request.httpMethod = "GET";
-        }
 
-        var urlConnection = new MIOURLConnection();
-        urlConnection.initWithRequestBlock(request, this, function(statusCode, data){
+        this.webservice.sendRequest(url, body, httpMethod, this, function(code, json) {
                         
             entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
             
-            var json = null;
-            if (data != null)
-                json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-            if (statusCode == 200){
+            if (code == 200){
 
                 // Check entity timestamp
                 // let ts1 = entity["Timestamp"] ? entity["Timestamp"] : 0;
                 let ts2 = json["lastupdate"];
                 // if (ts1 >= ts2) return;
 
-                this.parseServerObjects(entity, json, context);
+                let items = json["data"];
+                this.parseServerObjects(entity, items, context);
                 entity["Timestamp"] = ts2;
                 context.save();
             }                
-            else if (statusCode == 401) {                
-                let error = {"Code": statusCode, "error" : "Invalid token. The user need to login again"};
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }
-            else if (statusCode == 422) {
-                let error = {"Code": statusCode, "error" : "Unprocessable Entity. Check the value of the parameters you send it"};
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }
-            else {            
-                let error = {"Code": statusCode, "error" : "Conection error. Check internet and server conections"};                
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }                        
         });    
     }
 
@@ -244,38 +249,36 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         return "";
     }
 
-    private parseServerObjects(entity, json, context:MIOManagedObjectContext){
+    private parseServerObjects(entity, items, context:MIOManagedObjectContext){
 
         let entityName = entity["Name"];
         let psc = this.persistentStoreCoordinator;
         let mom = psc.managedObjectModel;
         let ed:MIOEntityDescription = mom.entitiesByName[entityName];
         let objs = entity["Objects"];
-
-        var items = json["data"];
+    
         for(var i = 0; i < items.length; i++) {
             var item = items[i];
-            var objID = item["id"]; //TODO: Add var to get from the server the objID
-            if (objID == null) throw ("MIOWebServicePersistentStore: Downloaded object without object ID");
-            var mo:MIOManagedObject = this.objectsByID[objID];
-            if (mo == null) {                
+            let referenceID = item[this.serverReferenceIDName] ? item[this.serverReferenceIDName].toUpperCase() : null;
+            let hasToDelete = item[this.serverDeleteDateName] != null ? true : false;
+            //if (referenceID == null) throw ("MIOWebServicePersistentStore: Downloaded object without object ID");
+            var mo:MIOManagedObject = this.objectsByReferenceID[referenceID];
+            if (mo == null && hasToDelete == false) {                
                 mo = MIOEntityDescription.insertNewObjectForEntityForName(entityName, context);
-                mo.objectID = objID;
                 this.parseAttributes(ed.attributes, item, mo);
                 this.parseRelationships(ed.relationships, item, mo);
-                this.updateRelationshipsForObject(mo);                
-                objs.push(mo);          // Update entity objects
-                this.objects.push(mo);  // update objects array
-                this.objectsByID[objID] = mo; 
-                mo.isFault = false;
+                //this.updateRelationshipsForObject(mo);       
+                this.insertCacheObject(mo);
+                mo.isFault = false;         
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);
             }
-            else {
+            else if (mo != null && hasToDelete == true) {
 
-                if (item["deletedAt"] != null) {
-                    this.deleteCacheObject(mo);
-                    continue;
-                }
+                this.deleteCacheObject(mo);
+                context.deleteObject(mo);
+                mo.isFault = false;
+            }
+            else {
 
                 let ts1 = mo.getValue("timestamp");
                 let ts2 = item["updatedAt"];
@@ -283,7 +286,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 if (ts1 != ts2) {
                     this.parseAttributes(ed.attributes, item, mo);
                     this.parseRelationships(ed.relationships, item, mo);
-                    this.updateRelationshipsForObject(mo);
+                    //this.updateRelationshipsForObject(mo);
                     mo.isFault = false;
                     MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);    
                 }
@@ -346,23 +349,25 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             if (rel.isToMany == false) {
 
                 // spected object
-                let objID:string = item[rel.serverName];
-                if (objID == null) continue;
+                let referenceID:string = item[rel.serverName];
+                if (referenceID == null) continue;
     
-                let obj = this.fetchObjectByID(objID, rel.destinationEntityName, mo.managedObjectContext);
+                let obj = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, mo.managedObjectContext);
                 if (obj == null) {
                     
-                    var objsNotes = this.entityRelationshipNotifcations[objID];
-                    if (objsNotes == null) {
-                        objsNotes = [];
-                        this.entityRelationshipNotifcations[objID] = objsNotes;
-                    }
+                    obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);
+                    this.insertCacheObject(obj);
+                    obj.isFault = false;
+                    // var objsNotes = this.entityRelationshipNotifcations[referenceID];
+                    // if (objsNotes == null) {
+                    //     objsNotes = [];
+                    //     this.entityRelationshipNotifcations[referenceID] = objsNotes;
+                    // }
     
-                    objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
+                    // objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
+                    
                 }
-                else {
-                    mo.setValue(rel.name, obj);
-                }
+                mo.setValue(rel.name, obj);                
             }
             else {
 
@@ -371,37 +376,72 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 
                 for (var j = 0; j < ids.length; j++) {
 
-                    let objID:string = ids[j];
-                    if (objID == null) continue;
+                    let referenceID:string = ids[j];
+                    if (referenceID == null) continue;
 
-                    let obj = this.fetchObjectByID(objID, rel.destinationEntityName, mo.managedObjectContext);
+                    let obj = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, mo.managedObjectContext);
                     if (obj == null) {
                 
-                        var objsNotes = this.entityRelationshipNotifcations[objID];
-                        if (objsNotes == null) {
-                            objsNotes = [];
-                            this.entityRelationshipNotifcations[objID] = objsNotes;
-                        }
+                        obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);
+                        this.insertCacheObject(obj);
+                        obj.isFault = false;
+                            
+                        // var objsNotes = this.entityRelationshipNotifcations[objID];
+                        // if (objsNotes == null) {
+                        //     objsNotes = [];
+                        //     this.entityRelationshipNotifcations[objID] = objsNotes;
+                        // }
 
-                        objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
+                        // objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
                     }
-                    else {
-                        mo.addObject(rel.name, obj);
-                    }
+                    mo.addObject(rel.name, obj);
                 }
             }
         }
     }
     
-    private fetchObjectByID(identifier:string, entityName:string, context:MIOManagedObjectContext) {
+    private fetchObjectByReferenceID(identifier:string, entityName:string, context:MIOManagedObjectContext) {
         
-        let request = new MIOFetchRequest();
-        request.initWithEntityName(entityName);
-        request.predicate = MIOPredicate.predicateWithFormat("identifier == " + identifier);
+        // let request = new MIOFetchRequest();
+        // request.initWithEntityName(entityName);
+        // request.predicate = MIOPredicate.predicateWithFormat("identifier == " + identifier);
         
-        let objs = this.fetchObjects(request, context);        
-        return objs.length > 0 ? objs[0] : null;
-    }    
+        let obj = this.objectsByReferenceID[identifier];
+        if (obj == null) {
+            this.downloadObjectByReferenceID(entityName, identifier, context);
+        }
+        return obj;
+    }        
+
+    private downloadObjectByReferenceID(entityName, referenceID, context){
+
+        if (this.canDownloadEntityByName(entityName) == false) return;                
+
+        let entity = this.entityInfoFromName(entityName);
+        entity["Status"] = MIOWebServicePersistentStoreStatus.Downloading;
+        
+        let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());        
+        var body = null;
+        var httpMethod = "GET";
+
+        this.webservice.sendRequest(url, body, httpMethod, this, function(code, json) {
+                    
+            entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
+        
+            if (code == 200){
+
+                // Check entity timestamp
+                // let ts1 = entity["Timestamp"] ? entity["Timestamp"] : 0;
+                let ts2 = json["lastupdate"];
+                // if (ts1 >= ts2) return;
+
+                let item = json["data"];
+                this.parseServerObjects(entity, [item], context);
+                entity["Timestamp"] = ts2;
+                context.save();
+            }                
+        });  
+    }
 
     private updateRelationshipsForObject(obj:MIOManagedObject){
 
@@ -438,16 +478,16 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         for (var entityName in deletedObjects)
         {
             var del_objs = deletedObjects[entityName];
-            let entity = this.entities[entityName];
+            let entity = this.entityInfoFromName(entityName);
 
             // Delete objects
             var array = entity["Objects"];
             for (var i = 0; i < del_objs.length; i++)
             {
-                var o = del_objs[i];
+                var o:MIOManagedObject = del_objs[i];
                 
-                this.deleteObjectOnServer(o);
                 this.deleteCacheObject(o);
+                this.deleteObjectOnServer(o);                
             }  
         }
 
@@ -455,23 +495,23 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         for (var entityName in insertedObjects)
         {
             var ins_objs = insertedObjects[entityName];
-            var entity = this.entities[entityName];
-            if (entity == null) {
-                entity = this.createEntity(entityName);
-            }
+            let entity = this.entityInfoFromName(entityName);
             
             // Add to context
             var array = entity["Objects"];
             for (var i = 0; i < ins_objs.length; i++)
             {
-                var o = ins_objs[i];
+                var o:MIOManagedObject = ins_objs[i];
                 if (o.isFault == false) continue;
 
                 // TODO: Insert data to server
-                this.insertObjetToServer(o);
+                this.insertObjectToServer(o);                            
                 array.push(o);
                 this.objects.push(o);
-                this.objectsByID[o.identifier] = o;
+                let referenceID = o.getValue(this.referenceIDName);
+                if (referenceID != null) {
+                    this.objectsByReferenceID[referenceID] = o;
+                }
             }            
         }
 /*
@@ -489,38 +529,43 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         }
 */
     }
-                
-    private insertObjetToServer(obj:MIOManagedObject) {
+
+    private insertCacheObject(obj:MIOManagedObject){
      
         let entityName = obj.entity.managedObjectClassName;
-        let entity = this.entities[entityName];
+
+        let entity = this.entityInfoFromName(entityName);        
+        var array = entity["Objects"];
+        
+        // Update entity objects
+        array.push(obj);
+        // update objects array
+        this.objects.push(obj);  
+        
+        let referenceID = obj.getValue(this.referenceIDName);
+        if (referenceID != null){
+            this.objectsByReferenceID[referenceID] = obj;                 
+        }        
+    }
+
+                
+    private insertObjectToServer(obj:MIOManagedObject) {
+     
+        let entityName = obj.entity.managedObjectClassName;
+        if (this.canDownloadEntityByName(entityName) == false) return;
+        
+        let entity = this.entityInfoFromName(entityName);
         
         entity["Status"] = MIOWebServicePersistentStoreStatus.Uploading;
         var count = entity["UploadingCount"];
         count++;
         entity["UploadingCount"] = count;
 
-        if (this.ignoreEntities.indexOf(entityName) != -1) {
-            return;
-        }
-
-        if (entityName == null || this.url == null || this.type == null || this.identifier == null) {
-            throw ("MIOWebPersistentStore: Some of the properties are invalid");
-        }
-
         let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());
-        let request = MIOURLRequest.requestWithURL(url);        
-        
-        // HACK: token must be removed and change for setMedata function instead
-        if (this.token != null)
-            request.setHeaderField("Authorization", "Bearer " + this.token);
-        request.setHeaderField("Content-Type", "application/json");
-        request.httpMethod = "PUT";
         let body = this.serverDataFromObject(obj);
-        request.body = JSON.stringify(body);        
+        let httpMethod = "PUT";
 
-        var urlConnection = new MIOURLConnection();
-        urlConnection.initWithRequestBlock(request, this, function(statusCode, data){
+        this.webservice.sendRequest(url, body, httpMethod, this, function(code, json) {
                         
             var count = entity["UploadingCount"];
             count--;
@@ -529,26 +574,11 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
             }
             
-            var json = null;
-            if (data != null)
-                json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-            if (statusCode == 200){
+            if (code == 200){
                 // this.parseServerObjects(entity, json, context);
                 // entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
                 // context.save();
             }                
-            else if (statusCode == 401) {                
-                let error = {"Code": statusCode, "error" : "Invalid token. The user need to login again"};
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }
-            else if (statusCode == 422) {
-                let error = {"Code": statusCode, "error" : "Unprocessable Entity. Check the value of the parameters you send it"};
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }
-            else {            
-                let error = {"Code": statusCode, "error" : "Conection error. Check internet and server conections"};                
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }                        
         });    
     }            
 
@@ -560,6 +590,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         let ed:MIOEntityDescription = mom.entitiesByName[entityName];
 
         let item  = {};
+        //item[this.objectIDServername] = obj.objectID.toUpperCase();
         this.serverAttributes(ed.attributes, item, obj);
         this.serverRelationships(ed.relationships, item, obj);
 
@@ -578,14 +609,16 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
         let value = object.getValue(attribute.name);
         
-        // TODO: Hack for the id. we need to change to something more generic
-        if (servername == "id") value = value.toUpperCase();
-
         if (value == null && attribute.optional == false) {
             throw ("MIOWebPersistentStore: Couldn't set attribute value. Value is nil and it's not optional.");
         }
         
         if (value == null) return;
+
+        if (attribute.name == this.referenceIDName) {
+            value = value.toUpperCase();
+        }
+
         let type = attribute.attributeType;
         if (type == MIOAttributeType.Date){
             item[servername] = this.serverDateFormatter.stringFromDate(value);
@@ -640,7 +673,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     private deleteCacheObject(obj:MIOManagedObject) {
 
         let entityName = obj.entity.managedObjectClassName;
-        let entity = this.entities[entityName];
+        let entity = this.entityInfoFromName(entityName);
         var array = entity["Objects"];
 
         var index = array.indexOf(obj);
@@ -649,38 +682,30 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         index = this.objects.indexOf(obj);
         if (index > -1) this.objects.splice(index, 1);
         
-        delete(this.objectsByID[obj.objectID]);
+        let referenceID = obj.getValue(this.referenceIDName);
+        if (referenceID != null) {
+            delete(this.objectsByReferenceID[referenceID.toUpperCase()]);
+        }
     }
 
     private deleteObjectOnServer(obj:MIOManagedObject){
 
         let entityName = obj.entity.managedObjectClassName;
-        let entity = this.entities[entityName];
+        
+        if (this.canDownloadEntityByName(entityName) == false) return;
+        
+        let entity = this.entityInfoFromName(entityName);
         
         entity["Status"] = MIOWebServicePersistentStoreStatus.Uploading;
         var count = entity["UploadingCount"];
         count++;
         entity["UploadingCount"] = count;
 
-        if (this.ignoreEntities.indexOf(entityName) != -1) {
-            return;
-        }
+        let referenceID = obj.getValue(this.referenceIDName);
+        let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());
+        let httpMethod = "DELETE";
 
-        if (entityName == null || this.url == null || this.type == null || this.identifier == null) {
-            throw ("MIOWebPersistentStore: Some of the properties are invalid");
-        }
-
-        let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + obj.objectID);
-        let request = MIOURLRequest.requestWithURL(url);        
-        
-        // HACK: token must be removed and change for setMedata function instead
-        if (this.token != null)
-            request.setHeaderField("Authorization", "Bearer " + this.token);
-        request.setHeaderField("Content-Type", "application/json");
-        request.httpMethod = "DELETE";
-
-        var urlConnection = new MIOURLConnection();
-        urlConnection.initWithRequestBlock(request, this, function(statusCode, data){
+        this.webservice.sendRequest(url, null, httpMethod, this, function(code, json) {
                         
             var count = entity["UploadingCount"];
             count--;
@@ -689,26 +714,11 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
             }
             
-            var json = null;
-            if (data != null)
-                json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-            if (statusCode == 200){
+            if (code == 200){
                 // this.parseServerObjects(entity, json, context);
                 // entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
                 // context.save();
-            }                
-            else if (statusCode == 401) {                
-                let error = {"Code": statusCode, "error" : "Invalid token. The user need to login again"};
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }
-            else if (statusCode == 422) {
-                let error = {"Code": statusCode, "error" : "Unprocessable Entity. Check the value of the parameters you send it"};
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }
-            else {            
-                let error = {"Code": statusCode, "error" : "Conection error. Check internet and server conections"};                
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreError", error);
-            }                        
+            }                                    
         });    
     }
 }

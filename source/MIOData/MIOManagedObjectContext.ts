@@ -42,9 +42,11 @@ class MIOManagedObjectContext extends MIOObject
         this.concurrencyType = ct;
     }
 
-    insertObject(obj)
+    insertObject(obj:MIOManagedObject)
     {
         var entityName = obj.entity.managedObjectClassName;
+        obj.objectID = MIOUUID.uuid();
+        
         var array = this._insertedObjects[entityName];
         if (array == null)
         {

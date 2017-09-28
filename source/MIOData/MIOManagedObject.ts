@@ -11,7 +11,7 @@ class MIOManagedObject extends MIOObject {
     
     objectID:string;
     entity:MIOEntityDescription = null;
-    managedObjectContext = null;       
+    managedObjectContext:MIOManagedObjectContext = null;       
 
     private _trackChanges = {};  
 
