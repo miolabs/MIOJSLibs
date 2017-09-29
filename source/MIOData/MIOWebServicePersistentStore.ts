@@ -619,8 +619,10 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 // this.parseServerObjects(entity, json, context);
                 // entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
                 // context.save();
-                let referenceID = json[this.serverReferenceIDName].toUpperCase();
-                this.updateObjectReferenceID(obj, referenceID);
+                let referenceID = json['data'][this.serverReferenceIDName];
+                if(referenceID != null ) 
+                    this.updateObjectReferenceID(obj, referenceID.toUpperCase());
+                else throw 'MIOWebService: Update from server without referenceID';
             }                
         });    
     }            
