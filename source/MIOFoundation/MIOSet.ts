@@ -4,6 +4,14 @@
 
 class MIOSet extends MIOObject {
 
+    static set() {
+
+        let s = new MIOSet();
+        s.init();
+
+        return s;
+    }
+
     private _objects = [];
 
     addObject(obj){

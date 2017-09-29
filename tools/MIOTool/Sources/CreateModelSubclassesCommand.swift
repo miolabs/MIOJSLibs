@@ -167,8 +167,8 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    }\n";
         
         // Getter raw value
-        fileContent += "    get \(name)RawValue()\(t) {\n";
-        fileContent += "        return this._\(name);\n";
+        fileContent += "    get \(name)PrimitiveValue()\(t) {\n";
+        fileContent += "        return this.primitiveValue('\(name)');\n";
         fileContent += "    }\n";
     }
     
@@ -186,7 +186,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             
             fileContent += "    // Relationship: \(name)\n";
             // Var
-            fileContent += "    protected _\(name):MIOSet = null;\n";
+            fileContent += "    protected _\(name):MIOSet = MIOSet.set();\n";
             // Getter
             fileContent += "    get \(name)():MIOSet {\n";
             fileContent += "        return this.getValue('\(name)');\n";
