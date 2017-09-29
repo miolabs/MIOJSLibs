@@ -23,12 +23,14 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     ignoreFiltersEntities = [];
     
     serverDeleteDateName = "deletedAt";
+    
     serverReferenceIDName="id";
     referenceIDName = "identifier";
 
     private entities = {};
     // Cache structures
     private objectsByReferenceID = {};
+    private referenceIDByObjectID = {};
     private objects = [];
 
     private entityRelationshipNotifcations = [];
@@ -259,7 +261,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     
         for(var i = 0; i < items.length; i++) {
             var item = items[i];
-            let referenceID = item[this.serverReferenceIDName] ? item[this.serverReferenceIDName].toUpperCase() : null;
+            let referenceID = item[this.serverReferenceIDName].toUpperCase(); // Cannot be null
             let hasToDelete = item[this.serverDeleteDateName] != null ? true : false;
             //if (referenceID == null) throw ("MIOWebServicePersistentStore: Downloaded object without object ID");
             var mo:MIOManagedObject = this.objectsByReferenceID[referenceID];
@@ -268,7 +270,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 this.parseAttributes(ed.attributes, item, mo);
                 this.parseRelationships(ed.relationships, item, mo);
                 //this.updateRelationshipsForObject(mo);       
-                this.insertCacheObject(mo);
+                this.insertCacheObject(mo, referenceID);
                 mo.isFault = false;         
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);
             }
@@ -352,11 +354,11 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let referenceID:string = item[rel.serverName];
                 if (referenceID == null) continue;
     
-                let obj = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, mo.managedObjectContext);
+                let obj:MIOManagedObject = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, mo.managedObjectContext);
                 if (obj == null) {
                     
-                    obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);
-                    this.insertCacheObject(obj);
+                    obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);                    
+                    this.insertCacheObject(obj, referenceID);
                     obj.isFault = false;
                     // var objsNotes = this.entityRelationshipNotifcations[referenceID];
                     // if (objsNotes == null) {
@@ -383,7 +385,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                     if (obj == null) {
                 
                         obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);
-                        this.insertCacheObject(obj);
+                        this.insertCacheObject(obj, referenceID);
                         obj.isFault = false;
                             
                         // var objsNotes = this.entityRelationshipNotifcations[objID];
@@ -472,7 +474,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         
         // Remove objects
         let insertedObjects = request.insertedObjects;
-        let updateObjects = request.updatedObjects;
+        let updatedObjects = request.updatedObjects;
         let deletedObjects = request.deletedObjects;        
 
         for (var entityName in deletedObjects)
@@ -481,7 +483,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             let entity = this.entityInfoFromName(entityName);
 
             // Delete objects
-            var array = entity["Objects"];
             for (var i = 0; i < del_objs.length; i++)
             {
                 var o:MIOManagedObject = del_objs[i];
@@ -498,39 +499,82 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             let entity = this.entityInfoFromName(entityName);
             
             // Add to context
-            var array = entity["Objects"];
             for (var i = 0; i < ins_objs.length; i++)
             {
                 var o:MIOManagedObject = ins_objs[i];
                 if (o.isFault == false) continue;
 
                 // TODO: Insert data to server
-                this.insertObjectToServer(o);                            
-                array.push(o);
-                this.objects.push(o);
-                let referenceID = o.getValue(this.referenceIDName);
-                if (referenceID != null) {
-                    this.objectsByReferenceID[referenceID] = o;
-                }
+                this.insertObjectToServer(o);
+                this.insertCacheObject(o);
             }            
         }
-/*
-        // Update objects
-        for (var key in this._updateObjects)
-        {
-            var upd_objs = this._updateObjects[key];
 
-            // save changes
+        // Update objects
+        for (var entityName in updatedObjects)
+        {
+            var upd_objs = updatedObjects[entityName];
+            let entity = this.entityInfoFromName(entityName);
+
+            // Update to context
             for (var i = 0; i < upd_objs.length; i++)
             {
-                var o = upd_objs[i];
-                o.saveChanges();
-            }
+                var o:MIOManagedObject = upd_objs[i];
+                if (o.isFault == false) continue;
+                
+                this.updateObjectOnServer(o);
+            }            
         }
-*/
     }
 
-    private insertCacheObject(obj:MIOManagedObject){
+    private updateObjectOnServer(obj:MIOManagedObject) {
+
+        let referenceID = this.referenceIDByObjectID[obj.objectID];
+        if (referenceID == null) return;
+
+        let entityName = obj.entity.managedObjectClassName;
+        if (this.canDownloadEntityByName(entityName) == false) return;
+
+        let entity = this.entityInfoFromName(entityName);
+        
+        entity["Status"] = MIOWebServicePersistentStoreStatus.Uploading;
+        var count = entity["UploadingCount"];
+        count++;
+        entity["UploadingCount"] = count;
+
+        let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID);
+        let body = this.serverDataFromObject(obj);
+        let httpMethod = "PATCH";
+
+        this.webservice.sendRequest(url, body, httpMethod, this, function(code, json) {
+                        
+            var count = entity["UploadingCount"];
+            count--;
+            if (count == 0) {
+                entity["UploadingCount"] = count;
+                entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
+            }
+            
+            if (code == 200){
+                // this.parseServerObjects(entity, json, context);
+                // entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
+                // context.save();
+
+            }                
+        });  
+
+    }
+
+    private updateObjectReferenceID(obj:MIOManagedObject, referenceID:string) {
+
+        if (referenceID == null) return;                 
+
+        let refID = referenceID.toUpperCase();
+        this.objectsByReferenceID[refID] = obj;                 
+        this.referenceIDByObjectID[obj.objectID] = refID;
+    }
+
+    private insertCacheObject(obj:MIOManagedObject, referenceID?:string){
      
         let entityName = obj.entity.managedObjectClassName;
 
@@ -542,10 +586,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         // update objects array
         this.objects.push(obj);  
         
-        let referenceID = obj.getValue(this.referenceIDName);
-        if (referenceID != null){
-            this.objectsByReferenceID[referenceID] = obj;                 
-        }        
+        this.updateObjectReferenceID(obj, referenceID);
     }
 
                 
@@ -578,6 +619,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 // this.parseServerObjects(entity, json, context);
                 // entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
                 // context.save();
+                let referenceID = json[this.serverReferenceIDName].toUpperCase();
+                this.updateObjectReferenceID(obj, referenceID);
             }                
         });    
     }            
@@ -639,7 +682,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let obj:MIOManagedObject = mo.getValue(rel.name);
                 if (obj == null) continue;
 
-                item[rel.serverName] = obj.objectID;
+                let referenceID = this.referenceIDByObjectID[obj.objectID];
+                item[rel.serverName] = referenceID;
             }
             else {
 
@@ -693,6 +737,9 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         let entityName = obj.entity.managedObjectClassName;
         
         if (this.canDownloadEntityByName(entityName) == false) return;
+
+        let referenceID = this.referenceIDByObjectID[obj.objectID];
+        if (referenceID == null) return; // It's not comming from the server        
         
         let entity = this.entityInfoFromName(entityName);
         
@@ -701,7 +748,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         count++;
         entity["UploadingCount"] = count;
 
-        let referenceID = obj.getValue(this.referenceIDName);
         let url = this.url.urlByAppendingPathComponent("/" + this.type + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());
         let httpMethod = "DELETE";
 

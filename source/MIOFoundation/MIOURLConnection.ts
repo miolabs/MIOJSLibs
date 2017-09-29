@@ -7,8 +7,8 @@
 
 class MIOURLRequest extends MIOObject
 {
-    url = null;
-    httpMethod = "GET";
+    url:MIOURL = null;
+    httpMethod:string = "GET";
     body = null;
     headers = [];
     binary = false;

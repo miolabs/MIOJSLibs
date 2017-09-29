@@ -10,40 +10,81 @@ class MIOObject
 
     init() {}
 
-    willChangeValue(key:string)
-    {
-        var obs = this.keyPaths[key];
-        if (obs != null) {
-            for(var count = 0; count < obs.length; count++) {
-                var o = obs[count];
-                if (typeof o.observeValueForKeyPath === "function")
-                    o.observeValueForKeyPath(key, "will", this);
+    private _notifyValueChange(key:string, type:string) {
+
+        let observers = this.keyPaths[key];
+        if (observers == null) return;
+
+        for(var count = 0; count < observers.length; count++) {
+            let item = observers[count];
+            let o = item["OBS"];            
+            if (typeof o.observeValueForKeyPath === "function") {
+                let keyPath = item["KP"] != null ? item["KP"]: key;
+                let ctx = item["CTX"];            
+                o.observeValueForKeyPath(keyPath, type, this, ctx);
             }
         }
     }
 
-    didChangeValue(key:string)
-    {
-        var obs = this.keyPaths[key];
-        if (obs != null) {
-            for(var count = 0; count < obs.length; count++) {
-                var o = obs[count];
-                if (typeof o.observeValueForKeyPath === "function")
-                    o.observeValueForKeyPath(key, "did", this);
-            }
-        }
+    willChangeValue(key:string) {
+        this._notifyValueChange(key, "will");
     }
 
-    addObserver(obs, keypath:string)
-    {
-        var observers = this.keyPaths[keypath];
+    didChangeValue(key:string){
+        this._notifyValueChange(key, "did");
+    }
+
+    private _addObserver(obs, key:string, context, keyPath?:string) {
+
+        var observers = this.keyPaths[key];
         if (observers == null)
         {
             observers = [];
-            this.keyPaths[keypath] = observers;
+            this.keyPaths[key] = observers;
         }
 
-        observers.push(obs);
+        let item = {"OBS" : obs};
+        if (context != null) item["CTX"] = context;
+        if (keyPath != null) item["KP"] = keyPath;
+        observers.push(item);
+    }
+
+    private _keyFromKeypath(keypath:string) {
+
+        let index = keypath.indexOf('.');
+        if (index == -1) {
+            return [keypath, null];
+        }
+
+        let key = keypath.substring(0, index);
+        let offset = keypath.substring(index + 1);
+
+        return [key, offset];
+    }
+
+    addObserver(obs, keypath:string, context?)
+    {
+        let [key, offset] = this._keyFromKeypath(keypath);
+        
+        if (offset == null) {
+            this._addObserver(obs, key, context);
+        }
+        else {
+            var obj = this;
+            var exit = false;
+            while (exit == false) {                
+                if (offset == null) {
+                    obj._addObserver(obs, key, context, keypath);
+                    exit = true;
+                }
+                else  {
+                    obj = this.valueForKey(key);
+                    [key, offset] = this._keyFromKeypath(offset);
+                }
+
+                if (obj == null) throw ("ERROR: Registering observer to null object");
+            }
+        }
     }
 
     removeObserver(obs, keypath:string)
@@ -55,6 +96,18 @@ class MIOObject
         var index = observers.indexOf(obs);
         observers.splice(index, 1);
     }
+
+    setValueForKey(value, key) {
+    
+        this.willChangeValue(key);
+        this[key] = value;
+        this.didChangeValue(value);
+    }
+
+    valueForKey(key) {
+        return this[key];
+    }
+        
 
     copy() {
         var obj = MIOClassFromString(this.className);
