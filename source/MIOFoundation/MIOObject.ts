@@ -107,6 +107,27 @@ class MIOObject
     valueForKey(key) {
         return this[key];
     }
+
+    valueForKeyPath(keyPath:string) {
+
+        let [key, offset] = this._keyFromKeypath(keyPath);
+        
+        var value = null;
+        var obj = this;
+        var exit = false;
+        while (exit == false) {                
+            if (offset == null) {
+                value = obj.valueForKey(key);
+                exit = true;
+            }
+            else  {
+                obj = obj.valueForKey(key);
+                [key, offset] = this._keyFromKeypath(offset);
+            }
+        }
+
+        return value;
+    }
         
 
     copy() {

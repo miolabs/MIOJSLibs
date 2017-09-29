@@ -67,21 +67,21 @@ class MIOPredicateItem {
             throw ("MIOPredicate: Invalid comparator!");
     }
 
-    evaluateObject(object) {
+    evaluateObject(object:MIOObject) {
         if (this.comparator == MIOPredicateComparatorType.Equal)
-            return (object[this.key] == this.value);
+            return (object.valueForKeyPath(this.key) == this.value);
         else if (this.comparator == MIOPredicateComparatorType.Not)
-            return (object[this.key] != this.value);
+            return (object.valueForKeyPath(this.key) != this.value);
         else if (this.comparator == MIOPredicateComparatorType.Less)
-            return (object[this.key] < this.value);
+            return (object.valueForKeyPath(this.key) < this.value);
         else if (this.comparator == MIOPredicateComparatorType.LessOrEqual)
-            return (object[this.key] <= this.value);        
+            return (object.valueForKeyPath(this.key) <= this.value);        
         else if (this.comparator == MIOPredicateComparatorType.Greater)
-            return (object[this.key] > this.value);
+            return (object.valueForKeyPath(this.key) > this.value);
         else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
-            return (object[this.key] >= this.value);        
+            return (object.valueForKeyPath(this.key) >= this.value);        
         if (this.comparator == MIOPredicateComparatorType.Contains) {
-            var value = object[this.key];
+            var value = object.valueForKeyPath(this.key);
             if (value == null)
                 return false;
 

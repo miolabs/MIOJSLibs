@@ -33,8 +33,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     private referenceIDByObjectID = {};
     private objects = [];
 
-    private entityRelationshipNotifcations = [];
-
     private webservice:MIOWebService = null;
     private serverDateFormatter:MIOISO8601DateFormatter = null;
 
@@ -359,15 +357,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                     
                     obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);                    
                     this.insertCacheObject(obj, referenceID);
-                    obj.isFault = false;
-                    // var objsNotes = this.entityRelationshipNotifcations[referenceID];
-                    // if (objsNotes == null) {
-                    //     objsNotes = [];
-                    //     this.entityRelationshipNotifcations[referenceID] = objsNotes;
-                    // }
-    
-                    // objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
-                    
+                    obj.isFault = false;                    
                 }
                 mo.setValue(rel.name, obj);                
             }
@@ -386,15 +376,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 
                         obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);
                         this.insertCacheObject(obj, referenceID);
-                        obj.isFault = false;
-                            
-                        // var objsNotes = this.entityRelationshipNotifcations[objID];
-                        // if (objsNotes == null) {
-                        //     objsNotes = [];
-                        //     this.entityRelationshipNotifcations[objID] = objsNotes;
-                        // }
-
-                        // objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
+                        obj.isFault = false;                            
                     }
                     mo.addObject(rel.name, obj);
                 }
@@ -403,11 +385,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     }
     
     private fetchObjectByReferenceID(identifier:string, entityName:string, context:MIOManagedObjectContext) {
-        
-        // let request = new MIOFetchRequest();
-        // request.initWithEntityName(entityName);
-        // request.predicate = MIOPredicate.predicateWithFormat("identifier == " + identifier);
-        
+                
         let obj = this.objectsByReferenceID[identifier];
         if (obj == null) {
             this.downloadObjectByReferenceID(entityName, identifier, context);
@@ -443,31 +421,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 context.save();
             }                
         });  
-    }
-
-    private updateRelationshipsForObject(obj:MIOManagedObject){
-
-        let objID = obj.getValue("identifier");
-        if (objID == null) return;
-        
-        let objsNotes = this.entityRelationshipNotifcations[objID];
-        if (objsNotes == null) return;
-
-        for (var index = 0; index < objsNotes.length; index++) {
-            let item = objsNotes[index];
-            let parent:MIOManagedObject = item["MO"];
-            let propertyName:string = item["PN"];
-            let toMany:boolean = item["TM"];
-            
-            if (toMany){
-                parent.addObject(propertyName, obj);
-            }
-            else {
-                parent.setValue(propertyName, obj);
-            }            
-        }
-
-        delete this.entityRelationshipNotifcations[objID];
     }
 
     private saveObjects(request:MIOSaveChangesRequest, context:MIOManagedObjectContext){
