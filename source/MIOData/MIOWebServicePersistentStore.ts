@@ -283,6 +283,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let ts1 = mo.getValue("timestamp");
                 let ts2 = item["updatedAt"];
 
+                if (ts2 == null) throw("MIOWebServicePersistentStore: UpdateAt field from server is null");
+
                 if (ts1 != ts2) {
                     this.parseAttributes(ed.attributes, item, mo);
                     this.parseRelationships(ed.relationships, item, mo);

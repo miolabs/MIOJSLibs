@@ -110,19 +110,21 @@ class MIOManagedObject extends MIOObject {
 
     addObject(propertyName, object) {
         
-        var array = this._trackChanges[propertyName];
+        var array:MIOSet = this._trackChanges[propertyName];
         let rawName = "_" + propertyName;
 
         if (array == null) {
 
             var oldArray = this[rawName];
             if (oldArray != null)
-                array = oldArray.slice(0);
-            else
-                array = [];
+                array = oldArray.copy();
+            else {
+                array = new MIOSet();
+                array.init();
+            }
         }
 
-        array.push(object);
+        array.addObject(object);
 
         this._trackChanges[propertyName] = array;
         if (this.managedObjectContext != null)
@@ -132,7 +134,7 @@ class MIOManagedObject extends MIOObject {
     }
 
     removeObject(propertyName, object) {
-        var array = this._trackChanges[propertyName];
+        var array:MIOSet = this._trackChanges[propertyName];
         if (array == null) {
             
             let rawName = "_" + propertyName;
@@ -140,14 +142,14 @@ class MIOManagedObject extends MIOObject {
             if (oldArray == null) return;
 
             // Clone the array to not touch the original ones
-            array = oldArray.slice(0);        
+            array = oldArray.copy();
         }
 
-        var index = array.indexOf(object);        
+        var index = array.indexOfObject(object);        
         if (index == -1) return;
 
         // Remove the item in the array
-        array.splice(index, 1);
+        array.removeObject(object);
             
         this._trackChanges[propertyName] = array;
         if (this.managedObjectContext != null)

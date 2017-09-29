@@ -13,6 +13,7 @@
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />
 /// <reference path="MIOPredicate.ts" />
+/// <reference path="MIOSet.ts" />
 
 /// <reference path="MIOLocale.ts" />
 /// <reference path="MIOFormatter.ts" />

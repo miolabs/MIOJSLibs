@@ -186,9 +186,9 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             
             fileContent += "    // Relationship: \(name)\n";
             // Var
-            fileContent += "    protected _\(name):Array<\(destinationEntity)> = [];\n";
+            fileContent += "    protected _\(name):MIOSet = null;\n";
             // Getter
-            fileContent += "    get \(name)():[\(destinationEntity)]  {\n";
+            fileContent += "    get \(name)():MIOSet {\n";
             fileContent += "        return this.getValue('\(name)');\n";
             fileContent += "    }\n";
             // Add
@@ -200,11 +200,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             fileContent += "        this.removeObject('\(name)', value);\n";
             fileContent += "    }\n";
             // Add objects
-            fileContent += "    add\(cname)(value:[\(destinationEntity)]) {\n";
+            fileContent += "    add\(cname)(value:MIOSet) {\n";
             fileContent += "        this.addObjects('\(name)', value);\n";
             fileContent += "    }\n";
             // Remove objects
-            fileContent += "    remove\(cname)(value:[\(destinationEntity)]) {\n";
+            fileContent += "    remove\(cname)(value:MIOSet) {\n";
             fileContent += "        this.removeObjects('\(name)', value);\n";
             fileContent += "    }\n";
         }

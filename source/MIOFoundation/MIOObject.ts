@@ -123,7 +123,8 @@ class MIOObject
             else  {
                 obj = obj.valueForKey(key);
                 [key, offset] = this._keyFromKeypath(offset);
-            }
+                if (obj == null) exit = true;
+            }            
         }
 
         return value;
