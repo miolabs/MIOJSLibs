@@ -2,6 +2,7 @@
  * Created by godshadow on 1/5/16.
  */
 
+/// <reference path="../MIOCore/MIOCoreLexer.ts" />
 /// <reference path="MIOObject.ts" />
 
 enum MIOPredicateComparatorType {
@@ -48,25 +49,6 @@ class MIOPredicateItem {
     comparator = null;
     value = null;
 
-    setComparator(comparator) {
-        if (comparator == "==")
-            this.comparator = MIOPredicateComparatorType.Equal;
-        else if (comparator == ">")
-            this.comparator = MIOPredicateComparatorType.Greater;
-        else if (comparator == ">=")
-            this.comparator = MIOPredicateComparatorType.GreaterOrEqual;        
-        else if (comparator == "<")
-            this.comparator = MIOPredicateComparatorType.Less;
-        else if (comparator == "<=")
-            this.comparator = MIOPredicateComparatorType.LessOrEqual;        
-        else if (comparator == "!=")
-            this.comparator = MIOPredicateComparatorType.Not;
-        else if (comparator.toLowerCase() == "contains")
-            this.comparator = MIOPredicateComparatorType.Contains;
-        else
-            throw ("MIOPredicate: Invalid comparator!");
-    }
-
     evaluateObject(object:MIOObject) {
         if (this.comparator == MIOPredicateComparatorType.Equal)
             return (object.valueForKeyPath(this.key) == this.value);
@@ -94,130 +76,12 @@ class MIOPredicateItem {
     }
 }
 
-class MIOPredicate extends MIOObject {
-    
+class MIOPredicateGroup {
+
     predicates = [];
 
-    public static predicateWithFormat(format) {
-        var p = new MIOPredicate();
-        p.initWithFormat(format);
-
-        return p;
-    }
-
-    initWithFormat(format) {
-        this._parse(format);
-    }
-
-    private _parse(format) {
-        var token = "";
-
-        var key = "";
-        var cmp = "";
-        var stepIndex = 0 // 0 -> Token, 1 -> operator, 2 -> value
-
-        var lastCharIsSpace = false;
-
-        for (var index = 0; index < format.length; index++) {
-            var ch = format.charAt(index);
-
-            if (ch == " ") {
-                if (lastCharIsSpace == true)
-                    continue;
-
-                lastCharIsSpace = true;
-
-                if (token.toLocaleLowerCase() == "and" || token == "&&") {
-                    this.predicates.push(MIOPredicateOperator.andPredicateOperatorType());
-                }
-                else if (token.toLocaleLowerCase() == "or" || token == "||") {
-                    this.predicates.push(MIOPredicateOperator.orPredicateOperatorType());
-                }
-                else if (token != "") {
-                    stepIndex++;
-                    if (stepIndex == 1)
-                        key = token;
-                    else if (stepIndex == 2)
-                        cmp = token;
-                    else if (stepIndex == 3) {
-                        var i = new MIOPredicateItem();
-                        i.key = key;
-                        i.setComparator(cmp);
-                        i.value = this._getValueFromToken(token);
-                        this.predicates.push(i);
-
-                        key = "";
-                        cmp = "";
-                        stepIndex = 0;
-                    }
-                }
-                token = "";
-            }
-            else if (ch == "(") {
-                // Create new predicate
-                var string = "";
-                index++;
-                var parenthesisCount = 1;
-                for (var count = index; count < format.length; count++ , index++) {
-                    var ch2 = format.charAt(index);
-                    
-                    if (ch2 == "(") parenthesisCount++;                                        
-                    if (ch2 == ")" && parenthesisCount == 1) {
-
-                        if (parenthesisCount > 1) parenthesisCount--;
-                        else {
-                            var p = MIOPredicate.predicateWithFormat(string);
-                            this.predicates.push(p);
-                        }
-                        break;
-                    }
-                    else {
-                        if (ch2 == ")" && parenthesisCount > 1) parenthesisCount--;
-                        string += ch2;
-                    }
-                }
-            }
-            else if (ch == "\"") {
-                index++;
-                for (var count = index; count < format.length; count++ , index++) {
-                    var ch2 = format.charAt(index);
-                    if (ch2 == "\"")
-                        break;
-                    else
-                        token += ch2;
-                }
-                lastCharIsSpace = false;
-            }
-            else {
-                token += ch;
-                lastCharIsSpace = false;
-            }
-        }
-
-        // Last check
-        if (token.length > 0) {
-            var i = new MIOPredicateItem();
-            i.key = key;
-            i.setComparator(cmp);
-            i.value = this._getValueFromToken(token);
-            this.predicates.push(i);
-        }
-    }
-
-    private _getValueFromToken(token) {
-
-        var normalizeToken = token.toLowerCase();
-        if (token.toLocaleLowerCase() == "true")
-            return true;
-        else if (token.toLocaleLowerCase() == "false")
-            return false;
-        else if (token.toLocaleLowerCase() == "null")            
-            return null;
-        else
-            return token;
-    }
-
-    evaluateObject(object) {
+    evaluateObject(object):boolean {
+        
         var result = false;
         var op = null;
         var lastResult = null;
@@ -225,7 +89,7 @@ class MIOPredicate extends MIOObject {
         for (var count = 0; count < this.predicates.length; count++) {
             var o = this.predicates[count];
 
-            if (o instanceof MIOPredicate) {
+            if (o instanceof MIOPredicateGroup) {
                 result = o.evaluateObject(object);
             }
             else if (o instanceof MIOPredicateItem) {
@@ -235,6 +99,9 @@ class MIOPredicate extends MIOObject {
                 op = o.type;
                 lastResult = result;
                 result = null;
+            }
+            else {
+                throw("MIOPredicate: Error. Predicate class type invalid. (" + o + ")");
             }
 
             if (op != null && result != null) {
@@ -252,6 +119,275 @@ class MIOPredicate extends MIOObject {
         }
 
         return result;
+    }
+}
+
+enum MIOPredicateTokenType{
+    Identifier,
+    
+    UUIDValue,
+    StringValue,
+    NumberValue,
+    BooleanValue,    
+    NullValue,
+
+    MinorOrEqualComparator,
+    MinorComparator,
+    MajorOrEqualComparator,
+    MajorComparator,
+    EqualComparator,
+    NotComparator,
+    ContainsComparator,
+    
+    OpenParenthesisSymbol,
+    CloseParenthesisSymbol,
+    Whitespace,
+
+    AND,
+    OR    
+}
+
+class MIOPredicate extends MIOObject {
+     
+    predicateGroup = null;
+
+    private lexer:MIOCoreLexer = null;
+
+    public static predicateWithFormat(format) {
+        var p = new MIOPredicate();
+        p.initWithFormat(format);
+
+        return p;
+    }
+
+    initWithFormat(format) {
+        this.parse(format);
+    }
+
+    evaluateObject(object:MIOObject) {        
+        return this.predicateGroup.evaluateObject(object);
+    }
+
+    // 
+    // Parse format string
+    //
+
+    private tokenizeWithFormat(format:string){
+        
+        this.lexer = new MIOCoreLexer(format);
+        
+        // Values
+        this.lexer.addTokenType(MIOPredicateTokenType.UUIDValue, /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.StringValue, /^"([^"]*)"|'([^']*)'/);
+        this.lexer.addTokenType(MIOPredicateTokenType.NumberValue, /^-?\d+(?:\.\d+)?(?:e[+\-]?\d+)?/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.BooleanValue, /^true|false/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.NullValue, /^null|nil/i);
+        // Symbols
+        this.lexer.addTokenType(MIOPredicateTokenType.OpenParenthesisSymbol, /^\(/);
+        this.lexer.addTokenType(MIOPredicateTokenType.CloseParenthesisSymbol, /^\)/);
+        // Comparators
+        this.lexer.addTokenType(MIOPredicateTokenType.MinorOrEqualComparator, /^<=?/);
+        this.lexer.addTokenType(MIOPredicateTokenType.MinorComparator, /^</);
+        this.lexer.addTokenType(MIOPredicateTokenType.MajorOrEqualComparator, /^>=?/);
+        this.lexer.addTokenType(MIOPredicateTokenType.MajorComparator, /^>/);
+        this.lexer.addTokenType(MIOPredicateTokenType.EqualComparator, /^==?/);
+        this.lexer.addTokenType(MIOPredicateTokenType.NotComparator, /^!=/);
+        this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains/i);
+        // Join operators
+        this.lexer.addTokenType(MIOPredicateTokenType.AND, /^and|&&/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.OR, /^or|\|\|/i);        
+        // Extra
+        this.lexer.addTokenType(MIOPredicateTokenType.Whitespace, /^\s+/);        
+        this.lexer.ignoreTokenType(MIOPredicateTokenType.Whitespace);
+        // Identifiers - Has to be the last one
+        this.lexer.addTokenType(MIOPredicateTokenType.Identifier, /^[a-zA-Z][a-zA-Z0-9\.]*/);            
+
+        this.lexer.tokenize();
+    }    
+
+    private parse(format:string){
+
+        console.log("**** Start predicate format parser")
+        console.log(format);
+        console.log("****")
+        
+        this.tokenizeWithFormat(format);
+        this.predicateGroup = new MIOPredicateGroup();
+        this.predicateGroup.predicates = this.parsePredicates();
+        
+        console.log("**** End predicate format parser")
+    }
+
+    private parsePredicates(){
+
+        var token = this.lexer.nextToken();
+        var predicates = [];
+        var exit = false;
+
+        while (token != null && exit == false) {
+            
+            switch (token.type) {
+
+                case MIOPredicateTokenType.Identifier:
+                    let pi = new MIOPredicateItem();
+                    this.lexer.prevToken();
+                    this.property(pi);
+                    this.comparator(pi);
+                    this.value(pi);
+                    predicates.push(pi);
+                    break;
+
+                case MIOPredicateTokenType.AND:
+                    predicates.push(MIOPredicateOperator.andPredicateOperatorType());
+                    break;
+
+                case MIOPredicateTokenType.OR:
+                    predicates.push(MIOPredicateOperator.orPredicateOperatorType());
+                    break;                    
+
+                case MIOPredicateTokenType.OpenParenthesisSymbol:
+                    let pg = new MIOPredicateGroup();
+                    pg.predicates = this.parsePredicates();
+                    break;
+
+                case MIOPredicateTokenType.CloseParenthesisSymbol:
+                    exit = true;
+                    break;
+
+                default:
+                    throw("MIOPredicate: Error. Unexpected token. (" + token.value + ")");
+            }
+
+            token = this.lexer.nextToken();
+        }
+
+        return predicates;
+    }
+
+    private property(item:MIOPredicateItem) {
+        
+        var token = this.lexer.nextToken();
+
+        switch (token.type) {
+
+            case MIOPredicateTokenType.Identifier:
+                item.key = token.value;
+                break;
+
+            default:
+                throw("MIOPredicate: Error. Unexpected identifier key. (" + token.value + ")");
+        }                    
+    }
+
+    private comparator(item:MIOPredicateItem) {
+        
+        var token = this.lexer.nextToken();
+
+        switch(token.type) {
+
+            case MIOPredicateTokenType.EqualComparator:
+                item.comparator = MIOPredicateComparatorType.Equal;
+                break;
+
+            case MIOPredicateTokenType.MajorComparator:
+                item.comparator = MIOPredicateComparatorType.Greater;
+                break;
+
+            case MIOPredicateTokenType.MajorOrEqualComparator:
+                item.comparator = MIOPredicateComparatorType.GreaterOrEqual;
+                break;
+
+            case MIOPredicateTokenType.MinorComparator:
+                item.comparator = MIOPredicateComparatorType.Less;
+                break;
+                
+            case MIOPredicateTokenType.MinorOrEqualComparator:
+                item.comparator = MIOPredicateComparatorType.LessOrEqual;
+                break;
+
+            case MIOPredicateTokenType.NotComparator:
+                item.comparator = MIOPredicateComparatorType.Not;
+                break;
+
+            case MIOPredicateTokenType.ContainsComparator:
+                item.comparator = MIOPredicateComparatorType.Contains;
+                break;
+
+            default:
+                throw("MIOPredicate: Error. Unexpected comparator. (" + token.value + ")");                                
+        }
+
+    }
+
+    private value(item:MIOPredicateItem) {
+
+        var token = this.lexer.nextToken();
+        
+        switch(token.type) {
+            
+            case MIOPredicateTokenType.UUIDValue:
+            case MIOPredicateTokenType.StringValue:
+                item.value = token.value;
+                break;
+
+            case MIOPredicateTokenType.NumberValue:
+                item.value = token.value;
+                break;
+
+            case MIOPredicateTokenType.BooleanValue:
+                item.value = this.booleanFromString(token.value);
+                break;
+
+            case MIOPredicateTokenType.NullValue:
+                item.value = this.nullFromString(token.value);
+                break;
+
+            default:
+                throw("MIOPredicate: Error. Unexpected comparator. (" + token.value + ")");
+        }            
+    }
+
+    private booleanFromString(value:string){
+
+        let v = value.toLocaleLowerCase();
+        var bv = false;
+        
+        switch (v) {
+
+            case "yes":
+            case "true":
+                bv = true;
+                break;
+
+            case "no":
+            case "false":
+                bv = false;
+                break;
+
+            default:
+                throw("MIOPredicate: Error. Cann't convert '" + value + "' to boolean");
+        }
+
+        return bv;
+    }
+
+    private nullFromString(value:string){
+
+        let v = value.toLocaleLowerCase();
+        var nv = null;
+
+        switch (v) {
+
+            case "nil":
+            case "null":
+                nv = null;
+                break;
+
+            default:
+                throw("MIOPredicate: Error. Cann't convert '" + value + "' to null");
+        }
+
+        return nv;
     }
 }
 

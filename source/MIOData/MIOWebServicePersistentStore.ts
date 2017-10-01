@@ -152,7 +152,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             let psc = this.persistentStoreCoordinator;
             let mom = psc.managedObjectModel;
             let ed:MIOEntityDescription = mom.entitiesByName[entityName];    
-            let filters = this.parsePredictates(predicate.predicates, ed);
+            let filters = this.parsePredictates(predicate.predicateGroup.predicates, ed);
             
             body = {"where" : [filters]};
             let ts = entity["Timestamp"];
