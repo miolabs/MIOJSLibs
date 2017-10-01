@@ -248,6 +248,7 @@ class MIOPredicate extends MIOObject {
                 case MIOPredicateTokenType.OpenParenthesisSymbol:
                     let pg = new MIOPredicateGroup();
                     pg.predicates = this.parsePredicates();
+                    predicates.push(pg);
                     break;
 
                 case MIOPredicateTokenType.CloseParenthesisSymbol:
