@@ -11,8 +11,9 @@ enum MIOPredicateComparatorType {
     LessOrEqual,
     Greater,
     GreaterOrEqual,
-    Not,
-    Contains
+    Distinct,    
+    Contains,
+    NotContains
 }
 
 enum MIOPredicateOperatorType {
@@ -52,7 +53,7 @@ class MIOPredicateItem {
     evaluateObject(object:MIOObject) {
         if (this.comparator == MIOPredicateComparatorType.Equal)
             return (object.valueForKeyPath(this.key) == this.value);
-        else if (this.comparator == MIOPredicateComparatorType.Not)
+        else if (this.comparator == MIOPredicateComparatorType.Distinct)
             return (object.valueForKeyPath(this.key) != this.value);
         else if (this.comparator == MIOPredicateComparatorType.Less)
             return (object.valueForKeyPath(this.key) < this.value);
@@ -62,7 +63,7 @@ class MIOPredicateItem {
             return (object.valueForKeyPath(this.key) > this.value);
         else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
             return (object.valueForKeyPath(this.key) >= this.value);        
-        if (this.comparator == MIOPredicateComparatorType.Contains) {
+        else if (this.comparator == MIOPredicateComparatorType.Contains) {
             var value = object.valueForKeyPath(this.key);
             if (value == null)
                 return false;
@@ -72,6 +73,17 @@ class MIOPredicateItem {
                 return true;
 
             return false;
+        }
+        else if (this.comparator == MIOPredicateComparatorType.NotContains) {
+            var value = object.valueForKeyPath(this.key);
+            if (value == null)
+                return true;
+
+            value = value.toLowerCase();
+            if (value.indexOf(this.value.toLowerCase()) > -1)
+                return false;
+
+            return true;
         }
     }
 }
@@ -136,8 +148,9 @@ enum MIOPredicateTokenType{
     MajorOrEqualComparator,
     MajorComparator,
     EqualComparator,
-    NotComparator,
+    DistinctComparator,
     ContainsComparator,
+    NotContainsComparator,
     
     OpenParenthesisSymbol,
     CloseParenthesisSymbol,
@@ -191,7 +204,8 @@ class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.MajorOrEqualComparator, /^>=?/);
         this.lexer.addTokenType(MIOPredicateTokenType.MajorComparator, /^>/);
         this.lexer.addTokenType(MIOPredicateTokenType.EqualComparator, /^==?/);
-        this.lexer.addTokenType(MIOPredicateTokenType.NotComparator, /^!=/);
+        this.lexer.addTokenType(MIOPredicateTokenType.DistinctComparator, /^!=/);
+        this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains/i);
         this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains/i);
         // Join operators
         this.lexer.addTokenType(MIOPredicateTokenType.AND, /^and|&&/i);
@@ -306,13 +320,17 @@ class MIOPredicate extends MIOObject {
                 item.comparator = MIOPredicateComparatorType.LessOrEqual;
                 break;
 
-            case MIOPredicateTokenType.NotComparator:
-                item.comparator = MIOPredicateComparatorType.Not;
+            case MIOPredicateTokenType.DistinctComparator:
+                item.comparator = MIOPredicateComparatorType.Distinct;
                 break;
 
             case MIOPredicateTokenType.ContainsComparator:
                 item.comparator = MIOPredicateComparatorType.Contains;
                 break;
+
+            case MIOPredicateTokenType.NotContainsComparator:
+                item.comparator = MIOPredicateComparatorType.NotContains;
+                break;                
 
             default:
                 throw("MIOPredicate: Error. Unexpected comparator. (" + token.value + ")");                                

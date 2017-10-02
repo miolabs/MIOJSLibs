@@ -198,11 +198,9 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             else if (o instanceof MIOPredicateItem) {
                 //result = o.evaluateObject(object);
                 let item = o as MIOPredicateItem;
-                let i = {};
-                i["type"] = "item";
-                i["key"] = this.transformPredicateKey(item, entity);
-                i["comparator"] = this.transfromPredicateComparator(item.comparator);
-                i["value"] = this.transformPredicateValue(item.value);
+                let i = {};                
+                i["type"] = "item";                
+                this.transformPredicateItem(i, item, entity);
                 result.push(i);
             }
             else if (o instanceof MIOPredicateOperator) {                
@@ -217,19 +215,47 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         return result;
     }
 
-    private transformPredicateKey(item, entity:MIOEntityDescription){
+    private transformPredicateItem(i, item, entity){
+
+        let value = item.value;
+        let cmp = item.comparator;
         
-        let serverKey = entity.serverAttributeName(item.key);
-        return serverKey;
+        i["key"] = this.transformPredicateKey(item, entity);
+
+        if (cmp.Equal && value == null) {            
+            i["comparator"] = "is null";
+        }
+        else if (cmp.Distinct && value == null) {
+            i["comparator"] = "not null";
+        }
+        else {
+            i["comparator"] = this.transfromPredicateComparator(item.comparator);
+            i["value"] = item.value;
+        }
     }
 
-    private transformPredicateValue(value) {
+    private transformPredicateKey(item, entity:MIOEntityDescription){
+        
+        var serverKey = null
+        // Check server relationship        
+        let keys = item.key.split('.');
+        if (keys.length == 1) {
+            serverKey = entity.serverAttributeName(item.key);
+        }
+        else if (keys.length == 2) {
+            let relKey = keys[0];
+            let key = keys[1];
 
-        if (value == null){
-            return "null";
+            if (key == this.referenceIDKey) {
+                serverKey = entity.serverRelationshipName(relKey);
+            }
         }
 
-        return value;
+        if (serverKey == null) {
+            throw("MIOWebServicePersistentStore: Attribute or Relationship server key is invalid.");
+        }
+
+        return serverKey;
     }
 
     private transfromPredicateComparator(cmp):string {
@@ -238,6 +264,27 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
             case MIOPredicateComparatorType.Equal:
                 return "=";
+
+            case MIOPredicateComparatorType.Less:
+                return "<";
+
+            case MIOPredicateComparatorType.LessOrEqual:
+                return "<=";
+                
+            case MIOPredicateComparatorType.Greater:
+                return ">";
+                
+            case MIOPredicateComparatorType.GreaterOrEqual:
+                return "<=";
+                
+            case MIOPredicateComparatorType.Distinct:
+                return "!=";
+
+            case MIOPredicateComparatorType.Contains:
+                return "like";
+
+            case MIOPredicateComparatorType.NotContains:
+                return "not like";                
         }
 
         return "";
