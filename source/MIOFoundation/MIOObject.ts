@@ -97,7 +97,7 @@ class MIOObject
         observers.splice(index, 1);
     }
 
-    setValueForKey(value, key) {
+    setValueForKey(key, value) {
     
         this.willChangeValue(key);
         this[key] = value;

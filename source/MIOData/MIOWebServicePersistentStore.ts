@@ -22,10 +22,10 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     ignoreEntities = [];
     ignoreFiltersEntities = [];
     
-    serverDeleteDateName = "deletedAt";
+    serverDeleteDateKey = "deletedAt";
     
-    serverReferenceIDName="id";
-    referenceIDName = "identifier";
+    serverReferenceIDKey = "id";
+    referenceIDKey = "identifier";
 
     private entities = {};
     // Cache structures
@@ -154,7 +154,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             let ed:MIOEntityDescription = mom.entitiesByName[entityName];    
             let filters = this.parsePredictates(predicate.predicateGroup.predicates, ed);
             
-            body = {"where" : [filters]};
+            body = {"where" : filters};
             let ts = entity["Timestamp"];
             if (ts > 0) {
                 body["lastupdate"] = ts;
@@ -183,41 +183,35 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
     parsePredictates(predicates, entity:MIOEntityDescription)  {
         
-        var result = [];
-        
+        var result = [];        
+
         for (var count = 0; count < predicates.length; count++) {
             var o = predicates[count];
 
-            if (o instanceof MIOPredicate) {
-                //result = o.evaluateObject(object);
-                //result = "P";
+            if (o instanceof MIOPredicateGroup) {
+                let group = o as MIOPredicateGroup;
+                let i = {};
+                i["type"] = "group";
+                i["group"] = this.parsePredictates(group.predicates, entity);
+                result.push(this)
             }
             else if (o instanceof MIOPredicateItem) {
                 //result = o.evaluateObject(object);
                 let item = o as MIOPredicateItem;
-                result.push(this.transformPredicateKey(item, entity));
-                result.push(this.transfromPredicateOperator(item.comparator));
-                result.push(this.transformPredicateValue(item.value));
+                let i = {};
+                i["type"] = "item";
+                i["key"] = this.transformPredicateKey(item, entity);
+                i["comparator"] = this.transfromPredicateComparator(item.comparator);
+                i["value"] = this.transformPredicateValue(item.value);
+                result.push(i);
             }
-            else if (o instanceof MIOPredicateOperator) {
-                // op = o.type;
-                // lastResult = result;
-                // result = null;
-                //result = "OP";
+            else if (o instanceof MIOPredicateOperator) {                
+                let op = o as MIOPredicateOperator;
+                let i = {};
+                i["type"] = "operator";
+                i["values"] = this.transfromPredicateOperator(op.type);
+                result.push(i)
             }
-
-            // if (op != null && result != null) {
-            //     if (op == MIOPredicateOperatorType.AND) {
-            //         result = result && lastResult;
-            //         op = null;
-            //         if (result == false)
-            //             break;
-            //     }
-            //     else if (op == MIOPredicateOperatorType.OR) {
-            //         result = result || lastResult;
-            //         op = null;
-            //     }
-            // }
         }
 
         return result;
@@ -238,9 +232,9 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         return value;
     }
 
-    private transfromPredicateOperator(op):string {
+    private transfromPredicateComparator(cmp):string {
 
-        switch (op) {
+        switch (cmp) {
 
             case MIOPredicateComparatorType.Equal:
                 return "=";
@@ -248,6 +242,21 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
         return "";
     }
+
+    private transfromPredicateOperator(op):string {
+        
+        switch (op) {
+        
+            case MIOPredicateOperatorType.AND:
+                return "and";
+
+            case MIOPredicateOperatorType.OR:
+                return "or";
+        }
+        
+        return "";
+    }
+        
 
     private parseServerObjects(entity, items, context:MIOManagedObjectContext){
 
@@ -259,15 +268,18 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     
         for(var i = 0; i < items.length; i++) {
             var item = items[i];
-            let referenceID = item[this.serverReferenceIDName].toUpperCase(); // Cannot be null
-            let hasToDelete = item[this.serverDeleteDateName] != null ? true : false;
+            let referenceID = item[this.serverReferenceIDKey].toUpperCase(); // Cannot be null
+            let hasToDelete = item[this.serverDeleteDateKey] != null ? true : false;
             //if (referenceID == null) throw ("MIOWebServicePersistentStore: Downloaded object without object ID");
             var mo:MIOManagedObject = this.objectsByReferenceID[referenceID];
             if (mo == null && hasToDelete == false) {                
                 mo = MIOEntityDescription.insertNewObjectForEntityForName(entityName, context);
+                // We bind the reference ID from the server to the local object
+                mo.setValueForKey(this.referenceIDKey, referenceID);
+                // We parse the attrbitues and relationships from the sever
                 this.parseAttributes(ed.attributes, item, mo);
                 this.parseRelationships(ed.relationships, item, mo);
-                //this.updateRelationshipsForObject(mo);       
+                //this.updateRelationshipsForObject(mo);
                 this.insertCacheObject(mo, referenceID);
                 mo.isFault = false;         
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);
@@ -299,13 +311,16 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
     private parseAttributes(attributes, item, mo:MIOManagedObject) {
         
         for (var i = 0; i < attributes.length; i++){
-            let attr:MIOAttributeDescription = attributes[i];
+            let attr:MIOAttributeDescription = attributes[i];            
             this.parseValueForAttribute(attr, item[attr.serverName], mo);
         }
     }
     
     private parseValueForAttribute(attribute:MIOAttributeDescription, value, object){
         
+        // Ignore server id attribute. We take care in other side of the code
+        if (attribute.serverName == this.serverReferenceIDKey) return;
+
         if (value == null && attribute.optional == false) {
             throw ("MIOWebPersistentStore: Couldn't set attribute value. Value is nil and it's not optional.");
         }
@@ -443,7 +458,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 var o:MIOManagedObject = del_objs[i];
                 
                 this.deleteCacheObject(o);
-                this.deleteObjectOnServer(o);                
+                this.deleteObjectOnServer(o);       
             }  
         }
 
@@ -459,9 +474,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 var o:MIOManagedObject = ins_objs[i];
                 if (o.isFault == false) continue;
 
-                // TODO: Insert data to server
-                this.insertObjectToServer(o);
                 this.insertCacheObject(o);
+                this.insertObjectToServer(o);                
             }            
         }
 
@@ -574,10 +588,10 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 // this.parseServerObjects(entity, json, context);
                 // entity["Status"] = MIOWebServicePersistentStoreStatus.Ready;
                 // context.save();
-                let referenceID = json['data'][this.serverReferenceIDName];
-                if(referenceID != null ) 
-                    this.updateObjectReferenceID(obj, referenceID.toUpperCase());
-                else throw 'MIOWebService: Update from server without referenceID';
+                // let referenceID = json['data'][this.serverReferenceIDKey];
+                // if(referenceID != null ) 
+                //     this.updateObjectReferenceID(obj, referenceID.toUpperCase());
+                // else throw 'MIOWebService: Update from server without referenceID';
             }                
         });    
     }            
@@ -589,8 +603,11 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         let mom = psc.managedObjectModel;
         let ed:MIOEntityDescription = mom.entitiesByName[entityName];
 
-        let item  = {};
-        //item[this.objectIDServername] = obj.objectID.toUpperCase();
+        let item = {};
+
+        let referenceID = obj.valueForKey(this.referenceIDKey);
+        if (referenceID == null) throw ('MIOWebService: Object without referenceID');
+        item[this.serverReferenceIDKey] = referenceID.toUpperCase();
         this.serverAttributes(ed.attributes, item, obj);
         this.serverRelationships(ed.relationships, item, obj);
 
@@ -607,6 +624,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
 
     private serverValueForAttribute(attribute:MIOAttributeDescription, servername, item, object){
 
+        if (attribute.name == this.referenceIDKey) return;
+
         let value = object.getValue(attribute.name);
         
         if (value == null && attribute.optional == false) {
@@ -614,10 +633,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         }
         
         if (value == null) return;
-
-        if (attribute.name == this.referenceIDName) {
-            value = value.toUpperCase();
-        }
 
         let type = attribute.attributeType;
         if (type == MIOAttributeType.Date){
@@ -639,7 +654,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let obj:MIOManagedObject = mo.getValue(rel.name);
                 if (obj == null) continue;
 
-                let referenceID = this.referenceIDByObjectID[obj.objectID];
+                let referenceID = obj.valueForKey(this.referenceIDKey);
                 item[rel.serverName] = referenceID;
             }
             else {
@@ -683,7 +698,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         index = this.objects.indexOf(obj);
         if (index > -1) this.objects.splice(index, 1);
         
-        let referenceID = obj.getValue(this.referenceIDName);
+        let referenceID = obj.getValue(this.referenceIDKey);
         if (referenceID != null) {
             delete(this.objectsByReferenceID[referenceID.toUpperCase()]);
         }
