@@ -2,12 +2,35 @@
 /// <reference path="MUIView.ts" />
 
 
+enum MUIChartViewType {
+    Bar,
+    Line,
+    Pie
+}
+
 class MUIChartView extends MUIView {
 
-    private canvas = null;
+    title = "";
+    backgroundChartColors = [
+        'rgba(0, 191, 191, 0.6)',
+        'rgba(255, 211, 88, 0.6)',
+        'rgba(75, 204, 255, 0.6)',
+        'rgba(255, 86, 113, 0.6)',
+    ];
 
-    initWithLayer(layer, owner, options?)
-    {
+    borderChartColors = [
+        'rgba(0, 191, 191, 0.6)',
+        'rgba(255, 211, 88, 0.6)',
+        'rgba(75, 204, 255, 0.6)',
+        'rgba(255, 86, 113, 0.6)',
+    ];
+
+    values = null;
+
+    private canvas = null;
+    private chartLayer = null;
+
+    initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
         this.canvas = MUILayerGetFirstElementWithTag(this.layer, "CANVAS");
@@ -19,31 +42,25 @@ class MUIChartView extends MUIView {
         }
     }
 
-    render(){
+    renderWithType(type:MUIChartViewType) {
 
-        var myChart = new Chart(this.canvas, {
-            type: 'bar',
+        let typeName = this.nameFromChartType(type);
+        let bgColors = this.backgroundChartColors;
+        let fgColors = this.borderChartColors;
+        let title = this.title;
+        let values = this.values;
+
+        if (type == null) return;
+
+        this.chartLayer = new Chart(this.canvas, {
+            type: typeName,
             data: {
-                labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                labels: ["Red", "Blue", "Yellow", "Green"],
                 datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
+                    label: title,
+                    data: values,
+                    backgroundColor: bgColors,
+                    borderColor: fgColors,
                     borderWidth: 1
                 }]
             },
@@ -51,12 +68,26 @@ class MUIChartView extends MUIView {
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero:true
+                            beginAtZero: true
                         }
                     }]
                 }
             }
         });
+    }
+
+    private nameFromChartType(type:MUIChartViewType) {
+
+        var name = null;
+
+        switch (type) {
+
+            case MUIChartViewType.Bar:
+                name = "bar";
+                break;
+        }
+
+        return name;
     }
 
 }
