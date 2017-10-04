@@ -239,6 +239,11 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         var serverKey = null
         // Check server relationship        
         let keys = item.key.split('.');
+
+        if (keys > 2) {
+            throw("MIOWebServicePersistentStore: It's not supported a key path with more than 2 keys.");
+        }
+
         if (keys.length == 1) {
             serverKey = entity.serverAttributeName(item.key);
         }
