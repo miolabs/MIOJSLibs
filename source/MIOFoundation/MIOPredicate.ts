@@ -190,8 +190,10 @@ class MIOPredicate extends MIOObject {
         this.lexer = new MIOCoreLexer(format);
         
         // Values
-        this.lexer.addTokenType(MIOPredicateTokenType.UUIDValue, /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
-        this.lexer.addTokenType(MIOPredicateTokenType.StringValue, /^"([^"]*)"|'([^']*)'/);
+        
+        this.lexer.addTokenType(MIOPredicateTokenType.UUIDValue, /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.StringValue, /^"([^"]*)"|^'([^']*)'/);
+
         this.lexer.addTokenType(MIOPredicateTokenType.NumberValue, /^-?\d+(?:\.\d+)?(?:e[+\-]?\d+)?/i);
         this.lexer.addTokenType(MIOPredicateTokenType.BooleanValue, /^true|false/i);
         this.lexer.addTokenType(MIOPredicateTokenType.NullValue, /^null|nil/i);
