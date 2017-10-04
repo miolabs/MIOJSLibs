@@ -30,6 +30,7 @@ class MUIChartView extends MUIView {
     private canvas = null;
     private chartLayer = null;
 
+
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
@@ -63,15 +64,6 @@ class MUIChartView extends MUIView {
                     borderColor: fgColors,
                     borderWidth: 1
                 }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
             }
         });
     }
@@ -85,6 +77,14 @@ class MUIChartView extends MUIView {
             case MUIChartViewType.Bar:
                 name = "bar";
                 break;
+
+            case MUIChartViewType.Line:
+                name = "line";
+                break;
+
+            case MUIChartViewType.Pie:
+                name = "pie";
+                break;                
         }
 
         return name;

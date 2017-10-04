@@ -471,6 +471,11 @@ class MUITableView extends MUIView {
                 var cell = sectionView.cells[count];
                 cell.removeObserver(this, "selected");
                 cell.removeFromSuperview();
+
+                if (this.delegate != null) {
+                    if (typeof this.delegate.didEndDisplayingCellAtIndexPath === "function")
+                        this.delegate.didEndDisplayingCellAtIndexPath(this, cell, index, section);
+                }
             }
         }
 
@@ -598,8 +603,12 @@ class MUITableView extends MUIView {
                 }
 
                 var cell = section.cells[index];
-                cell.setY(y);
+                if (this.delegate != null) {
+                    if (typeof this.delegate.willDisplayCellAtIndexPath === "function")
+                        this.delegate.willDisplayCellAtIndexPath(this, cell, index, section);
+                }
 
+                cell.setY(y);
                 if (h > 0)
                     cell.setHeight(h);
 
@@ -616,6 +625,8 @@ class MUITableView extends MUIView {
                     y += 1;
                 else if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLineEtched)
                     y += 2;
+                
+                cell.layout();
             }
         }
 
