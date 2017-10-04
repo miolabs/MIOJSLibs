@@ -47,9 +47,9 @@ class MUIChartView extends MUIView {
 
         let typeName = this.nameFromChartType(type);
         let bgColors = this.backgroundChartColors;
-        let fgColors = this.borderChartColors;
-        let title = this.title;
+        let fgColors = this.borderChartColors;        
         let values = this.values;
+        let opts = this.optionsForChartType(type, this.title);
 
         if (type == null) return;
 
@@ -58,13 +58,13 @@ class MUIChartView extends MUIView {
             data: {
                 labels: ["Red", "Blue", "Yellow", "Green"],
                 datasets: [{
-                    label: title,
                     data: values,
                     backgroundColor: bgColors,
                     borderColor: fgColors,
                     borderWidth: 1
                 }]
-            }
+            },
+            options: opts
         });
     }
 
@@ -88,6 +88,28 @@ class MUIChartView extends MUIView {
         }
 
         return name;
+    }
+
+    private optionsForChartType(type:MUIChartViewType, title:string) {
+
+        var op = {};
+
+        if (title != null){
+            op["title"] = {"display": true, "text":title};
+        }
+
+        switch (type) {
+
+            case MUIChartViewType.Pie:
+                op["legend"] = {"display": true, "position": "right"};       
+                break;
+
+            default:
+                op["legend"] = {"display": false};
+                break;
+        }
+
+        return op;
     }
 
 }

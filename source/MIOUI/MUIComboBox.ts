@@ -132,7 +132,7 @@ class MUIComboBox extends MUIControl
         this._selectLayer.onchange = function()
         {
             if (instance.enabled)
-                instance.action.call(target, instance._selectLayer.value);
+                instance.action.call(target, instance, instance._selectLayer.value);
         }
     }
 }

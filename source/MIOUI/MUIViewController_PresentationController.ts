@@ -92,10 +92,14 @@ class MUIPresentationController extends MIOObject
         var toVC = this.presentedViewController;
         var view = this.presentedView;
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen)
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsMobile() == true)
         {
-            var ws = MUIWindowSize();
-            view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
+            //var ws = MUIWindowSize();
+            //view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
+            view.layer.style.left = "0px";
+            view.layer.style.top = "0px";
+            view.layer.style.width = "100%";
+            view.layer.style.height = "100%";
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
         {
