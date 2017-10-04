@@ -192,7 +192,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let group = o as MIOPredicateGroup;
                 let i = {};
                 i["type"] = "group";
-                i["group"] = this.parsePredictates(group.predicates, entity);
+                i["values"] = this.parsePredictates(group.predicates, entity);
                 result.push(this)
             }
             else if (o instanceof MIOPredicateItem) {
@@ -207,7 +207,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let op = o as MIOPredicateOperator;
                 let i = {};
                 i["type"] = "operator";
-                i["values"] = this.transfromPredicateOperator(op.type);
+                i["value"] = this.transfromPredicateOperator(op.type);
                 result.push(i)
             }
         }
@@ -280,7 +280,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 return ">";
                 
             case MIOPredicateComparatorType.GreaterOrEqual:
-                return "<=";
+                return ">=";
                 
             case MIOPredicateComparatorType.Distinct:
                 return "!=";
