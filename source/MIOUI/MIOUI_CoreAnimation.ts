@@ -18,7 +18,9 @@ enum MUIAnimationType
     LightSpeedOut,
     Hinge,
     SlideInUp,
-    SlideOutDown
+    SlideOutDown,
+    HorizontalOutFlip,
+    HorizontalInFlip
 }
 
 // ANIMATION TYPES
@@ -68,6 +70,14 @@ function MUIClassListForAnimationType(type)
         case MUIAnimationType.SlideOutDown:
             array.push("slideOutDown");
             break;
+
+        case MUIAnimationType.HorizontalOutFlip:
+            array.push("flipOutY");
+            break;            
+
+        case MUIAnimationType.HorizontalInFlip:
+            array.push("flipInY");
+            break;                        
     }
 
     return array;
