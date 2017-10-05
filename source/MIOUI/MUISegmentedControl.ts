@@ -73,5 +73,8 @@ class MUISegmentedControl extends MUIControl
         }
 
         this.selectedSegmentedIndex = index;
+        
+        var item = this.segmentedItems[this.selectedSegmentedIndex];
+        item.setSelected(true);
     }
 }

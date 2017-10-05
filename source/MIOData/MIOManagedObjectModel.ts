@@ -126,6 +126,10 @@ class MIOManagedObjectModel extends MIOObject
             case "String":
                 attrType = MIOAttributeType.String;
                 break;
+
+            case "Date":
+                attrType = MIOAttributeType.Date;
+                break;
         }
         
         this.currentEntity.addAttribute(name, attrType, null, optional, serverName);

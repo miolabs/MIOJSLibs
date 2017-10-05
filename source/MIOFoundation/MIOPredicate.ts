@@ -5,6 +5,8 @@
 /// <reference path="../MIOCore/MIOCoreLexer.ts" />
 /// <reference path="MIOObject.ts" />
 
+/// <reference path="MIOISO8601DateFormatter.ts" />
+
 enum MIOPredicateComparatorType {
     Equal,
     Less,
@@ -51,20 +53,26 @@ class MIOPredicateItem {
     value = null;
 
     evaluateObject(object:MIOObject) {
+        var value = object.valueForKeyPath(this.key);
+        if (value instanceof Date) {
+            let sdf = new MIOISO8601DateFormatter();
+            sdf.init();
+            value = sdf.stringFromDate(value);
+        }
+
         if (this.comparator == MIOPredicateComparatorType.Equal)
-            return (object.valueForKeyPath(this.key) == this.value);
+            return (value == this.value);
         else if (this.comparator == MIOPredicateComparatorType.Distinct)
-            return (object.valueForKeyPath(this.key) != this.value);
+            return (value != this.value);
         else if (this.comparator == MIOPredicateComparatorType.Less)
-            return (object.valueForKeyPath(this.key) < this.value);
+            return (value < this.value);
         else if (this.comparator == MIOPredicateComparatorType.LessOrEqual)
-            return (object.valueForKeyPath(this.key) <= this.value);        
+            return (value <= this.value);        
         else if (this.comparator == MIOPredicateComparatorType.Greater)
-            return (object.valueForKeyPath(this.key) > this.value);
+            return (value > this.value);
         else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
-            return (object.valueForKeyPath(this.key) >= this.value);        
+            return (value >= this.value);        
         else if (this.comparator == MIOPredicateComparatorType.Contains) {
-            var value = object.valueForKeyPath(this.key);
             if (value == null)
                 return false;
 
@@ -75,7 +83,6 @@ class MIOPredicateItem {
             return false;
         }
         else if (this.comparator == MIOPredicateComparatorType.NotContains) {
-            var value = object.valueForKeyPath(this.key);
             if (value == null)
                 return true;
 
@@ -347,8 +354,11 @@ class MIOPredicate extends MIOObject {
         switch(token.type) {
             
             case MIOPredicateTokenType.UUIDValue:
-            case MIOPredicateTokenType.StringValue:
                 item.value = token.value;
+                break;
+            
+            case MIOPredicateTokenType.StringValue:
+                item.value = token.value.substring(1, token.value.length - 1);
                 break;
 
             case MIOPredicateTokenType.NumberValue:
