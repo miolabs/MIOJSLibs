@@ -16,6 +16,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         return "MIOWebServicePersistentStoreType";
     }
   
+    delegate = null;
+
     // HACK: token must be removed and change for setMedata function instead
     type = null;
     identifier = null;
@@ -193,15 +195,28 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 let i = {};
                 i["type"] = "group";
                 i["values"] = this.parsePredictates(group.predicates, entity);
-                result.push(this)
+                result.push(i);
             }
             else if (o instanceof MIOPredicateItem) {
                 //result = o.evaluateObject(object);
                 let item = o as MIOPredicateItem;
-                let i = {};                
-                i["type"] = "item";                
-                this.transformPredicateItem(i, item, entity);
-                result.push(i);
+                let mapItemPredicateFormat = null;
+                if (typeof this.delegate.filterServerAttributeKey === "function") {
+                    mapItemPredicateFormat = this.delegate.filterServerAttributeKey(this, entity.managedObjectClassName, item.key, item.value, item.comparator)
+                }
+                if (mapItemPredicateFormat == null) {                
+                    let i = {};                
+                    i["type"] = "item";                
+                    this.transformPredicateItem(i, item, entity);
+                    result.push(i);
+                }else {
+                    let p = MIOPredicate.predicateWithFormat(mapItemPredicateFormat);
+                    let group:MIOPredicateGroup = p.predicateGroup;
+                    let i = {};
+                    i["type"] = "group";
+                    i["values"] = this.parsePredictates(group.predicates, entity);
+                    result.push(i);
+                }
             }
             else if (o instanceof MIOPredicateOperator) {                
                 let op = o as MIOPredicateOperator;
@@ -488,7 +503,17 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 this.parseServerObjects(entity, [item], context);
                 entity["Timestamp"] = ts2;
                 context.save();
-            }                
+            }    
+            else if (code == 400) {
+                // The object is deleted
+                var catchError = false;
+                if (typeof this.delegate.serverErrorDownloadingObjectByReferenceID === "function"){
+                    catchError =  this.delegate.serverErrorDownloadingObjectByReferenceID(this, referenceID, entityName);
+                }
+                if (catchError == false) {
+                    throw("MIOWebPersistentStore: Asking object to server that doesn't exist or has been deleted. (" + entityName + ":" + referenceID + ")");
+                }
+            }            
         });  
     }
 

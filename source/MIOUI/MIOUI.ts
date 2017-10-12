@@ -41,6 +41,7 @@
 
 /// <reference path="MUICalendarView.ts" />
 /// <reference path="MUIDatePickerController.ts" />
+/// <reference path="MUIChartView.ts" />
 
 /// <reference path="MUIReportViewController.ts" />
 

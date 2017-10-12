@@ -47,47 +47,65 @@ class MIOPredicateOperator {
     }
 }
 
+enum MIOPredicateItemValueType {
+    
+    Undefined,
+    UUID,
+    String,
+    Number,
+    Boolean,    
+    Null,
+    Property
+}
+
 class MIOPredicateItem {
     key = null;
     comparator = null;
     value = null;
+    valueType = MIOPredicateItemValueType.Undefined;
 
     evaluateObject(object:MIOObject) {
-        var value = object.valueForKeyPath(this.key);
-        if (value instanceof Date) {
+
+        var lValue = object.valueForKeyPath(this.key);
+        if (lValue instanceof Date) {
             let sdf = new MIOISO8601DateFormatter();
             sdf.init();
-            value = sdf.stringFromDate(value);
+            lValue = sdf.stringFromDate(lValue);
         }
 
+        var rValue = this.value;
+        if (this.valueType == MIOPredicateItemValueType.Property){
+            rValue = object.valueForKeyPath(rValue);
+        }
+        
         if (this.comparator == MIOPredicateComparatorType.Equal)
-            return (value == this.value);
+            return (lValue == rValue);
         else if (this.comparator == MIOPredicateComparatorType.Distinct)
-            return (value != this.value);
+            return (lValue != rValue);
         else if (this.comparator == MIOPredicateComparatorType.Less)
-            return (value < this.value);
+            return (lValue < rValue);
         else if (this.comparator == MIOPredicateComparatorType.LessOrEqual)
-            return (value <= this.value);        
+            return (lValue <= rValue);        
         else if (this.comparator == MIOPredicateComparatorType.Greater)
-            return (value > this.value);
+            return (lValue > rValue);
         else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
-            return (value >= this.value);        
+            return (lValue >= rValue);        
         else if (this.comparator == MIOPredicateComparatorType.Contains) {
-            if (value == null)
+            if (lValue == null)
                 return false;
 
-            value = value.toLowerCase();
-            if (value.indexOf(this.value.toLowerCase()) > -1)
+            lValue = lValue.toLowerCase();
+            if (lValue.indexOf(rValue.toLowerCase()) > -1)
                 return true;
 
             return false;
         }
         else if (this.comparator == MIOPredicateComparatorType.NotContains) {
-            if (value == null)
+            if (lValue == null)
                 return true;
 
-            value = value.toLowerCase();
-            if (value.indexOf(this.value.toLowerCase()) > -1)
+            lValue = lValue.toLowerCase();
+            if (lValue.indexOf(rValue.toLowerCase()) > -1)
                 return false;
 
             return true;
@@ -149,6 +167,7 @@ enum MIOPredicateTokenType{
     NumberValue,
     BooleanValue,    
     NullValue,
+    PropertyValue,
 
     MinorOrEqualComparator,
     MinorComparator,
@@ -223,7 +242,7 @@ class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.Whitespace, /^\s+/);        
         this.lexer.ignoreTokenType(MIOPredicateTokenType.Whitespace);
         // Identifiers - Has to be the last one
-        this.lexer.addTokenType(MIOPredicateTokenType.Identifier, /^[a-zA-Z][a-zA-Z0-9\.]*/);            
+        this.lexer.addTokenType(MIOPredicateTokenType.Identifier, /^[a-zA-Z-_][a-zA-Z0-9-_\.]*/);            
 
         this.lexer.tokenize();
     }    
@@ -282,7 +301,9 @@ class MIOPredicate extends MIOObject {
                     throw("MIOPredicate: Error. Unexpected token. (" + token.value + ")");
             }
 
-            token = this.lexer.nextToken();
+            if (exit != true) {
+                token = this.lexer.nextToken();
+            }
         }
 
         return predicates;
@@ -355,22 +376,32 @@ class MIOPredicate extends MIOObject {
             
             case MIOPredicateTokenType.UUIDValue:
                 item.value = token.value;
+                item.valueType = MIOPredicateItemValueType.UUID;
                 break;
             
             case MIOPredicateTokenType.StringValue:
                 item.value = token.value.substring(1, token.value.length - 1);
+                item.valueType = MIOPredicateItemValueType.String;
                 break;
 
             case MIOPredicateTokenType.NumberValue:
                 item.value = token.value;
+                item.valueType = MIOPredicateItemValueType.Number;
                 break;
 
             case MIOPredicateTokenType.BooleanValue:
                 item.value = this.booleanFromString(token.value);
+                item.valueType = MIOPredicateItemValueType.Boolean;
                 break;
 
             case MIOPredicateTokenType.NullValue:
                 item.value = this.nullFromString(token.value);
+                item.valueType = MIOPredicateItemValueType.Null;
+                break;
+
+            case MIOPredicateTokenType.Identifier:
+                item.value = token.value;
+                item.valueType = MIOPredicateItemValueType.Property;
                 break;
 
             default:
