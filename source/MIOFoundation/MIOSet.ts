@@ -36,6 +36,11 @@ class MIOSet extends MIOObject {
         return this._objects.indexOf(obj);
     }
 
+    objectAtIndex(index)
+    {
+        return this._objects[index];
+    }
+    
     get length(){
         return this._objects.length;
     }

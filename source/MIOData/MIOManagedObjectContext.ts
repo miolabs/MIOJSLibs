@@ -206,15 +206,25 @@ class MIOManagedObjectContext extends MIOObject
         this._deletedObjects = [];        
     }
 
-    queryObject(entityName, predicate?)
-    {
-        let request = MIOFetchRequest.fetchRequestWithEntityName(entityName);
 
+    //
+    // TODO: Remove this. It's not Cocoa compatible
+    //
+
+    queryObjects(entityName, predicate?) {
+
+        let request = MIOFetchRequest.fetchRequestWithEntityName(entityName);
+        
         if (predicate != null)
             request.predicate = predicate;
-
+        
         let objs = this.executeFetch(request);
+        return objs;  
+    }
 
+    queryObject(entityName, predicate?) {
+        
+        let objs = this.queryObjects(entityName, predicate);
         return objs.length > 0 ? objs[0] : null;
     }
 }

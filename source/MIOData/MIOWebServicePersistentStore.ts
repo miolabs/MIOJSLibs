@@ -390,13 +390,14 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 //this.updateRelationshipsForObject(mo);
                 this.insertCacheObject(mo, referenceID);
                 mo.isFault = false;         
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);
+                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Inserted");
             }
             else if (mo != null && hasToDelete == true) {
 
                 this.deleteCacheObject(mo);
                 context.deleteObject(mo);
                 mo.isFault = false;
+                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Deleted");
             }
             else {
 
@@ -410,7 +411,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                     this.parseRelationships(ed.relationships, item, mo);
                     //this.updateRelationshipsForObject(mo);
                     mo.isFault = false;
-                    MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo);    
+                    MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Updated");    
                 }
             }                        
         }

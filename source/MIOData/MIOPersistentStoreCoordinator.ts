@@ -42,9 +42,10 @@ class MIOPersistentStoreCoordinator extends MIOObject
 
     executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){
         
+        var result = [];
         for (var index = 0; index < this._stores.length; index++){
             let ps:MIOPersistentStore = this._stores[index];
-            var result = ps.executeRequest(persistentStoreRequest, context);
+            result = ps.executeRequest(persistentStoreRequest, context);
         }
 
         return result;
