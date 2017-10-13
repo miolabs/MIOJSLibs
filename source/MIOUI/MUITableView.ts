@@ -728,19 +728,6 @@ class MUITableView extends MUIView {
 
     }
 
-    // get indexPathsForSelectedRows()
-    // {
-    //     var selected = [];
-    //
-    //     this._indexPathsForSelectedRows.forEach(function (rows, section) {
-    //         rows.forEach(function (row, index) {
-    //             selected.push({'section': section, 'row': row});
-    //         }, selected, section);
-    //     }, selected);
-    //
-    //     return selected;
-    // }
-
     cellAtIndexPath(row, section) {
         var s = this.sections[section];
         var c = s.cells[row];

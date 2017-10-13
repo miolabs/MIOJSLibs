@@ -675,7 +675,12 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         // update objects array
         this.objects.push(obj);  
         
-        this.updateObjectReferenceID(obj, referenceID);
+        let refID = referenceID;
+        if (referenceID == null) {
+            refID = obj.valueForKey(this.referenceIDKey);
+        }
+
+        this.updateObjectReferenceID(obj, refID);
     }
 
                 

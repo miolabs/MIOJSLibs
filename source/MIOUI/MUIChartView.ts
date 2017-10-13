@@ -73,11 +73,8 @@ class MUIChartView extends MUIView {
                 borderWidth: 1
                 }]
             }    
-        
-        if (this.chartLayer != null) {
-            this.chartLayer.destroy();
-            this.destroyCanvas();
-        }        
+
+        this.clear();
 
         this.createCanvas();
         this.chartLayer = new Chart(this.canvas, {
@@ -86,6 +83,14 @@ class MUIChartView extends MUIView {
             options: opts
         });
     }
+
+    clear(){
+
+        if (this.chartLayer != null) {
+            this.chartLayer.destroy();
+            this.destroyCanvas();
+        }        
+    }    
 
     private nameFromChartType(type:MUIChartViewType) {
 

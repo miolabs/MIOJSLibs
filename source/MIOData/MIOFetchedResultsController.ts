@@ -153,8 +153,8 @@ class MIOFetchedResultsController extends MIOObject
             var currentSectionKeyPathValue = "";
             for (var index = 0; index < this.resultObjects.length; index++)
             {
-                var obj = this.resultObjects[index];
-                var value = obj[this._sectionNameKeyPath];
+                let obj = this.resultObjects[index];
+                let value = obj.valueForKey(this._sectionNameKeyPath);
 
                 if (currentSectionKeyPathValue != value) {
                     currentSection = new MIOFetchSection();

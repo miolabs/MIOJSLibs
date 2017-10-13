@@ -10,7 +10,6 @@
 /// <reference path="MUIViewController_PopoverPresentationController.ts" />
 
 /// <reference path="MUIWindow.ts" />
-//declare var MIOHTMLParser;
 
 class MUIViewController extends MIOObject
 {
