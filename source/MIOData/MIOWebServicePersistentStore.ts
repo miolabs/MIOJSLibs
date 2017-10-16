@@ -380,7 +380,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
             let hasToDelete = item[this.serverDeleteDateKey] != null ? true : false;
             //if (referenceID == null) throw ("MIOWebServicePersistentStore: Downloaded object without object ID");
             var mo:MIOManagedObject = this.objectsByReferenceID[referenceID];
-            if (mo == null && hasToDelete == false) {                
+//            if (mo == null && hasToDelete == false) {                
+            if (mo == null) {                    
                 mo = MIOEntityDescription.insertNewObjectForEntityForName(entityName, context);
                 // We bind the reference ID from the server to the local object
                 mo.setValueForKey(this.referenceIDKey, referenceID);
@@ -388,17 +389,17 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 this.parseAttributes(ed.attributes, item, mo);
                 this.parseRelationships(ed.relationships, item, mo);
                 //this.updateRelationshipsForObject(mo);
-                this.insertCacheObject(mo, referenceID);
+                this.insertCacheObject(mo);
                 mo.isFault = false;         
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Inserted");
             }
-            else if (mo != null && hasToDelete == true) {
+            // else if (mo != null && hasToDelete == true) {
 
-                this.deleteCacheObject(mo);
-                context.deleteObject(mo);
-                mo.isFault = false;
-                MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Deleted");
-            }
+            //     this.deleteCacheObject(mo);
+            //     context.deleteObject(mo);
+            //     mo.isFault = false;
+            //     MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Deleted");
+            // }
             else {
 
                 let ts1 = mo.getValue("timestamp");
@@ -482,7 +483,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                 if (obj == null) {
                     
                     obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);                    
-                    this.insertCacheObject(obj, referenceID);
+                    obj.setValueForKey(this.referenceIDKey, referenceID);
+                    this.insertCacheObject(obj);
                     obj.isFault = false;                    
                 }
                 mo.setValue(rel.name, obj);                
@@ -501,7 +503,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
                     if (obj == null) {
                 
                         obj = MIOEntityDescription.insertNewObjectForEntityForName(rel.destinationEntityName, mo.managedObjectContext);
-                        this.insertCacheObject(obj, referenceID);
+                        obj.setValueForKey(this.referenceIDKey, referenceID);
+                        this.insertCacheObject(obj);
                         obj.isFault = false;                            
                     }
                     mo.addObject(rel.name, obj);
@@ -663,7 +666,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         this.referenceIDByObjectID[obj.objectID] = refID;
     }
 
-    private insertCacheObject(obj:MIOManagedObject, referenceID?:string){
+    private insertCacheObject(obj:MIOManagedObject){
      
         let entityName = obj.entity.managedObjectClassName;
 
@@ -675,11 +678,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore
         // update objects array
         this.objects.push(obj);  
         
-        let refID = referenceID;
-        if (referenceID == null) {
-            refID = obj.valueForKey(this.referenceIDKey);
-        }
-
+        let refID = obj.valueForKey(this.referenceIDKey);            
         this.updateObjectReferenceID(obj, refID);
     }
 
