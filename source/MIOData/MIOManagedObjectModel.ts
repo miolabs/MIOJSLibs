@@ -11,11 +11,11 @@ class MIOManagedObjectModel extends MIOObject
         
         var mom = context.persistentStoreCoordinator.managedObjectModel;
         var entity = mom.entitiesByName[entityName];
+
         if (entity == null) {
         
             // HACK!
             // TODO: We need to build a object model file to read this values
-
             entity = new MIOEntityDescription();
             entity.initWithEntityName(entityName);
 

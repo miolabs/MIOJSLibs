@@ -48,11 +48,14 @@ class MIOFetchedResultsController extends MIOObject
         // TODO: Add and remove notification observer
 
         if (delegate != null) {
-            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification){
+            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification:MIONotification){
 
-                var ins_objs = notification.object[MIOInsertedObjectsKey];
-                var upd_objs = notification.object[MIOUpdatedObjectsKey];
-                var del_objs = notification.object[MIODeletedObjectsKey];
+                let moc:MIOManagedObjectContext = notification.object;
+                if (moc !== this._moc) return;
+
+                var ins_objs = notification.userInfo[MIOInsertedObjectsKey];
+                var upd_objs = notification.userInfo[MIOUpdatedObjectsKey];
+                var del_objs = notification.userInfo[MIODeletedObjectsKey];
                 
                 var entityName = this._request.entityName;                
                 
