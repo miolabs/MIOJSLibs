@@ -123,13 +123,13 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
         let mom = this.persistentStoreCoordinator.managedObjectModel;
         let entity = mom.entitiesByName[entityName];
         let mo:MIOManagedObject = MIOClassFromString(entityName);
+        mo.init();
         mo.managedObjectContext = context;
         mo.entity = entity
         mo.setValueForKey(this.referenceIDKey, referenceID);
    
         return mo;
     }
-   
 
     canServerSyncEntityNameForType(entityName: string, type: MIOWebServicePersistentIgnoreEntityType) {
 
@@ -259,7 +259,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
             // Delete objects
             for (var i = 0; i < del_objs.length; i++) {
                 var o: MIOManagedObject = del_objs[i];
-
+                if (o.isFault == false) continue;
                 this.deleteObjectInCache(o);
                 //this.serverQueue.deleteObjectOnServer(o);
             }
@@ -274,7 +274,6 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
             for (var i = 0; i < ins_objs.length; i++) {
                 var o: MIOManagedObject = ins_objs[i];
                 if (o.isFault == false) continue;
-
                 this.insertObjectInCache(o);
                 //this.serverQueue.insertObjectToServer(o);
             }

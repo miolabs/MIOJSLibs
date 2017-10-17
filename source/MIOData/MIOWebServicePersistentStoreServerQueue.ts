@@ -48,13 +48,13 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
 
     objectWithReferenceID(referenceID, queryID:string) {
 
-        let query = this.queries[queryID];
-        var objs = query["Objects"];
+        // let query = this.queries[queryID];
+        // var objs = query["Objects"];
 
-        var obj = objs[referenceID];
-        if (obj != null) return obj;
+        // var obj = objs[referenceID];
+        // if (obj != null) return obj;
 
-        obj = this.delegate.objectByReferenceID(referenceID);
+        let obj = this.delegate.objectByReferenceID(referenceID);
         return obj;
     }
 
@@ -254,9 +254,11 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         if (obj == null) {
             obj = this.delegate.newObjectWithReferenceID(referenceID, entityName, context);
             
-            let query = this.queries[queryID];
-            let objs = query["Objects"];
-            objs[referenceID] = obj;
+            this.addInsertedObjectInQuery(queryID, obj);
+
+            // let query = this.queries[queryID];
+            // let objs = query["Objects"];
+            // objs[referenceID] = obj;
 
             this.fetchObjectOnServerByReferenceID(referenceID, entityName, queryID, context);
         }
@@ -417,10 +419,10 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             var mo: MIOManagedObject = this.objectWithReferenceID(referenceID, queryID);
             if (mo == null) {                
                 mo = this.delegate.newObjectWithReferenceID(referenceID, entityName, context);
+                this.addInsertedObjectInQuery(queryID, mo);
                 // We parse the attrbitues and relationships from the sever
                 this.parseAttributes(ed.attributes, item, mo);
-                this.parseRelationships(ed.relationships, item, mo, queryID);
-                this.addInsertedObjectInQuery(queryID, mo);
+                this.parseRelationships(ed.relationships, item, mo, queryID);                
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Inserted");
             }
             else {
@@ -431,9 +433,9 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                 if (ts2 == null) throw ("MIOWebServicePersistentStore: UpdateAt field from server is null");
 
                 if (ts1 != ts2) {
+                    this.addUpdatedObjectInQuery(queryID, mo);
                     this.parseAttributes(ed.attributes, item, mo);
                     this.parseRelationships(ed.relationships, item, mo, queryID);
-                    this.addUpdatedObjectInQuery(queryID, mo);
                     MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Updated");
                 }
             }

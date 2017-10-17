@@ -59,7 +59,7 @@ class MIOManagedObject extends MIOObject {
 
     initWithEntityAndInsertIntoManagedObjectContext(entityDescription:MIOEntityDescription, context?:MIOManagedObjectContext){
 
-        super.init();
+        this.init();
 
         this.entity = entityDescription;
         this.managedObjectContext = context;
@@ -69,6 +69,11 @@ class MIOManagedObject extends MIOObject {
             this._setIsInserted(true);
             this.awakeFromInsert();                    
         }
+    }
+
+    init(){
+        super.init();
+        this.objectID = MIOUUID.uuid();
     }
 
     awakeFromInsert() {}

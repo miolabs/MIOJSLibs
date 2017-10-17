@@ -55,8 +55,7 @@ class MIOManagedObjectContext extends MIOObject {
     }
 
     insertObject(obj: MIOManagedObject) {
-        var entityName = obj.entity.managedObjectClassName;
-        obj.objectID = MIOUUID.uuid();
+        var entityName = obj.entity.managedObjectClassName;        
 
         var array = this.insertedObjects[entityName];
         if (array == null) {
