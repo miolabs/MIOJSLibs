@@ -116,16 +116,8 @@ class MIOManagedObjectContext extends MIOObject {
     }
 
     executeFetch(request) {
-        var objs = null;
-        if (this.parent == null) {
-            objs = this.persistentStoreCoordinator.executeRequest(request, this);
-        }
-        else {
-            objs = this.objectsByEntity[request.entityName];
-            objs = _MIOPredicateFilterObjects(objs, request.predicate);
-            objs = _MIOSortDescriptorSortObjects(objs, request.sortDescriptors);
-        }
-
+        
+        var objs = this.persistentStoreCoordinator.executeRequest(request, this);
         return objs;
     }
 
@@ -143,52 +135,6 @@ class MIOManagedObjectContext extends MIOObject {
             let saveRequest = new MIOSaveChangesRequest();
             saveRequest.initWithObjects(this.insertedObjects, this.updateObjects, this.deletedObjects);
             this.persistentStoreCoordinator.executeRequest(saveRequest, this);
-        }
-
-        // Inserted objects        
-        for (var entityName in this.insertedObjects) {
-            var ins_objs = this.insertedObjects[entityName];
-
-            // save changes and add to context
-            var array = this.objectsByEntity[entityName];
-            if (array == null) {
-                array = [];
-                this.objectsByEntity[entityName] = array;
-            }
-
-            for (var i = 0; i < ins_objs.length; i++) {
-                var o = ins_objs[i];
-                o.saveChanges();
-                array.push(o);
-            }
-        }
-
-        // Update objects
-        for (var entityName in this.updateObjects) {
-            var upd_objs = this.updateObjects[entityName];
-
-            // save changes
-            for (var i = 0; i < upd_objs.length; i++) {
-                var o = upd_objs[i];
-                o.saveChanges();
-            }
-        }
-
-        // Delete objects
-        for (var entityName in this.deletedObjects) {
-            var del_objs = this.deletedObjects[entityName];
-            var objects = this.objectsByEntity[entityName];
-
-            // save changes
-            for (var i = 0; i < del_objs.length; i++) {
-                var o = del_objs[i];
-
-                var index = objects.indexOf(o);
-
-                if (index > -1) {
-                    objects.splice(index, 1);
-                }
-            }
         }
 
         var objsChanges = {};

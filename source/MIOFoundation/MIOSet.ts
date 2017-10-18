@@ -32,6 +32,12 @@ class MIOSet extends MIOObject {
         this.didChangeValue("length");
     }
 
+    removeAllObjects(){
+        this.willChangeValue("length");        
+        this._objects = [];
+        this.didChangeValue("length");
+    }
+
     indexOfObject(obj) {
         return this._objects.indexOf(obj);
     }

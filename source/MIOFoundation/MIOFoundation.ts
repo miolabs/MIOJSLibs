@@ -29,3 +29,7 @@
 /// <reference path="MIOURLConnection.ts" />
 /// <reference path="MIOXMLParser.ts" />
 
+/// <reference path="MIOOperation.ts" />
+/// <reference path="MIOOperationQueue.ts" />
+
+

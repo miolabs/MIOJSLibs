@@ -13,7 +13,7 @@ class MIOManagedObject extends MIOObject {
     entity:MIOEntityDescription = null;
     managedObjectContext:MIOManagedObjectContext = null;       
 
-    private _trackChanges = {};  
+    private trackChanges = {};  
 
     private _isFault = true;
     private setIsFault(value) {
@@ -84,20 +84,16 @@ class MIOManagedObject extends MIOObject {
         let rawName = "_" + propertyName;
         if (this[rawName] === value) return;
         
-        var oldValue = this._trackChanges[propertyName];
-        if (oldValue == null) {
-            this._trackChanges[propertyName] = this[rawName];
-        }
-        else {
-            if (oldValue == value) {
-                delete this._trackChanges[propertyName];
-            }
-        }
-        
-        this.willChangeValue(propertyName);
-        this[rawName] = value;
-        this.didChangeValue(propertyName);
-        
+        var oldValue = this.trackChanges[propertyName];
+        if (oldValue !== value) {
+            this.willChangeValue(propertyName);
+            if (oldValue !== this[rawName])
+                this.trackChanges[propertyName] = value;
+            else 
+                delete this.trackChanges[propertyName];
+            this.didChangeValue(propertyName);
+        }        
+                
         if (this.managedObjectContext != null) {
             this.managedObjectContext.updateObject(this);            
         }        
@@ -106,29 +102,40 @@ class MIOManagedObject extends MIOObject {
     }
 
     getValue(propertyName) {
-        let rawName = "_" + propertyName;
-        let value = this[rawName];
+        
+        var value = this.trackChanges[propertyName];
+        if (value == null) {
+            let rawName = "_" + propertyName;
+            value = this[rawName];
+        }
 
         return value;
     }    
     
+    setPrimitiveValue(propertyName, value) {
+        let rawName = "_" + propertyName;
+        this[rawName] = value;
+    }
+
     primitiveValue(propertyName) {
-        let value = this._trackChanges[propertyName];
+        let rawName = "_" + propertyName;
+        let value = this[rawName];
+        
         return value;
     }
 
     addObject(propertyName, object) {
-        
-        var oldArray:MIOSet = this._trackChanges[propertyName];
+
         let rawName = "_" + propertyName;
         var array = this[rawName];
-        
-        if (oldArray == null) {            
-            oldArray = array.copy();
-            this._trackChanges[propertyName] = oldArray;
-        }
 
-        array.addObject(object);
+        var newArray:MIOSet = this.trackChanges[propertyName];
+        if (newArray == null) {            
+            newArray = array.copy();
+            this.trackChanges[propertyName] = newArray;
+        }
+        
+        newArray.addObject(object);
         
         if (this.managedObjectContext != null)
             this.managedObjectContext.updateObject(this);
@@ -138,16 +145,16 @@ class MIOManagedObject extends MIOObject {
 
     removeObject(propertyName, object) {
         
-        var oldArray:MIOSet = this._trackChanges[propertyName];
         let rawName = "_" + propertyName;
         var array = this[rawName];
-        
-        if (oldArray == null) {            
-            oldArray = array.copy();
-            this._trackChanges[propertyName] = oldArray;
+
+        var newArray:MIOSet = this.trackChanges[propertyName];        
+        if (newArray == null) {            
+            newArray = array.copy();
+            this.trackChanges[propertyName] = newArray;
         }
 
-        array.removeObject(object);
+        newArray.removeObject(object);
         
         if (this.managedObjectContext != null)
             this.managedObjectContext.updateObject(this);
@@ -174,12 +181,30 @@ class MIOManagedObject extends MIOObject {
     }
 
     getChanges() {
-        return this._trackChanges;
+        return this.trackChanges;
     }
 
     saveChanges() {
-        this._trackChanges = {};
 
+        for (var propertyName in this.trackChanges) {
+            let rawName = "_" + propertyName;
+            let value = this.trackChanges[propertyName];
+            if (value instanceof MIOSet) {
+                let newArray:MIOSet = value;
+                let oldArray:MIOSet = this[rawName];
+                oldArray.removeAllObjects();
+                for (var index = 0; index < newArray.length; index++){
+                    let o = newArray.objectAtIndex(index);
+                    oldArray.addObject(o);
+                }
+            }
+            else {
+                this[rawName] = value;
+            }
+        }
+
+        this.trackChanges = {};
+        
         this._setIsInserted(false);
         this._setIsUpdated(false);
         this._setIsDeleted(false);
@@ -187,14 +212,10 @@ class MIOManagedObject extends MIOObject {
         this.isFault = false;
     }
 
-    discardChanges() {        
-        for (var propertyName in this._trackChanges) {
-            let rawName = "_" + propertyName;
-            this[rawName] = this._trackChanges[propertyName];
-        }
-
-        this._trackChanges = {};
-
+    discardChanges() {     
+        
+        this.trackChanges = {};
+        
         this._setIsInserted(false);
         this._setIsUpdated(false);
         this._setIsDeleted(false);        

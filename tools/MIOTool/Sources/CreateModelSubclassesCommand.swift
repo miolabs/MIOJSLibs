@@ -165,6 +165,12 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    get \(name)()\(t) {\n";
         fileContent += "        return this.getValue('\(name)');\n";
         fileContent += "    }\n";
+
+        // Setter raw value
+        fileContent += "    set \(name)PrimitiveValue(value\(t)) {\n";
+        fileContent += "        this.setPrimitiveValue('\(name)', value);\n";
+        fileContent += "    }\n";
+
         
         // Getter raw value
         fileContent += "    get \(name)PrimitiveValue()\(t) {\n";

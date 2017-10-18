@@ -11,17 +11,24 @@ class MIOObject
     init() {}
 
     private _notifyValueChange(key:string, type:string) {
-
+        
         let observers = this.keyPaths[key];
         if (observers == null) return;
 
+        // copy the array so we can iterating safetly
+        var obs = [];
         for(var count = 0; count < observers.length; count++) {
             let item = observers[count];
+            obs.push(item);
+        }        
+
+        for(var count = 0; count < obs.length; count++) {
+            let item = obs[count];
             let o = item["OBS"];            
             if (typeof o.observeValueForKeyPath === "function") {
                 let keyPath = item["KP"] != null ? item["KP"]: key;
                 let ctx = item["CTX"];            
-                o.observeValueForKeyPath(keyPath, type, this, ctx);
+                o.observeValueForKeyPath.call(o, keyPath, type, this, ctx);
             }
         }
     }

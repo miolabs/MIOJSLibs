@@ -13,4 +13,3 @@
 
 /// <reference path="MIOFetchedResultsController.ts" />
 
-/// <reference path="MIOWebServicePersistentStore.ts" />
