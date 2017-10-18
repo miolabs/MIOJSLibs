@@ -701,29 +701,20 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             }
             else {
 
-                /*                let ids = item[rel.serverName];
-                                if (ids == null) continue;
-                                
-                                for (var j = 0; j < ids.length; j++) {
-                
-                                    let objID:string = ids[j];
-                                    if (objID == null) continue;
-                
-                                    let obj = this.fetchObjectByID(objID, rel.destinationEntityName, mo.managedObjectContext);
-                                    if (obj == null) {
-                                
-                                        var objsNotes = this.entityRelationshipNotifcations[objID];
-                                        if (objsNotes == null) {
-                                            objsNotes = [];
-                                            this.entityRelationshipNotifcations[objID] = objsNotes;
-                                        }
-                
-                                        objsNotes.push({"MO": mo, "PN": rel.name, "TM": rel.isToMany});
-                                    }
-                                    else {
-                                        mo.addObject(rel.name, obj);
-                                    }
-                                }*/
+                let objects: MIOSet = mo.valueForKey(rel.serverName);
+                if (objects == null) continue;
+
+                var array = [];
+                for (var index = 0; index < objects.length; index++) {
+
+                    let obj:MIOManagedObject = objects.objectAtIndex(index);
+                    let referenceID = obj.valueForKey(this.referenceIDKey);
+                    
+                    array.push(referenceID);
+                    dependencies.push(referenceID);
+                }
+
+                item[rel.serverName] = array;
             }
         }
     }
