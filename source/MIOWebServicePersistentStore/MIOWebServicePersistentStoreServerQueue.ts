@@ -35,6 +35,37 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         this.serverDateFormatter = new MIOISO8601DateFormatter();
         this.serverDateFormatter.init();
     }
+    
+    private queryByID(queryID:string){
+     
+        var qID = queryID;
+        var query = null;
+        if (qID == null) {
+            qID = MIOUUID.uuid();
+            query = {};
+            query["Count"] = 1;
+            query["Inserted"] = {}
+            query["Updated"] = {}
+            query["Deleted"] = {}
+            query["Objects"] = []
+            this.queries[qID] = query;
+        }
+
+        return qID;
+    }
+
+    private incDownloadCountFromQueryID(queryID:string){
+
+        let qID = this.queryByID(queryID);
+        let query = this.queries[qID];
+        query["Count"] = query["Count"] + 1;
+    }
+
+    queryCountByID(queryID:string){
+        let query = this.queries[queryID];
+        if (query == null) return 0;    
+        else return query["Count"];
+    }
 
     private checkQueryByID(queryID: string, context: MIOManagedObjectContext) {
 
@@ -580,6 +611,13 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         op.target = this;
         op.completion = function () {
             delete this.operationsByReferenceID[referenceID];
+
+            let item = op.responseJSON["data"];
+            let queryID = this.queryByID(null);
+            this.parseServerObjectsForEntity(entityName, [item], queryID, obj.managedObjectContext);
+            let query = this.queries[queryID];
+            query["Count"] = query["Count"] - 1;
+            this.checkQueryByID(queryID, obj.managedObjectContext);
         }
     }
 

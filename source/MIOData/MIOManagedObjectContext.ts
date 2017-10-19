@@ -118,6 +118,21 @@ class MIOManagedObjectContext extends MIOObject {
     executeFetch(request) {
         
         var objs = this.persistentStoreCoordinator.executeRequest(request, this);
+
+        let entityName = request.entityName;
+        let array = this.objectsByEntity[entityName];
+        if (array == null) {
+            array = [];
+            this.objectsByEntity[entityName] = array;
+        }
+
+        for (var index = 0; index < objs.length; index++){
+            let o = objs[index];
+            let i = array.indexOf(o);
+            if (i == -1)
+                array.push(o);
+        }
+
         return objs;
     }
 

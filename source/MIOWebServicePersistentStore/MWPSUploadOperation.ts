@@ -9,6 +9,9 @@ class MWPSUploadOperation extends MIOOperation {
     httpMethod = "GET";
     dependencyIDs = null;
 
+    responseCode = null;
+    responseJSON = null;
+
     private delegate = null;    
     
     private uploading = false;
@@ -33,6 +36,10 @@ class MWPSUploadOperation extends MIOOperation {
     start() {
         this.setUploading(true);
         this.delegate.sendRequest(this.url, this.body, this.httpMethod, this, function(statusCode, json){            
+            
+            this.responseCode = statusCode;
+            this.responseJSON = json;
+            
             this.setUploading(false);
             this.setUploaded(true);
         });
