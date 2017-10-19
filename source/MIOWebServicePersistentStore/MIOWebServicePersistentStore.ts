@@ -288,8 +288,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
             for (var i = 0; i < ins_objs.length; i++) {
                 var o: MIOManagedObject = ins_objs[i];
                 if (o.isFault == false) continue;
-                this.insertObjectInCache(o);
                 this.serverQueue.insertObjectToServer(o);
+                this.insertObjectInCache(o);                
                 o.saveChanges();
             }
         }
@@ -303,9 +303,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
             for (var i = 0; i < upd_objs.length; i++) {
                 var o: MIOManagedObject = upd_objs[i];
                 if (o.isFault == false) continue;
-
-                this.updateObjectInCache(o);
                 this.serverQueue.updateObjectOnServer(o);
+                this.updateObjectInCache(o);                
                 o.saveChanges();
             }
         }
@@ -319,8 +318,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
             for (var i = 0; i < del_objs.length; i++) {
                 var o: MIOManagedObject = del_objs[i];
                 if (o.isFault == false) continue;
-                this.deleteObjectInCache(o);
                 this.serverQueue.deleteObjectOnServer(o);
+                this.deleteObjectInCache(o);
                 o.saveChanges();
             }
         }

@@ -178,8 +178,19 @@ class MIOManagedObject extends MIOObject {
         return (this.isInserted || this.isUpdated || this.isDeleted);
     }
 
+    //TODO: Remoe this method -> Not cocoa compatible
     getChanges() {
         return this.trackChanges;
+    }
+
+    get changedValues(){
+        
+        var values = {};
+        for (var propertyName in this.trackChanges){
+            values[propertyName] = this.primitiveValue(propertyName);      
+        }
+
+        return values;
     }
 
     saveChanges() {

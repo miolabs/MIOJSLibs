@@ -607,7 +607,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         op.initWithDelegate(this);
         op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());
         op.httpMethod = "PUT"
-        op.body = this.serverDataFromObject(obj, dependencies);
+        op.body = this.serverDataFromObject(obj, false, dependencies);
         op.dependencyIDs = dependencies;
 
         this.operationsByReferenceID[referenceID] = op;
@@ -640,7 +640,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         op.initWithDelegate(this);
         op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID);
         op.httpMethod = "PATCH"
-        op.body = this.serverDataFromObject(obj, dependencies);
+        op.body = this.serverDataFromObject(obj, true, dependencies);
         op.dependencyIDs = dependencies;
 
         this.operationsByReferenceID[referenceID] = op;
@@ -667,7 +667,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         op.initWithDelegate(this);
         op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());
         op.httpMethod = "DELETE"
-        op.body = this.serverDataFromObject(obj, dependencies);
+        op.body = this.serverDataFromObject(obj, false, dependencies);
         op.dependencyIDs = dependencies;
 
         this.operationsByReferenceID[referenceID] = op;
@@ -681,27 +681,37 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
     //
     // Managed Objects -> Server objects
     //
-    private serverDataFromObject(obj: MIOManagedObject, dependencies) {
+    private serverDataFromObject(obj: MIOManagedObject, onlyChanges:boolean, dependencies) {
 
         let entityName = obj.entity.managedObjectClassName;
         let ed: MIOEntityDescription = this.mom.entitiesByName[entityName];
+
+        var changedKeys = null;
+        if (onlyChanges == true){
+            changedKeys = [];
+            let changedValues = obj.changedValues;
+            for (var key in changedValues){
+                changedKeys.push(key);
+            }
+        }
 
         let item = {};
 
         let referenceID = obj.valueForKey(this.referenceIDKey);
         if (referenceID == null) throw ('MIOWebService: Object without referenceID');
         item[this.serverReferenceIDKey] = referenceID.toUpperCase();
-        this.serverAttributes(ed.attributes, item, obj);
-        this.serverRelationships(ed.relationships, item, obj, dependencies);
+        this.serverAttributes(ed.attributes, item, obj, changedKeys);
+        this.serverRelationships(ed.relationships, item, obj, changedKeys, dependencies);
 
         return item;
     }
 
-    private serverAttributes(attributes, item, mo: MIOManagedObject) {
+    private serverAttributes(attributes, item, mo: MIOManagedObject, changedKeys) {
 
         for (var i = 0; i < attributes.length; i++) {
             let attr: MIOAttributeDescription = attributes[i];
-            this.serverValueForAttribute(attr, attr.serverName, item, mo);
+            if (changedKeys == null || changedKeys.indexOf(attr.name) > 1)
+                this.serverValueForAttribute(attr, attr.serverName, item, mo);
         }
     }
 
@@ -726,10 +736,12 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         }
     }
 
-    private serverRelationships(relationships, item, mo: MIOManagedObject, dependencies) {
+    private serverRelationships(relationships, item, mo: MIOManagedObject, changedKeys, dependencies) {
 
         for (var i = 0; i < relationships.length; i++) {
             let rel: MIORelationshipDescription = relationships[i];
+
+            if (changedKeys == null || changedKeys.indexOf(rel.name) > 1)
 
             if (rel.isToMany == false) {
 
