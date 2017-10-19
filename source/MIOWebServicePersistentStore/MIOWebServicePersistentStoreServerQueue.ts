@@ -667,7 +667,8 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         op.initWithDelegate(this);
         op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());
         op.httpMethod = "DELETE"
-        op.body = this.serverDataFromObject(obj, false, dependencies);
+        //op.body = null; 
+        this.serverDataFromObject(obj, false, dependencies);
         op.dependencyIDs = dependencies;
 
         this.operationsByReferenceID[referenceID] = op;
@@ -710,14 +711,15 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
 
         for (var i = 0; i < attributes.length; i++) {
             let attr: MIOAttributeDescription = attributes[i];
-            if (changedKeys == null || changedKeys.indexOf(attr.name) > 1)
-                this.serverValueForAttribute(attr, attr.serverName, item, mo);
+            this.serverValueForAttribute(attr, attr.serverName, item, mo, changedKeys);
         }
     }
 
-    private serverValueForAttribute(attribute: MIOAttributeDescription, servername, item, object) {
+    private serverValueForAttribute(attribute: MIOAttributeDescription, servername, item, object, changedKeys) {
 
         if (attribute.name == this.referenceIDKey) return;
+
+        if (changedKeys != null && changedKeys.indexOf(attribute.name) == -1) return;
 
         let value = object.valueForKey(attribute.name);
 
@@ -741,7 +743,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         for (var i = 0; i < relationships.length; i++) {
             let rel: MIORelationshipDescription = relationships[i];
 
-            if (changedKeys == null || changedKeys.indexOf(rel.name) > 1)
+            if (changedKeys != null && changedKeys.indexOf(rel.name) == -1) continue;
 
             if (rel.isToMany == false) {
 
