@@ -13,7 +13,7 @@ class MIORelationshipDescription extends MIOObject
 
     private _serverName:string = null;
 
-    initWithName(name:string, destinationEntityName:string, isToMany:boolean, serverName?:string){
+    initWithName(name:string, destinationEntityName:string, isToMany:boolean, serverName?:string, inverseName?:string, inverseEntity?:string){
 
         this.init();
         this.name = name;
@@ -21,6 +21,11 @@ class MIORelationshipDescription extends MIOObject
         this.isToMany = isToMany;
         if (serverName != null)
             this._serverName = serverName;
+        if (inverseName != null && inverseEntity != null){
+            var ir = new MIORelationshipDescription();
+            ir.initWithName(inverseName, inverseEntity, false);
+            this.inverseRelationship = ir;
+        }
     }
 
     get serverName(){

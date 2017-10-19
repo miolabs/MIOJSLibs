@@ -697,7 +697,8 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
 
                 let referenceID = obj.valueForKey(this.referenceIDKey);
                 item[rel.serverName] = referenceID;
-                dependencies.push(referenceID);
+                if (rel.inverseRelationship == null)
+                    dependencies.push(referenceID);
             }
             else {
 
@@ -711,7 +712,8 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                     let referenceID = obj.valueForKey(this.referenceIDKey);
                     
                     array.push(referenceID);
-                    dependencies.push(referenceID);
+                    if (rel.inverseRelationship == null)
+                        dependencies.push(referenceID);
                 }
 
                 item[rel.serverName] = array;

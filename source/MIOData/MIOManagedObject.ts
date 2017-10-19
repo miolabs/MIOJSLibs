@@ -81,13 +81,12 @@ class MIOManagedObject extends MIOObject {
 
     setValue(propertyName, value) {
         
-        let rawName = "_" + propertyName;
-        if (this[rawName] === value) return;
+        let initValue = this.primitiveValue(propertyName);
+        let trackValue = this.trackChanges[propertyName];       
         
-        var oldValue = this.trackChanges[propertyName];
-        if (oldValue !== value) {
+        if (trackValue !== value) {
             this.willChangeValue(propertyName);
-            if (oldValue !== this[rawName])
+            if (initValue !== value)
                 this.trackChanges[propertyName] = value;
             else 
                 delete this.trackChanges[propertyName];
@@ -105,8 +104,7 @@ class MIOManagedObject extends MIOObject {
         
         var value = this.trackChanges[propertyName];
         if (value == null) {
-            let rawName = "_" + propertyName;
-            value = this[rawName];
+            value = this.primitiveValue(propertyName);
         }
 
         return value;

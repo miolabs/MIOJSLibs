@@ -58,10 +58,10 @@ class MIOEntityDescription extends MIOObject {
         return this.serverAttributes[name];
     }
 
-    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string) {
+    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string, inverseName?:string, inverseEntity?:string) {
 
         var rel = new MIORelationshipDescription();
-        rel.initWithName(name, destinationEntityName, toMany, serverName);
+        rel.initWithName(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
         this.relationships.push(rel);
 
         // Cache

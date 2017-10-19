@@ -68,7 +68,9 @@ class MIOManagedObjectModel extends MIOObject
             let destinationEntityName = attributes["destinationEntity"];
             let toMany = attributes["toMany"];
             let serverName = attributes["serverName"];            
-            this._addRelationship(name, destinationEntityName, toMany, serverName);
+            let inverseName = attributes["inverseName"];
+            let inverseEntity = attributes["inverseEntity"];
+            this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
         }
     }
 
@@ -135,13 +137,13 @@ class MIOManagedObjectModel extends MIOObject
         this.currentEntity.addAttribute(name, attrType, null, optional, serverName);
     }
 
-    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string){
+    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string){
 
         var isToMany = false;
         if (toMany.toLocaleLowerCase() == "yes" || toMany.toLocaleLowerCase() == "true"){
             isToMany = true;
         }
-        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName);
+        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity);
     }
 
     //TODO: Remove this function
