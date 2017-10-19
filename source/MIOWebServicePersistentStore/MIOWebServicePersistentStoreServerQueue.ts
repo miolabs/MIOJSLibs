@@ -486,7 +486,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         }
     }
 
-    private parseValueForAttribute(attribute: MIOAttributeDescription, value, object) {
+    private parseValueForAttribute(attribute: MIOAttributeDescription, value, object:MIOManagedObject) {
 
         // Ignore server id attribute. We take care in other side of the code
         if (attribute.serverName == this.serverReferenceIDKey) return;
@@ -498,6 +498,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         if (value == null) return;
         let type = attribute.attributeType;
 
+        object.willChangeValue(attribute.name);
         if (type == MIOAttributeType.Boolean) {
             if (typeof (value) === "boolean") {
                 object.setPrimitiveValue(attribute.name, value);
@@ -526,6 +527,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         else if (type == MIOAttributeType.Date) {
             object.setPrimitiveValue(attribute.name, this.serverDateFormatter.dateFromString(value));
         }
+        object.didChangeValue(attribute.name);
     }
 
     private parseRelationships(relationships, item, mo: MIOManagedObject, queryID: string) {
@@ -540,7 +542,9 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                 if (referenceID == null) continue;
 
                 let obj: MIOManagedObject = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, queryID, mo.managedObjectContext);
+                mo.willChangeValue(rel.name);
                 mo.setPrimitiveValue(rel.name, obj);
+                mo.didChangeValue(rel.name);
             }
             else {
 
