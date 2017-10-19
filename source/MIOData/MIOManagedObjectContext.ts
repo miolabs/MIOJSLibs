@@ -68,6 +68,8 @@ class MIOManagedObjectContext extends MIOObject {
             if (index == -1)
                 array.push(obj);
         }
+
+        this.objectsByID[obj.objectID] = obj;
     }
 
     updateObject(obj: MIOManagedObject) {
@@ -87,7 +89,7 @@ class MIOManagedObjectContext extends MIOObject {
         }
     }
 
-    deleteObject(obj) {
+    deleteObject(obj:MIOManagedObject) {
         var entityName = obj.entity.managedObjectClassName;
         var array = this.deletedObjects[entityName];
         if (array == null) {
@@ -100,6 +102,8 @@ class MIOManagedObjectContext extends MIOObject {
             if (index == -1)
                 array.push(obj);
         }
+        
+        delete this.objectsByID[obj.objectID];
 
         // TODO: Delete this hack.
         obj._markForDeletion();
@@ -113,6 +117,12 @@ class MIOManagedObjectContext extends MIOObject {
                 this.deleteObject(o);
             }
         }
+    }
+
+    objectWithID(objectID:string){
+
+        var obj = this.objectsByID[objectID];
+        return obj;
     }
 
     executeFetch(request) {
@@ -131,6 +141,7 @@ class MIOManagedObjectContext extends MIOObject {
             let i = array.indexOf(o);
             if (i == -1)
                 array.push(o);
+            this.objectsByID[o.objectID] = o;
         }
 
         return objs;
@@ -157,9 +168,12 @@ class MIOManagedObjectContext extends MIOObject {
         objsChanges[MIOUpdatedObjectsKey] = this.updateObjects;
         objsChanges[MIODeletedObjectsKey] = this.deletedObjects;
 
-        if (this.parent != null) {
-            let noty = new MIONotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);
+        let noty = new MIONotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);
+        if (this.parent != null) {            
             this.parent.mergeChangesFromContextDidSaveNotification(noty);
+        }
+        else {
+            this.mergeChangesFromContextDidSaveNotification(noty);
         }
         
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);        
