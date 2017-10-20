@@ -43,10 +43,10 @@ class MIOEntityDescription extends MIOObject {
         this._managedObjectClassName = entityName;
     }
 
-    addAttribute(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string) {
+    addAttribute(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string, syncable?:boolean) {
         
         var attr = new MIOAttributeDescription();
-        attr.initWithName(name, type, defaultValue, optional, serverName);
+        attr.initWithName(name, type, defaultValue, optional, serverName, syncable);
         this.attributes.push(attr);
 
         // Cache

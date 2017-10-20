@@ -719,6 +719,8 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
 
         if (attribute.name == this.referenceIDKey) return;
 
+        if (attribute.syncable == false) return;
+
         if (changedKeys != null && changedKeys.indexOf(attribute.name) == -1) return;
 
         let value = object.valueForKey(attribute.name);
