@@ -25,15 +25,15 @@ class MIOFetchedResultsController extends MIOObject
     resultObjects = [];
     objects = [];
 
-    private _request:MIOFetchRequest = null;
-    private _moc = null;
-    private _sectionNameKeyPath = null;
+    fetchRequest:MIOFetchRequest = null;
+    managedObjectContext:MIOManagedObjectContext  = null;
+    sectionNameKeyPath = null;
 
     initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?)
     {
-        this._request = request;
-        this._moc = managedObjectContext;
-        this._sectionNameKeyPath = sectionNameKeyPath;
+        this.fetchRequest = request;
+        this.managedObjectContext = managedObjectContext;
+        this.sectionNameKeyPath = sectionNameKeyPath;
     }
 
     get delegate()
@@ -72,7 +72,7 @@ class MIOFetchedResultsController extends MIOObject
 
     performFetch()
     {
-        this.objects = this._moc.executeFetch(this._request);
+        this.objects = this.managedObjectContext.executeFetch(this.fetchRequest);
         this.resultObjects = null;
 
         if (this.objects.length == 0)
@@ -104,8 +104,8 @@ class MIOFetchedResultsController extends MIOObject
             }
         }        
 
-        this.objects = _MIOPredicateFilterObjects(this.objects, this._request.predicate);
-        this.objects = _MIOSortDescriptorSortObjects(this.objects, this._request.sortDescriptors);
+        this.objects = _MIOPredicateFilterObjects(this.objects, this.fetchRequest.predicate);
+        this.objects = _MIOSortDescriptorSortObjects(this.objects, this.fetchRequest.sortDescriptors);
         this.resultObjects = this.objects;
         this._splitInSections();
 
@@ -143,7 +143,7 @@ class MIOFetchedResultsController extends MIOObject
     {
         this.sections = [];
 
-        if (this._sectionNameKeyPath == null)
+        if (this.sectionNameKeyPath == null)
         {
             var section = new MIOFetchSection();
             section.objects = this.resultObjects;
@@ -157,7 +157,7 @@ class MIOFetchedResultsController extends MIOObject
             for (var index = 0; index < this.resultObjects.length; index++)
             {
                 let obj = this.resultObjects[index];
-                let value = obj.valueForKey(this._sectionNameKeyPath);
+                let value = obj.valueForKey(this.sectionNameKeyPath);
 
                 if (currentSectionKeyPathValue != value) {
                     currentSection = new MIOFetchSection();
