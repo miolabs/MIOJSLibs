@@ -104,6 +104,12 @@ class MIOManagedObjectContext extends MIOObject {
         }
         
         delete this.objectsByID[obj.objectID];
+        let objs = this.objectsByEntity[entityName];
+        if (objs != null){
+            var index = objs.indexOf(obj);
+            if (index > -1)
+                objs.splice(index, 1);
+        }
 
         // TODO: Delete this hack.
         obj._markForDeletion();
@@ -112,7 +118,7 @@ class MIOManagedObjectContext extends MIOObject {
     removeAllObjectsForEntityName(entityName) {
         var objs = this.objectsByEntity[entityName];
         if (objs != null) {
-            for (var index = 0; index < objs.length; index++) {
+            for (var index = objs.length - 1; index >= 0; index--) {
                 var o = objs[index];
                 this.deleteObject(o);
             }
