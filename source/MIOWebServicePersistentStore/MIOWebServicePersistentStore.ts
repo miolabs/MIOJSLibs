@@ -235,6 +235,9 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
             }
         }
 
+        let noty = new MIONotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);
+        context.mergeChangesFromContextDidSaveNotification(noty);
+        
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, context, objsChanges);
     }
 
