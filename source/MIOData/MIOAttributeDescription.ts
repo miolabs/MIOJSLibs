@@ -19,10 +19,11 @@ class MIOAttributeDescription extends MIOObject
     private _attributeType = MIOAttributeType.Undefined;
     private _defaultValue = null;
     private _serverName:string = null;
+    private _syncable = true;
 
     optional = true;
 
-    initWithName(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string){
+    initWithName(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string, syncable?:boolean){
 
         super.init();
 
@@ -31,6 +32,7 @@ class MIOAttributeDescription extends MIOObject
         this._defaultValue = defaultValue;
         this._serverName = serverName;
         this.optional = optional;
+        if (syncable == false) this._syncable = false;
     }
 
     get name(){
@@ -51,5 +53,9 @@ class MIOAttributeDescription extends MIOObject
         }
         
         return this._serverName;
+    }
+
+    get syncable(){
+        return this._syncable;
     }
 }

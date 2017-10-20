@@ -59,8 +59,9 @@ class MIOManagedObjectModel extends MIOObject
             let serverName = attributes["serverName"];            
             let optional = attributes["optional"] != null ? attributes["optional"].toLowerCase() : "yes";            
             let optionalValue = optional == "no" ? false : true;
+            let syncable = attributes["syncable"];
 
-            this._addAttribute(name, type, optionalValue, serverName);
+            this._addAttribute(name, type, optionalValue, serverName, syncable);
         }        
         else if (element == "relationship") {
         
@@ -104,7 +105,7 @@ class MIOManagedObjectModel extends MIOObject
         console.log("datamodel.xml parser finished");
     }
 
-    private _addAttribute(name, type, optional, serverName){
+    private _addAttribute(name, type, optional, serverName, syncable){
 
         var attrType = null;
         switch(type){
@@ -134,7 +135,7 @@ class MIOManagedObjectModel extends MIOObject
                 break;
         }
         
-        this.currentEntity.addAttribute(name, attrType, null, optional, serverName);
+        this.currentEntity.addAttribute(name, attrType, null, optional, serverName, syncable);
     }
 
     private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string){
