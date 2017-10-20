@@ -122,6 +122,9 @@ class MIOManagedObjectContext extends MIOObject {
     objectWithID(objectID:string){
 
         var obj = this.objectsByID[objectID];
+        if (obj == null) {
+            obj = this.persistentStoreCoordinator.objectWithID(objectID);
+        }
         return obj;
     }
 
