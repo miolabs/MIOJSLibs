@@ -59,6 +59,13 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
         //TODO: Close miorpc
     }
 
+    objectWithID(objectID:string){
+        let referenceID = this.referenceIDByObjectID[objectID];
+        if (referenceID == null) return null;
+        let obj = this.objectsByReferenceID[referenceID];
+        return obj;
+    }
+
     executeRequest(persistentStoreRequest: MIOPersistentStoreRequest, context: MIOManagedObjectContext) {
 
         if (persistentStoreRequest.requestType == MIORequestType.Fetch) {
@@ -233,7 +240,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
                 let o = del_obj[index];
                 this.deleteObjectInCache(o);
             }
-        }
+        }        
 
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, context, objsChanges);
     }

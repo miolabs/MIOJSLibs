@@ -50,4 +50,15 @@ class MIOPersistentStoreCoordinator extends MIOObject
 
         return result;
     }
+
+    objectWithID(objectID:string){
+        
+        for (var index = 0; index < this._stores.length; index++){
+            let ps:MIOPersistentStore = this._stores[index];
+            let obj = ps.objectWithID(objectID);
+            if (obj != null) return obj;
+        }
+
+        return null;
+    }
 }
