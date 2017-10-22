@@ -4,7 +4,7 @@
 class MWPSUploadOperation extends MIOOperation {
 
     token = null;
-    url = null;
+    url:MIOURL = null;
     body = null;
     httpMethod = "GET";
     dependencyIDs = null;
@@ -35,8 +35,17 @@ class MWPSUploadOperation extends MIOOperation {
 
     start() {
         this.setUploading(true);
+        console.log("*******************");
+        console.log("MWPSUploadOperation: " + this.httpMethod + " " + this.url.absoluteString);
+        if (this.body != null)
+            console.log("MWPSUploadOperation: " + JSON.stringify(this.body));
+        console.log("*******************");
         this.delegate.sendRequest(this.url, this.body, this.httpMethod, this, function(statusCode, json){            
             
+            console.log("*******************");
+            console.log("MWPSUploadOperation: Server response " + statusCode);
+            console.log("*******************");
+
             this.responseCode = statusCode;
             this.responseJSON = json;
             

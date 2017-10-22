@@ -98,6 +98,9 @@ class MUIAlertViewController extends MUIViewController
 {
     textFields = [];
     comboBoxes = [];
+    
+    private target = null;
+    private completion = null; 
 
     private _items = [];        
 
@@ -157,6 +160,14 @@ class MUIAlertViewController extends MUIViewController
         this._tableView.reloadData();
     }
 
+    viewWillDisappear(animated?){
+        super.viewWillDisappear(animated);
+        
+        if (this.target != null && this.completion != null){
+            this.completion.call(this.target);
+        }
+    }
+
      get preferredContentSize()
     {
         return this._alertViewSize;
@@ -188,6 +199,12 @@ class MUIAlertViewController extends MUIViewController
         this.comboBoxes.push(ac.comboBox);
         this._addItem(ac);
     }    
+
+    addCompletionHandler(target, handler){
+
+        this.target = target;
+        this.completion = handler;
+    }
 
     private _calculateContentSize()
     {
