@@ -503,7 +503,7 @@ class MUITableView extends MUIView {
 
             var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
 
-            if (typeof this.dataSource.titleForHeaderInSection === "function") {
+            if (typeof this.dataSource.titleForHeaderInSection === "function" && rows > 0) {
                 var title = this.dataSource.titleForHeaderInSection(this, sectionIndex);
                 var header = new MUIView();
                 header.init();
@@ -521,7 +521,7 @@ class MUITableView extends MUIView {
 
                 this.addSubview(header);
             }
-            else if (typeof this.dataSource.viewForHeaderInSection === "function") {
+            else if (typeof this.dataSource.viewForHeaderInSection === "function" && rows > 0) {
                 var view = this.dataSource.viewForHeaderInSection(this, sectionIndex);
                 if (view != null) {
                     section.header = view;
