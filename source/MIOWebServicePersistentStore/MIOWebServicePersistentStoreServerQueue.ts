@@ -87,6 +87,9 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                 delete this.downloadingObjectsByReferenceID[referenceID];
             }
 
+            let entityName = query["EntityName"];
+            MIONotificationCenter.defaultCenter().postNotification('MIOWebServicePersistentStoreDidChangeEntityStatus', entityName, 'Ready');            
+
             delete this.queries[queryID];
         }
     }
@@ -195,6 +198,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             if (error != null) {
                 console.log("MIOWebserice: " + request.httpMethod + ": " + request.url.absoluteString);
                 console.log("MIOWebserice: Error " + error["Code"] + ". " + error["Error"]);
+                console.log("MIOWebserice: Body: " + request.body);
             }
 
             completion.call(target, statusCode, json);
@@ -210,17 +214,20 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             qID = MIOUUID.uuid();
             query = {};
             query["Count"] = 1;
-            query["Inserted"] = {}
-            query["Updated"] = {}
-            query["Deleted"] = {}
-            query["Objects"] = []
+            query["Inserted"] = {};
+            query["Updated"] = {};
+            query["Deleted"] = {};
+            query["Objects"] = [];
+            query["EntityName"] = entityName;
             this.queries[qID] = query;
+
+            MIONotificationCenter.defaultCenter().postNotification('MIOWebServicePersistentStoreDidChangeEntityStatus', entityName, 'Downloading');
         }
         else {
             query = this.queries[queryID];
             query["Count"] = query["Count"] + 1;
         }
-
+        
         // NO, so we can start ask to the server
         this.sendRequest(url, body, httpMethod, this, function (code, json) {
 
