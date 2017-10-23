@@ -197,7 +197,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
         return p;
     }
 
-    filterServerAttributeKey(ps: MIOWebServicePersistentStore, entityName, property, value, comparator) {
+    filterServerAttributeKey(entityName:string, property:string, value, comparator) {
 
         var format = null;
 
