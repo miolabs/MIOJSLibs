@@ -345,6 +345,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
 
     private removeObjectInCacheWithReferenceID(referenceID: string) {
 
+        if (referenceID == null) return;
+
         let obj = this.objectsByReferenceID[referenceID];
 
         if (obj == null) return;
