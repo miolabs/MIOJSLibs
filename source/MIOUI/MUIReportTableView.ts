@@ -9,26 +9,26 @@ enum MUIReportTableViewCellType {
 
 class MUIReportTableViewCell extends MUIView {
 
-    type = MUIReportTableViewCellType.Custom;    
+    type = MUIReportTableViewCellType.Custom;
 
-    label:MUILabel = null;
+    label: MUILabel = null;
 
     initWithLayer(layer, owner, options) {
         super.initWithLayer(layer, owner, options);
 
-        this.layer.style.background = "";        
+        this.layer.style.background = "";
         this.layer.classList.add("tableviewcell_deselected_color");
 
         if (this.type == MUIReportTableViewCellType.Label) {
 
             let labelLayer = MUILayerGetFirstElementWithTag(layer, "LABEL");
-            if (labelLayer != null){
+            if (labelLayer != null) {
                 this.label = new MUILabel();
                 this.label.initWithLayer(labelLayer, this);
                 this.addSubview(this.label);
             }
         }
-        
+
         // var instance = this;
         // this.layer.onclick = function () {
         //     if (instance._onClickFn != null)
@@ -50,23 +50,26 @@ class MUIReportTableViewRow extends MUIView {
             let cell: MUIReportTableViewCell = this.cells[index];
             cell.removeFromSuperview();
         }
-        super.removeFromSuperview();
+        //super.removeFromSuperview();
     }
 }
 
 class MUIReportTableViewColumn extends MIOObject {
 
-    static labelColumnWithTitle(title: string, width?, identifer?: string) {
+    static labelColumnWithTitle(title: string, width, serverName?, identifer?: string) {
         let col = new MUIReportTableViewColumn();
         col.title = title;
         col.identifier = identifer;
-        if (width != null) col.width = width;
+        col.width = width;
+        col.serverName = serverName;
         return col;
     }
 
     identifier: string = null;
     title: string = null;
-    width = 150;
+    width = 0;
+    serverName: string = null;
+    pixelWidth = 0;
 
     private _colHeader: MUIView = null;
 
@@ -107,7 +110,7 @@ class MUIReportTableView extends MUIView {
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
-        
+
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
             for (var index = 0; index < this.layer.childNodes.length; index++) {
@@ -153,11 +156,18 @@ class MUIReportTableView extends MUIView {
         this.columns.push(column);
     }
 
-    removeAllColumns(){
+    removeAllColumns() {
+        for (var index = 0; index < this.columns.length; index++) {
+
+            let col: MUIReportTableViewColumn = this.columns[index];
+            let header = col.columnHeaderView();
+            header.removeFromSuperview();
+        }
+
         this.columns = [];
     }
 
-    dequeueReusableCellWithIdentifier(identifier:string) {
+    dequeueReusableCellWithIdentifier(identifier: string) {
 
         var item = this.cellPrototypes[identifier];
 
@@ -191,16 +201,18 @@ class MUIReportTableView extends MUIView {
     reloadData() {
 
         // Remove all subviews
+
         for (var index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
             row.removeFromSuperview();
         }
 
+        this.rows = [];
         this.selectedIndexPath = null;
 
         for (var index = 0; index < this.columns.length; index++) {
 
-            let col:MUIReportTableViewColumn = this.columns[index];
+            let col: MUIReportTableViewColumn = this.columns[index];
             let header = col.columnHeaderView();
             this.addSubview(header);
         }
@@ -211,9 +223,9 @@ class MUIReportTableView extends MUIView {
             let row = new MUIReportTableViewRow();
             row.init();
             for (var colIndex = 0; colIndex < this.columns.length; colIndex++) {
-
+                let col = this.columns[colIndex];
                 let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
-                let cell = this.dataSource.cellAtIndexPath(this, indexPath);
+                let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
                 this.addSubview(cell);
                 row.cells.push(cell);
             }
@@ -232,114 +244,114 @@ class MUIReportTableView extends MUIView {
         if (this._needDisplay == false) return;
         this._needDisplay = false;
 
-
         var x = 0;
         var y = 0;
         var w = this.getWidth();
 
         for (var colIndex = 0; colIndex < this.columns.length; colIndex++) {
-            let col:MUIReportTableViewColumn = this.columns[colIndex];
-            let header:MUIView = col.columnHeaderView();
+            let col: MUIReportTableViewColumn = this.columns[colIndex];
+            let header: MUIView = col.columnHeaderView();
             header.setX(x);
-            x += col.width;
+            col.pixelWidth = (col.width * this.getWidth()) / 100;
+            x += col.pixelWidth;
         }
         y += 23;
 
         x = 0;
         var offsetY = 0;
-        for (var rowIndex = 0; rowIndex < this.rows.length; rowIndex++){
-            let row:MUIReportTableViewRow = this.rows[rowIndex];
-            for (var colIndex = 0; colIndex < this.columns.length; colIndex++){
+        for (var rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
+            let row: MUIReportTableViewRow = this.rows[rowIndex];
+            for (var colIndex = 0; colIndex < this.columns.length; colIndex++) {
                 let col = this.columns[colIndex];
                 let cell = row.cells[colIndex];
-                cell.setX(x);                
+                cell.setX(x);
                 cell.setY(y);
-                cell.setWidth(col.width);
-                x += col.width;
-                
+                cell.setWidth(col.pixelWidth);
+                x += col.pixelWidth;
+
                 let h = cell.getHeight();
                 if (offsetY < h) offsetY = h;
             }
             x = 0;
             y += offsetY;
-            if (offsetY == 0) y += 40; 
+            if (offsetY == 0) y += 40;
         }
 
     }
-/*
-        if (this.headerView != null) {
-            this.headerView.setY(y);
-
-            if (this.headerHeight > 0) {
-                this.headerView.setHeight(this.headerHeight);
-                y += this.headerHeight;
+    /*
+            if (this.headerView != null) {
+                this.headerView.setY(y);
+    
+                if (this.headerHeight > 0) {
+                    this.headerView.setHeight(this.headerHeight);
+                    y += this.headerHeight;
+                }
+                else
+                    y += this.headerView.getHeight();
             }
-            else
-                y += this.headerView.getHeight();
-        }
-
-        for (var count = 0; count < this.sections.length; count++) {
-            var section = this.sections[count];
-
-            if (section.header != null) {
-                section.header.setY(y);
-                var sh = section.header.getHeight();
-                if (sh > 0) {
-                    y += sh;
+    
+            for (var count = 0; count < this.sections.length; count++) {
+                var section = this.sections[count];
+    
+                if (section.header != null) {
+                    section.header.setY(y);
+                    var sh = section.header.getHeight();
+                    if (sh > 0) {
+                        y += sh;
+                    }
+                    else {
+                        section.header.setHeight(this.sectionHeaderHeight);
+                        y += this.sectionHeaderHeight;
+                    }
                 }
-                else {
-                    section.header.setHeight(this.sectionHeaderHeight);
-                    y += this.sectionHeaderHeight;
+    
+                for (var index = 0; index < section.cells.length; index++) {
+                    var h = 0;
+    
+                    if (this.delegate != null) {
+                        if (typeof this.delegate.heightForRowAtIndexPath === "function")
+                            h = this.delegate.heightForRowAtIndexPath(this, index, section);
+                    }
+    
+                    var cell = section.cells[index];
+                    if (this.delegate != null) {
+                        if (typeof this.delegate.willDisplayCellAtIndexPath === "function")
+                            this.delegate.willDisplayCellAtIndexPath(this, cell, index, section);
+                    }
+    
+                    cell.setY(y);
+                    if (h > 0)
+                        cell.setHeight(h);
+    
+                    if (h == 0)
+                        h = cell.getHeight();
+    
+                    if (h == 0) {
+                        h = 44;
+                        cell.setHeight(h);
+                    }
+    
+                    y += h;
+                    if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLine)
+                        y += 1;
+                    else if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLineEtched)
+                        y += 2;
+    
+                    cell.layout();
                 }
             }
-
-            for (var index = 0; index < section.cells.length; index++) {
-                var h = 0;
-
-                if (this.delegate != null) {
-                    if (typeof this.delegate.heightForRowAtIndexPath === "function")
-                        h = this.delegate.heightForRowAtIndexPath(this, index, section);
+    
+            if (this.footerView != null) {
+                this.footerView.setY(y);
+    
+                if (this.footerHeight > 0) {
+                    this.footerView.setHeight(this.footerHeight);
+                    y += this.footerHeight;
                 }
-
-                var cell = section.cells[index];
-                if (this.delegate != null) {
-                    if (typeof this.delegate.willDisplayCellAtIndexPath === "function")
-                        this.delegate.willDisplayCellAtIndexPath(this, cell, index, section);
-                }
-
-                cell.setY(y);
-                if (h > 0)
-                    cell.setHeight(h);
-
-                if (h == 0)
-                    h = cell.getHeight();
-
-                if (h == 0) {
-                    h = 44;
-                    cell.setHeight(h);
-                }
-
-                y += h;
-                if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLine)
-                    y += 1;
-                else if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLineEtched)
-                    y += 2;
-
-                cell.layout();
+                else
+                    y += this.footerView.getHeight() + 1;
             }
-        }
-
-        if (this.footerView != null) {
-            this.footerView.setY(y);
-
-            if (this.footerHeight > 0) {
-                this.footerView.setHeight(this.footerHeight);
-                y += this.footerHeight;
-            }
-            else
-                y += this.footerView.getHeight() + 1;
-        }
-
-        this.layer.scrollHeight = y;
-}*/
+    
+            this.layer.scrollHeight = y;
+    }*/
 }
