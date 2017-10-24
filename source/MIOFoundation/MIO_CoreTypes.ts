@@ -25,7 +25,7 @@ class MIOSize
     width = 0;
     height = 0;
 
-    public static Zero()
+    public static Zero():MIOSize
     {
         var s = new MIOSize(0, 0);
         return s;
@@ -37,7 +37,7 @@ class MIOSize
         this.height = h;
     }
 
-    isEqualTo(size)
+    isEqualTo(size):boolean
     {
         if (this.width == size.width
             && this.height == size.height)

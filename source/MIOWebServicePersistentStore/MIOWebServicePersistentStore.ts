@@ -347,6 +347,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
 
         let obj = this.objectsByReferenceID[referenceID];
 
+        if (obj == null) return;
+
         delete this.objectsByReferenceID[referenceID.toUpperCase()];
         delete this.referenceIDByObjectID[obj.objectID];
     }
@@ -362,6 +364,8 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
         let referenceID = obj.valueForKey(this.referenceIDKey);
         this.updateObjectInCacheWithReferenceID(obj, referenceID);
         obj.isFault = false;
+
+        console.log("INSERTED: " + referenceID);
     }
 
     updateObjectInCache(obj: MIOManagedObject) {
@@ -381,5 +385,7 @@ class MIOWebServicePersistentStore extends MIOPersistentStore {
         let referenceID = obj.valueForKey(this.referenceIDKey);
         this.removeObjectInCacheWithReferenceID(referenceID);
         obj.isFault = false;
+
+        console.log("DELETED: " + referenceID);
     }
 }

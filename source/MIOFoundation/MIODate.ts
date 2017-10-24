@@ -113,6 +113,16 @@ function MIODateAddDaysToDateString(dateString, days)
     return ds;
 }
 
+function MIODateRemoveDaysToDateString(dateString, days)
+{
+    var d = MIODateFromString(dateString);
+    d.setDate(d.getDate() - parseInt(days));
+    var ds = MIODateGetDateString(d);
+
+    return ds;
+}
+
+
 function MIODateFromMiliseconds(miliseconds){
   var mEpoch = parseInt(miliseconds); 
   if(mEpoch<10000000000) mEpoch *= 1000; // convert to milliseconds (Epoch is usually expressed in seconds, but Javascript uses Milliseconds)
@@ -124,4 +134,15 @@ function MIODateFromMiliseconds(miliseconds){
 function isDate (x) 
 { 
   return (null != x) && !isNaN(x) && ("undefined" !== typeof x.getDate); 
+}
+
+function MIODateToday(){
+    return new Date();
+}
+
+function MIODateYesterday(){
+    let d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d;
+
 }

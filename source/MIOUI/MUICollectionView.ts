@@ -3,29 +3,8 @@
  */
 
 /// <reference path="MUIView.ts" />
+/// <reference path="MUICollectionViewLayout.ts" />
 
-
-class MUICollectionViewLayout
-{
-    paddingTop = 0;
-    paddingLeft = 0;
-    paddingRight = 0;
-    spaceX = 0;
-    spaceY = 0;
-}
-
-class MUICollectionViewFlowLayout extends MUICollectionViewLayout
-{
-    constructor()
-    {
-        super();
-        this.paddingTop = 10;
-        this.paddingLeft = 0;
-        this.paddingRight = 0;
-        this.spaceX = 10;
-        this.spaceY = 10;
-    }
-}
 
 class MUICollectionViewCell extends MUIView
 {
@@ -39,7 +18,6 @@ class MUICollectionViewCell extends MUIView
     initWithLayer(layer, owner, options)
     {
         super.initWithLayer(layer, owner, options);
-
         this._setupLayer();
     }
 
@@ -76,7 +54,7 @@ class MUICollectionView extends MUIView
     dataSource = null;
     delegate = null;
 
-    private _collectionViewLayout = null;
+    private _collectionViewLayout:MUICollectionViewFlowLayout = null;
 
     private _cellPrototypes = {};
     private _supplementaryViews = {};
@@ -86,15 +64,17 @@ class MUICollectionView extends MUIView
     selectedCellIndex = -1;
     selectedCellSection = -1;
 
-    public get collectionViewLayout()
+    public get collectionViewLayout():MUICollectionViewFlowLayout
     {
-        if (this._collectionViewLayout == null)
+        if (this._collectionViewLayout == null) {
             this._collectionViewLayout = new MUICollectionViewFlowLayout();
+            this._collectionViewLayout.init();
+        }
 
         return this._collectionViewLayout;
     }
 
-    public set collectionViewLayout(layout)
+    public set collectionViewLayout(layout:MUICollectionViewFlowLayout)
     {
         //TODO: Set animations for changing layout
         this._collectionViewLayout = layout;
@@ -384,19 +364,20 @@ class MUICollectionView extends MUIView
         if (this._needDisplay == false) return;
         this._needDisplay = false;
 
-        if (this._collectionViewLayout == null)
-            this._collectionViewLayout = new MUICollectionViewFlowLayout();
-
         if (this._sections == null)
             return;
 
-        var x = this.collectionViewLayout.paddingLeft;
-        var y = this.collectionViewLayout.paddingTop;
+        // var x = this.collectionViewLayout.sectionInset.left;
+        // var y = this.collectionViewLayout.sectionInset.top;
+
+        // TODO: Check margins
+        var x = 0;
+        var y = 0;
 
         for (var count = 0; count < this._sections.length; count++)
         {
             var section = this._sections[count];
-            x = this.collectionViewLayout.paddingLeft;
+            x = this.collectionViewLayout.sectionInset.left;
 
             // Add header view
             if (section.header != null)
@@ -404,37 +385,28 @@ class MUICollectionView extends MUIView
                 section.header.setY(y);
                 var offsetY = section.header.getHeight();
                 if (offsetY <= 0) offsetY = 23;
-                y += offsetY + this.collectionViewLayout.spaceY;
+                y += offsetY + this.collectionViewLayout.headerReferenceSize.height;
             }
 
             // Add cells
-            var offsetY;
+            let maxX = this.getWidth() - this.collectionViewLayout.sectionInset.right;
             for (var index = 0; index < section.cells.length; index++) {
 
-                var cell = section.cells[index];
-
-                var offsetX = cell.getWidth() + this.collectionViewLayout.spaceX;
-                if (offsetX <= 0) offsetX = 44;
-
-                var oy = cell.getHeight();
-                if (oy <= 0) oy = 44;
-
-                if (oy > offsetY) offsetY = oy;
-
-                if ((x + offsetX + this.collectionViewLayout.paddingRight) > this.getWidth())
-                {
-                    x = this.collectionViewLayout.paddingLeft;
-                    y += offsetY + this.collectionViewLayout.spaceY;
-                }
+                let cell = section.cells[index];
+                cell.setWidth(this.collectionViewLayout.itemSize.width);
+                cell.setHeight(this.collectionViewLayout.itemSize.height);
 
                 cell.setX(x);
                 cell.setY(y);
 
-                x += offsetX + this.collectionViewLayout.paddingLeft;
+                x += this.collectionViewLayout.itemSize.width + this.collectionViewLayout.minimumInteritemSpacing;                
+                if (x >= maxX) {
+                    x = this.collectionViewLayout.sectionInset.left;
+                    y += this.collectionViewLayout.itemSize.height;
+                }
             }
 
-            if (x > 0)
-                y += offsetY + this.collectionViewLayout.paddingTop;
+            y += this.collectionViewLayout.minimumLineSpacing;
 
             // Add footer view
             if (section.footer != null)
@@ -442,7 +414,7 @@ class MUICollectionView extends MUIView
                 section.footer.setY(y);
                 var offsetY = section.footer.getHeight();
                 if (offsetY <= 0) offsetY = 23;
-                y += offsetY + this.collectionViewLayout.paddingTop;
+                y += offsetY + this.collectionViewLayout.footerReferenceSize.height;
             }
         }
     }
