@@ -45,3 +45,5 @@
 
 /// <reference path="MUIReportViewController.ts" />
 
+/// <reference path="MUIReportTableView.ts" />
+
