@@ -104,6 +104,15 @@ function MIODateFromString(string)
     return d;
 }
 
+function MIODateToUTC(date)
+{
+    var dif = date.getTimezoneOffset();
+    let d = new Date();
+    d.setTime(date.getTime() + (dif * 60 * 1000));
+
+    return d;
+}
+
 function MIODateAddDaysToDateString(dateString, days)
 {
     var d = MIODateFromString(dateString);
