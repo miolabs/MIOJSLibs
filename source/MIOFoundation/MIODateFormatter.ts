@@ -42,7 +42,12 @@ class MIODateFormatter extends MIOFormatter {
     }
 
     stringFromDate(date:Date):string {
+        return this.stringForObjectValue(date);
+    }
 
+    stringForObjectValue(value):string {
+
+        let date = value as Date;
         if (date == null) return null;
 
         var str = "";
