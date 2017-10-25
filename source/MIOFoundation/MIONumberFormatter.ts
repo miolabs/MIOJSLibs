@@ -45,8 +45,13 @@ class MIONumberFormatter extends MIOFormatter {
         return null;
     }
 
-    stringFromNumber(number:number){
+    stringFromNumber(number:number):string{
+        return this.stringForObjectValue(number);
+    }
 
+    stringForObjectValue(value):string {
+        
+        let number = value as number;
         if(!number) return '0';
         var str = number.toString();
         var intValue = null;

@@ -140,9 +140,33 @@ function MIODateToday(){
     return new Date();
 }
 
+function MIODateTodayString(){
+    let d = MIODateToday();
+    return MIODateGetString(d);
+}
+
 function MIODateYesterday(){
     let d = new Date();
     d.setDate(d.getDate() - 1);
     return d;
+}
 
+function MIODateGetFirstDayOfTheWeek(date:Date){
+
+    let dayString = MIODateGetDateString(date);
+    // TODO: Check sunday start or monday start
+    let firstDayString = MIODateRemoveDaysToDateString(dayString, date.getDay() - 1);
+    let first = MIODateFromString(firstDayString);
+
+    return first;
+}
+
+function MIODateGetLastDayOfTheWeek(date:Date){
+
+    let dayString = MIODateGetDateString(date);
+    // TODO: Check sunday start or monday start
+    let lastDayString = MIODateAddDaysToDateString(dayString, (7 - date.getDay()));
+    let last = MIODateFromString(lastDayString);
+
+    return last;
 }

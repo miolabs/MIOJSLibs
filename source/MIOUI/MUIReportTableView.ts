@@ -13,6 +13,9 @@ class MUIReportTableViewCell extends MUIView {
 
     label: MUILabel = null;
 
+    private _target = null;
+    private _onClickFn = null;
+
     initWithLayer(layer, owner, options) {
         super.initWithLayer(layer, owner, options);
 
@@ -29,11 +32,11 @@ class MUIReportTableViewCell extends MUIView {
             }
         }
 
-        // var instance = this;
-        // this.layer.onclick = function () {
-        //     if (instance._onClickFn != null)
-        //         instance._onClickFn.call(instance._target, instance);
-        // };
+        var instance = this;
+        this.layer.onclick = function () {
+            if (instance._onClickFn != null)
+                instance._onClickFn.call(instance._target, instance);
+        };
 
         // this.layer.ondblclick = function () {
         //     if (instance._onDblClickFn != null)
@@ -51,17 +54,20 @@ class MUIReportTableViewRow extends MUIView {
             cell.removeFromSuperview();
         }
         //super.removeFromSuperview();
+        this.cells = [];
     }
 }
 
 class MUIReportTableViewColumn extends MIOObject {
 
-    static labelColumnWithTitle(title: string, width, serverName?, identifer?: string) {
+    static labelColumnWithTitle(title: string, width, alignment, serverName?, formatter?:MIOFormatter, identifer?: string) {
         let col = new MUIReportTableViewColumn();
         col.title = title;
         col.identifier = identifer;
         col.width = width;
         col.serverName = serverName;
+        col.alignment = alignment;
+        col.formatter = formatter;
         return col;
     }
 
@@ -70,6 +76,8 @@ class MUIReportTableViewColumn extends MIOObject {
     width = 0;
     serverName: string = null;
     pixelWidth = 0;
+    alignment = "center";
+    formatter:MIOFormatter = null;
 
     private _colHeader: MUIView = null;
 
@@ -80,7 +88,6 @@ class MUIReportTableViewColumn extends MIOObject {
         var header = new MUIView();
         header.init();
         header.setHeight(23);
-        header.setWidth(this.width);
         header.layer.style.background = "";
         header.layer.classList.add("tableview_header");
 
@@ -89,6 +96,7 @@ class MUIReportTableViewColumn extends MIOObject {
         titleLabel.layer.style.background = "";
         titleLabel.layer.classList.add("tableview_header_title");
         titleLabel.text = this.title;
+        titleLabel.setTextAlignment(this.alignment);
         header.addSubview(titleLabel);
 
         this._colHeader = header;
@@ -102,8 +110,11 @@ class MUIReportTableView extends MUIView {
     delegate = null;
 
     private cellPrototypes = {};
+    private cells = [];
     private rows = [];
     private columns = [];
+
+    private rowByCell = {};
 
     selectedIndexPath = null;
 
@@ -207,7 +218,9 @@ class MUIReportTableView extends MUIView {
             row.removeFromSuperview();
         }
 
+        this.rowByCell = {};
         this.rows = [];
+        this.cells = [];
         this.selectedIndexPath = null;
 
         for (var index = 0; index < this.columns.length; index++) {
@@ -226,8 +239,11 @@ class MUIReportTableView extends MUIView {
                 let col = this.columns[colIndex];
                 let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
                 let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
+                cell._target = this;
+                cell._onClickFn = this.cellOnClickFn;
                 this.addSubview(cell);
                 row.cells.push(cell);
+                this.rowByCell[cell] = row;
             }
             this.rows.push(row);
         }
@@ -236,8 +252,6 @@ class MUIReportTableView extends MUIView {
     }
 
     layout() {
-
-        //super.layout();
 
         if (this._viewIsVisible == false) return;
         if (this.hidden == true) return;
@@ -253,6 +267,7 @@ class MUIReportTableView extends MUIView {
             let header: MUIView = col.columnHeaderView();
             header.setX(x);
             col.pixelWidth = (col.width * this.getWidth()) / 100;
+            header.setWidth(col.pixelWidth);
             x += col.pixelWidth;
         }
         y += 23;
@@ -276,82 +291,17 @@ class MUIReportTableView extends MUIView {
             y += offsetY;
             if (offsetY == 0) y += 40;
         }
-
     }
-    /*
-            if (this.headerView != null) {
-                this.headerView.setY(y);
+
+    cellOnClickFn(cell) {
+                
+        let row = this.rowByCell[cell];
+        let rowIndex = this.rows.indexOf(row);
+
+        if (this.delegate != null) {
+            if (typeof this.delegate.didSelectCellAtIndexPath === "function")
+                this.delegate.didSelectCellAtRow(this, rowIndex);
+        }
+    }
     
-                if (this.headerHeight > 0) {
-                    this.headerView.setHeight(this.headerHeight);
-                    y += this.headerHeight;
-                }
-                else
-                    y += this.headerView.getHeight();
-            }
-    
-            for (var count = 0; count < this.sections.length; count++) {
-                var section = this.sections[count];
-    
-                if (section.header != null) {
-                    section.header.setY(y);
-                    var sh = section.header.getHeight();
-                    if (sh > 0) {
-                        y += sh;
-                    }
-                    else {
-                        section.header.setHeight(this.sectionHeaderHeight);
-                        y += this.sectionHeaderHeight;
-                    }
-                }
-    
-                for (var index = 0; index < section.cells.length; index++) {
-                    var h = 0;
-    
-                    if (this.delegate != null) {
-                        if (typeof this.delegate.heightForRowAtIndexPath === "function")
-                            h = this.delegate.heightForRowAtIndexPath(this, index, section);
-                    }
-    
-                    var cell = section.cells[index];
-                    if (this.delegate != null) {
-                        if (typeof this.delegate.willDisplayCellAtIndexPath === "function")
-                            this.delegate.willDisplayCellAtIndexPath(this, cell, index, section);
-                    }
-    
-                    cell.setY(y);
-                    if (h > 0)
-                        cell.setHeight(h);
-    
-                    if (h == 0)
-                        h = cell.getHeight();
-    
-                    if (h == 0) {
-                        h = 44;
-                        cell.setHeight(h);
-                    }
-    
-                    y += h;
-                    if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLine)
-                        y += 1;
-                    else if (cell.separatorStyle == MUITableViewCellSeparatorStyle.SingleLineEtched)
-                        y += 2;
-    
-                    cell.layout();
-                }
-            }
-    
-            if (this.footerView != null) {
-                this.footerView.setY(y);
-    
-                if (this.footerHeight > 0) {
-                    this.footerView.setHeight(this.footerHeight);
-                    y += this.footerHeight;
-                }
-                else
-                    y += this.footerView.getHeight() + 1;
-            }
-    
-            this.layer.scrollHeight = y;
-    }*/
 }

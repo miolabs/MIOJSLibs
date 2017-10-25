@@ -4,7 +4,7 @@
 class MIOFormatter extends MIOObject {
 
     stringForObjectValue(value) {
-
+        return value;
     }
 
     getObjectValueForString(str:string) {
