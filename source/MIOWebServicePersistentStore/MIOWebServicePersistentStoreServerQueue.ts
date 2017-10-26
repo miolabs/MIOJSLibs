@@ -44,6 +44,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             qID = MIOUUID.uuid();
             query = {};
             query["Count"] = 1;
+            query["Level"] = 1;
             query["Inserted"] = {}
             query["Updated"] = {}
             query["Deleted"] = {}
@@ -169,10 +170,11 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             request.setHeaderField("Authorization", "Bearer " + this.token);
         request.setHeaderField("Content-Type", "application/json");
 
-        if (body != null) {
-            body['limit'] = 10;
+        if (body != null){
+            body["limit"] = 30;
             request.body = JSON.stringify(body);
         }
+            
         request.httpMethod = httpMethod;
 
         var urlConnection = new MIOURLConnection();
@@ -207,7 +209,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         });
     }
 
-    private fetchOnSever(url: MIOURL, body, httpMethod: string, referenceID: string, entityName: string, queryID: string, context: MIOManagedObjectContext) {
+    private fetchOnSever(url: MIOURL, body, httpMethod: string, referenceID: string, entityName: string, queryID: string, level, context: MIOManagedObjectContext) {
 
         // Create query to keep track the objects
         var qID = queryID;
@@ -229,7 +231,9 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             query = this.queries[queryID];
             query["Count"] = query["Count"] + 1;
         }
-        
+                
+        let lvl = level + 1;
+
         // NO, so we can start ask to the server
         this.sendRequest(url, body, httpMethod, this, function (code, json) {
 
@@ -241,7 +245,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
 
                 // Convert to an array in case of fetch by reference ID
                 let items = referenceID ? [json["data"]] : json["data"];
-                this.parseServerObjectsForEntity(entityName, items, qID, context);
+                this.parseServerObjectsForEntity(entityName, items, qID, lvl, context);
             }
             else {
                 // The object is deleted
@@ -275,10 +279,10 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             httpMethod = "POST";
         }
 
-        this.fetchOnSever(url, body, httpMethod, null, entityName, null, context);
+        this.fetchOnSever(url, body, httpMethod, null, entityName, null, 0, context);
     }
 
-    fetchObjectOnServerByReferenceID(referenceID: string, entityName: string, queryID: string, context: MIOManagedObjectContext) {
+    fetchObjectOnServerByReferenceID(referenceID: string, entityName: string, queryID: string, level, context: MIOManagedObjectContext) {
 
         var result = this.delegate.canServerSyncEntityNameForType(entityName, MIOWebServicePersistentIgnoreEntityType.Query);
         if (result == false) return;
@@ -287,10 +291,10 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         var body = null;
         var httpMethod = "GET";
 
-        this.fetchOnSever(url, body, httpMethod, referenceID, entityName, queryID, context);
+        this.fetchOnSever(url, body, httpMethod, referenceID, entityName, queryID, level, context);
     }
 
-    private fetchObjectByReferenceID(referenceID: string, entityName: string, queryID: string, context: MIOManagedObjectContext) {
+    private fetchObjectByReferenceID(referenceID: string, entityName: string, queryID: string, level, context: MIOManagedObjectContext) {
 
         var obj = this.downloadingObjectsByReferenceID[referenceID];
         if (obj != null) return obj;
@@ -299,11 +303,13 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         var obj = this.delegate.objectByReferenceID(referenceID);
         if (obj == null) {
             obj = this.delegate.newObjectWithReferenceID(referenceID, entityName, context);
-            this.addInsertedObjectInQuery(queryID, obj);
+            if (level < 2) this.addInsertedObjectInQuery(queryID, obj);
         }
-
-        this.downloadingObjectsByReferenceID[referenceID] = obj;
-        this.fetchObjectOnServerByReferenceID(referenceID, entityName, queryID, context);
+        
+        if (level < 2) {
+            this.downloadingObjectsByReferenceID[referenceID] = obj;
+            this.fetchObjectOnServerByReferenceID(referenceID, entityName, queryID, level, context);
+        }
 
         return obj;
     }
@@ -450,7 +456,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
     // Server objects -> Managed objects
     //
 
-    private parseServerObjectsForEntity(entityName: string, items, queryID: string, context: MIOManagedObjectContext) {
+    private parseServerObjectsForEntity(entityName: string, items, queryID: string, level, context: MIOManagedObjectContext) {
 
         let ed: MIOEntityDescription = this.mom.entitiesByName[entityName];
 
@@ -467,7 +473,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                 this.downloadingObjectsByReferenceID[referenceID] = mo;
                 // We parse the attrbitues and relationships from the sever
                 this.parseAttributes(ed.attributes, item, mo);
-                this.parseRelationships(ed.relationships, item, mo, queryID);
+                this.parseRelationships(ed.relationships, item, mo, queryID, level);
                 this.addInsertedObjectInQuery(queryID, mo);
                 MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Inserted");
             }
@@ -480,7 +486,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                 if (ts1 != ts2) {
                     this.addUpdatedObjectInQuery(queryID, mo);
                     this.parseAttributes(ed.attributes, item, mo);
-                    this.parseRelationships(ed.relationships, item, mo, queryID);
+                    this.parseRelationships(ed.relationships, item, mo, queryID, level);
                     MIONotificationCenter.defaultCenter().postNotification("MIOWebServicePersistentStoreEntityDownloaded", mo, "Updated");
                 }
             }
@@ -539,7 +545,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         object.didChangeValue(attribute.name);
     }
 
-    private parseRelationships(relationships, item, mo: MIOManagedObject, queryID: string) {
+    private parseRelationships(relationships, item, mo: MIOManagedObject, queryID: string, level) {
 
         for (var i = 0; i < relationships.length; i++) {
             let rel: MIORelationshipDescription = relationships[i];
@@ -550,7 +556,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                 let referenceID: string = item[rel.serverName];
                 if (referenceID == null) continue;
 
-                let obj: MIOManagedObject = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, queryID, mo.managedObjectContext);
+                let obj: MIOManagedObject = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, queryID, level, mo.managedObjectContext);
                 mo.willChangeValue(rel.name);
                 mo.setPrimitiveValue(rel.name, obj);
                 mo.didChangeValue(rel.name);
@@ -565,7 +571,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
                     let referenceID: string = ids[j];
                     if (referenceID == null) continue;
 
-                    let obj: MIOManagedObject = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, queryID, mo.managedObjectContext);
+                    let obj: MIOManagedObject = this.fetchObjectByReferenceID(referenceID, rel.destinationEntityName, queryID, level, mo.managedObjectContext);
                     let values: MIOSet = mo.primitiveValue(rel.name);
                     values.addObject(obj);
                 }
