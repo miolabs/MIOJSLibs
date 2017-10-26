@@ -169,8 +169,10 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             request.setHeaderField("Authorization", "Bearer " + this.token);
         request.setHeaderField("Content-Type", "application/json");
 
-        if (body != null)
+        if (body != null) {
+            body['limit'] = 10;
             request.body = JSON.stringify(body);
+        }
         request.httpMethod = httpMethod;
 
         var urlConnection = new MIOURLConnection();
