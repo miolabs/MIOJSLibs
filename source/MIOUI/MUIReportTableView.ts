@@ -15,6 +15,7 @@ class MUIReportTableViewCell extends MUIView {
 
     private _target = null;
     private _onClickFn = null;
+    private parentRow = null;
 
     initWithLayer(layer, owner, options) {
         super.initWithLayer(layer, owner, options);
@@ -240,10 +241,11 @@ class MUIReportTableView extends MUIView {
                 let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
                 let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
                 cell._target = this;
-                cell._onClickFn = this.cellOnClickFn;
+                cell._onClickFn = this.cellOnClickFn;                
                 this.addSubview(cell);
-                row.cells.push(cell);
-                this.rowByCell[cell] = row;
+                
+                cell.parentRow = row;
+                row.cells.push(cell); 
             }
             this.rows.push(row);
         }
@@ -295,12 +297,14 @@ class MUIReportTableView extends MUIView {
 
     cellOnClickFn(cell) {
                 
-        let row = this.rowByCell[cell];
+        let row:MUIReportTableViewRow = cell.parentRow;
+        let colIndex = row.cells.indexOf(cell);
         let rowIndex = this.rows.indexOf(row);
+        let ip = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
 
         if (this.delegate != null) {
             if (typeof this.delegate.didSelectCellAtIndexPath === "function")
-                this.delegate.didSelectCellAtRow(this, rowIndex);
+                this.delegate.didSelectCellAtIndexPath(this, ip);
         }
     }
     
