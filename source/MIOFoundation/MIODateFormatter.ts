@@ -215,7 +215,7 @@ class MIODateFormatter extends MIOFormatter {
         var day = _MIODateFormatterStringDays[date.getDay()];
         var month = _MIODateFormatterStringMonths[date.getMonth()];
 
-        return day + ", " + date.getDate() + " of " + month + " of " + date.getFullYear();
+        return day + ", " + month + " " + date.getDate() + ", " + date.getFullYear();
     }
 
     private _parseTime(str:string):[boolean, string, string]{

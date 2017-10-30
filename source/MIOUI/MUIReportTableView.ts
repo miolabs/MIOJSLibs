@@ -79,8 +79,12 @@ class MUIReportTableViewColumn extends MIOObject {
     pixelWidth = 0;
     alignment = "center";
     formatter:MIOFormatter = null;
+    ascending = true;
 
     private _colHeader: MUIView = null;
+
+    _target = null;
+    _onHeaderClickFn = null;
 
     columnHeaderView() {
         if (this._colHeader != null)
@@ -101,6 +105,13 @@ class MUIReportTableViewColumn extends MIOObject {
         header.addSubview(titleLabel);
 
         this._colHeader = header;
+
+        var instance = this;
+        this._colHeader.layer.onclick = function () {
+            if (instance._onHeaderClickFn != null)
+                instance._onHeaderClickFn.call(instance._target, instance);
+        };
+        
 
         return this._colHeader;
     }
@@ -228,6 +239,8 @@ class MUIReportTableView extends MUIView {
 
             let col: MUIReportTableViewColumn = this.columns[index];
             let header = col.columnHeaderView();
+            col._target = this;
+            col._onHeaderClickFn = this.onHeaderClickFn;
             this.addSubview(header);
         }
 
@@ -293,6 +306,15 @@ class MUIReportTableView extends MUIView {
             y += offsetY;
             if (offsetY == 0) y += 40;
         }
+    }
+
+    onHeaderClickFn(col:MUIReportTableViewColumn){
+
+        if (this.delegate != null) {
+            if (typeof this.delegate.sortDescriptorsDidChange === "function")
+                this.delegate.sortDescriptorsDidChange(this, col);
+        }
+
     }
 
     cellOnClickFn(cell) {
