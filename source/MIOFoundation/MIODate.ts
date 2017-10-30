@@ -104,6 +104,15 @@ function MIODateFromString(string)
     return d;
 }
 
+function MIODateToUTC(date)
+{
+    var dif = date.getTimezoneOffset();
+    let d = new Date();
+    d.setTime(date.getTime() + (dif * 60 * 1000));
+
+    return d;
+}
+
 function MIODateAddDaysToDateString(dateString, days)
 {
     var d = MIODateFromString(dateString);
@@ -137,9 +146,13 @@ function isDate (x)
 }
 
 function MIODateToday(){
+    var d = new Date();
+    d.setHours(0,0,0);
+    return d;
+}
+function MIODateNow(){
     return new Date();
 }
-
 function MIODateTodayString(){
     let d = MIODateToday();
     return MIODateGetString(d);
@@ -148,6 +161,14 @@ function MIODateTodayString(){
 function MIODateYesterday(){
     let d = new Date();
     d.setDate(d.getDate() - 1);
+    d.setHours(0,0,0);
+    return d;
+}
+
+function MIODateTomorrow(){
+    let d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(0,0,0);
     return d;
 }
 
