@@ -11,5 +11,8 @@
 /// <reference path="MIOFetchRequest.ts" />
 /// <reference path="MIOSaveChangesRequest.ts" />
 
+/// <reference path="MIOPersistentStore.ts" />
+/// <reference path="MIOIncrementalStore.ts" />
+
 /// <reference path="MIOFetchedResultsController.ts" />
 

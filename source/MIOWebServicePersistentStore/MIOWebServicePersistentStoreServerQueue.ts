@@ -12,6 +12,8 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
     dataSource = null;
     delegate = null;
 
+    private maxDownloadLevel = 1;
+
     get referenceIDKey() { return this.delegate.referenceIDKey; }
     serverDeleteDateKey = "deletedAt";
     serverReferenceIDKey = "id";
@@ -303,10 +305,10 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         var obj = this.delegate.objectByReferenceID(referenceID);
         if (obj == null) {
             obj = this.delegate.newObjectWithReferenceID(referenceID, entityName, context);
-            if (level < 2) this.addInsertedObjectInQuery(queryID, obj);
+            if (level < this.maxDownloadLevel) this.addInsertedObjectInQuery(queryID, obj);
         }
         
-        if (level < 2) {
+        if (level < this.maxDownloadLevel) {
             this.downloadingObjectsByReferenceID[referenceID] = obj;
             this.fetchObjectOnServerByReferenceID(referenceID, entityName, queryID, level, context);
         }

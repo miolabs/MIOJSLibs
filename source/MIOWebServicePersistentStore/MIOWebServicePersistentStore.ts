@@ -18,7 +18,8 @@ enum MIOWebServicePersistentStoreStatus {
     Ready
 }
 
-class MIOWebServicePersistentStore extends MIOPersistentStore {
+class MIOWebServicePersistentStore extends MIOIncrementalStore {
+    
     static get type(): string {
         return "MIOWebServicePersistentStoreType";
     }
