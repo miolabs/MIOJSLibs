@@ -124,7 +124,7 @@ class MUIReportTableView extends MUIView {
     private cellPrototypes = {};
     private cells = [];
     private rows = [];
-    private columns = [];
+    columns = [];
 
     private rowByCell = {};
 
