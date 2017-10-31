@@ -12,7 +12,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
     dataSource = null;
     delegate = null;
 
-    private maxDownloadLevel = 1;
+    private maxDownloadLevel = 3;
 
     get referenceIDKey() { return this.delegate.referenceIDKey; }
     serverDeleteDateKey = "deletedAt";
@@ -270,8 +270,8 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         var p: MIOPredicate = this.delegate.predicateFetchOnServerForEntityName(entityName, predicate);
 
         let url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());
-        var body = null;
-        var httpMethod = "GET";
+        var body = {};
+        var httpMethod = "POST";
 
         if (p != null) {
             let ed: MIOEntityDescription = this.mom.entitiesByName[entityName];
