@@ -254,6 +254,10 @@ class MUICollectionView extends MUIView
             for (var count = 0; count < sectionView.cells.length; count++){
                 var cell = sectionView.cells[count];
                 cell.removeFromSuperview();
+                if (this.delegate != null) {
+                    if (typeof this.delegate.didEndDisplayingCellAtIndexPath === "function")
+                        this.delegate.didEndDisplayingCellAtIndexPath(this, cell, count, index);
+                }                
             }
         }
 
@@ -393,6 +397,11 @@ class MUICollectionView extends MUIView
             for (var index = 0; index < section.cells.length; index++) {
 
                 let cell = section.cells[index];
+                if (this.delegate != null) {
+                    if (typeof this.delegate.willDisplayCellAtIndexPath === "function")
+                        this.delegate.willDisplayCellAtIndexPath(this, cell, index, count);
+                }
+
                 cell.setWidth(this.collectionViewLayout.itemSize.width);
                 cell.setHeight(this.collectionViewLayout.itemSize.height);
 

@@ -4,6 +4,7 @@
 
 enum MUIChartViewType {
     Bar,
+    HorizontalBar,
     Line,
     Pie
 }
@@ -100,6 +101,10 @@ class MUIChartView extends MUIView {
 
             case MUIChartViewType.Bar:
                 name = "bar";
+                break;
+
+            case MUIChartViewType.HorizontalBar:
+                name = "horizontalBar";
                 break;
 
             case MUIChartViewType.Line:
