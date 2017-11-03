@@ -192,6 +192,23 @@ class MUITextField extends MUIControl
         }
     }
 
+    private didEditingAction = null;
+    private didEditingTarget = null;
+
+    setOnDidEditing(target, action) {
+        this.didEditingTarget = target;
+        this.didEditingAction = action;
+        var instance = this;
+
+        this._inputLayer.onblur = function(e)
+        {
+            if (instance.enabled) {
+                instance.didEditingAction.call(target, instance, instance.text);
+            }
+        }
+        
+    }
+
     setTextRGBColor(r, g, b)
     {
         var value = "rgb(" + r + ", " + g + ", " + b + ")";
