@@ -14,6 +14,7 @@ class MIOFetchRequest extends MIOPersistentStoreRequest {
     predicate = null;
     sortDescriptors = null;
     resultType = MIOFetchRequestResultType.MIOManagedObject;
+    fetchLimit = 30;
 
     static fetchRequestWithEntityName(name) {
         var fetch = new MIOFetchRequest();

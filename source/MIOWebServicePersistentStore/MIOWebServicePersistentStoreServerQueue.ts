@@ -173,7 +173,6 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         request.setHeaderField("Content-Type", "application/json");
 
         if (body != null){
-            body["limit"] = 30;
             request.body = JSON.stringify(body);
         }
             
@@ -262,26 +261,33 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         });
     }
 
-    fetchObjectsOnServer(entityName: string, predicate: MIOPredicate, context: MIOManagedObjectContext) {
+    fetchObjectsOnServer(request:MIOFetchRequest, predicate: MIOPredicate, context: MIOManagedObjectContext) {
 
-        var result = this.delegate.canServerSyncEntityNameForType(entityName, MIOWebServicePersistentIgnoreEntityType.Query);
+        var result = this.delegate.canServerSyncEntityNameForType(request.entityName, MIOWebServicePersistentIgnoreEntityType.Query);
         if (result == false) return;
 
-        var p: MIOPredicate = this.delegate.predicateFetchOnServerForEntityName(entityName, predicate);
+        var p: MIOPredicate = this.delegate.predicateFetchOnServerForEntityName(request.entityName, predicate);
 
-        let url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());
-        var body = {};
-        var httpMethod = "POST";
+        let url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + request.entityName.toLocaleLowerCase());
+        var body = null;
+        var httpMethod = "GET";
 
         if (p != null) {
-            let ed: MIOEntityDescription = this.mom.entitiesByName[entityName];
+            let ed: MIOEntityDescription = this.mom.entitiesByName[request.entityName];
             let filters = this.parsePredictates(p.predicateGroup.predicates, ed);
 
+            body = {};
             body = { "where": filters };
             httpMethod = "POST";
         }
 
-        this.fetchOnSever(url, body, httpMethod, null, entityName, null, 0, context);
+        if (request.fetchLimit > 0) {
+            httpMethod = "POST";
+            if (body == null) body = {};
+            body["limit"] = request.fetchLimit;
+        }
+
+        this.fetchOnSever(url, body, httpMethod, null, request.entityName, null, 0, context);
     }
 
     fetchObjectOnServerByReferenceID(referenceID: string, entityName: string, queryID: string, level, context: MIOManagedObjectContext) {

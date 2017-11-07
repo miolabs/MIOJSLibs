@@ -266,8 +266,8 @@ class MIOWebServicePersistentStore extends MIOIncrementalStore {
         let entityInfo = this.entityInfoFromName(request.entityName);
 
         // TODO: Check with the server the last update fo the entity!        
-        let entityName = entityInfo["Name"];
-        this.serverQueue.fetchObjectsOnServer(entityName, request.predicate, context);
+        //let entityName = entityInfo["Name"];
+        this.serverQueue.fetchObjectsOnServer(request, request.predicate, context);
 
         // return the cache objects
         var objs = entityInfo["Objects"];
