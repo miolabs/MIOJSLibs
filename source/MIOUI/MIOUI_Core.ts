@@ -145,12 +145,13 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
 function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
-        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
+        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext
+        || MIOCoreIsPhone() == true) {
 
         toVC.viewWillAppear();
         //toVC._childControllersWillAppear();
 
-        toVC.view.layout();
+        //toVC.view.layout();
     }
 
     fromVC.viewWillDisappear();

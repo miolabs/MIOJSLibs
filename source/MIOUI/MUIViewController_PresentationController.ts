@@ -80,7 +80,7 @@ class MUIPresentationController extends MIOObject
 
         this._calculateFrame();
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet || MIOCoreIsPhone() == true)
         {
             view.layer.classList.add("modal_window");
         }       
@@ -92,7 +92,7 @@ class MUIPresentationController extends MIOObject
         var toVC = this.presentedViewController;
         var view = this.presentedView;
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsMobile() == true)
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsPhone() == true)
         {
             //var ws = MUIWindowSize();
             //view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
@@ -108,7 +108,7 @@ class MUIPresentationController extends MIOObject
 
             view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
         }
-        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOLibIsMobile() == false)
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOCoreIsPhone() == false)
         {
             // Present like desktop sheet window
             var ws = MUIWindowSize();
@@ -279,7 +279,7 @@ class MIOModalPresentAnimationController extends MIOObject
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
             || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
         {
-            if (MIOLibIsMobile() == true)
+            if (MIOCoreIsPhone() == true)
                 animations = MUIClassListForAnimationType(MUIAnimationType.SlideInUp);
             else 
                 animations = MUIClassListForAnimationType(MUIAnimationType.BeginSheet);
@@ -316,7 +316,7 @@ class MIOModalDismissAnimationController extends MIOObject
         if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
             || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
         {
-            if (MIOLibIsMobile() == true)                        
+            if (MIOCoreIsPhone() == true)                        
                 animations = MUIClassListForAnimationType(MUIAnimationType.SlideOutDown);
             else 
                 animations = MUIClassListForAnimationType(MUIAnimationType.EndSheet);

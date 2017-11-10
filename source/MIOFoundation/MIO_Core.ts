@@ -4,42 +4,6 @@
 
 /// <reference path="MIOURL.ts" />
 
-enum MIOCoreAppType
-{
-    Web,
-    iOS,
-    macOS,
-    Android,
-    WindowsMobile,
-    Windows,
-    Linux
-}
-
-var _miocore_app_type:MIOCoreAppType;
-
-function MIOCoreSetAppType(appType:MIOCoreAppType)
-{
-    _miocore_app_type = appType;
-}
-
-function MIOCoreGetAppType():MIOCoreAppType
-{
-    return _miocore_app_type;
-}
-
-function MIOCoreGetMainBundleURL()
-{    
-    var url = null;
-
-    if (MIOCoreGetAppType() == MIOCoreAppType.Web)
-    {
-        url = new MIOURL();    
-        url.initWithURLString(window.location.href);
-    }
-    
-    return url;
-}
-
 function MIOCoreLoadScript(url)
 {
     // Adding the script tag to the head as suggested before

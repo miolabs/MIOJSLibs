@@ -320,8 +320,7 @@ class MUIViewController extends MIOObject
         }
         else if (pc.isPresented == true)
         {
-            // You try to presented a presetnation controller that is already presented
-            return;
+            throw ("You try to present a view controller that is already presented"); 
         }
 
         if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
