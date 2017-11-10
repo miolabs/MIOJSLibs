@@ -100,8 +100,69 @@ function MIODateGetUTCTimeString(date)
 
 function MIODateFromString(string)
 {
-    var d = new Date(Date.parse(string));
-    return d;
+    var lexer:MIOCoreLexer = new MIOCoreLexer(string);
+    
+    // Values    
+    lexer.addTokenType(0, /^[0-9]{4}-/i); // Year
+    lexer.addTokenType(1, /^[0-9]{2}-/i); // Month
+    lexer.addTokenType(2, /^[0-9]{2} /i); // day
+
+    lexer.addTokenType(3, /^[0-9]{2}:/i); // hh // mm
+    lexer.addTokenType(4, /^[0-9]{2}/i); // ss
+
+    lexer.tokenize();
+
+    var y = -1;
+    var m = -1;
+    var d = -1;
+    var h = -1;
+    var mm = -1;
+    var s = -1;
+
+    var token = lexer.nextToken();
+    while(token != null){
+
+        switch (token.type) {
+
+            case 0:
+                y = parseInt(token.value.substring(0, 4));
+                break;
+
+            case 1:
+                if (y == -1) return null;
+                m = parseInt(token.value.substring(0, 2)) - 1;
+                break;
+
+            case 2:
+                if (m == -1) return null;
+                d = parseInt(token.value.substring(0, 2));
+                break;
+
+            case 3:
+                if (d == -1) return null;
+                if (h == -1) h = parseInt(token.value.substring(0, 2));
+                else if (mm == -1) mm = parseInt(token.value.substring(0, 2));
+                else return null;
+                break;
+
+            case 4:
+                if (mm == -1) return null;
+                s = parseInt(token.value);
+                break;
+
+            default:
+                return null;
+        }
+
+        token = lexer.nextToken();
+    }
+
+    if (h == -1) h = 0;
+    if (mm == -1) mm = 0;
+    if (s == -1) s = 0;
+
+    var date = new Date(y,m,d,h,mm,s);
+    return date;
 }
 
 function MIODateToUTC(date)
