@@ -12,7 +12,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
     dataSource = null;
     delegate = null;
 
-    private maxDownloadLevel = 3;
+    private maxDownloadLevel = 4;
 
     get referenceIDKey() { return this.delegate.referenceIDKey; }
     serverDeleteDateKey = "deletedAt";
