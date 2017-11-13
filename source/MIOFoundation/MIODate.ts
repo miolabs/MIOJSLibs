@@ -146,8 +146,11 @@ function MIODateFromString(string)
                 break;
 
             case 4:
-                if (mm == -1) return null;
-                s = parseInt(token.value);
+                if (mm == -1) {
+                    //return null;
+                    d = parseInt(token.value.substring(0, 2));
+                }
+                else s = parseInt(token.value);
                 break;
 
             default:
