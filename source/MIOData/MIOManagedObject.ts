@@ -69,6 +69,17 @@ class MIOManagedObject extends MIOObject {
             this._setIsInserted(true);
             this.awakeFromInsert();                    
         }
+
+        // Set default value
+        for(var index = 0; index < entityDescription.attributes.length; index++) {
+            
+            let attr:MIOAttributeDescription = entityDescription.attributes[index];
+            let dv = attr.defaultValue;
+
+            if (dv == null) continue;
+            
+            this.setPrimitiveValue(attr.name, dv);
+        }
     }
 
     init(){

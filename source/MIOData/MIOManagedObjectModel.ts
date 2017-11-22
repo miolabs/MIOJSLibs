@@ -60,8 +60,8 @@ class MIOManagedObjectModel extends MIOObject
             let optional = attributes["optional"] != null ? attributes["optional"].toLowerCase() : "yes";            
             let optionalValue = optional == "no" ? false : true;
             let syncable = attributes["syncable"];
-
-            this._addAttribute(name, type, optionalValue, serverName, syncable);
+            let defaultValueString = attributes["defaultValueString"];
+            this._addAttribute(name, type, optionalValue, serverName, syncable, defaultValueString);
         }        
         else if (element == "relationship") {
         
@@ -70,7 +70,7 @@ class MIOManagedObjectModel extends MIOObject
             let toMany = attributes["toMany"];
             let serverName = attributes["serverName"];            
             let inverseName = attributes["inverseName"];
-            let inverseEntity = attributes["inverseEntity"];
+            let inverseEntity = attributes["inverseEntity"];            
             this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
         }
     }
@@ -105,37 +105,44 @@ class MIOManagedObjectModel extends MIOObject
         console.log("datamodel.xml parser finished");
     }
 
-    private _addAttribute(name, type, optional, serverName, syncable){
+    private _addAttribute(name, type, optional, serverName, syncable, defaultValueString){
 
         var attrType = null;
+        var defaultValue = null;
+        
         switch(type){
-
             case "Boolean":
                 attrType = MIOAttributeType.Boolean;
+                if (defaultValueString != null) defaultValue = defaultValueString.toLocaleLowerCase() == "true" ? true : false;
                 break;
 
             case "Integer":
                 attrType = MIOAttributeType.Integer;
+                if (defaultValueString != null) defaultValue = parseInt(defaultValueString);
                 break;
 
             case "Float":
                 attrType = MIOAttributeType.Float;
+                if (defaultValueString != null) defaultValue = parseFloat(defaultValueString);
                 break;
 
             case "Number":
                 attrType = MIOAttributeType.Number;
+                if (defaultValueString != null) defaultValue = parseFloat(defaultValueString);
                 break;
 
             case "String":
                 attrType = MIOAttributeType.String;
+                if (defaultValueString != null) defaultValue = defaultValueString;
                 break;
 
             case "Date":
                 attrType = MIOAttributeType.Date;
+                if (defaultValueString != null) defaultValue = MIODateFromString(defaultValueString); 
                 break;
         }
         
-        this.currentEntity.addAttribute(name, attrType, null, optional, serverName, syncable);
+        this.currentEntity.addAttribute(name, attrType, defaultValue, optional, serverName, syncable);
     }
 
     private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string){
