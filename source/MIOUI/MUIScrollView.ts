@@ -61,8 +61,7 @@ class MUIScrollView extends MUIView
         };
     }
 
-    private _scrollEventCallback(event)
-    {
+    private _scrollEventCallback(event) {
         if (this.scrolling == false)
         {
             this.scrolling = true;
@@ -88,25 +87,21 @@ class MUIScrollView extends MUIView
             this.delegate.scrollViewDidScroll.call(this.delegate, this);        
     }
 
-    private _scrollEventStopCallback(timer)
-    {
+    private _scrollEventStopCallback(timer) {
         this.scrolling = false;
 
         this.didStopScroll();
     }
 
-    protected didStartScroll()
-    {
+    protected didStartScroll() {
         console.log("START SCROLL");
     }
 
-    protected didScroll(deltaX, deltaY)
-    {
+    protected didScroll(deltaX, deltaY) {
         console.log("DID SCROLL");
     }
 
-    protected didStopScroll()
-    {
+    protected didStopScroll() {
         console.log("STOP SCROLL");        
     }
 

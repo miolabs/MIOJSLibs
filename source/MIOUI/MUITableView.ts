@@ -306,6 +306,7 @@ class MUITableView extends MUIView {
     private _cellPrototypes = {};
 
     private _reusableCells = {}
+    private visibleCells = []
 
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
@@ -499,7 +500,6 @@ class MUITableView extends MUIView {
             section.init();
             this.sections.push(section);
             this._indexPathsForSelectedRows[sectionIndex] = [];
-
 
             var rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
 
