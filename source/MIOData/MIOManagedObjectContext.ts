@@ -344,6 +344,8 @@ class MIOManagedObjectContext extends MIOObject {
         this.blockChanges[MIODeletedObjectsKey] = {};
 
         block.call(target);
+        let noty = new MIONotification(MIOManagedObjectContextDidSaveNotification, this, this.blockChanges);
+        this.mergeChangesFromContextDidSaveNotification(noty);
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, this.blockChanges);
         this.blockChanges = null;
     }

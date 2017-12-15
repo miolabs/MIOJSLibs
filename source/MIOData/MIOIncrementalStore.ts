@@ -7,7 +7,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
     get type(): string { return MIOIncrementalStore.type; }
 
     private referenceObjectByObjectID = {};
-    private nodesByID = {};
+    private nodesByObjectID = {};
     private objectsByID = {};
 
     private dateFormatter = MIOISO8601DateFormatter.iso8601DateFormatter();
@@ -37,9 +37,8 @@ class MIOIncrementalStore extends MIOPersistentStore {
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         if (obj == null) {
             let node = this.newValuesForObjectWithID(objectID, context);
-            if (node != null) {
-                this.nodesByID[node.objectID.identifier] = node;
-
+            if (node == null) throw("MIOIncrementalStore: Node CAN NOT BE NULL");
+            if (this.nodesByObjectID[objectID.identifier] == null) {                                            
                 let entity: MIOEntityDescription = objectID.entity;                
                 obj = MIOClassFromString(entity.name);
                 obj.objectID = objectID;
@@ -47,6 +46,10 @@ class MIOIncrementalStore extends MIOPersistentStore {
                 obj.isFault = false;
                 this.objectsByID[objectID.identifier] = obj;
             }
+            this.nodesByObjectID[objectID.identifier] = node;
+        }
+        else {
+            context.updateObject(obj);
         }
 
         return obj;
@@ -55,7 +58,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
     refreshObject(object: MIOManagedObject, context: MIOManagedObjectContext, version): number {
 
         let objID = object.objectID;
-        let node = this.nodesByID[objID.identifier];
+        let node = this.nodesByObjectID[objID.identifier];
 
         if (node.version <= version) return version;
 

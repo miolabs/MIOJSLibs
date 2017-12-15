@@ -19,9 +19,9 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
     delegate = null;
 
-    storeURL: MIOURL = null;
-    entitiesInfo = {};
-    itemsByReferenceID = {};
+    private storeURL: MIOURL = null;
+    private entitiesInfo = {};
+    private nodesByReferenceID = {};
 
     loadMetadata(): MIOError {
 
@@ -52,26 +52,17 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
     newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode {
 
-        var node = new MIOIncrementalStoreNode();
-        let refID = this.referenceObjectForObjectID(objectID);
-        if (refID == null) {
-            node.initWithObjectID(objectID, {}, 1);
-            return node;
-        }
+        var refID = this.referenceObjectForObjectID(objectID);
+        if (refID == null) throw("MWSPersistentStore: Asking objectID without referenceID");
+        
+        var node = this.nodesByReferenceID[refID];
+        if (node != null) return node;
 
-        let item = this.itemsByReferenceID[refID];
-        if (item == null) {
-            var node = new MIOIncrementalStoreNode();
-            node.initWithObjectID(objectID, {}, 1);
-            return node;
-        }
-
-        node.initWithObjectID(objectID, item, 1);
-
+        node.initWithObjectID(objectID, {}, 1);
         return node;
     }
 
-    newValueForRelationship(relationship: MIORelationshipDescription, objectID: string, context?: MIOManagedObjectContext) {
+    newValueForRelationship(relationship: MIORelationshipDescription, objectID: MIOManagedObjectID, context?: MIOManagedObjectContext) {
 
         //let relationName = relationship.name
         let objectIDs = [];
@@ -106,14 +97,30 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
             for (var index = 0; index < items.length; index++) {
 
-                let i = items[index];
-                let refID = i["id"];
-                if (refID != null) {
+                let objectValues = items[index];
+                let serverID = this.delegate.serverIDForItem(this, objectValues, entity);
+                //let version = objectValues["version"] ? objectValues["version"] : 0;
+                if (serverID != null) {
 
-                    this.itemsByReferenceID[refID] = i;
-                    let objID = this.newObjectIDForEntity(entity, refID);
-                    let obj = context.existingObjectWithID(objID);
-                    if (obj != null) context.refreshObject(obj, true);
+                    let refID = entity.name + "://" + serverID;
+                    let node = this.nodesByReferenceID[refID];
+                    if (node == null) {                    
+                        //this.itemsByReferenceID[refID] = objectValues;                        
+                        let objID = this.newObjectIDForEntity(entity, refID);
+                        
+                        let node = new MIOIncrementalStoreNode();
+                        node.initWithObjectID(objID, objectValues, 1);
+                        this.nodesByReferenceID[refID] = node;                        
+
+                        console.log("REFID: " + refID + " - " + objectValues["name"]);
+
+                        let obj = context.existingObjectWithID(objID);
+                        if (obj != null) context.refreshObject(obj, true);
+                    }
+                    else {                        
+                        let version = node.version + 1;
+                        node.updateWithValues(objectValues, version);
+                    }
                 }
             }
         });

@@ -14,6 +14,11 @@ class MIOIncrementalStoreNode extends MIOObject {
         this.version = version;
     }
 
+    updateWithValues(values, version) {
+        this.values = values;
+        this.version = version;
+    }
+
     valueForPropertyDescription(prop:MIOPropertyDescription) {
         return null;
     }
