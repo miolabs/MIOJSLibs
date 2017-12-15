@@ -119,7 +119,7 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
         ac = pc.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
 
-    view.layout();
+    view.setNeedsDisplay();
 
     var layer = view.layer;
         

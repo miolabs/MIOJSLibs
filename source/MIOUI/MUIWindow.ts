@@ -30,12 +30,12 @@ class MUIWindow extends MUIView
         this.setHidden(false);
     }
 
-    layout()
+    layoutSubviews()
     {
         if (this.rootViewController != null)
-            this.rootViewController.view.layout();
+            this.rootViewController.view.layoutSubviews();
         else
-            super.layout();                
+            super.layoutSubviews();                
     }
 
     addSubview(view:MUIView)

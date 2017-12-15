@@ -23,7 +23,6 @@ class MIOFetchedResultsController extends MIOObject
     sections = [];
 
     resultObjects = [];
-    objects = [];
 
     fetchRequest:MIOFetchRequest = null;
     managedObjectContext:MIOManagedObjectContext  = null;
@@ -72,15 +71,8 @@ class MIOFetchedResultsController extends MIOObject
 
     performFetch()
     {
-        this.objects = this.managedObjectContext.executeFetch(this.fetchRequest);
-        this.resultObjects = null;
-
-        if (this.objects.length == 0)
-            this.resultObjects = this.objects;
-        else {
-            this.resultObjects = this.objects;
-            this._splitInSections();
-        }
+        this.resultObjects = this.managedObjectContext.executeFetch(this.fetchRequest);
+        this._splitInSections();
     }
 
     updateContent(inserted, updated, deleted)
@@ -88,7 +80,7 @@ class MIOFetchedResultsController extends MIOObject
         // Process inserted objects
         for(var i = 0; i < inserted.length; i++) {
             let o = inserted[i];
-            this.objects.push(o);
+            this.resultObjects.push(o);
         }
 
         // Process updated objects
@@ -98,17 +90,13 @@ class MIOFetchedResultsController extends MIOObject
         // Process delete objects
         for(var i = 0; i < deleted.length; i++) {
             let o = deleted[i];
-            let index = this.objects.indexOf(o);
+            let index = this.resultObjects.indexOf(o);
             if (index != -1){
-                this.objects.splice(index, 1);
+                this.resultObjects.splice(index, 1);
             }
         }        
 
-        this.objects = _MIOPredicateFilterObjects(this.objects, this.fetchRequest.predicate);
-        this.objects = _MIOSortDescriptorSortObjects(this.objects, this.fetchRequest.sortDescriptors);
-        this.resultObjects = this.objects;
         this._splitInSections();
-
         this._notify();
     }
 
@@ -170,10 +158,10 @@ class MIOFetchedResultsController extends MIOObject
         }
     }
 
-    objectAtIndexPath(row, section)
+    objectAtIndexPath(indexPath:MIOIndexPath)
     {
-        var section = this.sections[section];
-        var object = section.objects[row];
+        var section = this.sections[indexPath.section];
+        var object = section.objects[indexPath.row];
         return object;
     }
 

@@ -1,6 +1,9 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
+let MIOStoreUUIDKey = "MIOStoreUUIDKey";
+let MIOStoreTypeKey = "MIOStoreTypeKey";
+
 class  MIOPersistentStore extends MIOObject
 {    
     private _persistentStoreCoordinator:MIOPersistentStoreCoordinator = null;
@@ -9,16 +12,19 @@ class  MIOPersistentStore extends MIOObject
     private _options = null;
 
     // To override per class
-    static get type ():string {
-        return "MIOPersistentStoreType";
-    }
+    static get type ():string { return "MIOPersistentStore";}
+    get type():string {return MIOPersistentStore.type;}
 
-    initWithPersistentStoreCoordinator(root:MIOPersistentStoreCoordinator, configurationName:string, url:MIOURL, options) {
+    metadata = null;
+
+    initWithPersistentStoreCoordinator(root:MIOPersistentStoreCoordinator, configurationName:string, url:MIOURL, options?) {
 
         this._persistentStoreCoordinator = root;
         this._configurationName = configurationName;
         this._url = url;
-        this._options = options;
+        this._options = options;        
+
+        this.loadMetadata();
     }    
 
     get persistentStoreCoordinator():MIOPersistentStoreCoordinator{

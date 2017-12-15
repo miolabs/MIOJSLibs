@@ -7,15 +7,17 @@
 /// <reference path="MIOEntityDescription.ts" />
 /// <reference path="MIOFetchRequest.ts" />
 
+/// <reference path="MIOManagedObjectID.ts" />
+
 class MIOManagedObject extends MIOObject {
     
-    objectID:string;
+    objectID:MIOManagedObjectID = null;
     entity:MIOEntityDescription = null;
     managedObjectContext:MIOManagedObjectContext = null;       
 
     private trackChanges = {};  
 
-    private _isFault = true;
+    private _isFault = false;
     private setIsFault(value) {
         this.willChangeValue("isFault");
         this._isFault=value;
@@ -57,10 +59,11 @@ class MIOManagedObject extends MIOObject {
     };
     get isDeleted():boolean {return this._isDeleted;}
 
-    initWithEntityAndInsertIntoManagedObjectContext(entityDescription:MIOEntityDescription, context?:MIOManagedObjectContext){
-
+    initWithEntityAndInsertIntoManagedObjectContext(entityDescription:MIOEntityDescription, context?:MIOManagedObjectContext){        
+        
         this.init();
 
+        if (this.objectID == null) this.objectID = MIOManagedObjectID.objectIDWithEntity(entityDescription);
         this.entity = entityDescription;
         this.managedObjectContext = context;
 
@@ -83,12 +86,20 @@ class MIOManagedObject extends MIOObject {
     }
 
     init(){
-        super.init();
-        this.objectID = MIOUUID.uuid();
+        super.init();        
     }
 
     awakeFromInsert() {}
     awakeFromFetch() {}
+
+    private version = 0;
+    private mergeFromStore(){
+        
+        let ps = this.objectID.persistentStore as MIOIncrementalStore;
+        if (ps == null) return;
+        this.version = ps.refreshObject(this, this.managedObjectContext, this.version);
+        this.isFault = false;
+    }
 
     setValue(propertyName, value) {
         
@@ -113,6 +124,10 @@ class MIOManagedObject extends MIOObject {
 
     getValue(propertyName) {
         
+        if (this.isFault == true) {
+            this.mergeFromStore();
+        }
+
         var value = this.trackChanges[propertyName];
         if (value == null) {
             value = this.primitiveValue(propertyName);
@@ -194,7 +209,7 @@ class MIOManagedObject extends MIOObject {
         return this.trackChanges;
     }
 
-    get changedValues(){
+    changedValues(){
         
         var values = {};
         for (var propertyName in this.trackChanges){

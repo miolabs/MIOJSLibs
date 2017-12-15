@@ -18,7 +18,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
     permittedArrowDirections = MUIPopoverArrowDirection.Any;
 
     sourceView = null;
-    sourceRect = MIOFrame.Zero();
+    sourceRect = MIORect.Zero();
 
     delegate = null;
 
@@ -84,8 +84,8 @@ class MUIPopoverPresentationController extends MUIPresentationController
                 x = v.layer.getBoundingClientRect().left - w - 10;
         }
 
-        view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-        this.window.setFrame(MIOFrame.frameWithRect(x, y, w, h))
+        view.setFrame(MIORect.rectWithValues(0, 0, w, h));
+        this.window.setFrame(MIORect.rectWithValues(x, y, w, h))
     }
 
     private _drawRoundRect(x, y, width, height, radius) {

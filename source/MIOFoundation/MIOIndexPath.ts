@@ -1,6 +1,19 @@
 
 /// <reference path="MIOObject.ts" />
 
+function MIOIndexPathEqual(indexPath1:MIOIndexPath, indexPath2:MIOIndexPath):Boolean {
+
+    //TODO: CHECK REAL INDEX PATH
+    if (indexPath1 == null || indexPath2 == null) return false;
+
+    if (indexPath1.section == indexPath2.section
+        && indexPath1.row == indexPath2.row){
+            return true;
+    }
+
+    return false;
+}
+
 class MIOIndexPath extends MIOObject
 {
     static indexForRowInSection(row:number, section:number){

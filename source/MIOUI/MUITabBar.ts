@@ -98,7 +98,7 @@ class MUITabBar extends MUIView
         {            
             var item = this.items[index];
             if (item.hidden == true) continue;
-            item.setFrame(MIOFrame.frameWithRect(x, 0, w, this.getHeight()));
+            item.setFrame(MIORect.rectWithValues(x, 0, w, this.getHeight()));
             x += w;
         }
     }

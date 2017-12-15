@@ -173,7 +173,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
         request.setHeaderField("Content-Type", "application/json");
 
         if (body != null){
-            request.body = JSON.stringify(body);
+            request.httpBody = JSON.stringify(body);
         }
             
         request.httpMethod = httpMethod;
@@ -203,7 +203,7 @@ class MIOWebServicePersitentStoreServerQueue extends MIOObject {
             if (error != null) {
                 console.log("MIOWebserice: " + request.httpMethod + ": " + request.url.absoluteString);
                 console.log("MIOWebserice: Error " + error["Code"] + ". " + error["Error"]);
-                console.log("MIOWebserice: Body: " + request.body);
+                console.log("MIOWebserice: Body: " + request.httpBody);
             }
 
             completion.call(target, statusCode, json);

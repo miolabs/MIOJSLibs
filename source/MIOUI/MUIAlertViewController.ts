@@ -222,16 +222,16 @@ class MUIAlertViewController extends MUIViewController
         return this._items.length + 1;
     }
 
-    cellAtIndexPath(tableview, row, section)
+    cellAtIndexPath(tableview, indexPath:MIOIndexPath)
     {
         var cell:MUITableViewCell = null;
-        if (row == 0)
+        if (indexPath.row == 0)
         {
             cell = this._createHeaderCell();
         }
         else
         {
-            var item = this._items[row - 1];
+            var item = this._items[indexPath.row - 1];
             if (item.type == MUIAlertItemType.Action) {
                 cell = this._createActionCellWithTitle(item.title, item.style);
             }
@@ -247,25 +247,25 @@ class MUIAlertViewController extends MUIViewController
         return cell;
     }
 
-    heightForRowAtIndexPath(taleview, row, section)
+    heightForRowAtIndexPath(taleview, indexPath:MIOIndexPath)
     {
-        if (row == 0) return 80;
+        if (indexPath.row == 0) return 80;
         else return 50;
     }
 
-    canSelectCellAtIndexPath(tableview, row, section)
+    canSelectCellAtIndexPath(tableview, indexPath:MIOIndexPath)
     {
-        if (row == 0) return false;
+        if (indexPath.row == 0) return false;
 
-        var item = this._items[row - 1];
+        var item = this._items[indexPath.row - 1];
         if (item.type == MUIAlertItemType.Action) return true;
 
         return false;
     }
 
-    didSelectCellAtIndexPath(tableView, row, section)
+    didSelectCellAtIndexPath(tableView, indexPath:MIOIndexPath)
     {
-        var item = this._items[row - 1];
+        var item = this._items[indexPath.row - 1];
         if (item.type == MUIAlertItemType.Action) {
             
             if (item.target != null && item.completion != null)

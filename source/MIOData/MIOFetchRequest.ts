@@ -10,21 +10,23 @@ enum MIOFetchRequestResultType{
 
 class MIOFetchRequest extends MIOPersistentStoreRequest {
     
-    entityName = null;
+    entityName:string = null;
+    entity:MIOEntityDescription = null;
     predicate = null;
     sortDescriptors = null;
     resultType = MIOFetchRequestResultType.MIOManagedObject;
-    fetchLimit = 15;
+    fetchLimit = 0;
+    fetchOffset = 0;
 
-    static fetchRequestWithEntityName(name) {
+    static fetchRequestWithEntityName(entityName:string) {
         var fetch = new MIOFetchRequest();
-        fetch.initWithEntityName(name);
+        fetch.initWithEntityName(entityName);
 
         return fetch;
     }    
 
-    initWithEntityName(name) {
-        this.entityName = name;
+    initWithEntityName(entityName:string) {
+        this.entityName = entityName;
         this.requestType = MIORequestType.Fetch;
     }
 }

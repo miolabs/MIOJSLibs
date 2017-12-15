@@ -106,7 +106,7 @@ class MUIPresentationController extends MIOObject
             var w = fromVC.view.getWidth();
             var h = fromVC.view.getHeight();
 
-            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            view.setFrame(MIORect.rectWithValues(0, 0, w, h));
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOCoreIsPhone() == false)
         {
@@ -120,8 +120,8 @@ class MUIPresentationController extends MIOObject
             var h = toVC.preferredContentSize.height;
             var x = (ws.width - w) / 2;
 
-            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-            this.window.setFrame(MIOFrame.frameWithRect(x, 0, w, h))
+            view.setFrame(MIORect.rectWithValues(0, 0, w, h));
+            this.window.setFrame(MIORect.rectWithValues(x, 0, w, h))
 
             view.layer.classList.add("modal_background");
         }
@@ -138,8 +138,8 @@ class MUIPresentationController extends MIOObject
             var x = (ws.width - w) / 2;
             var y = (ws.height - h) / 2;
 
-            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
-            this.window.setFrame(MIOFrame.frameWithRect(x, y, w, h))
+            view.setFrame(MIORect.rectWithValues(0, 0, w, h));
+            this.window.setFrame(MIORect.rectWithValues(x, y, w, h))
 
             view.layer.classList.add("modal_background");
         }
@@ -148,7 +148,7 @@ class MUIPresentationController extends MIOObject
             var w = toVC.preferredContentSize.width;
             var h = toVC.preferredContentSize.height;
 
-            view.setFrame(MIOFrame.frameWithRect(0, 0, w, h));
+            view.setFrame(MIORect.rectWithValues(0, 0, w, h));
         }        
     }
 

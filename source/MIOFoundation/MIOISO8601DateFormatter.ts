@@ -4,6 +4,13 @@
 
 class MIOISO8601DateFormatter extends MIODateFormatter {
 
+    static iso8601DateFormatter():MIOISO8601DateFormatter {
+        var df = new MIOISO8601DateFormatter();
+        df.init();
+
+        return df;
+    }
+
     timeZone = null;
 
     dateFromString(str:string):Date {

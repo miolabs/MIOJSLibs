@@ -139,7 +139,7 @@ class MUIWebApplication {
 
     private _resizeEvent(event:MIOCoreEvent) {
         
-        this.delegate.window.layout();
+        this.delegate.window.layoutSubviews();
     }
 
     private _clickEvent(event:MIOCoreEventInput)

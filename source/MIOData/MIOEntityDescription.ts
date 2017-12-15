@@ -3,10 +3,9 @@
 
 /// <reference path="MIORelationshipDescription.ts" />
 
-
 class MIOEntityDescription extends MIOObject {
     
-    name = null;    
+    name:string = null;
     attributes = [];
     relationships = [];
 
@@ -40,6 +39,7 @@ class MIOEntityDescription extends MIOObject {
     initWithEntityName(entityName:string) {
 
         super.init();
+        this.name = entityName;
         this._managedObjectClassName = entityName;
     }
 

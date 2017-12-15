@@ -5,7 +5,11 @@
 
 class MIOObject
 {
-    className = "MIOObject";
+    get className() {
+        let comp:any = this.constructor;
+        return comp.name;
+    }
+
     keyPaths = {};
 
     init() {}

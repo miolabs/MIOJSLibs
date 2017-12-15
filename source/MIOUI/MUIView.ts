@@ -51,8 +51,7 @@ class MUIView extends MIOObject
 {
     layerID = null;
     layer = null;
-    layerOptions = null;
-    subviews = [];
+    layerOptions = null;    
     hidden = false;
     alpha = 1;
     parent = null;
@@ -61,6 +60,11 @@ class MUIView extends MIOObject
     protected _viewIsVisible = false;
     protected _needDisplay = true;
     _isLayerInDOM = false;
+
+    protected _subviews = [];
+    get subviews(){
+        return this._subviews;
+    }
 
     _window:MUIWindow = null;
 
@@ -107,7 +111,8 @@ class MUIView extends MIOObject
 
         var objLayer = this.layer.cloneNode(true);
         
-        var obj = MIOClassFromString(this.className);
+        let className = this.className;
+        var obj = MIOClassFromString(className);
         obj.initWithLayer(objLayer);
 
         return obj;
@@ -166,7 +171,13 @@ class MUIView extends MIOObject
 
     removeFromSuperview()
     {
-        this.parent._removeView(this);
+        let subviews = this.parent._subviews;
+        var index = subviews.indexOf(this);
+        subviews.splice(index, 1);
+
+        if (this._isLayerInDOM == false) return;
+
+        this.parent.layer.removeChild(this.layer);
         this._isLayerInDOM = false;
     }
 
@@ -177,14 +188,6 @@ class MUIView extends MIOObject
 
         this.layer.removeChild(this.layer);
         this._isLayerInDOM = false;
-    }
-
-    private _removeView(view)
-    {
-        var index = this.subviews.indexOf(view);
-        this.subviews.splice(index, 1);
-
-        this.layer.removeChild(view.layer);
     }
 
     private _removeAllSubviews() {
@@ -212,25 +215,25 @@ class MUIView extends MIOObject
         }
     }
 
-    layout()
-    {
-        if (this._viewIsVisible == false) return;
-        if (this.hidden == true) return;
-        if (this._needDisplay == false) return;
-        this._needDisplay = false;
-        
+    layoutSubviews(){
+                
         for(var index = 0; index < this.subviews.length; index++)
         {
             var v = this.subviews[index];
             if ((v instanceof MUIView) == false) throw ("layout: Trying to layout an object that is not a view");
-            v.layout();
+            v.setNeedsDisplay();
         }
     }
 
     setNeedsDisplay(){
 
         this._needDisplay = true;
-        this.layout();
+
+        if (this._viewIsVisible == false) return;
+        if (this.hidden == true) return;
+        
+        this._needDisplay = false;
+        this.layoutSubviews();
 
         for(var index = 0; index < this.subviews.length; index++)
         {
@@ -340,6 +343,7 @@ class MUIView extends MIOObject
         var w1 = this.layer.clientWidth;
         var w2 = this._getIntValueFromCSSProperty("width");
         var w = Math.max(w1, w2);
+        if (isNaN(w)) w = 0;
         return w;
     }
 
@@ -373,9 +377,12 @@ class MUIView extends MIOObject
         this.didChangeValue("frame");
     }
 
-    public get frame()
-    {
-        return MIOFrame.frameWithRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    public get frame() {
+        return MIORect.rectWithValues(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    }
+
+    public get bounds(){
+        return MIORect.rectWithValues(0, 0, this.getWidth(), this.getHeight());
     }
 
     //

@@ -37,6 +37,8 @@ class MIOManagedObjectContext extends MIOObject {
     private deletedObjects = {};
     private updateObjects = {};
 
+    private blockChanges = null;    
+
     initWithConcurrencyType(ct: MIOManagedObjectContextConcurrencyType) {
 
         super.init();
@@ -55,7 +57,7 @@ class MIOManagedObjectContext extends MIOObject {
     }
 
     insertObject(obj: MIOManagedObject) {
-        var entityName = obj.entity.managedObjectClassName;        
+        let entityName = obj.entity.managedObjectClassName;        
 
         var array = this.insertedObjects[entityName];
         if (array == null) {
@@ -69,7 +71,13 @@ class MIOManagedObjectContext extends MIOObject {
                 array.push(obj);
         }
 
-        this.objectsByID[obj.objectID] = obj;
+        var array = this.objectsByEntity[entityName];
+        if (array == null) {
+            array = [];
+            this.objectsByEntity[entityName] = array;
+        }
+        array.push(obj);        
+        this.objectsByID[obj.objectID.identifier] = obj;
     }
 
     updateObject(obj: MIOManagedObject) {
@@ -103,16 +111,76 @@ class MIOManagedObjectContext extends MIOObject {
                 array.push(obj);
         }
         
-        delete this.objectsByID[obj.objectID];
+        delete this.objectsByID[obj.objectID.identifier];
         let objs = this.objectsByEntity[entityName];
         if (objs != null){
             var index = objs.indexOf(obj);
             if (index > -1)
                 objs.splice(index, 1);
-        }
+        }        
 
         // TODO: Delete this hack.
         obj._markForDeletion();
+    }
+
+    existingObjectWithID(objectID:MIOManagedObjectID):MIOManagedObject{
+
+        let obj:MIOManagedObject = this.objectsByID[objectID.identifier];
+        if (obj == null){
+            var ps = this.persistentStoreCoordinator.persistentStores[0];
+            if (ps instanceof MIOIncrementalStore) {
+                obj = ps.existingObjectWithID(objectID, this);
+            }
+        }
+
+        return obj;
+    }
+
+    refreshObject(object:MIOManagedObject, mergeChanges:boolean) {
+
+        if (mergeChanges == false) return;
+        object.isFault = true;
+
+        var objsChanges = null;
+        if (this.blockChanges != null) {
+            objsChanges = this.blockChanges;
+        }
+        else {
+            objsChanges = {};
+            objsChanges[MIOInsertedObjectsKey] = {};
+            objsChanges[MIOUpdatedObjectsKey] = {};
+            objsChanges[MIODeletedObjectsKey] = {};
+        }
+
+        let entityName = object.entity.name;
+        if (object.isInserted) {
+            this.addObjectToTracking(objsChanges[MIOInsertedObjectsKey], object);
+            this.removeObjectFromTracking(this.insertedObjects, object);
+        }
+        else if (object.isUpdated) {
+            this.addObjectToTracking(objsChanges[MIOUpdatedObjectsKey], object);
+            this.removeObjectFromTracking(this.updateObjects, object);            
+        }
+        
+        if (this.blockChanges == null) {
+            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);
+        }
+    }     
+
+    private addObjectToTracking(objectTracking, object:MIOManagedObject) {
+        var array = objectTracking[object.entity.name];
+        if (array == null) {
+            array = [];
+            objectTracking[object.entity.name] = array;
+        }
+        array.push(object);        
+    }
+
+    private removeObjectFromTracking(objectTracking, object:MIOManagedObject){        
+        var array = objectTracking[object.entity.name];
+        if (array == null) return;
+        let index = array.indexOf(object);
+        if (index > -1) array.splice(index, 1);
     }
 
     removeAllObjectsForEntityName(entityName) {
@@ -139,9 +207,12 @@ class MIOManagedObjectContext extends MIOObject {
 
     executeFetch(request) {
         
-        var objs = this.persistentStoreCoordinator.executeRequest(request, this);
-
         let entityName = request.entityName;
+        let entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, this);
+        request.entity = entity;
+        
+        var objs = this.persistentStoreCoordinator.executeRequest(request, this);
+        
         let array = this.objectsByEntity[entityName];
         if (array == null) {
             array = [];
@@ -156,7 +227,14 @@ class MIOManagedObjectContext extends MIOObject {
             this.objectsByID[o.objectID] = o;
         }
 
-        return objs;
+        if (request instanceof MIOFetchRequest) {        
+            let fetchRequest = request as MIOFetchRequest;
+            var objects = _MIOPredicateFilterObjects(array, fetchRequest.predicate);
+            objects = _MIOSortDescriptorSortObjects(objects, fetchRequest.sortDescriptors);
+            return objects;
+        }
+
+        return [];
     }
 
     save() {
@@ -256,28 +334,19 @@ class MIOManagedObjectContext extends MIOObject {
                     array.push(o);
             }
         }
+    }
+    
+    performBlockAndWait(target, block){
 
+        this.blockChanges = {};
+        this.blockChanges[MIOInsertedObjectsKey] = {};
+        this.blockChanges[MIOUpdatedObjectsKey] = {};
+        this.blockChanges[MIODeletedObjectsKey] = {};
+
+        block.call(target);
+        MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, this.blockChanges);
+        this.blockChanges = null;
     }
 
-    //
-    // TODO: Remove this. It's not Cocoa compatible
-    //
-
-    queryObjects(entityName, predicate?) {
-
-        let request = MIOFetchRequest.fetchRequestWithEntityName(entityName);
-
-        if (predicate != null)
-            request.predicate = predicate;
-
-        let objs = this.executeFetch(request);
-        return objs;
-    }
-
-    queryObject(entityName, predicate?) {
-
-        let objs = this.queryObjects(entityName, predicate);
-        return objs.length > 0 ? objs[0] : null;
-    }
 }
 

@@ -1,6 +1,7 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
+/// <reference path="MIOPropertyDescription.ts" />
 
 enum MIOAttributeType {
 
@@ -13,30 +14,23 @@ enum MIOAttributeType {
     Date   
 }
 
-class MIOAttributeDescription extends MIOObject
-{
-    private _name:string = null;
+class MIOAttributeDescription extends MIOPropertyDescription
+{    
     private _attributeType = MIOAttributeType.Undefined;
     private _defaultValue = null;
     private _serverName:string = null;
     private _syncable = true;
 
-    optional = true;
-
     initWithName(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string, syncable?:boolean){
 
         super.init();
 
-        this._name = name;
+        this.name = name;
         this._attributeType = type;
         this._defaultValue = defaultValue;
         this._serverName = serverName;
         this.optional = optional;
         if (syncable == false) this._syncable = false;
-    }
-
-    get name(){
-        return this._name;
     }
 
     get attributeType(){
@@ -49,7 +43,7 @@ class MIOAttributeDescription extends MIOObject
 
     get serverName(){
         if (this._serverName == null) {    
-            return this._name;
+            return this.name;
         }
         
         return this._serverName;

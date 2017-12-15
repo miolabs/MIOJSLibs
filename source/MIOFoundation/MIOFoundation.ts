@@ -6,9 +6,10 @@
 /// <reference path="MIO_CoreEvents.ts" />
 /// <reference path="MIO_CoreEventTypes.ts" />
 
-/// <reference path="MIOBundle.ts" />
-
 /// <reference path="MIOObject.ts" />
+/// <reference path="MIONull.ts" />
+/// <reference path="MIOError.ts" />
+
 /// <reference path="MIOString.ts" />
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />
@@ -27,10 +28,16 @@
 /// <reference path="MIONotificationCenter.ts" />
 /// <reference path="MIOUserDefaults.ts" />
 
+/// <reference path="MIOURL.ts" />
+/// <reference path="MIOURLRequest.ts" />
 /// <reference path="MIOURLConnection.ts" />
+
 /// <reference path="MIOXMLParser.ts" />
 
 /// <reference path="MIOOperation.ts" />
 /// <reference path="MIOOperationQueue.ts" />
 
+/// <reference path="MIOBundle.ts" />
+
+/// <reference path="MIOLog.ts" />
 
