@@ -56,16 +56,32 @@ class MIOFetchedResultsController extends MIOObject
                 var upd_objs = notification.userInfo[MIOUpdatedObjectsKey];
                 var del_objs = notification.userInfo[MIODeletedObjectsKey];
                 
-                var entityName = this.fetchRequest.entityName;                
+                let entityName = this.fetchRequest.entityName;                
                 
                 if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
                     this.updateContent( ins_objs[entityName]?ins_objs[entityName]:[], 
                                         upd_objs[entityName]?upd_objs[entityName]:[], 
                                         del_objs[entityName]?del_objs[entityName]:[]);
             });
+
+            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextObjectsDidChange, function(notification:MIONotification) {
+
+                let moc:MIOManagedObjectContext = notification.object;
+                if (moc !== this.managedObjectContext) return;
+
+                let refreshed = notification.userInfo[MIORefreshedObjectsKey];
+                if (refreshed == null) return;
+                let entityName = this.fetchRequest.entityName;                
+                
+                let objects = refreshed[entityName];
+                if (objects == null) return;
+
+                this.refreshObjects(objects);
+            });
         }
         else {
             MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextDidSaveNotification);
+            MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextObjectsDidChange);
         }
     }
 
@@ -75,7 +91,45 @@ class MIOFetchedResultsController extends MIOObject
         this._splitInSections();
     }
 
-    updateContent(inserted, updated, deleted)
+    private refreshObjects(objects:MIOSet){
+        
+        let predicate = this.fetchRequest.predicate;
+        for (var count = 0; count < objects.count; count++){
+            let obj = objects.objectAtIndex(count);            
+            if (predicate != null) {
+                var result = predicate.evaluateObject(obj);
+                if (result) this.processObject(obj);
+            }
+            else {
+                this.processObject(obj);
+            }
+        }        
+        
+        this._splitInSections();
+        this._notify();
+    }
+
+    private processObject(object:MIOManagedObject){
+
+        let index = this.resultObjects.indexOf(object);
+        if (index == -1) {
+            this.insertObject(object);
+        }
+        else {
+            this.updateObject(object);
+        }
+
+    }
+
+    private insertObject(obj:MIOManagedObject) {
+        this.resultObjects.push(obj);        
+    }
+
+    private updateObject(obj:MIOManagedObject){
+
+    }
+
+    private updateContent(inserted, updated, deleted)
     {
         // Process inserted objects
         for(var i = 0; i < inserted.length; i++) {

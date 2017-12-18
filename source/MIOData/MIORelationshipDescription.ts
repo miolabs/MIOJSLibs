@@ -2,10 +2,8 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
 
-class MIORelationshipDescription extends MIOObject
+class MIORelationshipDescription extends MIOPropertyDescription
 {
-    name:string = null;
-
     destinationEntityName:string = null;
     destinationEntity:MIOEntityDescription = null;
     inverseRelationship:MIORelationshipDescription = null;

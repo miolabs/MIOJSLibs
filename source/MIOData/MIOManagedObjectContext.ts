@@ -6,10 +6,12 @@
 /// <reference path="MIOManagedObject.ts" />
 
 let MIOManagedObjectContextDidSaveNotification = "MIOManagedObjectContextDidSaveNotification";
+let MIOManagedObjectContextObjectsDidChange = "MIOManagedObjectContextObjectsDidChange";
 
 let MIOInsertedObjectsKey = "MIOInsertedObjectsKey";
 let MIOUpdatedObjectsKey = "MIOUpdatedObjectsKey";
 let MIODeletedObjectsKey = "MIODeletedObjectsKey";
+let MIORefreshedObjectsKey = "MIORefreshedObjectsKey";
 
 enum MIOManagedObjectContextConcurrencyType {
     PrivateQueue,
@@ -36,6 +38,7 @@ class MIOManagedObjectContext extends MIOObject {
     private insertedObjects = {};
     private deletedObjects = {};
     private updateObjects = {};
+    private refresedObjects = {};
 
     private blockChanges = null;    
 
@@ -125,14 +128,7 @@ class MIOManagedObjectContext extends MIOObject {
 
     existingObjectWithID(objectID:MIOManagedObjectID):MIOManagedObject{
 
-        let obj:MIOManagedObject = this.objectsByID[objectID.identifier];
-        if (obj == null){
-            var ps = this.persistentStoreCoordinator.persistentStores[0];
-            if (ps instanceof MIOIncrementalStore) {
-                obj = ps.existingObjectWithID(objectID, this);
-            }
-        }
-
+        let obj = this.objectWithID(objectID);
         return obj;
     }
 
@@ -141,29 +137,29 @@ class MIOManagedObjectContext extends MIOObject {
         if (mergeChanges == false) return;
         object.isFault = true;
 
-        var objsChanges = null;
-        if (this.blockChanges != null) {
-            objsChanges = this.blockChanges;
+        var changes = null;
+        if (this.blockChanges != null){
+            changes = this.blockChanges;
         }
         else {
-            objsChanges = {};
-            objsChanges[MIOInsertedObjectsKey] = {};
-            objsChanges[MIOUpdatedObjectsKey] = {};
-            objsChanges[MIODeletedObjectsKey] = {};
+            changes = {};
+            changes[MIORefreshedObjectsKey] = this.refresedObjects;
         }
 
         let entityName = object.entity.name;
-        if (object.isInserted) {
-            this.addObjectToTracking(objsChanges[MIOInsertedObjectsKey], object);
-            this.removeObjectFromTracking(this.insertedObjects, object);
-        }
-        else if (object.isUpdated) {
-            this.addObjectToTracking(objsChanges[MIOUpdatedObjectsKey], object);
-            this.removeObjectFromTracking(this.updateObjects, object);            
+        let objs = changes[MIORefreshedObjectsKey];
+
+        var set = objs[entityName];
+        if (set == null) {
+            set = MIOSet.set();
+            objs[entityName] = set;
         }
         
+        set.addObject(object);
+        
         if (this.blockChanges == null) {
-            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);
+            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, objs);
+            this.refresedObjects = {};
         }
     }     
 
@@ -193,13 +189,13 @@ class MIOManagedObjectContext extends MIOObject {
         }
     }
 
-    objectWithID(objectID:string){
+    objectWithID(objectID:MIOManagedObjectID){
 
-        var obj = this.objectsByID[objectID];
+        var obj = this.objectsByID[objectID.identifier];
         if (obj == null) {
-            obj = this.persistentStoreCoordinator.objectWithID(objectID);
+            obj = this.persistentStoreCoordinator.objectWithID(objectID, this);
             if (obj != null){
-                this.objectsByID[obj.objectID] = obj;
+                this.objectsByID[objectID.identifier] = obj;
             }
         }
         return obj;
@@ -342,11 +338,10 @@ class MIOManagedObjectContext extends MIOObject {
         this.blockChanges[MIOInsertedObjectsKey] = {};
         this.blockChanges[MIOUpdatedObjectsKey] = {};
         this.blockChanges[MIODeletedObjectsKey] = {};
+        this.blockChanges[MIORefreshedObjectsKey] = {};
 
         block.call(target);
-        let noty = new MIONotification(MIOManagedObjectContextDidSaveNotification, this, this.blockChanges);
-        this.mergeChangesFromContextDidSaveNotification(noty);
-        MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, this.blockChanges);
+        MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, this.blockChanges);
         this.blockChanges = null;
     }
 

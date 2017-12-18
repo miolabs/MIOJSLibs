@@ -12,7 +12,7 @@ class MIOFetchRequest extends MIOPersistentStoreRequest {
     
     entityName:string = null;
     entity:MIOEntityDescription = null;
-    predicate = null;
+    predicate:MIOPredicate = null;
     sortDescriptors = null;
     resultType = MIOFetchRequestResultType.MIOManagedObject;
     fetchLimit = 0;

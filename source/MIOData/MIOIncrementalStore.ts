@@ -17,6 +17,8 @@ class MIOIncrementalStore extends MIOPersistentStore {
         let objID = MIOManagedObjectID.objectIDWithEntity(entity);
         objID.persistentStore = this;
         this.referenceObjectByObjectID[objID.identifier] = referenceObject;
+        
+        console.log("New REFID: " + referenceObject);
 
         return objID;
     }
@@ -31,87 +33,109 @@ class MIOIncrementalStore extends MIOPersistentStore {
 
     newValueForRelationship(relationship: MIORelationshipDescription, objectID: MIOManagedObjectID, context?: MIOManagedObjectContext) {
         return null;
-    }
+    } 
 
-    existingObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext) {
+    objectWithID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         if (obj == null) {
             let node = this.newValuesForObjectWithID(objectID, context);
             if (node == null) throw("MIOIncrementalStore: Node CAN NOT BE NULL");
-            if (this.nodesByObjectID[objectID.identifier] == null) {                                            
-                let entity: MIOEntityDescription = objectID.entity;                
+            if (this.nodesByObjectID[objectID.identifier] == null) {
+                let entity: MIOEntityDescription = objectID.entity;
                 obj = MIOClassFromString(entity.name);
                 obj.objectID = objectID;
-                obj.initWithEntityAndInsertIntoManagedObjectContext(entity, context);
-                obj.isFault = false;
+                obj.entity = entity;
+                obj.managedObjectContext = context;
                 this.objectsByID[objectID.identifier] = obj;
+                this.fillObjectValuesFromNode(node, obj, context);
             }
             this.nodesByObjectID[objectID.identifier] = node;
-        }
-        else {
-            context.updateObject(obj);
         }
 
         return obj;
     }
 
-    refreshObject(object: MIOManagedObject, context: MIOManagedObjectContext, version): number {
-
-        let objID = object.objectID;
-        let node = this.nodesByObjectID[objID.identifier];
-
-        if (node.version <= version) return version;
-
-        this.parseAttributes(node.objectID.entity.attributes, node.values, object);
-        //TODO: Parse relationships
-
+    mergeFromStore(objectID: MIOManagedObjectID, context: MIOManagedObjectContext):number {
+        let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
+        let node = this.newValuesForObjectWithID(objectID, context);
+        this.fillObjectValuesFromNode(node, obj, context);
         return node.version;
     }
 
-    private parseAttributes(attributes, values, mo: MIOManagedObject) {
+    private fillObjectValuesFromNode(node:MIOIncrementalStoreNode, object:MIOManagedObject, context:MIOManagedObjectContext) {
+        
+        this.parseObjectAttributesFromNode(node, object);
+        this.parseObjectRelationshipsFromNode(node, object, context);
+    }
 
+    private parseObjectAttributesFromNode(node:MIOIncrementalStoreNode, mo: MIOManagedObject) {
+
+        let attributes = mo.entity.attributes;
         for (var i = 0; i < attributes.length; i++) {
             let attr: MIOAttributeDescription = attributes[i];
-            this.parseValueForAttribute(attr, values[attr.serverName], mo);
+            let value = node.valueForPropertyDescription(attr);
+            // if (value == null && attr.optional == false && attr.defaultValue == null) {
+            //     throw ("MIOWebPersistentStore: Couldn't set attribute value (" + mo.className + "." + attr.name + "). Value is nil and it's not optional.");
+            // }    
+            if (value == null && attr.defaultValue != null) value = attr.defaultValue;
+            if (attr.attributeType == MIOAttributeType.Date) {
+                let date = this.dateFormatter.dateFromString(value);
+                mo.setPrimitiveValue(attr.name, date);
+            }
+            else {
+                mo.setPrimitiveValue(attr.name, value);
+            }
         }
     }
 
-    private parseValueForAttribute(attribute: MIOAttributeDescription, value, object: MIOManagedObject) {
+    private parseObjectRelationshipsFromNode(node:MIOIncrementalStoreNode, mo: MIOManagedObject, context?: MIOManagedObjectContext){
 
-        if (value == null && attribute.optional == false && attribute.defaultValue == null) {
-            throw ("MIOWebPersistentStore: Couldn't set attribute value (" + object.className + "." + attribute.name + "). Value is nil and it's not optional.");
-        }
+        let relationships = mo.entity.relationships;
+        for (var i = 0; i < relationships.length; i++) {
+            let rel: MIORelationshipDescription = relationships[i];
 
-        if (value == null && attribute.defaultValue != null) value = attribute.defaultValue;
-        let type = attribute.attributeType;
+            if (rel.isToMany == false) {
 
-        if (type == MIOAttributeType.Boolean) {
-            if (typeof (value) === "boolean") {
-                object.setPrimitiveValue(attribute.name, value);
-            }
-            else if (typeof (value) === "string") {
-                let lwValue = value.toLocaleLowerCase();
-                if (lwValue == "yes" || lwValue == "true" || lwValue == "1")
-                    object.setPrimitiveValue(attribute.name, true);
-                else
-                    object.setPrimitiveValue(attribute.name, false);
+                let objID:MIOManagedObjectID = this.newValueForRelationship(rel, mo.objectID, context);
+                if (objID == null) continue;
+
+                let obj:MIOManagedObject = this.relationshipObjectWithObjectID(objID, context);
+
+                mo.willChangeValue(rel.name);
+                mo.setPrimitiveValue(rel.name, obj);
+                mo.didChangeValue(rel.name);
             }
             else {
-                let v = value > 0 ? true : false;
-                object.setPrimitiveValue(attribute.name, v);
+
+                let ids = this.newValueForRelationship(rel, mo.objectID, context);
+                if (ids == null) continue;
+
+                var set:MIOSet = mo.primitiveValue(rel.name);
+
+                for (var count = 0; count < ids.length; count++) {
+
+                    let objID:MIOManagedObjectID = ids[count];
+                    let obj:MIOManagedObject = this.relationshipObjectWithObjectID(objID, context);
+                    set.addObject(obj);
+                }
             }
         }
-        else if (type == MIOAttributeType.Integer) {
-            object.setPrimitiveValue(attribute.name, parseInt(value));
+    }
+
+    private relationshipObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+
+        var obj:MIOManagedObject = this.objectsByID[objectID.identifier];
+        if (obj == null) {
+            // Create fault object
+            let entity: MIOEntityDescription = objectID.entity;
+            obj = MIOClassFromString(entity.name);
+            obj.objectID = objectID;
+            obj.entity = entity;
+            obj.managedObjectContext = context;
+            obj.isFault = true;
+            this.objectsByID[objectID.identifier] = obj;
         }
-        else if (type == MIOAttributeType.Float || type == MIOAttributeType.Number) {
-            object.setPrimitiveValue(attribute.name, parseFloat(value));
-        }
-        else if (type == MIOAttributeType.String) {
-            object.setPrimitiveValue(attribute.name, value);
-        }
-        else if (type == MIOAttributeType.Date) {
-            object.setPrimitiveValue(attribute.name, this.dateFormatter.dateFromString(value));
-        }
+
+        return obj;
     }
 }

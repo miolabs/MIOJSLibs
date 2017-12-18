@@ -51,11 +51,11 @@ class MIOPersistentStoreCoordinator extends MIOObject
         return result;
     }
 
-    objectWithID(objectID:string){
+    objectWithID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         
         for (var index = 0; index < this._stores.length; index++){
             let ps:MIOPersistentStore = this._stores[index];
-            let obj = ps.objectWithID(objectID);
+            let obj = ps.objectWithID(objectID, context);
             if (obj != null) return obj;
         }
 

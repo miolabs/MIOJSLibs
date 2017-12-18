@@ -62,7 +62,7 @@ class  MIOPersistentStore extends MIOObject
         
     }
 
-    objectWithID(objectID:string){
+    objectWithID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         return null;
     }
 }

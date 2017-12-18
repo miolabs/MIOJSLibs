@@ -97,7 +97,7 @@ class MIOManagedObject extends MIOObject {
         
         let ps = this.objectID.persistentStore as MIOIncrementalStore;
         if (ps == null) return;
-        this.version = ps.refreshObject(this, this.managedObjectContext, this.version);
+        this.version = ps.mergeFromStore(this.objectID, this.managedObjectContext);        
         this.isFault = false;
     }
 
