@@ -196,6 +196,13 @@ class MIOManagedObjectContext extends MIOObject {
             obj = this.persistentStoreCoordinator.objectWithID(objectID, this);
             if (obj != null){
                 this.objectsByID[objectID.identifier] = obj;
+                let entityName = obj.entity.name;
+                var array = this.objectsByEntity[entityName];
+                if (array == null) {
+                    array = [];
+                    this.objectsByEntity[entityName] = array;
+                }
+                array.push(obj);
             }
         }
         return obj;
