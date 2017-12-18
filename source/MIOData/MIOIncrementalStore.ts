@@ -14,6 +14,8 @@ class MIOIncrementalStore extends MIOPersistentStore {
 
     newObjectIDForEntity(entity: MIOEntityDescription, referenceObject: string): MIOManagedObjectID {
 
+        if (entity == null) throw("MIOIncrementalStore: Trying to create and object ID with NULL entity");
+
         let objID = MIOManagedObjectID.objectIDWithEntity(entity);
         objID.persistentStore = this;
         this.referenceObjectByObjectID[objID.identifier] = referenceObject;
@@ -130,7 +132,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
             let entity: MIOEntityDescription = objectID.entity;
             obj = MIOClassFromString(entity.name);
             obj.objectID = objectID;
-            obj.entity = entity;
+            obj.entity = entity;            
             obj.managedObjectContext = context;
             obj.isFault = true;
             this.objectsByID[objectID.identifier] = obj;
