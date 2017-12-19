@@ -260,9 +260,19 @@ class MUITableView extends MUIScrollView {
         for (var index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
             if (row.view != null) {
-                row.view.removeFromSuperview();
-                if (row.type == MUITableViewRowType.Cell) {
-                    this.recycleCell(row.view);
+                switch (row.type) {
+
+                    case MUITableViewRowType.Header:
+                    case MUITableViewRowType.Footer:                    
+                        break;
+
+                    case MUITableViewRowType.Cell:
+                        this.recycleCell(row.view);
+                        row.view.removeFromSuperview();                        
+                        break;
+
+                    default:
+                        row.view.removeFromSuperview();
                 }                
             }
         }
@@ -639,7 +649,7 @@ class MUITableView extends MUIScrollView {
     private addHeader() {
 
         let header = null;
-        if (this.headerView != null) header = this.headerView.copy();
+        if (this.headerView != null) header = this.headerView;
         if (header == null) return 0;
 
         header.setX(0);
