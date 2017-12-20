@@ -38,7 +38,6 @@ class MIOManagedObjectContext extends MIOObject {
     private insertedObjects = {};
     private deletedObjects = {};
     private updateObjects = {};
-    private refresedObjects = {};
 
     private blockChanges = null;    
 
@@ -126,16 +125,38 @@ class MIOManagedObjectContext extends MIOObject {
         obj._markForDeletion();
     }
 
+    private registerObject(object:MIOManagedObject){
+
+        if (object == null) throw ("MIOManagedObjectContext: Registering null object");
+        let objectID = object.objectID;
+
+        this.objectsByID[objectID.identifier] = object;
+        let entityName = object.entity.name;
+        var array = this.objectsByEntity[entityName];
+        if (array == null) {
+            array = [];
+            this.objectsByEntity[entityName] = array;
+        }
+        array.push(object);
+    }
+
     existingObjectWithID(objectID:MIOManagedObjectID):MIOManagedObject{
 
-        let obj = this.objectWithID(objectID);
+        var obj = this.objectsByID[objectID.identifier];
+        if (obj == null) {
+            obj = this.persistentStoreCoordinator.fetchObjectWithObjectID(objectID, this, false);
+            if (obj != null) {
+                this.registerObject(obj);
+                obj.isFault = true;
+            }
+        }
+
         return obj;
     }
 
     refreshObject(object:MIOManagedObject, mergeChanges:boolean) {
 
         if (mergeChanges == false) return;
-        object.isFault = true;
 
         var changes = null;
         if (this.blockChanges != null){
@@ -143,7 +164,7 @@ class MIOManagedObjectContext extends MIOObject {
         }
         else {
             changes = {};
-            changes[MIORefreshedObjectsKey] = this.refresedObjects;
+            changes[MIORefreshedObjectsKey] = {};
         }
 
         let entityName = object.entity.name;
@@ -158,9 +179,9 @@ class MIOManagedObjectContext extends MIOObject {
         set.addObject(object);
         
         if (this.blockChanges == null) {
-            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, objs);
-            this.refresedObjects = {};
-        }
+            this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this);            
+            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, objs);            
+        }        
     }     
 
     private addObjectToTracking(objectTracking, object:MIOManagedObject) {
@@ -193,16 +214,10 @@ class MIOManagedObjectContext extends MIOObject {
 
         var obj = this.objectsByID[objectID.identifier];
         if (obj == null) {
-            obj = this.persistentStoreCoordinator.objectWithID(objectID, this);
-            if (obj != null){
-                this.objectsByID[objectID.identifier] = obj;
-                let entityName = obj.entity.name;
-                var array = this.objectsByEntity[entityName];
-                if (array == null) {
-                    array = [];
-                    this.objectsByEntity[entityName] = array;
-                }
-                array.push(obj);
+            obj = this.persistentStoreCoordinator.fetchObjectWithObjectID(objectID, this, true);
+            if (obj != null) {
+                this.registerObject(obj);
+                this.refreshObject(obj, true);
             }
         }
         return obj;
@@ -348,8 +363,25 @@ class MIOManagedObjectContext extends MIOObject {
         this.blockChanges[MIORefreshedObjectsKey] = {};
 
         block.call(target);
+
+        // Refresed block objects
+        let refresed = this.blockChanges[MIORefreshedObjectsKey];
+        this.refreshObjectsFromStore(refresed);
+        
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, this.blockChanges);
         this.blockChanges = null;
+    }
+
+    private refreshObjectsFromStore(objects){
+
+        for (var entityName in objects) {
+
+            let set:MIOSet = objects[entityName];            
+            for(var index = 0; index < set.length; index++) {
+                let object = set.objectAtIndex(index);
+                this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this);
+            }
+        }
     }
 
 }

@@ -37,7 +37,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return null;
     } 
 
-    objectWithID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext, mergeChanges:boolean){
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         if (obj == null) {
             let node = this.newValuesForObjectWithID(objectID, context);
@@ -49,7 +49,8 @@ class MIOIncrementalStore extends MIOPersistentStore {
                 obj.entity = entity;
                 obj.managedObjectContext = context;
                 this.objectsByID[objectID.identifier] = obj;
-                this.fillObjectValuesFromNode(node, obj, context);
+                if (mergeChanges == true)
+                    this.fillObjectValuesFromNode(node, obj, context);
             }
             this.nodesByObjectID[objectID.identifier] = node;
         }
@@ -57,7 +58,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return obj;
     }
 
-    mergeFromStore(objectID: MIOManagedObjectID, context: MIOManagedObjectContext):number {
+    updateObjectWithObjectID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext):number {
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         let node = this.newValuesForObjectWithID(objectID, context);
         this.fillObjectValuesFromNode(node, obj, context);

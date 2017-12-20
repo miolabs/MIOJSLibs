@@ -17,6 +17,7 @@ class MIOFetchRequest extends MIOPersistentStoreRequest {
     resultType = MIOFetchRequestResultType.MIOManagedObject;
     fetchLimit = 0;
     fetchOffset = 0;
+    relationshipKeyPathsForPrefetching = [];
 
     static fetchRequestWithEntityName(entityName:string) {
         var fetch = new MIOFetchRequest();

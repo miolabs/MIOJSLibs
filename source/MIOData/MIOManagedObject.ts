@@ -20,7 +20,7 @@ class MIOManagedObject extends MIOObject {
     private _isFault = false;
     private setIsFault(value) {
         this.willChangeValue("isFault");
-        this._isFault=value;
+        this._isFault = value;
         this.didChangeValue("isFault");        
     }       
     set isFault(value:boolean) {this.setIsFault(value);}
@@ -30,7 +30,7 @@ class MIOManagedObject extends MIOObject {
     private _setIsInserted(value) {
         this.willChangeValue("isInserted");
         this.willChangeValue("hasChanges");
-        this._isInserted=value;
+        this._isInserted = value;
         this.didChangeValue("isInserted");
         this.didChangeValue("hasChanges");
         this.isFault = true;
@@ -41,7 +41,7 @@ class MIOManagedObject extends MIOObject {
     private _setIsUpdated(value) {
         this.willChangeValue("isUpdated");
         this.willChangeValue("hasChanges");
-        this._isUpdated=value;
+        this._isUpdated = value;
         this.didChangeValue("isUpdated");
         this.didChangeValue("hasChanges");
         this.isFault = true;
@@ -52,7 +52,7 @@ class MIOManagedObject extends MIOObject {
     private _setIsDeleted(value) {
         this.willChangeValue("isDeleted");
         this.willChangeValue("hasChanges");
-        this._isDeleted=value;
+        this._isDeleted = value;
         this.didChangeValue("isDeleted");
         this.didChangeValue("hasChanges");
         this.isFault = true;
@@ -97,7 +97,7 @@ class MIOManagedObject extends MIOObject {
         
         let ps = this.objectID.persistentStore as MIOIncrementalStore;
         if (ps == null) return;
-        this.version = ps.mergeFromStore(this.objectID, this.managedObjectContext);        
+        this.version = ps.updateObjectWithObjectID(this.objectID, this.managedObjectContext);
         this.isFault = false;
     }
 
