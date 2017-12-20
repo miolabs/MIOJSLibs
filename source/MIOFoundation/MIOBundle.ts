@@ -49,9 +49,15 @@ class MIOBundle extends MIOObject
             }
 
             this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
-
-                if (target != null && completion != null)
-                    completion.call(target, layerData);
+                        
+                    var domParser = new DOMParser();
+                    var items = domParser.parseFromString(layerData, "text/html");
+                    var layer = items.getElementById(layerID);
+                            
+                    //this.localizeSubLayers(layer.childNodes);
+        
+                    if (target != null && completion != null)
+                        completion.call(target, layer);
             });
         }
     }

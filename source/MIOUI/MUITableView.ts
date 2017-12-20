@@ -9,6 +9,12 @@
 
 /// <reference path="MUITableViewCell.ts" />
 
+interface MUITableViewDataSource {
+    
+    viewForHeaderInSection?(tableView:MUITableView, section):MUIView;
+    titleForHeaderInSection?(tableView:MUITableView, section):string;
+}
+
 class MUITableViewSection extends MIOObject {
     header: MUIView = null;
     title: String = null;
@@ -100,6 +106,8 @@ class MUITableView extends MUIScrollView {
     private contentHeight = 0;
     private lastContentOffsetY = -this.defaultRowHeight;
 
+    private firstVisibleHeader:MUIView = null;
+
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
@@ -170,19 +178,7 @@ class MUITableView extends MUIScrollView {
 
         this._cellPrototypes[identifier] = item;
         var mainBundle = MIOBundle.mainBundle();
-        mainBundle.loadHTMLNamed(url, elementID, this, function (data) {
-
-            var result = data;
-            var cssFiles = result.styles;
-            var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
-            for (var index = 0; index < cssFiles.length; index++)
-                MIOCoreLoadStyle(baseURL + cssFiles[index], null);
-
-            var domParser = new DOMParser();
-            var items = domParser.parseFromString(result.layout, "text/html");
-            var layer = items.getElementById(elementID);
-
-            //cell.localizeSubLayers(layer.childNodes);
+        mainBundle.loadHTMLNamed(url, elementID, this, function (layer) {
 
             item["layer"] = layer;
             this._cellPrototypes[identifier] = item;
@@ -213,8 +209,7 @@ class MUITableView extends MUIScrollView {
 
         //instance creation here
         var className = item["class"];
-        cell = Object.create(window[className].prototype);
-        cell.constructor.apply(cell);
+        cell = MIOClassFromString(className);
         cell.nodeID = MIOUUID.uuid();
         cell.reuseIdentifier = identifier;
 
@@ -328,13 +323,6 @@ class MUITableView extends MUIScrollView {
         else {
             this.scrollLayoutSubviews();
         }
-
-        // if (this.contentHeight < this.getHeight()) {
-        //     this.contentHeight = this.getHeight();
-        //     let size = new MIOSize(this.getWidth(), this.contentHeight);
-        //     MIOLog("SIZE: " + this.contentHeight);
-        //     this.contentSize = size;
-        // }
     }
 
     private lastIndexPath: MIOIndexPath = null;
@@ -426,14 +414,18 @@ class MUITableView extends MUIScrollView {
                 if (exit == true) break;
 
                 var section: MUITableViewSection = this.sections[sectionIndex];
-                h = this.addSectionHeader(section, posY, this.rows[nextRow]);
-                posY += h;
-                if (h > 0) {
-                    nextRow++;
-                    start++;
-                }
-
+                
                 for (var cellIndex = startRowIndex; cellIndex < section.rows; cellIndex++) {
+
+                    if (cellIndex == 0) {
+                        h = this.addSectionHeader(section, posY, this.rows[nextRow]);
+                        posY += h;
+                        if (h > 0) {
+                            nextRow++;
+                            start++;
+                        }
+                    }
+
                     MIOLog("-> ROW: " + nextRow + " POS Y: " + posY);
                     let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
                     posY += this.addCell(ip, posY, this.rows[nextRow]);
@@ -467,67 +459,11 @@ class MUITableView extends MUIScrollView {
         }
 
 
-        // Title cells
-        // let range = this.rangeForVisibleCells();
-        // if (MIOEqualRanges(range, this.visibleRange) == true) return;
-
-        // this.recycleRowsForNewVisibleRange(range, scrollDown);
-        // this.addRowsForNewVisibleRange(range, scrollDown);
-        // this.visibleRange = range;
 
         let size = new MIOSize(this.getWidth(), this.contentHeight);
         this.contentSize = size;
 
         MIOLog("----------------------------------------");
-    }
-
-    private rangeForVisibleCells() {
-
-        let visibleBounds: MIORect = this.bounds;
-
-        var firstIndex = Math.floor(MIORectMaxY(visibleBounds) / this.defaultRowHeight) - 1;
-        var lastIndex = Math.floor(MIORectMinY(visibleBounds) / this.defaultRowHeight) + 1;
-        firstIndex = Math.max(firstIndex, 0);
-        lastIndex = Math.min(lastIndex, this.rowsCount - 1);
-
-        let visibleRange = new MIORange(firstIndex, lastIndex - firstIndex + 1);
-        return visibleRange;
-    }
-
-    private recycleRowsForNewVisibleRange(range: MIORange, scrollDown: Boolean) {
-
-        if (this.visibleRange.location == -1) return;
-
-        var row;
-        var start;
-        var end;
-
-        if (scrollDown == true) {
-            // First visible row
-            row = this.rows[this.visibleRange.location];
-            start = this.visibleRange.location;
-            end = range.location;
-        }
-        else {
-            // Last visible row
-            row = this.rows[this.visibleRange.location + this.visibleRange.length - 1];
-            start = range.location + range.length - 1;
-            end = this.visibleRange.location + this.visibleRange.length;
-        }
-
-        for (var index = start; index < end; index++) {
-
-            if (MIOLocationInRange(index, range) == true) continue;
-
-            let row = this.rows[index];
-            if (row.type == MUITableViewRowType.Cell) {
-                this.recycleCell(row.view);
-                row.view = null;
-            }
-            else if (row.type == MUITableViewRowType.SectionHeader || row.type == MUITableViewRowType.SectionFooter) {
-                row.view = null;
-            }
-        }
     }
 
     private recycleCell(cell: MUITableViewCell) {

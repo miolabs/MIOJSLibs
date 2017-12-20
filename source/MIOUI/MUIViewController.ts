@@ -123,26 +123,8 @@ class MUIViewController extends MIOObject
         }
         
         var mainBundle = MIOBundle.mainBundle();
-        mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layerData) {
-
-            //var result = MIOHTMLParser(data, this.layerID);
-            // var result = data;
-            // var cssFiles = result.styles;
-            // var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
-            // for (var index = 0; index < cssFiles.length; index++) {
-
-            //     var cssurl  = baseURL + cssFiles[index];
-            //     console.log("Adding CSS: " + cssurl);
-            //     MIOCoreLoadStyle(cssurl);
-            // }
-
-            var domParser = new DOMParser();
-            var items = domParser.parseFromString(layerData, "text/html");
-            var layer = items.getElementById(this.layerID);
-
-            this.localizeSubLayers(layer.childNodes);
-
-            //this.view.addSubLayer(layer);
+        mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layer) {            
+            
             this.view.initWithLayer(layer);
             this.view.awakeFromHTML();
             this._didLoadView();
