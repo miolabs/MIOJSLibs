@@ -51,14 +51,23 @@ class MIOPersistentStoreCoordinator extends MIOObject
         return result;
     }
 
-    objectWithID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext, mergeChanges:boolean){
         
         for (var index = 0; index < this._stores.length; index++){
             let ps:MIOPersistentStore = this._stores[index];
-            let obj = ps.objectWithID(objectID, context);
+            let obj = ps.fetchObjectWithObjectID(objectID, context, mergeChanges);
             if (obj != null) return obj;
         }
 
         return null;
+    }
+
+    updateObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+        
+        for (var index = 0; index < this._stores.length; index++){
+            let ps:MIOPersistentStore = this._stores[index];
+            let obj = ps.updateObjectWithObjectID(objectID, context);
+            if (obj != null) return obj;
+        }
     }
 }

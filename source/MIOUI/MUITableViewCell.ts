@@ -35,7 +35,7 @@ enum MUITableViewCellSelectionStyle {
     Default
 }
 
-class MUITableViewCell extends MUIScrollView {
+class MUITableViewCell extends MUIView {
 
     reuseIdentifier:string = null;
 

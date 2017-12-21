@@ -52,17 +52,17 @@ class  MIOPersistentStore extends MIOObject
 
     loadMetadata(){}
 
-    executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){
-        
+    executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){        
         return [];
     }
 
-    newObjectIDForEntityWithReferenceObject(entity, referenceObject){
-        
-        
+    newObjectIDForEntityWithReferenceObject(entity, referenceObject){                
     }
 
-    objectWithID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext, mergeChanges:boolean){
         return null;
+    }
+
+    updateObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
     }
 }

@@ -8,6 +8,7 @@ class MIOEntityDescription extends MIOObject {
     name:string = null;
     attributes = [];
     relationships = [];
+    relationshipsByName = {};
 
     private serverAttributes = {};
     private serverRelationships = {};
@@ -63,8 +64,9 @@ class MIOEntityDescription extends MIOObject {
         var rel = new MIORelationshipDescription();
         rel.initWithName(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
         this.relationships.push(rel);
+        this.relationshipsByName[name] = rel;
 
-        // Cache
+        // Server cache
         this.serverRelationships[name] = serverName ? serverName : name;                
     }
 
