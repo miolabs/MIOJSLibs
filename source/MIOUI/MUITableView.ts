@@ -1019,8 +1019,8 @@ class MUITableView extends MUIScrollView {
 
     selectNextIndexPath() {
 
-        var sectionIndex = this.selectedIndexPath.section;
-        var rowIndex = this.selectedIndexPath.row;
+        var sectionIndex =  this.selectedIndexPath ? this.selectedIndexPath.section: -1;
+        var rowIndex =  this.selectedIndexPath ? this.selectedIndexPath.row : -1;
 
         if (sectionIndex == -1 && rowIndex == -1) {
             sectionIndex = 0;
