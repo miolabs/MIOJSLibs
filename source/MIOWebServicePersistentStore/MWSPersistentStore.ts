@@ -254,7 +254,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let inserts = request.insertedObjects;
         for (var index = 0; index < inserts.length; index++) {
             let obj: MIOManagedObject = inserts[index];
-            this.insertObjectOnServer(obj);
+            this.insertObjectToServer(obj);
             obj.isFault = false;
         }
 
@@ -273,8 +273,70 @@ class MWSPersistentStore extends MIOIncrementalStore {
         }
     }
 
-    private insertObjectOnServer(object: MIOManagedObject) {
+    //
+    // App to server comunication
+    //
 
+    private uploadOperationQueue:MIOOperationQueue = null;
+    private operationsByReferenceID = {};
+
+    checkOperationDependecies(operation: MWPSUploadOperation, dependencies) {
+
+        for (var index = 0; index < dependencies.length; index++) {
+            let referenceID = dependencies[index];
+            let op = this.operationsByReferenceID[referenceID];
+            if (op == null) continue;
+            operation.addDependency(op);
+        }
+    }
+    
+    uploadToServer() {
+
+        if (this.uploadOperationQueue == null) {
+            this.uploadOperationQueue = new MIOOperationQueue();
+            this.uploadOperationQueue.init();
+        }
+
+        for (var refID in this.operationsByReferenceID) {
+            let op = this.operationsByReferenceID[refID];
+            this.checkOperationDependecies(op, op.dependencyIDs);
+            this.uploadOperationQueue.addOperation(op);
+        }
+    }
+
+    insertObjectToServer(obj: MIOManagedObject) {
+/*
+        let referenceID = obj.valueForKey(this.referenceIDKey);
+        if (referenceID == null) return;
+
+        let entityName = obj.entity.managedObjectClassName;
+        var result = this.delegate.canServerSyncEntityNameForType(entityName, MIOWebServicePersistentIgnoreEntityType.Insert);
+        if (result == false) return;
+
+        var dependencies = [];
+
+        var op = new MWPSUploadOperation();
+        op.initWithDelegate(this);
+        op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase());
+        op.httpMethod = "PUT"
+        op.body = this.serverDataFromObject(obj, false, dependencies);
+        op.dependencyIDs = dependencies;
+
+        this.operationsByReferenceID[referenceID] = op;
+
+        op.target = this;
+        op.completion = function () {
+            delete this.operationsByReferenceID[referenceID];
+
+            let item = op.responseJSON["data"];
+            let queryID = this.queryByID(null);
+            this.parseServerObjectsForEntity(entityName, [item], queryID, obj.managedObjectContext);
+            let query = this.queries[queryID];
+            query["Count"] = query["Count"] - 1;
+            this.checkQueryByID(queryID, obj.managedObjectContext);
+        }
+
+        */
     }
 
     private updateObjectOnServer(object: MIOManagedObject) {
@@ -288,17 +350,81 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
         let request = this.delegate.newRequestForWebStore(this, MWSPersistentStoreRequestType.Update, entityName, refID, values);
         if (request == null) throw "MWSPersistentStoreError.InvalidRequest";
-        request.send(this, function (code, data) {
-            let [result] = this.delegate.requestDidFinishForWebStore(this, null, code, data);
-            if (result == true) {
-                MIOLog("Saved!");
-            }
-        });
+
+        var op = new MWSPersistenStoreUploadOperation();
+        op.initWithDelegate(this);
+        op.request = request;
+        //op.dependencyIDs = dependencies;
+        this.operationsByReferenceID[refID] = op;
+
+        // request.send(this, function (code, data) {
+        //     let [result] = this.delegate.requestDidFinishForWebStore(this, null, code, data);
+        //     if (result == true) {
+        //         MIOLog("Saved!");
+        //     }
+        // });
+
+        op.target = this;
+        op.completion = function () {
+            delete this.operationsByReferenceID[refID];
+        }        
     }
 
-    private deleteObjectOnServer(object: MIOManagedObject) {
+/*    updateObjectOnServer(obj: MIOManagedObject) {
 
+        let referenceID = obj.valueForKey(this.referenceIDKey);
+        if (referenceID == null) return;
+
+        let entityName = obj.entity.managedObjectClassName;
+        var result = this.delegate.canServerSyncEntityNameForType(entityName, MIOWebServicePersistentIgnoreEntityType.Update);
+        if (result == false) return;
+
+        var dependencies = [];
+
+        var op = new MWPSUploadOperation();
+        op.initWithDelegate(this);
+        op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID);
+        op.httpMethod = "PATCH"
+        op.body = this.serverDataFromObject(obj, true, dependencies);
+        op.dependencyIDs = dependencies;
+
+        this.operationsByReferenceID[referenceID] = op;
+
+        op.target = this;
+        op.completion = function () {
+            delete this.operationsByReferenceID[referenceID];
+        }
+    }*/
+
+    deleteObjectOnServer(obj: MIOManagedObject) {
+
+        /*
+        let referenceID = obj.valueForKey(this.referenceIDKey);
+        if (referenceID == null) return;
+
+        let entityName = obj.entity.managedObjectClassName;
+        var result = this.delegate.canServerSyncEntityNameForType(entityName, MIOWebServicePersistentIgnoreEntityType.Delete);
+        if (result == false) return;
+
+
+        var dependencies = [];
+
+        var op = new MWPSUploadOperation();
+        op.initWithDelegate(this);
+        op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());
+        op.httpMethod = "DELETE"
+        //op.body = null; 
+        this.serverDataFromObject(obj, false, dependencies);
+        op.dependencyIDs = dependencies;
+
+        this.operationsByReferenceID[referenceID] = op;
+
+        op.target = this;
+        op.completion = function () {
+            delete this.operationsByReferenceID[referenceID];
+        }
+
+        */
     }
-
 
 }

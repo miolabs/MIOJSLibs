@@ -704,8 +704,20 @@ class MUITableView extends MUIScrollView {
         var h = this.rowHeight;
         if (typeof this.delegate.heightForRowAtIndexPath === "function") {
             h = this.delegate.heightForRowAtIndexPath(this, indexPath);
+            if (r.height != h) {
+                if (r.height == 0) {
+                    this.contentHeight -= this.defaultRowHeight;
+                    this.contentHeight += h; 
+                }
+                else {
+                    this.contentHeight -= r.height;
+                    this.contentHeight += h;                     
+                }
+                r.height = h;
+            }
         }
-        else if (h > 0) {
+        
+        if (h > 0) {
             cell.setHeight(h);
         }
         else {

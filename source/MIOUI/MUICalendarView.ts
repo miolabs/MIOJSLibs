@@ -249,7 +249,7 @@ class MUICalendarMonthView extends MUIView {
         this._weekRows = rowIndex + 1;
     }
 
-    layout() {
+    layoutSubviews() {
         // Layout header
         var headerHeight = this._header.getHeight() + 1;
 
@@ -273,9 +273,9 @@ class MUICalendarMonthView extends MUIView {
             x = offsetX[MIODateGetDayFromDate(dv.date)];
             y = headerHeight + (dv.weekRow * h) + marginY;
 
-            dv.setFrame(MIOFrame.frameWithRect(x, y, (w - marginW), (h - marginH)));
+            dv.setFrame(MIORect.rectWithValues(x, y, (w - marginW), (h - marginH)));
 
-            dv.layout();
+            dv.layoutSubviews();
         }
     }
 }
@@ -483,17 +483,29 @@ class MUICalendarView extends MUIScrollView {
             this.addSubview(mv);
             this._views.push(mv);
         }
-
-        this.setNeedsDisplay();
+        
+        this.initialReload = true;
+        this.setNeedsDisplay();        
     }
 
-    layout() {
+    private initialReload = false;
+
+    layoutSubviews() {
         //super.layout();
 
         if (this._viewIsVisible == false) return;
-        if (this.hidden == true) return;
-        if (this._needDisplay == false) return;
-        this._needDisplay = false;
+        if (this.hidden == true) return;        
+      
+        if (this.initialReload == true) {
+            this.initialReload = false;
+            this.initialLayout();
+        }
+        else {
+            this.scrollLayout();
+        }
+    }        
+
+    private initialLayout(){
         
         var w = this.getWidth() - this.horizontalCellSpacing;
         var h = this.getHeight();
@@ -503,21 +515,23 @@ class MUICalendarView extends MUIScrollView {
 
         for (var index = 0; index < this._views.length; index++) {
             var mv = this._views[index];
-            mv.setFrame(MIOFrame.frameWithRect(x, y, w, h));
+            mv.setFrame(MIORect.rectWithValues(x, y, w, h));
             mv.layer.style.top = "";
-            mv.layout();
+            mv.layoutSubviews();
 
             y += h;
         }
 
         var middle = h / 2;
         this._scrollTopLimit = middle;        
-        this._scrollBottomLimit = h + middle;
+        this._scrollBottomLimit = h + middle;  
 
-        this.scrollToDate(this.today);
-    }        
+        this.contentSize = new MIOSize(this.getWidth(), y + h);
 
-    protected didScroll(deltaX, deltaY) {
+        this.scrollToDate(this.today);        
+    }
+
+    private scrollLayout() {
         
         if (this.contentOffset.y < this._scrollTopLimit) {
                         
@@ -541,7 +555,7 @@ class MUICalendarView extends MUIScrollView {
 
             console.log("Offset y: " + this.contentOffset.y);
 
-            lastMonth.layout();
+            lastMonth.layoutSubviews();
 
             if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari) {
                 var offsetY = this.getHeight() + this.contentOffset.y;
@@ -568,7 +582,7 @@ class MUICalendarView extends MUIScrollView {
             firstMonth.removeFromSuperview();
             this.addSubview(firstMonth);
 
-            firstMonth.layout();
+            firstMonth.layoutSubviews();
 
             if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari) {
                 this.scrollToPoint(0, offsetY);

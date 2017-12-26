@@ -153,10 +153,8 @@ class MUIAlertViewController extends MUIViewController
         this.view.layer.classList.add("alertview_window");
     }
 
-    viewWillAppear(animated?)
-    {
-        super.viewWillAppear(animated);
-        
+    viewDidAppear(animated?) {
+        super.viewDidAppear(animated);        
         this._tableView.reloadData();
     }
 
@@ -247,10 +245,11 @@ class MUIAlertViewController extends MUIViewController
         return cell;
     }
 
-    heightForRowAtIndexPath(taleview, indexPath:MIOIndexPath)
-    {
-        if (indexPath.row == 0) return 80;
-        else return 50;
+    heightForRowAtIndexPath(tableView:MUITableView, indexPath:MIOIndexPath) {
+        let h = 50;
+        if (indexPath.row == 0) h = 80;
+        
+        return h;
     }
 
     canSelectCellAtIndexPath(tableview, indexPath:MIOIndexPath)
