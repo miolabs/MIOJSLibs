@@ -7,6 +7,8 @@ class MIOEntityDescription extends MIOObject {
     
     name:string = null;
     attributes = [];
+    attributesByName = {};
+
     relationships = [];
     relationshipsByName = {};
 
@@ -49,8 +51,9 @@ class MIOEntityDescription extends MIOObject {
         var attr = new MIOAttributeDescription();
         attr.initWithName(name, type, defaultValue, optional, serverName, syncable);
         this.attributes.push(attr);
-
-        // Cache
+        this.attributesByName[name] = attr;
+        
+        // Cache        
         this.serverAttributes[name] = serverName ? serverName : name;
     }
 

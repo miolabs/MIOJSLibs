@@ -306,8 +306,8 @@ class MUICalendarView extends MUIScrollView {
     private _views = [];
     private _visibleDayCells = {};
 
-    private _scrollTopLimit = 0;
-    private _scrollBottomLimit = 0;
+    private scrollTopLimit = 0;
+    private scrollBottomLimit = 0;
 
     init(){
 
@@ -338,7 +338,7 @@ class MUICalendarView extends MUIScrollView {
 
     private _setup(){
         
-        this.showsVerticalScrollIndicator = false;
+        //this.showsVerticalScrollIndicator = false;
     }
 
     private _addCellPrototypeWithLayer(subLayer) 
@@ -501,7 +501,7 @@ class MUICalendarView extends MUIScrollView {
             this.initialLayout();
         }
         else {
-            this.scrollLayout();
+            //this.scrollLayout();
         }
     }        
 
@@ -523,17 +523,37 @@ class MUICalendarView extends MUIScrollView {
         }
 
         var middle = h / 2;
-        this._scrollTopLimit = middle;        
-        this._scrollBottomLimit = h + middle;  
+        this.scrollTopLimit = middle;        
+        this.scrollBottomLimit = h + middle;  
 
-        this.contentSize = new MIOSize(this.getWidth(), y + h);
+        let ws = this.getWidth();
+        let hs = y;
+        this.contentSize = new MIOSize(ws, y);
 
-        this.scrollToDate(this.today);        
+        this.scrollToDate(this.today);
+        this.lastContentOffsetY = this.contentOffset.y;
     }
+
+    private lastContentOffsetY = 0;
 
     private scrollLayout() {
         
-        if (this.contentOffset.y < this._scrollTopLimit) {
+        var scrollDown = false;
+        var offsetY = 0;
+        if (this.contentOffset.y == this.lastContentOffsetY) return;
+        if (this.contentOffset.y > this.lastContentOffsetY) {
+            offsetY = this.contentOffset.y - this.lastContentOffsetY;
+            scrollDown = true;
+        }
+        else if (this.contentOffset.y < this.lastContentOffsetY) {
+            offsetY = this.lastContentOffsetY - this.contentOffset.y;
+            scrollDown = false;
+        }
+        
+        if (offsetY < this.scrollTopLimit) return;
+        this.lastContentOffsetY = this.contentOffset.y;        
+
+        if (scrollDown == false) {
                         
             // Going up
             var firstMonth = this._views[0];
@@ -562,7 +582,7 @@ class MUICalendarView extends MUIScrollView {
                 this.scrollToPoint(0, offsetY);
             }
         }
-        else if (this.contentOffset.y > this._scrollBottomLimit) {
+        else {
             // Going down
 
             var firstMonth = this._views[0];
@@ -577,16 +597,24 @@ class MUICalendarView extends MUIScrollView {
             this._views[1] = lastMonth;
             this._views[2] = firstMonth;
             
-            var offsetY = this.contentOffset.y - this.getHeight();
+            let hs = this.getHeight();
+            var newY = this.contentOffset.y - this.getHeight();
+
+            console.log("Offset y: " + this.contentOffset.y + " H: " + hs);
 
             firstMonth.removeFromSuperview();
             this.addSubview(firstMonth);
 
+            console.log("Offset y: " + this.contentOffset.y + " new Y: " + newY);
+
             firstMonth.layoutSubviews();
 
             if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari) {
-                this.scrollToPoint(0, offsetY);
+                this.scrollToPoint(0, newY);
             }
+
+            this.scrollToPoint(0, newY);
+            this.lastContentOffsetY = newY;
         }
     }
 
