@@ -15,14 +15,12 @@ class MUICollectionViewCell extends MUIView
 
     selected = false;
 
-    initWithLayer(layer, owner, options)
-    {
+    initWithLayer(layer, owner, options){
         super.initWithLayer(layer, owner, options);
         this._setupLayer();
     }
 
-    private _setupLayer()
-    {
+    private _setupLayer() {
         var instance = this;
 
         this.layer.addEventListener("click", function(e) {
@@ -33,11 +31,9 @@ class MUICollectionViewCell extends MUIView
         });
     }
 
-    setSelected(value)
-    {
+    setSelected(value) {
         this.willChangeValue("selected");
         this.selected = value;
-
         this.didChangeValue("selected");
     }
 }
@@ -64,8 +60,7 @@ class MUICollectionView extends MUIView
     selectedCellIndex = -1;
     selectedCellSection = -1;
 
-    public get collectionViewLayout():MUICollectionViewFlowLayout
-    {
+    public get collectionViewLayout():MUICollectionViewFlowLayout{
         if (this._collectionViewLayout == null) {
             this._collectionViewLayout = new MUICollectionViewFlowLayout();
             this._collectionViewLayout.init();
@@ -74,21 +69,17 @@ class MUICollectionView extends MUIView
         return this._collectionViewLayout;
     }
 
-    public set collectionViewLayout(layout:MUICollectionViewFlowLayout)
-    {
+    public set collectionViewLayout(layout:MUICollectionViewFlowLayout){
         //TODO: Set animations for changing layout
         this._collectionViewLayout = layout;
     }
 
-    initWithLayer(layer, options)
-    {
+    initWithLayer(layer, options){
         super.initWithLayer(layer, options);
 
         // Check if we have prototypes
-        if (this.layer.childNodes.length > 0)
-        {
-            for(var index = 0; index < this.layer.childNodes.length; index++)
-            {
+        if (this.layer.childNodes.length > 0){
+            for(var index = 0; index < this.layer.childNodes.length; index++){
                 var subLayer = this.layer.childNodes[index];
 
                 if (subLayer.tagName != "DIV")
@@ -98,8 +89,7 @@ class MUICollectionView extends MUIView
                     this._addCellPrototypeWithLayer(subLayer);
                     subLayer.style.display = "none";
                 }
-                else if (subLayer.getAttribute("data-supplementary-view-identifier") != null)
-                {
+                else if (subLayer.getAttribute("data-supplementary-view-identifier") != null){
                     this._addSupplementaryViewPrototypeWithLayer(subLayer);
                     subLayer.style.display = "none";
                 }
@@ -107,8 +97,7 @@ class MUICollectionView extends MUIView
         }
     }
 
-    private _addCellPrototypeWithLayer(subLayer)
-    {
+    private _addCellPrototypeWithLayer(subLayer){
         var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
         var cellClassname = subLayer.getAttribute("data-class");
         if (cellClassname == null) cellClassname = "MIOCollectionViewCell";
@@ -124,8 +113,7 @@ class MUICollectionView extends MUIView
         this._cellPrototypes[cellIdentifier] = item;
     }
 
-    private _addSupplementaryViewPrototypeWithLayer(subLayer)
-    {
+    private _addSupplementaryViewPrototypeWithLayer(subLayer){
         var viewIdentifier = subLayer.getAttribute("data-supplementary-view-identifier");
         var viewClassname = subLayer.getAttribute("data-class");
         if (viewClassname == null) viewClassname = "MIOView";
@@ -141,18 +129,15 @@ class MUICollectionView extends MUIView
         this._supplementaryViews[viewIdentifier] = item;
     }
 
-    registerClassForCellWithReuseIdentifier(cellClass, resource, identifier)
-    {
+    registerClassForCellWithReuseIdentifier(cellClass, resource, identifier){
         //TODO:
     }
 
-    registerClassForSupplementaryViewWithReuseIdentifier(viewClass, resource, identifier)
-    {
+    registerClassForSupplementaryViewWithReuseIdentifier(viewClass, resource, identifier){
         //TODO:
     }
 
-    dequeueReusableCellWithIdentifier(identifier)
-    {
+    dequeueReusableCellWithIdentifier(identifier){
         var item = this._cellPrototypes[identifier];
 
         //instance creation here
@@ -189,8 +174,7 @@ class MUICollectionView extends MUIView
         return cell;
     }
 
-    dequeueReusableSupplementaryViewWithReuseIdentifier(identifier)
-    {
+    dequeueReusableSupplementaryViewWithReuseIdentifier(identifier){
         var item = this._supplementaryViews[identifier];
 
         //instance creation here
@@ -229,16 +213,15 @@ class MUICollectionView extends MUIView
         return view;
     }
 
-    cellAtIndexPath(index, section)
-    {
-        var s = this._sections[section];
-        var c = s.cells[index];
+    cellAtIndexPath(indexPath:MIOIndexPath){
+        var s = this._sections[indexPath.section];
+        var c = s.cells[indexPath.row];
 
         return c;
     }
 
-    public reloadData()
-    {
+    public reloadData(){
+        
         if (this.dataSource == null) return;
 
         // Remove all subviews
@@ -255,8 +238,10 @@ class MUICollectionView extends MUIView
                 var cell = sectionView.cells[count];
                 cell.removeFromSuperview();
                 if (this.delegate != null) {
-                    if (typeof this.delegate.didEndDisplayingCellAtIndexPath === "function")
-                        this.delegate.didEndDisplayingCellAtIndexPath(this, cell, count, index);
+                    if (typeof this.delegate.didEndDisplayingCellAtIndexPath === "function"){
+                        let ip = MIOIndexPath.indexForRowInSection(count, index);
+                        this.delegate.didEndDisplayingCellAtIndexPath(this, cell, ip);
+                    }
                 }                
             }
         }
@@ -272,7 +257,7 @@ class MUICollectionView extends MUIView
 
             if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function")
             {
-                var hv = this.dataSource.viewForSupplementaryViewAtIndex(this, "header", index, sectionIndex);
+                var hv = this.dataSource.viewForSupplementaryViewAtIndex(this, "header", sectionIndex);
                 section.header = hv;
                 if (hv != null) this.addSubview(hv);
             }
@@ -280,7 +265,8 @@ class MUICollectionView extends MUIView
             var items = this.dataSource.numberOfItemsInSection(this, sectionIndex);
             for (var index = 0; index < items; index++) {
 
-                var cell = this.dataSource.cellForItemAtIndex(this, index, sectionIndex);
+                let ip = MIOIndexPath.indexForRowInSection(index, sectionIndex);
+                let cell = this.dataSource.cellForItemAtIndexPath(this, ip);
                 section.cells.push(cell);
                 this.addSubview(cell);
 
@@ -293,7 +279,7 @@ class MUICollectionView extends MUIView
 
             if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function")
             {
-                var fv = this.dataSource.viewForSupplementaryViewAtIndex(this, "footer", index, sectionIndex);
+                var fv = this.dataSource.viewForSupplementaryViewAtIndex(this, "footer", sectionIndex);
                 section.footer = fv;
                 if (fv != null) this.addSubview(fv);
             }
@@ -302,8 +288,7 @@ class MUICollectionView extends MUIView
         this.setNeedsDisplay();
     }
 
-    cellOnClickFn(cell)
-    {
+    cellOnClickFn(cell){
         var index = cell._index;
         var section = cell._section;
 
@@ -321,8 +306,10 @@ class MUICollectionView extends MUIView
         if (canSelectCell == false)
             return;
 
-        if (this.selectedCellIndex > -1 && this.selectedCellSection > -1)
-            this.deselectCellAtIndexPath(this.selectedCellIndex, this.selectedCellSection);
+        if (this.selectedCellIndex > -1 && this.selectedCellSection > -1){
+            let ip = MIOIndexPath.indexForRowInSection(this.selectedCellIndex, this.selectedCellSection);
+            this.deselectCellAtIndexPath(this, ip);
+        }
 
         this.selectedCellIndex = index;
         this.selectedCellSection = section;
@@ -330,8 +317,10 @@ class MUICollectionView extends MUIView
         this._selectCell(cell);
 
         if (this.delegate != null){
-            if (typeof this.delegate.didSelectCellAtIndexPath === "function")
-                this.delegate.didSelectCellAtIndexPath(this, index, section);
+            if (typeof this.delegate.didSelectCellAtIndexPath === "function"){
+                let ip = MIOIndexPath.indexForRowInSection(index, section);
+                this.delegate.didSelectCellAtIndexPath(this, ip);
+            }
         }
 
     }
@@ -362,11 +351,11 @@ class MUICollectionView extends MUIView
         this._deselectCell(cell);
     }
 
-    layout()
-    {
+    layoutSubviews() {
+        
         if (this.hidden == true) return;
-        if (this._needDisplay == false) return;
-        this._needDisplay = false;
+        // if (this._needDisplay == false) return;
+        // this._needDisplay = false;
 
         if (this._sections == null)
             return;
