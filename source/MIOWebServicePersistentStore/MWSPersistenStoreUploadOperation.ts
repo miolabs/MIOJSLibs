@@ -3,6 +3,7 @@
 class MWSPersistenStoreUploadOperation extends MIOOperation {
 
     request:MWSJSONRequest = null;
+    dependencyIDs = null;
 
     responseCode = null;
     responseJSON = null;
@@ -49,7 +50,6 @@ class MWSPersistenStoreUploadOperation extends MIOOperation {
         // });
 
         this.request.send(this, function (code, data) {
-            let [result] = this.delegate.requestDidFinishForWebStore(this, null, code, data);
             this.responseCode = code;
             this.responseJSON = data;            
 

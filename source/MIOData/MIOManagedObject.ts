@@ -33,7 +33,7 @@ class MIOManagedObject extends MIOObject {
         this._isInserted = value;
         this.didChangeValue("isInserted");
         this.didChangeValue("hasChanges");
-        this.isFault = true;
+        //this.isFault = true;
     }
     get isInserted():boolean {return this._isInserted;}
     
@@ -44,7 +44,7 @@ class MIOManagedObject extends MIOObject {
         this._isUpdated = value;
         this.didChangeValue("isUpdated");
         this.didChangeValue("hasChanges");
-        this.isFault = true;
+        //this.isFault = true;
     }
     get isUpdated():boolean {return this._isUpdated;}
 
@@ -55,7 +55,7 @@ class MIOManagedObject extends MIOObject {
         this._isDeleted = value;
         this.didChangeValue("isDeleted");
         this.didChangeValue("hasChanges");
-        this.isFault = true;
+        //this.isFault = true;
     };
     get isDeleted():boolean {return this._isDeleted;}
 
@@ -213,7 +213,7 @@ class MIOManagedObject extends MIOObject {
         
         var values = {};
         for (var propertyName in this.trackChanges){
-            values[propertyName] = this.primitiveValue(propertyName);      
+            values[propertyName] = this.trackChanges[propertyName];      
         }
 
         return values;

@@ -121,10 +121,10 @@ class MUIScrollView extends MUIView {
         this._showsVerticalScrollIndicator = value;
 
         if (value == false) {
-            this.contentView.layer.style.paddingRight = "20px";
+            this.layer.style.paddingRight = "20px";
         }
         else {
-            this.contentView.layer.style.paddingRight = "";
+            this.layer.style.paddingRight = "";
         }
     }
 
@@ -163,18 +163,18 @@ class MUIScrollView extends MUIView {
         // if (true)
         //     this.layer.style.transition = "scrollTop 0.25s";
 
-        this.contentView.layer.scrollTop = 0;
+        this.layer.scrollTop = 0;
     }
 
     scrollToBottom(animate?) {
         // if (true)
         //     this.layer.style.transition = "scrollTop 0.25s";
 
-        this.contentView.layer.scrollTop = this.layer.scrollHeight;
+        this.layer.scrollTop = this.layer.scrollHeight;
     }
 
     scrollToPoint(x, y, animate?) {
-        this.contentView.layer.scrollTop = y;
+        this.layer.scrollTop = y;
         this.lastOffsetY = y;
     }
 
