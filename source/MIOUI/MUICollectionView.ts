@@ -308,7 +308,7 @@ class MUICollectionView extends MUIView
 
         if (this.selectedCellIndex > -1 && this.selectedCellSection > -1){
             let ip = MIOIndexPath.indexForRowInSection(this.selectedCellIndex, this.selectedCellSection);
-            this.deselectCellAtIndexPath(this, ip);
+            this.deselectCellAtIndexPath(ip);
         }
 
         this.selectedCellIndex = index;
@@ -343,11 +343,11 @@ class MUICollectionView extends MUIView
         cell.setSelected(false);
     }
 
-    deselectCellAtIndexPath(row, section)
+    deselectCellAtIndexPath(indexPath:MIOIndexPath)
     {
         this.selectedCellIndex = -1;
         this.selectedCellSection = -1;
-        var cell = this._sections[section].cells[row];
+        var cell = this._sections[indexPath.section].cells[indexPath.row];
         this._deselectCell(cell);
     }
 

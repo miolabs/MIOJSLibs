@@ -15,7 +15,9 @@ enum MIOPredicateComparatorType {
     GreaterOrEqual,
     Distinct,    
     Contains,
-    NotContains
+    NotContains,
+    In,
+    NotIn
 }
 
 enum MIOPredicateOperatorType {
@@ -177,13 +179,15 @@ enum MIOPredicateTokenType{
     DistinctComparator,
     ContainsComparator,
     NotContainsComparator,
+    InComparator,
+    NotIntComparator,
     
     OpenParenthesisSymbol,
     CloseParenthesisSymbol,
     Whitespace,
 
     AND,
-    OR    
+    OR
 }
 
 class MIOPredicate extends MIOObject {
@@ -235,6 +239,7 @@ class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.DistinctComparator, /^!=/);
         this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains/i);
         this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.InComparator, /^in/i);
         // Join operators
         this.lexer.addTokenType(MIOPredicateTokenType.AND, /^and|&&/i);
         this.lexer.addTokenType(MIOPredicateTokenType.OR, /^or|\|\|/i);        
@@ -361,6 +366,10 @@ class MIOPredicate extends MIOObject {
             case MIOPredicateTokenType.NotContainsComparator:
                 item.comparator = MIOPredicateComparatorType.NotContains;
                 break;                
+
+            case MIOPredicateTokenType.InComparator:
+                item.comparator = MIOPredicateComparatorType.In;
+                break;
 
             default:
                 throw("MIOPredicate: Error. Unexpected comparator. (" + token.value + ")");                                
