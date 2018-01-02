@@ -61,12 +61,13 @@ class MUIReportTableViewRow extends MUIView {
 
 class MUIReportTableViewColumn extends MIOObject {
 
-    static labelColumnWithTitle(title: string, width, alignment, serverName?, formatter?:MIOFormatter, identifer?: string) {
+    static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifer?: string) {
         let col = new MUIReportTableViewColumn();
         col.title = title;
         col.identifier = identifer;
         col.width = width;
-        col.serverName = serverName;
+        col.minWidth = minWidth;
+        col.serverName = key;
         col.alignment = alignment;
         col.formatter = formatter;
         return col;
@@ -75,6 +76,7 @@ class MUIReportTableViewColumn extends MIOObject {
     identifier: string = null;
     title: string = null;
     width = 0;
+    minWidth = 0;
     serverName: string = null;
     pixelWidth = 0;
     alignment = "center";
@@ -266,13 +268,13 @@ class MUIReportTableView extends MUIView {
         this.setNeedsDisplay();
     }
 
-    layout() {
+    layoutSubviews() {
 
         if (this._viewIsVisible == false) return;
         if (this.hidden == true) return;
-        if (this._needDisplay == false) return;
-        this._needDisplay = false;
-
+        // if (this._needDisplay == false) return;
+        // this._needDisplay = false;
+ 
         var x = 0;
         var y = 0;
         var w = this.getWidth();
@@ -282,6 +284,7 @@ class MUIReportTableView extends MUIView {
             let header: MUIView = col.columnHeaderView();
             header.setX(x);
             col.pixelWidth = (col.width * this.getWidth()) / 100;
+            if (col.minWidth > 0 && col.pixelWidth < col.minWidth) col.pixelWidth = col.minWidth;
             header.setWidth(col.pixelWidth);
             x += col.pixelWidth;
         }
