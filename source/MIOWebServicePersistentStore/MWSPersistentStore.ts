@@ -370,6 +370,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             delete this.operationsByReferenceID[refID];
+            
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             MIOLog("Object " + refID + " -> Insert " + (result ? "OK" : "FAIL"));
         }  
