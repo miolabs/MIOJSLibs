@@ -187,6 +187,7 @@ class MUIViewController extends MIOObject
 
         this._onViewLoadedTarget = null;
         this._onViewLoadedAction = null;
+        this.view.setNeedsDisplay();
     }
 
     onLoadView(target, action)
@@ -196,11 +197,13 @@ class MUIViewController extends MIOObject
 
         if (this._viewIsLoaded == true) {
             action.call(target);
+            //this.view.setNeedsDisplay();
         }
         else if (this._layerIsReady == true)
         {
-            this.viewDidLoad();
+            this.viewDidLoad();            
             this._loadChildControllers();
+            //this.view.setNeedsDisplay();
         }
     }
 
@@ -387,7 +390,7 @@ class MUIViewController extends MIOObject
 
     viewDidAppear(animated?)
     {
-        this.view.setNeedsDisplay();
+        //this.view.setNeedsDisplay();
         
         for (var index = 0; index < this._childViewControllers.length; index++)
         {
