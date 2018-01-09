@@ -872,17 +872,16 @@ class MUITableView extends MUIScrollView {
 
     selectNextIndexPath() {
 
-        var sectionIndex =  this.selectedIndexPath ? this.selectedIndexPath.section: -1;
-        var rowIndex =  this.selectedIndexPath ? this.selectedIndexPath.row : -1;
+        var sectionIndex = 0;
+        var rowIndex = 0;
 
-        if (sectionIndex == -1 && rowIndex == -1) {
-            sectionIndex = 0;
-            rowIndex = 0;
-        }
-        else {
+        if (this.selectedIndexPath != null) {
+            sectionIndex = this.selectedIndexPath.section;
+            rowIndex = this.selectedIndexPath.row;    
+
             let ip = MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
             this.deselectCellAtIndexPath(ip);
-            rowIndex++;
+            rowIndex++;                
         }
 
         if (this.sections.length == 0) return;

@@ -119,7 +119,7 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
         ac = pc.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
 
-    view.setNeedsDisplay();
+    //view.setNeedsDisplay();
 
     var layer = view.layer;
         
@@ -224,7 +224,7 @@ function _MUITransitionFromViewControllerToViewController(fromVC, toVC, sourceVC
     fromVC.viewWillDisappear();                
     //fromVC._childControllersWillDisappear();
     
-    toVC.view.layout();
+    //toVC.view.layout();
 
     var ac = null;
     if (toVC.transitioningDelegate != null)

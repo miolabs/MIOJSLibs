@@ -41,9 +41,9 @@ class MUIComboBox extends MUIControl
             this._selectLayer.removeAttribute("multiple");
     }
 
-    layout()
+    layoutSubviews()
     {
-        super.layout();
+        super.layoutSubviews();
 
         var w = this.getWidth();
         var h = this.getHeight();
@@ -57,7 +57,6 @@ class MUIComboBox extends MUIControl
         //this._selectLayer.style.backgroundColor = color;
 
         // this._selectLayer.style.backgroundColor = "rgb(255, 255, 255)"
-
     }
 
     addItem(text, value?)

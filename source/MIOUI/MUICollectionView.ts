@@ -71,7 +71,9 @@ class MUICollectionView extends MUIView
 
     public set collectionViewLayout(layout:MUICollectionViewFlowLayout){
         //TODO: Set animations for changing layout
-        this._collectionViewLayout = layout;
+        layout.collectionView = this;
+        this._collectionViewLayout = layout;        
+        layout.invalidateLayout();
     }
 
     initWithLayer(layer, options){
@@ -285,6 +287,7 @@ class MUICollectionView extends MUIView
             }
         }
 
+        this.collectionViewLayout.invalidateLayout();
         this.setNeedsDisplay();
     }
 
@@ -351,14 +354,14 @@ class MUICollectionView extends MUIView
         this._deselectCell(cell);
     }
 
-    layoutSubviews() {
-        
+    layoutSubviews() {                
+
         if (this.hidden == true) return;
         // if (this._needDisplay == false) return;
         // this._needDisplay = false;
 
         if (this._sections == null)
-            return;
+            return;        
 
         // var x = this.collectionViewLayout.sectionInset.left;
         // var y = this.collectionViewLayout.sectionInset.top;

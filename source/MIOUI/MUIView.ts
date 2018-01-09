@@ -151,6 +151,7 @@ class MUIView extends MIOObject
             this.subviews.splice(index, 0, view);
 
         view._addLayerToDOM(index);
+        view.setNeedsDisplay();
     }
 
     protected _addLayerToDOM(index?)
