@@ -182,18 +182,23 @@ class MWSPersistentStore extends MIOIncrementalStore {
             for (var index = 0; index < items.length; index++) {
 
                 let objectValues = items[index];
-                let serverID = this.delegate.serverIDForItem(this, objectValues, entity.name);
+                let serverID = this.delegate.referenceIDForItem(this, objectValues, entity.name);
                 if (serverID == null) continue;
-                //let version = objectValues["version"] ? objectValues["version"] : 0;
-                let node = this.nodeObjectForServerID(serverID, objectValues, entity, context, relationshipEntities)
-                let obj = context.existingObjectWithID(node.objectID);
-                if (obj != null) context.refreshObject(obj, true);                
+                
+                let version = this.delegate.versionNumberForItem(this, objectValues, entity.name);
+                this.updateNodeObjectForServerID(serverID, objectValues, version, entity, context, relationshipEntities);
+
+                // let node = this.nodeObjectForServerID(serverID, objectValues, version, entity, context, relationshipEntities)
+                // let obj = context.existingObjectWithID(node.objectID);
+                // if (obj != null) context.refreshObject(obj, true);
             }
         });
 
     }
 
-    nodeObjectForServerID(serverID:string, values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipEntities){
+    updateNodeObjectForServerID(serverID:string, values, version, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipEntities){
+
+        var isUpdated = false;
 
         let refID = entity.name + "://" + serverID;
         var node = this.nodesByReferenceID[refID];
@@ -202,14 +207,19 @@ class MWSPersistentStore extends MIOIncrementalStore {
             let objID = this.newObjectIDForEntity(entity, refID);
 
             node = new MIOIncrementalStoreNode();
-            node.initWithObjectID(objID, values, 1);
+            node.initWithObjectID(objID, values, version);
             this.nodesByReferenceID[refID] = node;
             MIOLog("Inserting REFID: " + refID);
+            isUpdated = true;
         }
-        else {
-            let version = node.version + 1;
+        else if (version >= node.version) {
             node.updateWithValues(values, version);
             MIOLog("Updating REFID: " + refID);
+            isUpdated = true;
+        }
+        else {
+            MIOLog("Ignoring REFID: " + refID);
+            return node;
         }      
         
         // Check relationships values
@@ -221,12 +231,14 @@ class MWSPersistentStore extends MIOIncrementalStore {
                 let serverValues = values[serverRelname];
                 if (serverValues == null) continue;
 
-                let relServerID = this.delegate.serverIDForItem(this, serverValues, relEntity.name);
+                let relServerID = this.delegate.referenceIDForItem(this, serverValues, relEntity.name);
                 if (relServerID == null) continue;
 
-                let node = this.nodeObjectForServerID(relServerID, serverValues, relEntity.destinationEntity, null, []);
-                let obj = context.existingObjectWithID(node.objectID);
-                if (obj != null) context.refreshObject(obj, true);
+                let relVersion = this.delegate.versionNumberForItem(this, serverValues, entity.name);
+
+                this.updateNodeObjectForServerID(relServerID, serverValues, relVersion, relEntity.destinationEntity, null, []);
+                // let obj = context.existingObjectWithID(node.objectID);
+                // if (obj != null) context.refreshObject(obj, true);
             }
             else {
                 var array = values[serverRelname];
@@ -236,12 +248,19 @@ class MWSPersistentStore extends MIOIncrementalStore {
     
                     let serverID = this.delegate.serverIDForItem(this, serverValues, relEntity.name);
                     if (serverID == null) continue;
+
+                    let serverVersion = this.delegate.versionNumberForItem(this, serverValues, entity.name);
     
-                    let node = this.nodeObjectForServerID(serverID, serverValues, relEntity, null, []);
-                    let obj = context.existingObjectWithID(node.objectID);
-                    if (obj != null) context.refreshObject(obj, true);
+                    this.updateNodeObjectForServerID(serverID, serverValues, serverVersion, relEntity, null, []);
+                    // let obj = context.existingObjectWithID(node.objectID);
+                    // if (obj != null) context.refreshObject(obj, true);
                 }
             }
+        }
+
+        if (isUpdated == true){
+            let obj = context.existingObjectWithID(node.objectID);
+            if (obj != null) context.refreshObject(obj, true);
         }
 
         return node;
