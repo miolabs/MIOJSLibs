@@ -8,6 +8,7 @@ class MIOManagedObjectID extends MIOObject {
     identifier:string;
     entity:MIOEntityDescription = null;
     persistentStore:MIOPersistentStore = null;
+    isTemporaryID = true;
         
     static objectIDWithEntity(entity:MIOEntityDescription) {
         var objID = new MIOManagedObjectID();

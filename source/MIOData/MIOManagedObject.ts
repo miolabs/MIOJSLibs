@@ -63,7 +63,7 @@ class MIOManagedObject extends MIOObject {
         
         this.init();
 
-        if (this.objectID == null) this.objectID = MIOManagedObjectID.objectIDWithEntity(entityDescription);
+        this.objectID = MIOManagedObjectID.objectIDWithEntity(entityDescription);
         this.entity = entityDescription;
         this.managedObjectContext = context;
 
@@ -92,12 +92,12 @@ class MIOManagedObject extends MIOObject {
     awakeFromInsert() {}
     awakeFromFetch() {}
 
-    private version = 0;
+    _version = 0;
     private mergeFromStore(){
         
         let ps = this.objectID.persistentStore as MIOIncrementalStore;
         if (ps == null) return;
-        this.version = ps.updateObjectWithObjectID(this.objectID, this.managedObjectContext);
+        ps.updateObjectWithObjectID(this.objectID, this.managedObjectContext);
         this.isFault = false;
     }
 

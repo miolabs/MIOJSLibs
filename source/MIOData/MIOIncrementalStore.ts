@@ -6,11 +6,16 @@ class MIOIncrementalStore extends MIOPersistentStore {
     static get type(): string { return "MIOIncrementalStore"; }
     get type(): string { return MIOIncrementalStore.type; }
 
-    private referenceObjectByObjectID = {};
+    //TODO: Change to provate when possible
+    protected referenceObjectByObjectID = {};
     private nodesByObjectID = {};
     private objectsByID = {};
 
     private dateFormatter = MIOISO8601DateFormatter.iso8601DateFormatter();
+
+    //
+    // Can't be overriden 
+    //
 
     newObjectIDForEntity(entity: MIOEntityDescription, referenceObject: string): MIOManagedObjectID {
 
@@ -18,6 +23,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
 
         let objID = MIOManagedObjectID.objectIDWithEntity(entity);
         objID.persistentStore = this;
+        objID.isTemporaryID = false;
         this.referenceObjectByObjectID[objID.identifier] = referenceObject;
         
         console.log("New REFID: " + referenceObject);
@@ -29,6 +35,10 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return this.referenceObjectByObjectID[objectID.identifier];
     }
 
+    //
+    // Could be overriden
+    //
+
     newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode {
         return null;
     }
@@ -37,7 +47,15 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return null;
     } 
 
-    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext, mergeChanges:boolean){
+    obtainPermanentIDsForObjects(objectIDs){
+        return null;
+    }
+
+    //
+    // Methods only to be call byt the framework
+    //
+
+    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         if (obj == null) {
             let node = this.newValuesForObjectWithID(objectID, context);
@@ -49,8 +67,6 @@ class MIOIncrementalStore extends MIOPersistentStore {
                 obj.entity = entity;
                 obj.managedObjectContext = context;
                 this.objectsByID[objectID.identifier] = obj;
-                if (mergeChanges == true)
-                    this.fillObjectValuesFromNode(node, obj, context);
             }
             this.nodesByObjectID[objectID.identifier] = node;
         }
@@ -58,17 +74,29 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return obj;
     }
 
-    updateObjectWithObjectID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext):number {
+    storedVersionFromObject(object:MIOManagedObject, context:MIOManagedObjectContext){        
+        var version = 0;
+        let objID = object.objectID;
+        if (this.objectsByID[objID.identifier] == null) {
+            this.objectsByID[objID.identifier] = object;
+            this.obtainPermanentIDsForObjects([objID]);
+        }        
+        let node = this.newValuesForObjectWithID(objID, context);
+        return node.version;
+    }
+
+    updateObjectWithObjectID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext) {
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         let node = this.newValuesForObjectWithID(objectID, context);
         this.fillObjectValuesFromNode(node, obj, context);
-        return node.version;
     }
 
     private fillObjectValuesFromNode(node:MIOIncrementalStoreNode, object:MIOManagedObject, context:MIOManagedObjectContext) {
         
         this.parseObjectAttributesFromNode(node, object);
         this.parseObjectRelationshipsFromNode(node, object, context);
+        object._version = node.version;
+        //object.isFault = true;
     }
 
     private parseObjectAttributesFromNode(node:MIOIncrementalStoreNode, mo: MIOManagedObject) {

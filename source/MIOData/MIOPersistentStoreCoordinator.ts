@@ -51,11 +51,11 @@ class MIOPersistentStoreCoordinator extends MIOObject
         return result;
     }
 
-    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext, mergeChanges:boolean){
+    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         
         for (var index = 0; index < this._stores.length; index++){
             let ps:MIOPersistentStore = this._stores[index];
-            let obj = ps.fetchObjectWithObjectID(objectID, context, mergeChanges);
+            let obj = ps.fetchObjectWithObjectID(objectID, context);
             if (obj != null) return obj;
         }
 
@@ -66,8 +66,17 @@ class MIOPersistentStoreCoordinator extends MIOObject
         
         for (var index = 0; index < this._stores.length; index++){
             let ps:MIOPersistentStore = this._stores[index];
-            let obj = ps.updateObjectWithObjectID(objectID, context);
-            if (obj != null) return obj;
+            ps.updateObjectWithObjectID(objectID, context);            
         }
+    }
+
+    storedVersionFromObject(object:MIOManagedObject, context:MIOManagedObjectContext){        
+        for (var index = 0; index < this._stores.length; index++){
+            let ps:MIOPersistentStore = this._stores[index];
+            let version = ps.storedVersionFromObject(object, context);            
+            return version;
+        }
+
+        return 0;
     }
 }

@@ -4,6 +4,8 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 /// <reference path="MIOManagedObject.ts" />
+/// <reference path="MIOPersistentStore.ts" />
+
 
 let MIOManagedObjectContextDidSaveNotification = "MIOManagedObjectContextDidSaveNotification";
 let MIOManagedObjectContextObjectsDidChange = "MIOManagedObjectContextObjectsDidChange";
@@ -142,11 +144,17 @@ class MIOManagedObjectContext extends MIOObject {
 
     existingObjectWithID(objectID:MIOManagedObjectID):MIOManagedObject{
 
-        var obj = this.objectsByID[objectID.identifier];
+        var obj:MIOManagedObject = this.objectsByID[objectID.identifier];
         if (obj == null) {
-            obj = this.persistentStoreCoordinator.fetchObjectWithObjectID(objectID, this, false);
+            obj = this.persistentStoreCoordinator.fetchObjectWithObjectID(objectID, this);
             if (obj != null) {
                 this.registerObject(obj);
+                obj.isFault = true;
+            }
+        }
+        else {
+            let version = this.persistentStoreCoordinator.storedVersionFromObject(obj, this);
+            if (obj._version < version) {
                 obj.isFault = true;
             }
         }
@@ -179,7 +187,8 @@ class MIOManagedObjectContext extends MIOObject {
         set.addObject(object);
         
         if (this.blockChanges == null) {
-            this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this);            
+            this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this); 
+            object.isFault = false;           
             MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, objs);            
         }        
     }     

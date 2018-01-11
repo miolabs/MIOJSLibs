@@ -59,10 +59,13 @@ class  MIOPersistentStore extends MIOObject
     newObjectIDForEntityWithReferenceObject(entity, referenceObject){                
     }
 
-    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext, mergeChanges:boolean){
+    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         return null;
     }
 
     updateObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+    }
+
+    storedVersionFromObject(object:MIOManagedObject, context:MIOManagedObjectContext){        
     }
 }

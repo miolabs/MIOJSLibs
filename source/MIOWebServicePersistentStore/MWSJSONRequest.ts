@@ -12,7 +12,7 @@ class MWSJSONRequest extends MWSRequest
     }
     
     didFinish(){
-        if (this.resultData != null) {
+        if (this.resultData != null && this.resultData != "") {
             this.resultData = JSON.parse(this.resultData.replace(/(\r\n|\n|\r)/gm, ""));
         }
     }
