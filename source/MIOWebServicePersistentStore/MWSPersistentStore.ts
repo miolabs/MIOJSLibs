@@ -73,7 +73,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             
             let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
             if (relNode == null) {
-                relNode = this.newNodeWithValuesAtServerID(relRefID, {}, 0, relationship.destinationEntity);
+                relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
                 this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                 MIOLog("Downloading REFID: " + relRefID);
             }            
@@ -88,7 +88,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             for (var count = 0; count < relRefIDs.length; count++) {
 
                 let relRefID = relRefIDs[count];
-                let relNode = this.newNodeWithValuesAtServerID(relRefID, {}, 0, relationship.destinationEntity);
+                let relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
                 this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                 MIOLog("Downloading REFID: " + relRefID);
                 array.push(relNode.objectID);
@@ -126,6 +126,9 @@ class MWSPersistentStore extends MIOIncrementalStore {
         request.send(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
+                // if (entityName == "Tax"){
+                //     MIOLog("???");
+                // }
                 this.updateObjectInContext(values, fetchRequest.entity, context);
             }
         });
@@ -197,10 +200,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
             updateContext = true;
         }        
 
-        if (updateContext) {
-            let obj = context.existingObjectWithID(node.objectID);
-            if (obj != null) context.refreshObject(obj, true);                            
-        }
+        let obj = context.existingObjectWithID(node.objectID);
+        if (obj != null) context.refreshObject(obj, true);                            
 
         return updateContext;
     }
@@ -286,7 +287,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         for (var index = 0; index < deletes.length; index++) {
             let obj: MIOManagedObject = deletes[index];
             this.deleteObjectOnServer(obj);
-            obj.isFault = false;
+            //obj.isFault = false;
         }
 
         this.uploadToServer();
@@ -328,11 +329,12 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (this.delegate == null) return;
 
         let entityName = object.entity.name;
-        var refID:string = this.referenceObjectForObjectID(object.objectID);
-        if (refID != null) {
-            let removeEnityName = object.entity.name + "://";
-            refID = refID.replace(removeEnityName, '');
-        }
+        let refID = this.delegate.serverIDForObject(this, object);
+        // var refID:string = this.referenceObjectForObjectID(object.objectID);
+        // if (refID != null) {
+        //     let removeEnityName = object.entity.name + "://";
+        //     refID = refID.replace(removeEnityName, '');
+        // }
 
         var dependencyIDs = [];
 

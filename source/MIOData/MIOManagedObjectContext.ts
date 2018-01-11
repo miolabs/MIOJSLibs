@@ -166,6 +166,8 @@ class MIOManagedObjectContext extends MIOObject {
 
         if (mergeChanges == false) return;
 
+        if (object.isFault == false) return;
+
         var changes = null;
         if (this.blockChanges != null){
             changes = this.blockChanges;
@@ -187,8 +189,8 @@ class MIOManagedObjectContext extends MIOObject {
         set.addObject(object);
         
         if (this.blockChanges == null) {
-            this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this); 
-            object.isFault = false;           
+            //this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this); 
+            //object.isFault = false;           
             MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, objs);            
         }        
     }     
@@ -223,7 +225,7 @@ class MIOManagedObjectContext extends MIOObject {
 
         var obj = this.objectsByID[objectID.identifier];
         if (obj == null) {
-            obj = this.persistentStoreCoordinator.fetchObjectWithObjectID(objectID, this, true);
+            obj = this.persistentStoreCoordinator.fetchObjectWithObjectID(objectID, this);
             if (obj != null) {
                 this.registerObject(obj);
                 this.refreshObject(obj, true);
@@ -375,7 +377,7 @@ class MIOManagedObjectContext extends MIOObject {
 
         // Refresed block objects
         let refresed = this.blockChanges[MIORefreshedObjectsKey];
-        this.refreshObjectsFromStore(refresed);
+        //this.refreshObjectsFromStore(refresed);
         
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, this.blockChanges);
         this.blockChanges = null;
@@ -389,6 +391,7 @@ class MIOManagedObjectContext extends MIOObject {
             for(var index = 0; index < set.length; index++) {
                 let object = set.objectAtIndex(index);
                 this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this);
+                //object.isFault = false;                
             }
         }
     }

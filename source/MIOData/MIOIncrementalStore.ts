@@ -88,7 +88,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
     updateObjectWithObjectID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext) {
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         let node = this.newValuesForObjectWithID(objectID, context);
-        this.fillObjectValuesFromNode(node, obj, context);
+        this.fillObjectValuesFromNode(node, obj, context);        
     }
 
     private fillObjectValuesFromNode(node:MIOIncrementalStoreNode, object:MIOManagedObject, context:MIOManagedObjectContext) {
@@ -96,7 +96,7 @@ class MIOIncrementalStore extends MIOPersistentStore {
         this.parseObjectAttributesFromNode(node, object);
         this.parseObjectRelationshipsFromNode(node, object, context);
         object._version = node.version;
-        //object.isFault = true;
+        object.isFault = false;
     }
 
     private parseObjectAttributesFromNode(node:MIOIncrementalStoreNode, mo: MIOManagedObject) {

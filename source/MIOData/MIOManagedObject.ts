@@ -98,7 +98,7 @@ class MIOManagedObject extends MIOObject {
         let ps = this.objectID.persistentStore as MIOIncrementalStore;
         if (ps == null) return;
         ps.updateObjectWithObjectID(this.objectID, this.managedObjectContext);
-        this.isFault = false;
+        //this.isFault = false;
     }
 
     setValue(propertyName, value) {
