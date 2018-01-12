@@ -3,7 +3,8 @@
 class MIONull extends MIOObject
 {            
     static nullValue():MIONull {
-        let n = new MIONull();
+        var n = new MIONull();
+        n.init();
         return n;
     }
 }
