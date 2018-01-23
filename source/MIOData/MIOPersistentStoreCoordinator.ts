@@ -6,77 +6,95 @@
 class MIOPersistentStoreCoordinator extends MIOObject
 {
     private _managedObjectModel:MIOManagedObjectModel = null;
-    private _stores = [];
-    static storeClasses = {};
-
     get managedObjectModel() { return this._managedObjectModel;}
+
+    private _storesByIdentifier = {};
+    private _stores = [];    
     get persistentStores() {return this._stores;}
+    static _storeClasses = {};
 
     static registerStoreClassForStoreType(storeClass:string, storeType:string){
-        MIOPersistentStoreCoordinator.storeClasses[storeType] = storeClass;
+        MIOPersistentStoreCoordinator._storeClasses[storeType] = storeClass;
     }
 
     initWithManagedObjectModel(model:MIOManagedObjectModel) {
-
         super.init();
         this._managedObjectModel = model;
     }
 
-    addPersistentStoreWithType(type:string, configuration, url:MIOURL, options){
+    addPersistentStoreWithType(type:string, configuration:string, url:MIOURL, options){
     
-        let className = MIOPersistentStoreCoordinator.storeClasses[type];
-        if (className == null) throw("PersistentStoreType doesn't exists");
+        if (type == null) {
+            //TODO: Check the configuration type from store metada
+            throw ("MIOPersistentStoreCoordinator: Unimplemeted method with type null");
+        }
+
+        let className = MIOPersistentStoreCoordinator._storeClasses[type];
+        if (className == null) throw("MIOPersistentStoreCoordinator: Unkown persistent store type.");
         
         var ps:MIOPersistentStore = MIOClassFromString(className);
         ps.initWithPersistentStoreCoordinator(this, configuration, url, options);
         
-        this._stores.push(ps);
+        this._storesByIdentifier[ps.identifier] = ps;
+        this._stores.addObject(ps);
         ps.didAddToPersistentStoreCoordinator(this);
+
+        return ps;
     }
 
     removePersistentStore(store:MIOPersistentStore){
         store.willRemoveFromPersistentStoreCoordinator(this);
-        let index = this._stores.indexOf(store);
-        if (index > -1) this._stores.splice(index);
+        delete this._storesByIdentifier[store.identifier];
+        this._stores.removeObject(store);
     }
 
-    executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){
+    managedObjectIDForURIRepresentation(url:MIOURL):MIOManagedObjectID{
+        let scheme:string = url.scheme;
+        let host:string = url.host;
+        let path:string = url.path;
+        let reference:string = path.lastPathComponent();
+        let entityName:string = path.stringByDeletingLastPathComponent().lastPathComponent();
+        let model:MIOManagedObjectModel = this.managedObjectModel;
+        let entity:MIOEntityDescription = model.entitiesByName[entityName];
+
+        return this._persistentStoreWithIdentifier(host)._objectIDForEntity(entity, reference);
+    }
+
+    _persistentStoreWithIdentifier(identifier:string) {
+        if (identifier == null) return null;
+        return this._storesByIdentifier[identifier];
+    }
+
+    _persistentStoreForObjectID(objectID:MIOManagedObjectID):MIOPersistentStore{
         
-        var result = [];
-        for (var index = 0; index < this._stores.length; index++){
-            let ps:MIOPersistentStore = this._stores[index];
-            result = ps.executeRequest(persistentStoreRequest, context);
-        }
-
-        return result;
-    }
-
-    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+        if (this._stores.length == 0) throw("MIOPersistentStoreCoordinator: There's no stores!");
         
-        for (var index = 0; index < this._stores.length; index++){
-            let ps:MIOPersistentStore = this._stores[index];
-            let obj = ps.fetchObjectWithObjectID(objectID, context);
-            if (obj != null) return obj;
-        }
-
-        return null;
-    }
-
-    updateObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+        let entity = objectID.entity;
+        var storeIdentifier = objectID._getStoreIdentifier();
+        let store = this._persistentStoreWithIdentifier(storeIdentifier);
         
+        if (store != null) return store;        
+
+        let model = this.managedObjectModel;
+
         for (var index = 0; index < this._stores.length; index++){
-            let ps:MIOPersistentStore = this._stores[index];
-            ps.updateObjectWithObjectID(objectID, context);            
+            let store:MIOPersistentStore = this._stores[index];
+            let configurationName = store.configurationName;
+
+            if (configurationName != null){
+                let entities = model.entitiesForConfiguration(configurationName);
+                for (var name in entities) {
+                    var checkEntity = entities[name];
+                    if (checkEntity === entity) return checkEntity;
+                }
+            }
         }
+
+        return this._stores[0];
+        
     }
 
-    storedVersionFromObject(object:MIOManagedObject, context:MIOManagedObjectContext){        
-        for (var index = 0; index < this._stores.length; index++){
-            let ps:MIOPersistentStore = this._stores[index];
-            let version = ps.storedVersionFromObject(object, context);            
-            return version;
-        }
-
-        return 0;
+    _persistentStoreForObject(object:MIOManagedObject):MIOPersistentStore{
+        return this._persistentStoreForObjectID(object.objectID);    
     }
 }

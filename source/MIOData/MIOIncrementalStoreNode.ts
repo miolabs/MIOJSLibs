@@ -2,31 +2,32 @@
 
 class MIOIncrementalStoreNode extends MIOObject {
 
-    objectID:MIOManagedObjectID = null;
-    values = null;
-    version = 0;
-
-    object:MIOManagedObject = null;
+    private _objectID:MIOManagedObjectID = null;
+    get objectID():MIOManagedObjectID {return this._objectID;}
+    
+    private _version = 0;
+    get version(){return this._version;}
 
     initWithObjectID(objectID:MIOManagedObjectID, values, version){
-        this.objectID = objectID;
-        this.values = values;
-        this.version = version;
+        this._objectID = objectID;
+        this._values = values;
+        this._version = version;
     }
 
     updateWithValues(values, version) {
-        this.values = values;
-        this.version = version;
+        this._values = values;
+        this._version = version;
     }
 
+    private _values = null;
     valueForPropertyDescription(property:MIOPropertyDescription) {
 
-        var value = this.values[property.name];        
+        var value = this._values[property.name];
 
         if (property instanceof MIORelationshipDescription) {
             let rel = property as MIORelationshipDescription;
             if (value == null) {
-                value = this.values[rel.serverName];
+                value = this._values[rel.serverName];
             }
             return value;
         }
@@ -36,7 +37,7 @@ class MIOIncrementalStoreNode extends MIOObject {
 
             if (value == null){
                 let attr = property as MIOAttributeDescription;
-                value = this.values[attr.serverName];
+                value = this._values[attr.serverName];
             }        
     
             if (type == MIOAttributeType.Boolean) {

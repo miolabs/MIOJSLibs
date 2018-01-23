@@ -35,8 +35,21 @@ class MIOURL extends MIOObject
         return url;
     }
 
+    initWithScheme(scheme:string, host:string, path:string){
+        super.init();
+        this.scheme = scheme;
+        this.host = host;
+        this.path = path;
+
+        this.absoluteString = "";
+        if (scheme.length > 0) this.absoluteString += scheme + "://";
+        if (host.length > 0) this.absoluteString += host + "/";
+        if (path.length > 0) this.absoluteString += path;                
+    }
+
     initWithURLString(urlString:string)
     {
+        super.init();
         this.absoluteString = urlString;
         this._parseURLString(urlString);
     }

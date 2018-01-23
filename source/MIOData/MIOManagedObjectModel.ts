@@ -2,25 +2,26 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
 class MIOManagedObjectModel extends MIOObject
-{
+{    
     private _entitiesByName = {};
-
-    private currentEntity:MIOEntityDescription = null;
-
+    private _entitiesByConfigName = {};
+    
     static entityForNameInManagedObjectContext(entityName, context:MIOManagedObjectContext):MIOEntityDescription{
         
         var mom = context.persistentStoreCoordinator.managedObjectModel;
         var entity = mom.entitiesByName[entityName];
-
-        if (entity == null) {
         
-            // HACK!
-            // TODO: We need to build a object model file to read this values
-            entity = new MIOEntityDescription();
-            entity.initWithEntityName(entityName);
-
-            mom._setEntity(entity);
+        if (entity == null) {
+            throw ("MIOManagedObjectModel: Unkown entity (" + entityName + ")");
         }
+        
+        //     // HACK!
+        //     // TODO: We need to build a object model file to read this values
+        //     entity = new MIOEntityDescription();
+        //     entity.initWithEntityName(entityName);
+
+        //     mom._setEntity(entity);
+        // }
 
         return entity;
     }
@@ -40,10 +41,14 @@ class MIOManagedObjectModel extends MIOObject
         parser.parse();        
     }
 
+    // #region XML Parser delegate
+    private currentEntity:MIOEntityDescription = null;
+    private currentConfigName:string = null;
+
     // XML Parser delegate
     parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
 
-        console.log("XMLParser: Start element (" + element + ")");        
+        //console.log("XMLParser: Start element (" + element + ")");        
         
         if (element == "entity"){
 
@@ -73,11 +78,20 @@ class MIOManagedObjectModel extends MIOObject
             let inverseEntity = attributes["inverseEntity"];            
             this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
         }
+        else if (element == "configuration") {
+            this.currentConfigName = attributes["name"];
+        }        
+        else if (element == "memberEntity") {
+            let entityName = attributes["name"];
+            let entity = this._entitiesByName[entityName];
+            this._setEntityForConfiguration(entity, this.currentConfigName);
+        }        
+
     }
 
     parserDidEndElement(parser:MIOXMLParser, element:string){
         
-        console.log("XMLParser: End element (" + element + ")");
+        //console.log("XMLParser: End element (" + element + ")");
 
         if (element == "entity") {
             let entity = this.currentEntity;
@@ -102,8 +116,10 @@ class MIOManagedObjectModel extends MIOObject
             }
         }
 
-        console.log("datamodel.xml parser finished");
+        //console.log("datamodel.xml parser finished");
     }
+
+    // #endregion
 
     private _addAttribute(name, type, optional, serverName, syncable, defaultValueString){
 
@@ -155,14 +171,28 @@ class MIOManagedObjectModel extends MIOObject
     }
 
     //TODO: Remove this function
-    _setEntity(entity:MIOEntityDescription) {
+    // _setEntity(entity:MIOEntityDescription) {
+    //     this._entitiesByName[entity.managedObjectClassName] = entity;
+    //}
 
-        this._entitiesByName[entity.managedObjectClassName] = entity;
+    private _setEntityForConfiguration(entity, configuration:string) {
+        var array = this.entitiesForConfiguration[configuration];
+        if (array == null){
+            array = [];
+            this.entitiesForConfiguration[configuration] = array;
+        }     
+        array.addObject(entity);
     }
 
     setEntitiesForConfiguration(entities, configuration:string) {
+        for (var index = 0; index < entities.length; index++){
+            let entity = entities[index];
+            this._setEntityForConfiguration(entity, configuration);
+        }
+    }
 
-        //TODO
+    entitiesForConfiguration(configurationName:string){        
+        return this.entitiesForConfiguration[configurationName];
     }
 
     get entitiesByName() {

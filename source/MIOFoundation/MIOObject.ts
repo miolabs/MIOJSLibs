@@ -37,6 +37,15 @@ class MIOObject
         }
     }
 
+    willChangeValueForKey(key:string) {
+        this.willChangeValue(key);
+    }
+    
+    didChangeValueForKey(key:string) {
+        this.didChangeValue(key);
+    }
+
+    //TODO: Remove below method
     willChangeValue(key:string) {
         this._notifyValueChange(key, "will");
     }
@@ -108,14 +117,14 @@ class MIOObject
         observers.splice(index, 1);
     }
 
-    setValueForKey(key, value) {
+    setValueForKey(value, key:string) {
     
         this.willChangeValue(key);
         this[key] = value;
         this.didChangeValue(value);
     }
 
-    valueForKey(key) {
+    valueForKey(key:string) {
         return this[key];
     }
 

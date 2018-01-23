@@ -14,21 +14,20 @@ class MIOSet extends MIOObject {
 
     private _objects = [];
 
-    addObject(obj){
-        let index = this._objects.indexOf(obj);
-        if (index > -1) return;
+    addObject(object){
+        if (this.containsObject(object) == true) return;
         
         this.willChangeValue("length");
-        this._objects.push(obj);
+        this._objects.addObject(object);
         this.didChangeValue("length");
     }
 
-    removeObject(obj){
-        let index = this._objects.indexOf(obj);
+    removeObject(object){
+        let index = this.indexOfObject(object);
         if (index == -1) return;
-
+        
         this.willChangeValue("length");
-        this._objects.splice(index, 1);
+        this._objects.removeObjectAtIndex(index);
         this.didChangeValue("length");
     }
 
@@ -38,13 +37,20 @@ class MIOSet extends MIOObject {
         this.didChangeValue("length");
     }
 
-    indexOfObject(obj) {
-        return this._objects.indexOf(obj);
+    indexOfObject(object) {
+        return this._objects.indexOf(object);
     }
 
-    objectAtIndex(index)
-    {
+    containsObject(object){
+        return this.indexOfObject(object) > -1 ? true : false;
+    }
+
+    objectAtIndex(index){
         return this._objects[index];
+    }
+
+    get allObjects(){
+        return this._objects;
     }
 
     get count(){
@@ -53,7 +59,7 @@ class MIOSet extends MIOObject {
 
     get length(){
         return this._objects.length;
-    }
+    }    
 
     copy():MIOSet{
          
@@ -73,5 +79,6 @@ class MIOSet extends MIOObject {
         var objs = _MIOPredicateFilterObjects(this._objects, predicate);
         return objs;
     }
+    
 
 }

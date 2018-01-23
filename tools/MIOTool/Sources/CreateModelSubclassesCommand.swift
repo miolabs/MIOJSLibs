@@ -158,23 +158,23 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    protected _\(name)\(t)\(dv)\n";
         // Setter
         fileContent += "    set \(name)(value\(t)) {\n";
-        fileContent += "        this.setValue('\(name)', value);\n";
+        fileContent += "        this.setValueForKey(value, '\(name)');\n";
         fileContent += "    }\n";
     
         // Getter
         fileContent += "    get \(name)()\(t) {\n";
-        fileContent += "        return this.getValue('\(name)');\n";
+        fileContent += "        return this.valueForKey('\(name)');\n";
         fileContent += "    }\n";
 
         // Setter raw value
         fileContent += "    set \(name)PrimitiveValue(value\(t)) {\n";
-        fileContent += "        this.setPrimitiveValue('\(name)', value);\n";
+        fileContent += "        this.setPrimitiveValueForKey(value, '\(name)');\n";
         fileContent += "    }\n";
 
         
         // Getter raw value
         fileContent += "    get \(name)PrimitiveValue()\(t) {\n";
-        fileContent += "        return this.primitiveValue('\(name)');\n";
+        fileContent += "        return this.primitiveValueForKey('\(name)');\n";
         fileContent += "    }\n";
     }
     

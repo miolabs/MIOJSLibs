@@ -14,6 +14,7 @@
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />
 /// <reference path="MIOPredicate.ts" />
+/// <reference path="MIOArray.ts" />
 /// <reference path="MIOSet.ts" />
 /// <reference path="MIOIndexPath.ts" />
 
