@@ -141,9 +141,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
         request.send(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
-                if (entityName == "Product"){
-                     MIOLog("???");
-                }
                 this.updateObjectInContext(values, fetchRequest.entity, context);
             }
         });
@@ -253,11 +250,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
     private checkRelationships(values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipEntities){                
         
-        return;
-        
-        let relationships = entity.relationships;
-        for (var index = 0; index < relationships.length; index++){
-            let relEntity = relationships[index];
+        for (var index = 0; index < relationshipEntities.length; index++){
+            let relEntity = relationshipEntities[index];
             //let serverRelname = relEntity.serverName[relEntity.name];
             let serverRelName = this.delegate.serverRelationshipName(this, relEntity.name, entity);
             let value = values[serverRelName];

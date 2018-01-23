@@ -215,12 +215,14 @@ class MIOManagedObject extends MIOObject {
                     value = this.managedObjectContext.objectWithID(objectID);
                 }
             } else {
-                value = [];
+                // Trick. Storing set in private property                
+                value = this["_" + propertyName];
+                value.removeAllObjects();                
                 let objectIDs = this.primitiveValueForKey(propertyName);
-                for(var index = 0; index < objectIDs.length; index++){
+                for(let index = 0; index < objectIDs.length; index++){
                     let objID = objectIDs[index];
                     let obj = this._managedObjectContext.objectWithID(objID);
-                    value.push(obj);
+                    value.addObject(obj);
                 }
             }
 
