@@ -136,23 +136,31 @@ class MIOManagedObject extends MIOObject {
             if (property instanceof MIOAttributeDescription) {
                 let attribute = property as MIOAttributeDescription;
                 let node = store.newValuesForObjectWithID(this.objectID, this.managedObjectContext);
-                let value = node.valueForPropertyDescription(attribute);
+                let value = node.valueForPropertyDescription(attribute);                
                 storedValues[attribute.name] = value;
             }
             else if (property instanceof MIORelationshipDescription) {
                 let relationship = property as MIORelationshipDescription;                
                 if (relationship.isToMany == false) {                    
-                    var value = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
-                    if (value != null) storedValues[relationship.name] = value;
+                    var objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
+                    if (objectID != null){                    
+                        let value = this.managedObjectContext.objectWithID(objectID);
+                        storedValues[relationship.name] = value;
+                    }                        
                 }
                 else {
-                    var set = MIOSet.set();
-                    let values = [];//store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);                    
-                    for (let index2 = 0; index2 < values.length; index2++){
-                        let objID = values[index2];
-                        set.addObject(objID);
-                    }                    
-                    storedValues[relationship.name] = set;
+                    // Trick. I store the set in the managed object intead of dynamic
+                    let set = this["_" + relationship.name];
+                    set.removeAllObjects();
+                    storedValues[relationship.name] = set;                    
+                    let objectIDs = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
+                    if (objectIDs == null) continue;
+                    
+                    for(let index = 0; index < objectIDs.length; index++){
+                        let objID = objectIDs[index];
+                        let obj = this._managedObjectContext.objectWithID(objID);
+                        set.addObject(obj);
+                    }                                            
                 }
             }
         } 
@@ -190,43 +198,12 @@ class MIOManagedObject extends MIOObject {
         if (key == null) return null;
 
         let property = this.entity.propertiesByName[key];
-        if (property == null) {
-            return super.valueForKey(key);
-        }
+        if (property != null) {            
+            let propertyName = property.name;
 
-        let propertyName = property.name;
-
-        if (property instanceof MIOAttributeDescription){
             this.willAccessValueForKey(propertyName);
             var value = this.primitiveValueForKey(propertyName);
-            this.didAccessValueForKey(propertyName);            
-            return value;
-        }
-        else if (property instanceof MIORelationshipDescription) {
-            let relationship = property as MIORelationshipDescription;
-
-            this.willAccessValueForKey(propertyName);
-            
-            var value = null;
-
-            if (relationship.isToMany == false){
-                let objectID = this.primitiveValueForKey(propertyName);
-                if (objectID != null){                    
-                    value = this.managedObjectContext.objectWithID(objectID);
-                }
-            } else {
-                // Trick. Storing set in private property                
-                value = this["_" + propertyName];
-                value.removeAllObjects();                
-                let objectIDs = this.primitiveValueForKey(propertyName);
-                for(let index = 0; index < objectIDs.length; index++){
-                    let objID = objectIDs[index];
-                    let obj = this._managedObjectContext.objectWithID(objID);
-                    value.addObject(obj);
-                }
-            }
-
-            this.didAccessValueForKey(propertyName);
+            this.didAccessValueForKey(propertyName);                
             return value;
         }
 

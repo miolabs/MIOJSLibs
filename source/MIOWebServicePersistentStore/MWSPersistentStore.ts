@@ -86,12 +86,11 @@ class MWSPersistentStore extends MIOIncrementalStore {
             }            
             return relNode.objectID;
         }
-        else {
+        else {                        
             let relRefIDs = node.valueForPropertyDescription(relationship);
-            if (relRefIDs == null) return null;
+            if (relRefIDs == null) return null;        
 
             var array = [];
-
             // for (var count = 0; count < relRefIDs.length; count++) {
 
             //     let relRefID = relRefIDs[count];
