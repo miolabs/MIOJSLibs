@@ -131,7 +131,7 @@ class MIOManagedObject extends MIOObject {
 
         let properties = this.entity.properties;
         
-        for(var index = 0; index < properties.length; index++){
+        for(let index = 0; index < properties.length; index++){
             let property = properties[index];
             if (property instanceof MIOAttributeDescription) {
                 let attribute = property as MIOAttributeDescription;
@@ -148,7 +148,7 @@ class MIOManagedObject extends MIOObject {
                 else {
                     var set = MIOSet.set();
                     let values = [];//store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);                    
-                    for (var index2 = 0; index2 < values.length; index2++){
+                    for (let index2 = 0; index2 < values.length; index2++){
                         let objID = values[index2];
                         set.addObject(objID);
                     }                    
