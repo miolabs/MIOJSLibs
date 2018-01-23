@@ -1,5 +1,10 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
+
+class _MIOIncrementalStoreNodeDateTransformer {
+    static sdf:MIOISO8601DateFormatter = MIOISO8601DateFormatter.iso8601DateFormatter();
+}
+
 class MIOIncrementalStoreNode extends MIOObject {
 
     private _objectID:MIOManagedObjectID = null;
@@ -66,7 +71,8 @@ class MIOIncrementalStoreNode extends MIOObject {
                 return value;
             }
             else if (type == MIOAttributeType.Date) {
-                return value;
+                let date = _MIOIncrementalStoreNodeDateTransformer.sdf.dateFromString(value);
+                return date;
             }
         }
         

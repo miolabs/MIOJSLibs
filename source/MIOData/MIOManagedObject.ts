@@ -24,7 +24,6 @@ class MIOManagedObject extends MIOObject {
         this._storedValues = null;
 
         //this.setDefaultValues();
-
         MIOLog("ManagedObject create: " + this.entity.name + "/" + this.objectID._getReferenceObject());
     }
 
@@ -37,7 +36,7 @@ class MIOManagedObject extends MIOObject {
         
         context.insertObject(this);
 
-        MIOLog("ManagedObject create: " + this.entity.name + "/" + this.objectID._getReferenceObject());        
+        MIOLog("ManagedObject ins create: " + this.entity.name + "/" + this.objectID._getReferenceObject());          
     }
 
     private setDefaultValues(){
@@ -199,22 +198,42 @@ class MIOManagedObject extends MIOObject {
         if (key == null) return null;
 
         let property = this.entity.propertiesByName[key];
-        if (property != null) {            
-            let propertyName = property.name;
-
-            this.willAccessValueForKey(propertyName);
-            var value = this._changedValues[propertyName];
-            if (value == null) {
-                let committedValues = this.committedValues();
-                value = committedValues[key];
-            }
-            this.didAccessValueForKey(propertyName);                
-
-            return value;
-        }
-        else {
+        if (property == null) {      
             return super.valueForKey(key);
-        }
+        }      
+        
+        this.willAccessValueForKey(key);        
+        var value = this._changedValues[key];
+        if (value == null) {
+            let committedValues = this.committedValues();
+            value = committedValues[key];
+        }        
+        this.didAccessValueForKey(key);
+
+        return value;
+
+        // if (property instanceof MIOAttributeDescription){
+        //     return value;
+        // }
+
+        // if (property instanceof MIORelationshipDescription){
+        //     let rel = property as MIORelationshipDescription;
+        //     if (rel.isToMany == false){
+        //         //let obj = this.managedObjectContext.objectWithID(value);
+        //         //return obj;
+        //         return value;
+        //     }
+        //     else {
+        //         let array = []; 
+        //         let set = value as MIOSet;
+        //         for (let index = 0; index < set.count; index++){
+        //             let objID = set.objectAtIndex(index);
+        //             let obj = this.managedObjectContext.objectWithID(objID);
+        //             array.addObject(obj);
+        //         }
+        //         return array;
+        //     }
+        // }
     }
 
     setValueForKey(value, key:string){
@@ -226,9 +245,7 @@ class MIOManagedObject extends MIOObject {
             return;
         }
 
-        let propertyName = property.name;
-
-        this.willChangeValueForKey(propertyName);
+        this.willChangeValueForKey(key);
         if (property instanceof MIOAttributeDescription){            
             if (value == null) delete this._changedValues[key];
             else this._changedValues[key] = value;
@@ -237,30 +254,24 @@ class MIOManagedObject extends MIOObject {
             let relationship = property as MIORelationshipDescription;
             let inverseRelationship = relationship.inverseRelationship;
 
-            if (relationship.isToMany == false){
-                if (value == null) delete this._changedValues[key];
-                else this._changedValues[key] = value.objectID;                    
-            }
-            else {
-                if (value == null) delete this._changedValues[key];
-                else this._changedValues[key] = value;
-            }
+            if (value == null) delete this._changedValues[key];
+            else this._changedValues[key] = value;              
 
             if (inverseRelationship != null) {
                 // TODO:
             }
         }
-        this.didChangeValueForKey(propertyName);        
+        this.didChangeValueForKey(key);        
     }
 
     primitiveValueForKey(key:string){
-        let committedValues = this._getCommittedValues();
+        let committedValues = this.committedValues();
         value = committedValues[key];
         return value;
     }
 
     setPrimitiveValueForKey(value, key:string){
-        let committedValues = this._getCommittedValues();        
+        let committedValues = this.committedValues();        
         committedValues[key] = value;
     }
 

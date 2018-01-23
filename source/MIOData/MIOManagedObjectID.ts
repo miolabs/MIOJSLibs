@@ -48,6 +48,7 @@ class MIOManagedObjectID extends MIOObject {
         else {
             this._isTemporaryID = false;
             this._referenceObject = referenceObject;
+            MIOLog("ManagedObjectID create " + entity.name + "/" + referenceObject);
         }
     }
 

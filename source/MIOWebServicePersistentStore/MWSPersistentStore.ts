@@ -365,7 +365,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL"));         
-            let version = this.delegate.serverVersionNumberForItem(values);
+            let version = this.delegate.serverVersionNumberForItem(this, values);
             if (version > 0) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
         }  
     }

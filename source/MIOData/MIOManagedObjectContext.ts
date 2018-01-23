@@ -204,12 +204,8 @@ class MIOManagedObjectContext extends MIOObject {
         var obj:MIOManagedObject = this.objectsByID[objectID.URIRepresentation.absoluteString];
         if (obj == null) {
             obj = MIOClassFromString(objectID.entity.name);
-            obj._initWithObjectID(objectID, this);     
-            
-            // if (objectID.persistentStore instanceof MIOIncrementalStore){
-            //     let store = objectID.persistentStore as MIOIncrementalStore;
-            //     store._fetchObjectWithObjectID(objectID, this);
-            // }
+            obj._initWithObjectID(objectID, this);  
+            this._registerObject(obj);               
         }
         return obj;
     }
