@@ -75,7 +75,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         
         if (relationship.isToMany == false) {
 
-            var relRefID = node.valueForPropertyDescription(relationship);
+            let relRefID = node.valueForPropertyDescription(relationship);
             if (relRefID == null) return null;
             
             let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
@@ -91,14 +91,14 @@ class MWSPersistentStore extends MIOIncrementalStore {
             if (relRefIDs == null) return null;        
 
             var array = [];
-            // for (var count = 0; count < relRefIDs.length; count++) {
+            for (let count = 0; count < relRefIDs.length; count++) {
 
-            //     let relRefID = relRefIDs[count];
-            //     let relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
-            //     this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
-            //     MIOLog("Downloading REFID: " + relRefID);
-            //     array.push(relNode.objectID);
-            // }
+                let relRefID = relRefIDs[count];
+                let relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
+                this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
+                MIOLog("Downloading REFID: " + relRefID);
+                array.push(relNode.objectID);
+            }
             return array;
         }
 
@@ -125,9 +125,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
     }
 
     private fetchObjectWithReferenceID(referenceID: string, entityName: string, context: MIOManagedObjectContext) {
-
-        //let node = this.nodesByReferenceID[referenceID];
-        //if (node != null) return node.objectID;
 
         if (this.delegate == null) return;
 
@@ -184,10 +181,10 @@ class MWSPersistentStore extends MIOIncrementalStore {
                 let objectValues = items[index];
                 let updated = this.updateObjectInContext(objectValues, entity, context);
                                         
-                if (updated == true) {
+                //if (updated == true) {
                     let relationshipsObjects = relationshipEntities != null ? relationshipEntities : [];
                     this.checkRelationships(objectValues, entity, context, relationshipsObjects);
-                }                
+                //}                
             }
         });
     }
@@ -200,19 +197,23 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (serverID == null) return;
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);
-        
+                
         var node = this.nodeWithServerID(serverID, entity);
         if (node == null) {
-            node = this.newNodeWithValuesAtServerID(serverID, values, version, entity, objectID);
+            MIOLog("New version: " + entity.name + " (" + version + ")");                        
+            node = this.newNodeWithValuesAtServerID(serverID, values, version, entity, objectID);            
             updateContext = true;
         }
         else if (version > node.version){
-            this.updateNodeWithValuesAtServerID(serverID, values, version, entity);  
+            MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");            
+            this.updateNodeWithValuesAtServerID(serverID, values, version, entity);              
             updateContext = true;
         }        
 
-        let obj = context.existingObjectWithID(node.objectID);
-        if (obj != null) context.refreshObject(obj, true);                            
+        if (updateContext == true) {
+            let obj = context.existingObjectWithID(node.objectID);
+            if (obj != null) context.refreshObject(obj, true);                            
+        }
 
         return updateContext;
     }
@@ -231,12 +232,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         node.initWithObjectID(objID, values, version);
         this.nodesByReferenceID[referenceID] = node;
         MIOLog("Inserting REFID: " + referenceID);   
-        
-        // Only for temporary
-        // if (objectID != null) {
-        //     this.referenceIDByObjectsID[objID.identifier] = referenceID;
-        // }
-        
+                
         return node;
     }
 
@@ -251,41 +247,25 @@ class MWSPersistentStore extends MIOIncrementalStore {
         
         for (var index = 0; index < relationshipEntities.length; index++){
             let relEntity = relationshipEntities[index];
-            //let serverRelname = relEntity.serverName[relEntity.name];
             let serverRelName = this.delegate.serverRelationshipName(this, relEntity.name, entity);
             let value = values[serverRelName];
 
+            if (value == null) continue;
+
             if (relEntity.isToMany == false) {
-                if (relationshipEntities.containsObject(relEntity.destinationEntityName)){                    
-                    // Value is a object
-                    //this.updateObjectInContext(value, relEntity.destinationEntity, context);                    
-                    //values[serverRelName] = value;
-                }
-                else {
-                    // Value is a server id
-                    // let referenceID = relEntity.destinationEntityName + "://" + value;
-                    // var node = this.nodesByReferenceID[referenceID];
-                    // if (node == null) {                         
-                    //     let objID = this.newObjectIDForEntity(relEntity.destinationEntity, value);
-                    //     this.newNodeWithValuesAtServerID(value, {}, -1, relEntity.destinationEntity, objID);
-                    //     this.fetchObjectWithReferenceID(value, relEntity.destinationEntityName, context);                         
-                    //     values[relEntity.name] = objID;
-                    // }
-                    // else {
-                    //     values[relEntity.name] = node.objectID;
-                    // }
-                }
+                this.updateObjectInContext(value, relEntity.destinationEntity, context);
+                let serverID = this.delegate.serverIDForItem(this, value, relEntity.destinationEntity.name);                                
+                values[serverRelName] = serverID;
             }
-            else {
+            else {                
                 var array = [];
-                if (value != null) {
-                    // for (var count = 0; count < value.length; count++){
-                    //     let serverValues = array[count];              
-                    //     if (serverValues == null) continue;    
-                    //     let node = this.updateObjectInContext(serverValues, relEntity, context);
-                    // }
+                for (var count = 0; count < value.length; count++){
+                    let serverValues = value[count];
+                    this.updateObjectInContext(serverValues, relEntity.destinationEntity, context);
+                    let serverID = this.delegate.serverIDForItem(this, serverValues, relEntity.destinationEntityName);                
+                    array.addObject(serverID);
                 }
-                //values[relEntity.name] = array;
+                values[serverRelName] = array;
             }
         }
     }    

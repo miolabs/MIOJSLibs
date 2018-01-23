@@ -79,6 +79,12 @@ class MIOSet extends MIOObject {
         var objs = _MIOPredicateFilterObjects(this._objects, predicate);
         return objs;
     }
+
+    // Prevent KVO on special properties
+    addObserver(obs, keypath:string, context?){
+        if (keypath == "count" || keypath == "length") throw "MIOSet: Can't observe count. It's not KVO Compilant";        
+        super.addObserver(obj, keypath, context);
+    }
     
 
 }

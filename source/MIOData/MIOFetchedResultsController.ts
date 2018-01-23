@@ -11,15 +11,13 @@ class MIOFetchSection extends MIOObject
 {
     objects = [];
 
-    numberOfObjects()
-    {
+    numberOfObjects(){
         return this.objects.length;
     }
 }
 
 class MIOFetchedResultsController extends MIOObject
 {
-    _delegate = null;
     sections = [];
 
     resultObjects = [];
@@ -27,21 +25,20 @@ class MIOFetchedResultsController extends MIOObject
     fetchRequest:MIOFetchRequest = null;
     managedObjectContext:MIOManagedObjectContext  = null;
     sectionNameKeyPath = null;
+    
+    private registerObjects = {};
 
-    initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?)
-    {
+    initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?){
         this.fetchRequest = request;
         this.managedObjectContext = managedObjectContext;
         this.sectionNameKeyPath = sectionNameKeyPath;
     }
 
-    get delegate()
-    {
+    private _delegate = null;
+    get delegate(){
         return this._delegate;
     }
-
-    set delegate(delegate)
-    {
+    set delegate(delegate){
         this._delegate = delegate;
 
         // TODO: Add and remove notification observer
@@ -85,8 +82,7 @@ class MIOFetchedResultsController extends MIOObject
         }
     }
 
-    performFetch()
-    {
+    performFetch(){
         this.resultObjects = this.managedObjectContext.executeFetch(this.fetchRequest);
         this._splitInSections();
     }
@@ -95,7 +91,7 @@ class MIOFetchedResultsController extends MIOObject
         
         let predicate = this.fetchRequest.predicate;
         for (var count = 0; count < objects.count; count++){
-            let obj = objects.objectAtIndex(count);            
+            let obj = objects.objectAtIndex(count);
             if (predicate != null) {
                 var result = predicate.evaluateObject(obj);
                 if (result) this.processObject(obj);
@@ -105,20 +101,20 @@ class MIOFetchedResultsController extends MIOObject
             }
         }        
         
+        this.resultObjects = _MIOSortDescriptorSortObjects(this.resultObjects, this.fetchRequest.sortDescriptors);
         this._splitInSections();
         this._notify();
     }
 
     private processObject(object:MIOManagedObject){
 
-        let index = this.resultObjects.indexOf(object);
-        if (index == -1) {
+        let ref = object.objectID._getReferenceObject();
+        if (this.registerObjects[ref] == null){
             this.insertObject(object);
         }
         else {
             this.updateObject(object);
         }
-
     }
 
     private insertObject(obj:MIOManagedObject) {
@@ -187,8 +183,15 @@ class MIOFetchedResultsController extends MIOObject
 
         if (this.sectionNameKeyPath == null)
         {
-            var section = new MIOFetchSection();
-            section.objects = this.resultObjects;
+            let section = new MIOFetchSection();
+            //section.objects = this.resultObjects;
+            for (var index = 0; index < this.resultObjects.length; index++){
+                let obj:MIOManagedObject = this.resultObjects[index];                
+                // Cache to for checking updates
+                let ref = obj.objectID._getReferenceObject();
+                this.registerObjects[ref] = obj;  
+                section.objects.push(obj);              
+            }
 
             this.sections.push(section);
         }
@@ -198,8 +201,12 @@ class MIOFetchedResultsController extends MIOObject
             var currentSectionKeyPathValue = "";
             for (var index = 0; index < this.resultObjects.length; index++)
             {
-                let obj = this.resultObjects[index];
-                let value = obj.valueForKey(this.sectionNameKeyPath);
+                let obj:MIOManagedObject = this.resultObjects[index];                
+                // Cache to for checking updates
+                let ref = obj.objectID._getReferenceObject();
+                this.registerObjects[ref] = obj;
+
+                let value = obj.valueForKey(this.sectionNameKeyPath);                
 
                 if (currentSectionKeyPathValue != value) {
                     currentSection = new MIOFetchSection();

@@ -80,9 +80,8 @@ class MUITextField extends MUIControl
         this._registerInputEvent();            
     }
 
-    layout()
-    {
-        super.layout();
+    layoutSubviews(){
+        super.layoutSubviews();
 
         var w = this.getWidth();
         var h = this.getHeight();
@@ -93,18 +92,16 @@ class MUITextField extends MUIControl
         this._inputLayer.style.height = (h - 8) + "px";
     }
 
-    setText(text)
-    {
+    setText(text){
         this.text = text;
     }
 
-    set text(text)
-    {
-        this._inputLayer.value = text != null ? text : "";
+    set text(text){        
+        let newValue = text != null ? text : "";        
+        this._inputLayer.value = newValue;
     }
 
-    get text()
-    {
+    get text(){
         return this._inputLayer.value;
     }
 
