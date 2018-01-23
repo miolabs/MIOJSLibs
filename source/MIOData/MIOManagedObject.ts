@@ -148,8 +148,8 @@ class MIOManagedObject extends MIOObject {
                 else {
                     var set = MIOSet.set();
                     let values = [];//store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);                    
-                    for (var index = 0; index < values.length; index++){
-                        let objID = values[index];
+                    for (var index2 = 0; index2 < values.length; index2++){
+                        let objID = values[index2];
                         set.addObject(objID);
                     }                    
                     storedValues[relationship.name] = set;
