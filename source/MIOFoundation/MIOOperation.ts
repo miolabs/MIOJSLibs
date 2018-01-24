@@ -14,7 +14,7 @@ class MIOOperation extends MIOObject {
     get isExecuting() {return this.executing()}
     
     private setExecuting(value){
-        if (value == this._isFinished) return;
+        if (value == this._isExecuting) return;
         this.willChangeValue("isExecuting");
         this._isExecuting = value;
         this.didChangeValue("isExecuting");
@@ -76,8 +76,11 @@ class MIOOperation extends MIOObject {
         if (type != "did") return;
 
         if (keyPath == "isFinished") {
-            object.removeObserver(this, "isFinished");
-            this.checkDependecies();
+            let op:MIOOperation = object;
+            if (op.isFinished == true){
+                object.removeObserver(this, "isFinished");
+                this.checkDependecies();
+            }
         }
     }
 

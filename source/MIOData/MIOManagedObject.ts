@@ -212,28 +212,6 @@ class MIOManagedObject extends MIOObject {
 
         return value;
 
-        // if (property instanceof MIOAttributeDescription){
-        //     return value;
-        // }
-
-        // if (property instanceof MIORelationshipDescription){
-        //     let rel = property as MIORelationshipDescription;
-        //     if (rel.isToMany == false){
-        //         //let obj = this.managedObjectContext.objectWithID(value);
-        //         //return obj;
-        //         return value;
-        //     }
-        //     else {
-        //         let array = []; 
-        //         let set = value as MIOSet;
-        //         for (let index = 0; index < set.count; index++){
-        //             let objID = set.objectAtIndex(index);
-        //             let obj = this.managedObjectContext.objectWithID(objID);
-        //             array.addObject(obj);
-        //         }
-        //         return array;
-        //     }
-        // }
     }
 
     setValueForKey(value, key:string){
@@ -262,11 +240,13 @@ class MIOManagedObject extends MIOObject {
             }
         }
         this.didChangeValueForKey(key);        
+
+        this.managedObjectContext.updateObject(this);
     }
 
     primitiveValueForKey(key:string){
         let committedValues = this.committedValues();
-        value = committedValues[key];
+        let value = committedValues[key];
         return value;
     }
 
