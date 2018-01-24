@@ -255,6 +255,20 @@ class MIOManagedObject extends MIOObject {
         committedValues[key] = value;
     }
 
+    _addObjectForKey(object, key:string){
+        var value = this.valueForKey(key);
+        value.addObject(object);
+        this._changedValues[key] = value;
+        this.managedObjectContext.updateObject(this);
+    }
+
+    _removeObjectForKey(object, key:string){
+        var value = this.valueForKey(key);
+        value.removeObject(object);
+        this._changedValues[key] = value;
+        this.managedObjectContext.updateObject(this);
+    }
+    
     _didCommit(){
         this._changedValues = {};
         this._storedValues = null;
