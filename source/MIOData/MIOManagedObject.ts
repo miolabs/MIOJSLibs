@@ -256,16 +256,16 @@ class MIOManagedObject extends MIOObject {
     }
 
     _addObjectForKey(object, key:string){
-        var value = this.valueForKey(key);
-        value.addObject(object);
-        this._changedValues[key] = value;
+        var set = this.valueForKey(key);
+        set.addObject(object);
+        this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
     }
 
     _removeObjectForKey(object, key:string){
-        var value = this.valueForKey(key);
-        value.removeObject(object);
-        this._changedValues[key] = value;
+        var set = this.valueForKey(key);
+        set.removeObject(object);
+        this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
     }
     

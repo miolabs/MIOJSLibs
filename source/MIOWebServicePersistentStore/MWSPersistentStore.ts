@@ -102,9 +102,12 @@ class MWSPersistentStore extends MIOIncrementalStore {
             for (let count = 0; count < relRefIDs.length; count++) {
 
                 let relRefID = relRefIDs[count];
-                let relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
-                this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
-                MIOLog("Downloading REFID: " + relRefID);
+                let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
+                if (relNode == null) {                    
+                    relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
+                    this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
+                    MIOLog("Downloading REFID: " + relRefID);
+                }
                 array.push(relNode.objectID);
             }
             return array;
