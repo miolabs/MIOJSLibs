@@ -16,12 +16,12 @@ class MUILabel extends MUIView
         this.layer.style.background = "";
         this._setupLayer();
     }
-
+/*
     initWithFrame(frame:MIOFrame)
     {
         super.initWithFrame(frame);
         this._setupLayer();
-    }
+    }*/
 
     initWithLayer(layer, owner, options?)
     {
@@ -46,7 +46,7 @@ class MUILabel extends MUIView
             this.layer.appendChild(this._textLayer);
         }
     }
-
+/*
     layout()
     {
         super.layout();
@@ -77,7 +77,7 @@ class MUILabel extends MUIView
                 this.layer.style.fontSize = size + 'px';
         }
     }
-
+*/
     setText(text)
     {
         this.text = text;

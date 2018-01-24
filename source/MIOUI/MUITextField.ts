@@ -79,7 +79,7 @@ class MUITextField extends MUIControl
 
         this._registerInputEvent();            
     }
-
+/*
     layout()
     {
         super.layout();
@@ -91,7 +91,7 @@ class MUITextField extends MUIControl
         this._inputLayer.style.width = (w - 8) + "px";
         this._inputLayer.style.marginTop = "4px";
         this._inputLayer.style.height = (h - 8) + "px";
-    }
+    }*/
 
     setText(text)
     {

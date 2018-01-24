@@ -1,6 +1,14 @@
 
 /// <reference path="../MIOData/MIOData.ts" />
 
+let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
+
+enum MWSPersistentStoreFetchStatus{
+    None,
+    Downloading,
+    Downloaded
+}
+
 enum MWSPersistentStoreRequestType {
     Fetch,
     Insert,
@@ -123,14 +131,17 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let request = this.delegate.fetchRequestForWebStore(this, fetchRequest, referenceID);
         if (request == null) return;
 
+        MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
+
         request.send(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
                 // if (entityName == "Tax"){
                 //     MIOLog("???");
                 // }
-                this.updateObjectInContext(values, fetchRequest.entity, context);
+                this.updateObjectInContext(values, fetchRequest.entity, context);                
             }
+            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
         });
 
     }
@@ -143,6 +154,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
         let request = this.delegate.fetchRequestForWebStore(this, fetchRequest, null);
         if (request == null) return;
+
+        MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
         request.send(this, function (code, data) {
             var [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
@@ -159,6 +172,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
                 this.updateObjectsInContext(items, fetchRequest.entity, context, array);
             }
+            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
         });
     }
 
