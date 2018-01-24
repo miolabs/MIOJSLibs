@@ -422,10 +422,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let entityName = object.entity.name;
         
         let serverID = this.delegate.serverIDForObject(this, object);
-        //let values = this.delegate.serverValuesForObject(this, object, true);
-        
-        //this.newNodeWithValuesAtServerID(serverID, values, 0, object.entity, object.objectID);
-        var dependencyIDs = [];
 
         let request = this.delegate.deleteRequestForWebStore(this, object);
         if (request == null) return;
@@ -433,7 +429,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         var op = new MWSPersistenStoreUploadOperation();
         op.initWithDelegate(this);
         op.request = request;
-        op.dependencyIDs = dependencyIDs;
+        op.dependencyIDs = [];
         this.operationsByReferenceID[serverID] = op;
 
         op.target = this;
@@ -445,34 +441,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("Object " + serverID + " -> Deleted " + (result ? "OK" : "FAIL"));                     
             this.deleteNodeAtServerID(serverID, object.entity);
         }  
-
-        /*
-        let referenceID = obj.valueForKey(this.referenceIDKey);
-        if (referenceID == null) return;
-
-        let entityName = obj.entity.managedObjectClassName;
-        var result = this.delegate.canServerSyncEntityNameForType(entityName, MIOWebServicePersistentIgnoreEntityType.Delete);
-        if (result == false) return;
-
-
-        var dependencies = [];
-
-        var op = new MWPSUploadOperation();
-        op.initWithDelegate(this);
-        op.url = this.url.urlByAppendingPathComponent("/" + this.identifierType + "/" + this.identifier + "/" + entityName.toLocaleLowerCase() + "/" + referenceID.toUpperCase());
-        op.httpMethod = "DELETE"
-        //op.body = null; 
-        this.serverDataFromObject(obj, false, dependencies);
-        op.dependencyIDs = dependencies;
-
-        this.operationsByReferenceID[referenceID] = op;
-
-        op.target = this;
-        op.completion = function () {
-            delete this.operationsByReferenceID[referenceID];
-        }
-
-        */
     }
 
 }
