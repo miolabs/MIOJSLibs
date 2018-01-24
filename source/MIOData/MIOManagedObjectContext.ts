@@ -57,30 +57,7 @@ class MIOManagedObjectContext extends MIOObject {
     }
     get parent() { return this._parent; }
 
-    // insertObject(obj: MIOManagedObject) {
-    //     let entityName = obj.entity.managedObjectClassName;
-
-    //     var array = this.insertedObjects[entityName];
-    //     if (array == null) {
-    //         array = [];
-    //         array.push(obj);
-    //         this.insertedObjects[entityName] = array;
-    //     }
-    //     else {
-    //         var index = array.indexOf(obj);
-    //         if (index == -1)
-    //             array.push(obj);
-    //     }
-
-    //     var array = this.objectsByEntity[entityName];
-    //     if (array == null) {
-    //         array = [];
-    //         this.objectsByEntity[entityName] = array;
-    //     }
-    //     array.push(obj);        
-    //     this.objectsByID[obj.objectID.identifier] = obj;
-    // }
-
+    
     private registerObjects = [];
     private _registerObject(object: MIOManagedObject) {
 
@@ -136,21 +113,6 @@ class MIOManagedObjectContext extends MIOObject {
         object._setIsDeleted(true);
         //this._unregisterObject(object);
     }
-
-    // private registerObject(object: MIOManagedObject) {
-
-    //     if (object == null) throw ("MIOManagedObjectContext: Registering null object");
-    //     let objectID = object.objectID;
-
-    //     this.objectsByID[objectID.identifier] = object;
-    //     let entityName = object.entity.name;
-    //     var array = this.objectsByEntity[entityName];
-    //     if (array == null) {
-    //         array = [];
-    //         this.objectsByEntity[entityName] = array;
-    //     }
-    //     array.push(object);
-    // }
 
     _objectWithURIRepresentationString(urlString:string){
         return this.objectsByID[urlString];
@@ -269,43 +231,6 @@ class MIOManagedObjectContext extends MIOObject {
 
         return [];
     }
-
-    // save() {
-
-    //     let insertedCount = Object.keys(this.insertedObjects).length;
-    //     let updatedCount = Object.keys(this.updateObjects).length;
-    //     let deletedCount = Object.keys(this.deletedObjects).length;
-
-    //     // Check if nothing changed... to avoid unnecessay methods calls
-    //     if (insertedCount == 0 && updatedCount == 0 && deletedCount == 0) return;
-
-    //     if (this.parent == null) {
-    //         // Save to persistent store
-    //         let saveRequest = new MIOSaveChangesRequest();
-    //         saveRequest.initWithObjects(this.insertedObjects, this.updateObjects, this.deletedObjects);
-    //         this.persistentStoreCoordinator.executeRequest(saveRequest, this);
-    //     }
-
-    //     var objsChanges = {};
-    //     objsChanges[MIOInsertedObjectsKey] = this.insertedObjects;
-    //     objsChanges[MIOUpdatedObjectsKey] = this.updateObjects;
-    //     objsChanges[MIODeletedObjectsKey] = this.deletedObjects;
-
-    //     let noty = new MIONotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);
-    //     if (this.parent != null) {            
-    //         this.parent.mergeChangesFromContextDidSaveNotification(noty);
-    //     }
-    //     else {
-    //         this.mergeChangesFromContextDidSaveNotification(noty);
-    //     }
-
-    //     MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextDidSaveNotification, this, objsChanges);        
-
-    //     // Clear arrays
-    //     this.insertedObjects = [];
-    //     this.updateObjects = [];
-    //     this.deletedObjects = [];
-    // }
 
     _obtainPermanentIDForObject(object: MIOManagedObject) {
         let store: MIOPersistentStore = object.objectID.persistentStore;
@@ -494,19 +419,6 @@ class MIOManagedObjectContext extends MIOObject {
 
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, this.blockChanges);
         this.blockChanges = null;
-    }
-
-    private refreshObjectsFromStore(objects) {
-
-        for (var entityName in objects) {
-
-            let set: MIOSet = objects[entityName];
-            for (var index = 0; index < set.length; index++) {
-                let object = set.objectAtIndex(index);
-                this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this);
-                //object.isFault = false;                
-            }
-        }
     }
 
 }

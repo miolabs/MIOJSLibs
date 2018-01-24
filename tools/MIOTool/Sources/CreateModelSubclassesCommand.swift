@@ -199,15 +199,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             fileContent += "    }\n";
             // Add
             fileContent += "    add\(cname)Object(value:\(destinationEntity)) {\n";
-            fileContent += "        let set = this.valueForKey('\(name)');\n";
-            fileContent += "        set.addObject(value);\n";
-            fileContent += "        this.managedObjectContext.updateObject(this);\n";
+            fileContent += "        this._addObjectForKey(value,\(name);\n";
             fileContent += "    }\n";
             // Remove
             fileContent += "    remove\(cname)Object(value:\(destinationEntity)) {\n";
-            fileContent += "        let set = this.valueForKey('\(name)');\n";
-            fileContent += "        set.removeObject(value);\n";
-            fileContent += "        this.managedObjectContext.updateObject(this);\n";
+            fileContent += "        this._removeObjectForKey(value,\(name);\n";
             fileContent += "    }\n";
             // Add objects
             fileContent += "    add\(cname)(value:MIOSet) {\n";
