@@ -20,7 +20,9 @@ class MIOIncrementalStoreNode extends MIOObject {
     }
 
     updateWithValues(values, version) {
-        this._values = values;
+        for(let property in values)
+            this._values[property] = values[property];
+       // this._values = values;
         this._version = version;
     }
 

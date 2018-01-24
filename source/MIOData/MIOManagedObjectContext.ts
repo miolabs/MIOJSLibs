@@ -392,10 +392,10 @@ class MIOManagedObjectContext extends MIOObject {
                 obj._didCommit();
             }
 
-            for (var index = 0; index < this.deletedObjects.length; index++) {
-                let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
-                obj._didCommit();
-            }
+            // for (var index = 0; index < this.deletedObjects.length; index++) {
+            //     let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
+            //     obj._didCommit();
+            // }
 
             // Clear
             this.insertedObjects = MIOSet.set();

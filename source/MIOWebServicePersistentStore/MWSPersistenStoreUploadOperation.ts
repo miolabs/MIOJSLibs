@@ -30,24 +30,9 @@ class MWSPersistenStoreUploadOperation extends MIOOperation {
     }
 
     start() {
-        this.setUploading(true);
-//        console.log("*******************");
-        //console.log("MWPSUploadOperation: " + this.httpMethod + " " + this.url.absoluteString);
-        // if (this.body != null)
-        //     console.log("MWSPersistenStoreUploadOperation: " + JSON.stringify(this.body));
-        // console.log("*******************");
-        // this.delegate.sendRequest(this.url, this.body, this.httpMethod, this, function(statusCode, json){            
-            
-        //     console.log("*******************");
-        //     console.log("MWSPersistenStoreUploadOperation: Server response " + statusCode);
-        //     console.log("*******************");
+        if (this.uploading == true) throw("MWSPersistenStoreUploadOperation: Trying to start again on an executing operation");
 
-        //     this.responseCode = statusCode;
-        //     this.responseJSON = json;
-            
-        //     this.setUploading(false);
-        //     this.setUploaded(true);
-        // });
+        this.setUploading(true);
 
         this.request.send(this, function (code, data) {
             this.responseCode = code;

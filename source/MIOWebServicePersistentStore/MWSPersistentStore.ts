@@ -367,7 +367,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         this.newNodeWithValuesAtServerID(serverID, values, 0, object.entity, object.objectID);
         var dependencyIDs = [];
 
-        let request = this.delegate.insertRequestForWebStore(this, object, serverID, dependencyIDs);
+        let request = this.delegate.insertRequestForWebStore(this, object, dependencyIDs);
         if (request == null) return;
 
         var op = new MWSPersistenStoreUploadOperation();
@@ -382,7 +382,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);
-            MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")"));                     
+            MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
             if (version > 0) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
         }  
     }
@@ -392,26 +392,32 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (this.delegate == null) return;
 
         let entityName = object.entity.name;
-        var refID:string = this.referenceObjectForObjectID(object.objectID);
-        let removeEnityName = object.entity.name + "://";
-        refID = refID.replace(removeEnityName, '');
-
+        
+        let serverID = this.delegate.serverIDForObject(this, object);
+        let values = this.delegate.serverValuesForObject(this, object, true);
+        
+        let node = this.nodeWithServerID(serverID, object.entity);
+        
+        this.updateNodeWithValuesAtServerID(serverID, values, node.version + 1, object.entity);
+        
         var dependencyIDs = [];
 
-        let request = this.delegate.updateRequestForWebStore(this, object, refID, dependencyIDs);
+        let request = this.delegate.updateRequestForWebStore(this, object, dependencyIDs);
         if (request == null) return;
 
         var op = new MWSPersistenStoreUploadOperation();
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = dependencyIDs;
-        this.operationsByReferenceID[refID] = op;
+        this.operationsByReferenceID[serverID] = op;
 
         op.target = this;
         op.completion = function () {
-            delete this.operationsByReferenceID[refID];
+            delete this.operationsByReferenceID[serverID];
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
-            MIOLog("Object " + refID + " -> Update " + (result ? "OK" : "FAIL"));
+            let version = this.delegate.serverVersionNumberForItem(this, values);            
+            MIOLog("Object " + serverID + " -> Update " + (result ? "OK" : "FAIL") + " (" + version + ")");
+            if (version > node.version) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
         }        
     }
 
