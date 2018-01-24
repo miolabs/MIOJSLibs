@@ -87,10 +87,21 @@ class MIOFetchedResultsController extends MIOObject
         this._splitInSections();
     }
 
-    private refreshObjects(objects:MIOSet){
-        
+    private processObject(object:MIOManagedObject){
+
+        let ref = object.objectID._getReferenceObject();
+        if (this.registerObjects[ref] == null){
+            this.resultObjects.push(object);
+            //this.insertObject(object);
+        }
+        else {
+            //this.updateObject(object);
+        }
+    }
+
+    private checkObjects(objects){
         let predicate = this.fetchRequest.predicate;
-        for (var count = 0; count < objects.count; count++){
+        for (var count = 0; count < objects.length; count++){
             let obj = objects.objectAtIndex(count);
             if (predicate != null) {
                 var result = predicate.evaluateObject(obj);
@@ -100,38 +111,26 @@ class MIOFetchedResultsController extends MIOObject
                 this.processObject(obj);
             }
         }        
+    }
+
+    private refreshObjects(objects:MIOSet){
         
+        this.checkObjects(objects);
         this.resultObjects = _MIOSortDescriptorSortObjects(this.resultObjects, this.fetchRequest.sortDescriptors);
         this._splitInSections();
         this._notify();
     }
 
-    private processObject(object:MIOManagedObject){
-
-        let ref = object.objectID._getReferenceObject();
-        if (this.registerObjects[ref] == null){
-            this.insertObject(object);
-        }
-        else {
-            this.updateObject(object);
-        }
-    }
-
-    private insertObject(obj:MIOManagedObject) {
-        this.resultObjects.push(obj);        
-    }
-
-    private updateObject(obj:MIOManagedObject){
-
-    }
-
     private updateContent(inserted, updated, deleted)
     {
-        // Process inserted objects
-        for(var i = 0; i < inserted.length; i++) {
-            let o = inserted[i];
-            this.resultObjects.push(o);
-        }
+        this.checkObjects(inserted);
+        this.checkObjects(updated);        
+                
+        // Process inserted objects        
+        // for(var i = 0; i < inserted.length; i++) {
+        //     let o = inserted[i];
+        //     this.resultObjects.push(o);
+        // }
 
         // Process updated objects
         // TODO: Check if the sort descriptor keys changed. If not do nothing becuse the objects are already
@@ -143,9 +142,12 @@ class MIOFetchedResultsController extends MIOObject
             let index = this.resultObjects.indexOf(o);
             if (index != -1){
                 this.resultObjects.splice(index, 1);
+                let ref = o.objectID._getReferenceObject();
+                delete this.registerObjects[ref];
             }
         }        
 
+        this.resultObjects = _MIOSortDescriptorSortObjects(this.resultObjects, this.fetchRequest.sortDescriptors);        
         this._splitInSections();
         this._notify();
     }

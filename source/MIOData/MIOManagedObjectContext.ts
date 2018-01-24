@@ -121,54 +121,11 @@ class MIOManagedObjectContext extends MIOObject {
         object._setIsInserted(true);
     }
 
-    // updateObject(obj: MIOManagedObject) {
-    //     if (obj.isInserted || obj.isDeleted) return;
-
-    //     var entityName = obj.entity.managedObjectClassName;
-    //     var array = this.updateObjects[entityName];
-    //     if (array == null) {
-    //         array = [];
-    //         array.push(obj);
-    //         this.updateObjects[entityName] = array;
-    //     }
-    //     else {
-    //         var index = array.indexOf(obj);
-    //         if (index == -1)
-    //             array.push(obj);
-    //     }
-    // }
-
     updateObject(object: MIOManagedObject) {
         if (this.insertedObjects.containsObject(object)) return;
         this.updatedObjects.addObject(object);
         object._setIsUpdated(true);
     }
-
-    // deleteObject(obj:MIOManagedObject) {
-    //     var entityName = obj.entity.managedObjectClassName;
-    //     var array = this.deletedObjects[entityName];
-    //     if (array == null) {
-    //         array = [];
-    //         array.push(obj);
-    //         this.deletedObjects[entityName] = array;
-    //     }
-    //     else {
-    //         var index = array.indexOf(obj);
-    //         if (index == -1)
-    //             array.push(obj);
-    //     }
-
-    //     delete this.objectsByID[obj.objectID.identifier];
-    //     let objs = this.objectsByEntity[entityName];
-    //     if (objs != null){
-    //         var index = objs.indexOf(obj);
-    //         if (index > -1)
-    //             objs.splice(index, 1);
-    //     }        
-
-    //     // TODO: Delete this hack.
-    //     obj._markForDeletion();
-    // }
 
     deleteObject(object: MIOManagedObject) {
         this.insertedObjects.removeObject(object);
@@ -258,7 +215,7 @@ class MIOManagedObjectContext extends MIOObject {
         if (this.blockChanges == null) {
             //this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this); 
             //object.isFault = false;           
-            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, objs);
+            MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextObjectsDidChange, this, changes);
         }
     }
 
@@ -287,38 +244,6 @@ class MIOManagedObjectContext extends MIOObject {
             }
         }
     }
-
-    // executeFetch(request) {
-
-    //     let entityName = request.entityName;
-    //     let entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, this);
-    //     request.entity = entity;
-
-    //     var objs = this.persistentStoreCoordinator.executeRequest(request, this);
-
-    //     let array = this.objectsByEntity[entityName];
-    //     if (array == null) {
-    //         array = [];
-    //         this.objectsByEntity[entityName] = array;
-    //     }
-
-    //     for (var index = 0; index < objs.length; index++) {
-    //         let o = objs[index];
-    //         let i = array.indexOf(o);
-    //         if (i == -1)
-    //             array.push(o);
-    //         this.objectsByID[o.objectID] = o;
-    //     }
-
-    //     if (request instanceof MIOFetchRequest) {
-    //         let fetchRequest = request as MIOFetchRequest;
-    //         var objects = _MIOPredicateFilterObjects(array, fetchRequest.predicate);
-    //         objects = _MIOSortDescriptorSortObjects(objects, fetchRequest.sortDescriptors);
-    //         return objects;
-    //     }
-
-    //     return [];
-    // }
 
     executeFetch(request) {
 

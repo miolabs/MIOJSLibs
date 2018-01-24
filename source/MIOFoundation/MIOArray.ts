@@ -2,7 +2,9 @@ interface Array<T> {
     addObject(object);
     removeObject(object);
     removeObjectAtIndex(index);
+    objectAtIndex(index);
     containsObject(object):boolean;
+    count();
 }
 
 Array.prototype.addObject = function(object){
@@ -23,4 +25,12 @@ Array.prototype.removeObjectAtIndex = function(index){
 Array.prototype.containsObject = function(object):boolean{
     let index = this.indexOf(object);
     return index > -1 ? true : false;
+}
+
+Array.prototype.objectAtIndex = function(index){        
+    return this[index];
+}
+
+Array.prototype.count = function(){
+    return this.length;
 }

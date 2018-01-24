@@ -147,14 +147,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         request.send(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
-<<<<<<< HEAD
-                // if (entityName == "Tax"){
-                //     MIOLog("???");
-                // }
                 this.updateObjectInContext(values, fetchRequest.entity, context);                
-=======
-                this.updateObjectInContext(values, fetchRequest.entity, context);
->>>>>>> e8c6aec41bd05dfb1b1d533751288a8e912f34ca
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
         });
@@ -218,7 +211,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (serverID == null) return;
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);
-                
+                        
         var node = this.nodeWithServerID(serverID, entity);
         if (node == null) {
             MIOLog("New version: " + entity.name + " (" + version + ")");                        
@@ -231,10 +224,10 @@ class MWSPersistentStore extends MIOIncrementalStore {
             updateContext = true;
         }        
 
-        if (updateContext == true) {
+        //if (updateContext == true) {
             let obj = context.existingObjectWithID(node.objectID);
             if (obj != null) context.refreshObject(obj, true);                            
-        }
+        //}
 
         return updateContext;
     }
@@ -263,6 +256,12 @@ class MWSPersistentStore extends MIOIncrementalStore {
         node.updateWithValues(values, version);
         MIOLog("Updating REFID: " + referenceID);        
     }
+
+    private deleteNodeAtServerID(serverID:string, entity:MIOEntityDescription){                
+        let referenceID = entity.name + "://" + serverID;
+        delete this.nodesByReferenceID[referenceID];
+        MIOLog("Deleting REFID: " + referenceID);        
+    }    
 
     private checkRelationships(values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipEntities){                
         
@@ -296,27 +295,30 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (context == null) return;
 
         let inserts = request.insertedObjects;
-        for (var entityName in inserts) {
-            var array = inserts[entityName];
-            for (var index = 0; index < array.length; index++) {
+        for (let entityName in inserts) {
+            let array = inserts[entityName];
+            for (let index = 0; index < array.length; index++) {
                 let obj: MIOManagedObject = array[index];                
                 this.insertObjectToServer(obj);
             }
         }
 
         let updates = request.updatedObjects;
-        for (var entityName in updates) {
-            var array = updates[entityName];
-            for (var index = 0; index < array.length; index++) {
+        for (let entityName in updates) {
+            let array = updates[entityName];
+            for (let index = 0; index < array.length; index++) {
                 let obj: MIOManagedObject = array[index];
                 this.updateObjectOnServer(obj);
             }
         }
 
         let deletes = request.deletedObjects;
-        for (var index = 0; index < deletes.length; index++) {
-            let obj: MIOManagedObject = deletes[index];
-            this.deleteObjectOnServer(obj);
+        for (let entityName in deletes) {
+            let array = deletes[entityName];
+            for (let index = 0; index < array.length; index++) {
+                let obj: MIOManagedObject = array[index];
+                this.deleteObjectOnServer(obj);
+            }
         }
 
         this.uploadToServer();
@@ -363,12 +365,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let values = this.delegate.serverValuesForObject(this, object, true);
         
         this.newNodeWithValuesAtServerID(serverID, values, 0, object.entity, object.objectID);
-        // var refID:string = this.referenceObjectForObjectID(object.objectID);
-        // if (refID != null) {
-        //     let removeEnityName = object.entity.name + "://";
-        //     refID = refID.replace(removeEnityName, '');
-        // }
-
         var dependencyIDs = [];
 
         let request = this.delegate.insertRequestForWebStore(this, object, serverID, dependencyIDs);
@@ -385,8 +381,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
             delete this.operationsByReferenceID[serverID];
             
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
-            MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL"));         
             let version = this.delegate.serverVersionNumberForItem(this, values);
+            MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")"));                     
             if (version > 0) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
         }  
     }
@@ -419,7 +415,36 @@ class MWSPersistentStore extends MIOIncrementalStore {
         }        
     }
 
-    deleteObjectOnServer(obj: MIOManagedObject) {
+    deleteObjectOnServer(object: MIOManagedObject) {
+
+        if (this.delegate == null) return;
+
+        let entityName = object.entity.name;
+        
+        let serverID = this.delegate.serverIDForObject(this, object);
+        //let values = this.delegate.serverValuesForObject(this, object, true);
+        
+        //this.newNodeWithValuesAtServerID(serverID, values, 0, object.entity, object.objectID);
+        var dependencyIDs = [];
+
+        let request = this.delegate.deleteRequestForWebStore(this, object);
+        if (request == null) return;
+
+        var op = new MWSPersistenStoreUploadOperation();
+        op.initWithDelegate(this);
+        op.request = request;
+        op.dependencyIDs = dependencyIDs;
+        this.operationsByReferenceID[serverID] = op;
+
+        op.target = this;
+        op.completion = function () {
+            delete this.operationsByReferenceID[serverID];
+            
+            let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
+            //let version = this.delegate.serverVersionNumberForItem(this, values);
+            MIOLog("Object " + serverID + " -> Deleted " + (result ? "OK" : "FAIL"));                     
+            this.deleteNodeAtServerID(serverID, object.entity);
+        }  
 
         /*
         let referenceID = obj.valueForKey(this.referenceIDKey);
