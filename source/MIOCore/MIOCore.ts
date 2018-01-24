@@ -32,8 +32,8 @@ function MIOCoreIsPhone(){
     if (value != null) return value;
 
     var phone = ['iphone','android','blackberry','nokia','opera mini','windows mobile','windows phone','iemobile'];
-    for (var i in phone) {
-        if (navigator.userAgent.toLowerCase().indexOf(phone[i].toLowerCase()) > 0) {
+    for (var index = 0; index < phone.length; index++) {
+        if (navigator.userAgent.toLowerCase().indexOf(phone[index].toLowerCase()) > 0) {
             return true;
         }
     }    
@@ -47,8 +47,8 @@ function MIOCoreIsPad(){
     if (value != null) return value;
 
     var pad = ['ipad'];
-    for (var i in pad) {
-        if (navigator.userAgent.toLowerCase().indexOf(pad[i].toLowerCase()) > 0) {
+    for (var index = 0; index < pad.length; index++) {
+        if (navigator.userAgent.toLowerCase().indexOf(pad[index].toLowerCase()) > 0) {
             return true;
         }
     }
@@ -64,7 +64,9 @@ function MIOCoreIsMobile()
 
     //var mobile = ['iphone','ipad','android','blackberry','nokia','opera mini','windows mobile','windows phone','iemobile'];
     var mobile = ['iphone','android','blackberry','nokia','opera mini','windows mobile','windows phone','iemobile'];
-    for (var i in mobile) if (navigator.userAgent.toLowerCase().indexOf(mobile[i].toLowerCase()) > 0) return true;
+    for (var index = 0; index < mobile.length; index++) {
+        if (navigator.userAgent.toLowerCase().indexOf(mobile[index].toLowerCase()) > 0) return true;
+    }
 
     // nothing found.. assume desktop
     return false;

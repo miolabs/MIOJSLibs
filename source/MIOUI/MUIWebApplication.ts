@@ -168,7 +168,7 @@ class MUIWebApplication {
         {        
             var controlRect = this._keyWindow.layer.getBoundingClientRect();
 
-            console.log("x: " + controlRect.left + " mx: " + x);
+            //console.log("x: " + controlRect.left + " mx: " + x);
 
             if ((x > controlRect.left && x < controlRect.right)
                 && (y > controlRect.top && y < controlRect.bottom)) {

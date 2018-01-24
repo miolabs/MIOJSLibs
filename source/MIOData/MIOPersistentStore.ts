@@ -4,18 +4,32 @@
 let MIOStoreUUIDKey = "MIOStoreUUIDKey";
 let MIOStoreTypeKey = "MIOStoreTypeKey";
 
-class  MIOPersistentStore extends MIOObject
+class MIOPersistentStore extends MIOObject
 {    
-    private _persistentStoreCoordinator:MIOPersistentStoreCoordinator = null;
-    private _configurationName:string = null;
-    private _url:MIOURL = null;
-    private _options = null;
-
     // To override per class
     static get type ():string { return "MIOPersistentStore";}
-    get type():string {return MIOPersistentStore.type;}
 
-    metadata = null;
+    private _persistentStoreCoordinator:MIOPersistentStoreCoordinator = null;
+    get persistentStoreCoordinator():MIOPersistentStoreCoordinator{return this._persistentStoreCoordinator;}
+
+    private _configurationName:string = null;
+    get configurationName():string{return this._configurationName;}
+    
+    private _url:MIOURL = null;
+    get url():MIOURL{return this._url;}
+    
+    private _options = null;    
+    get options(){return this._options;}
+
+    get readOnly():boolean{return false;}
+    
+    private _type:string = null;
+    get type():string {return this._type;}
+
+    private _identifier:string = null;
+    get identifier(){return this._identifier;}
+
+    protected metadata = null;
 
     initWithPersistentStoreCoordinator(root:MIOPersistentStoreCoordinator, configurationName:string, url:MIOURL, options?) {
 
@@ -25,47 +39,32 @@ class  MIOPersistentStore extends MIOObject
         this._options = options;        
 
         this.loadMetadata();
+        this._identifier = this.metadata[MIOStoreUUIDKey];
+        this._type = this.metadata[MIOStoreTypeKey];
+
+        if (this._identifier == null || this._type == null) {
+            throw ("MIOPersistentStore: Invalid metada information");
+        }
     }    
-
-    get persistentStoreCoordinator():MIOPersistentStoreCoordinator{
-        return this._persistentStoreCoordinator;
-    }
-
-    get configurationName():string{
-        return this._configurationName;
-    }
-
-    get url():MIOURL{
-        return this._url;
-    }
-
-    get options(){
-        return this._options;
-    }
-
-    get readOnly():boolean{
-        return false;
-    }
 
     didAddToPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){}
     willRemoveFromPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){}
 
-    loadMetadata(){}
+    loadMetadata(){
+        let uuid = MIOUUID.uuid();
+        let metadata = { MIOStoreUUIDKey: uuid, MIOStoreTypeKey: "MIOPersistentStore" };
+        this.metadata = metadata;        
+    }
 
-    executeRequest(persistentStoreRequest:MIOPersistentStoreRequest, context:MIOManagedObjectContext){        
+    _obtainPermanentIDForObject(object:MIOManagedObject) {
+        return object.objectID;
+    }        
+
+    _executeRequest(request: MIOPersistentStoreRequest, context: MIOManagedObjectContext) {
         return [];
     }
 
-    newObjectIDForEntityWithReferenceObject(entity, referenceObject){                
-    }
-
-    fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+    _objectIDForEntity(entity:MIOEntityDescription, referenceObject:string){
         return null;
-    }
-
-    updateObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
-    }
-
-    storedVersionFromObject(object:MIOManagedObject, context:MIOManagedObjectContext){        
     }
 }

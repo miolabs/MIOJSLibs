@@ -307,8 +307,6 @@ class MUITableView extends MUIScrollView {
 
         this.reloadLayoutSubviews = true;
 
-        MIOLog("ROW COUNT: " + this.rowsCount);
-        MIOLog("SIZE HEIGHT: " + this.contentHeight);
         if (this.rowsCount > 0) this.setNeedsDisplay();
     }
 
@@ -345,7 +343,6 @@ class MUITableView extends MUIScrollView {
             posY += this.addSectionHeader(section, posY, null);
 
             for (var cellIndex = 0; cellIndex < section.rows; cellIndex++) {
-                console.log("-- ROW: " + this.rows.length + " POS Y: " + posY);
                 let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
                 posY += this.addCell(ip, posY, null);
 
@@ -401,7 +398,6 @@ class MUITableView extends MUIScrollView {
             var startRowIndex = this.lastIndexPath.row + 1;
 
             var nextRow = end + 1;
-            MIOLog("** Start row: " + nextRow + " (" + startSectionIndex + ", " + startRowIndex + ")");
             var h = 0;
             var exit = false;
 
@@ -422,7 +418,6 @@ class MUITableView extends MUIScrollView {
                         }
                     }
 
-                    MIOLog("-> ROW: " + nextRow + " POS Y: " + posY);
                     let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
                     posY += this.addCell(ip, posY, this.rows[nextRow]);
                     nextRow++;
@@ -434,7 +429,6 @@ class MUITableView extends MUIScrollView {
                     // }                        
 
                     this.lastIndexPath = ip;
-                    MIOLog("<- Row: " + this.lastIndexPath.row + " Section: " + this.lastIndexPath.section);
 
                     if (posY >= maxY) {
                         exit = true;
@@ -454,12 +448,8 @@ class MUITableView extends MUIScrollView {
             this.visibleRange = new MIORange(start, nextRow - start);
         }
 
-
-
         let size = new MIOSize(this.getWidth(), this.contentHeight);
         this.contentSize = size;
-
-        MIOLog("----------------------------------------");
     }
 
     private recycleCell(cell: MUITableViewCell) {
@@ -541,7 +531,6 @@ class MUITableView extends MUIScrollView {
                     //     posY += this.addSectionHeader(section, posY, index);
                     // }
 
-                    console.log("-- ROW: " + index + " POS Y: " + posY);
                     let ip = this.indexPathForRowIndex(index, 0);
                     posY += this.addCell(ip, posY, index);
                 }
@@ -561,7 +550,6 @@ class MUITableView extends MUIScrollView {
                     row = this.rows[index + 1];
                     posY = row.view.getY() - h;
                     let ip = this.indexPathForRowIndex(index, 0);
-                    console.log("-- ROW: " + index + " POS Y: " + posY + " IP.row: " + ip.row);
                     this.addCell(ip, posY, index, row.view);
                 }
             }

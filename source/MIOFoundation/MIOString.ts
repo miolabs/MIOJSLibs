@@ -44,6 +44,24 @@ if ( typeof String.prototype.endsWith != 'function' ) {
 //     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 // };
 
+interface String {
+    stringByAppendingPathComponent(path:string):string;
+    
+    lastPathComponent():string;    
+    stringByDeletingLastPathComponent():string;
+}
+
+String.prototype.lastPathComponent = function():string{
+    return MIOStringLastPathComponent(this);
+}
+
+String.prototype.stringByAppendingPathComponent = function(path:string):string{
+    return MIOStringAppendPathComponent(this, path);
+}
+String.prototype.stringByDeletingLastPathComponent = function():string{
+    return MIOStringDeletingLastPathComponent(this);
+}
+
 function MIOStringHasPreffix(str, preffix)
 {
     return str.substring( 0, preffix.length ) === preffix;
@@ -65,6 +83,15 @@ function MIOStringAppendPathComponent(string:string, path):string
         str += path;
     else
         str += path.substr(1);
+
+    return str;
+}
+
+function MIOStringLastPathComponent(string:string)
+{
+    let index = string.lastIndexOf("/");
+    let len = string.length - index;
+    var str = string.substr(index, len);
 
     return str;
 }

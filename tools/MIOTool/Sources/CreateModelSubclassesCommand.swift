@@ -158,23 +158,23 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    protected _\(name)\(t)\(dv)\n";
         // Setter
         fileContent += "    set \(name)(value\(t)) {\n";
-        fileContent += "        this.setValue('\(name)', value);\n";
+        fileContent += "        this.setValueForKey(value, '\(name)');\n";
         fileContent += "    }\n";
     
         // Getter
         fileContent += "    get \(name)()\(t) {\n";
-        fileContent += "        return this.getValue('\(name)');\n";
+        fileContent += "        return this.valueForKey('\(name)');\n";
         fileContent += "    }\n";
 
         // Setter raw value
         fileContent += "    set \(name)PrimitiveValue(value\(t)) {\n";
-        fileContent += "        this.setPrimitiveValue('\(name)', value);\n";
+        fileContent += "        this.setPrimitiveValueForKey(value, '\(name)');\n";
         fileContent += "    }\n";
 
         
         // Getter raw value
         fileContent += "    get \(name)PrimitiveValue()\(t) {\n";
-        fileContent += "        return this.primitiveValue('\(name)');\n";
+        fileContent += "        return this.primitiveValueForKey('\(name)');\n";
         fileContent += "    }\n";
     }
     
@@ -195,24 +195,26 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             fileContent += "    protected _\(name):MIOSet = MIOSet.set();\n";
             // Getter
             fileContent += "    get \(name)():MIOSet {\n";
-            fileContent += "        return this.getValue('\(name)');\n";
+            fileContent += "        return this.valueForKey('\(name)');\n";
             fileContent += "    }\n";
             // Add
             fileContent += "    add\(cname)Object(value:\(destinationEntity)) {\n";
-            fileContent += "        this.addObject('\(name)', value);\n";
+            fileContent += "        let set = this.primitiveValueForKey('\(name)');\n";
+            fileContent += "        set.addObject(value);\n";
             fileContent += "    }\n";
             // Remove
             fileContent += "    remove\(cname)Object(value:\(destinationEntity)) {\n";
-            fileContent += "        this.removeObject('\(name)', value);\n";
+            fileContent += "        let set = this.primitiveValueForKey('\(name)');\n";
+            fileContent += "        set.removeObject(value);\n";
             fileContent += "    }\n";
             // Add objects
             fileContent += "    add\(cname)(value:MIOSet) {\n";
-            fileContent += "        this.addObjects('\(name)', value);\n";
+            fileContent += "        this.setPrimitiveValueForKey(value, '\(name)');\n";
             fileContent += "    }\n";
             // Remove objects
-            fileContent += "    remove\(cname)(value:MIOSet) {\n";
-            fileContent += "        this.removeObjects('\(name)', value);\n";
-            fileContent += "    }\n";
+//            fileContent += "    remove\(cname)(value:MIOSet) {\n";
+//            fileContent += "        this.removeObjects('\(name)', value);\n";
+//            fileContent += "    }\n";
         }
         
     }

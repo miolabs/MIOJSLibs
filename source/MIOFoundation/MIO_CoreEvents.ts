@@ -10,7 +10,7 @@
 declare function main(args);
 
 
-window.onload = function() {
+window.onload = function(e) {
     
     var mb = MIOBundle.mainBundle();
     console.log("Main URL: " + mb.url.absoluteString);

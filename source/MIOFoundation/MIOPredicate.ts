@@ -468,7 +468,9 @@ class MIOPredicate extends MIOObject {
 
 function _MIOPredicateFilterObjects(objs, predicate)
 {
-    var resultObjects = null;
+    if (objs == null) return [];
+
+    var resultObjects = null;    
 
     if (objs.length == 0 || predicate == null) {
         resultObjects = objs.slice(0);        

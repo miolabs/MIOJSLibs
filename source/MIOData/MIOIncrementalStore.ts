@@ -3,11 +3,8 @@
 /// <reference path="MIOIncrementalStoreNode.ts" />
 
 class MIOIncrementalStore extends MIOPersistentStore {
-    static get type(): string { return "MIOIncrementalStore"; }
-    get type(): string { return MIOIncrementalStore.type; }
-
+    
     //TODO: Change to provate when possible
-    protected referenceObjectByObjectID = {};
     private nodesByObjectID = {};
     private objectsByID = {};
 
@@ -21,10 +18,9 @@ class MIOIncrementalStore extends MIOPersistentStore {
 
         if (entity == null) throw("MIOIncrementalStore: Trying to create and object ID with NULL entity");
 
-        let objID = MIOManagedObjectID.objectIDWithEntity(entity);
-        objID.persistentStore = this;
-        objID.isTemporaryID = false;
-        this.referenceObjectByObjectID[objID.identifier] = referenceObject;
+        let objID = MIOManagedObjectID._objectIDWithEntity(entity, referenceObject);
+        objID._setPersistentStore(this);
+        objID._setStoreIdentifier(this.identifier);
         
         console.log("New REFID: " + referenceObject);
 
@@ -32,12 +28,16 @@ class MIOIncrementalStore extends MIOPersistentStore {
     }
 
     referenceObjectForObjectID(objectID: MIOManagedObjectID) {
-        return this.referenceObjectByObjectID[objectID.identifier];
+        return objectID._getReferenceObject();
     }
 
     //
     // Could be overriden
     //
+
+    executeRequest(request: MIOPersistentStoreRequest, context: MIOManagedObjectContext) {
+        return [];
+    }
 
     newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode {
         return null;
@@ -47,14 +47,28 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return null;
     } 
 
-    obtainPermanentIDsForObjects(objectIDs){
-        return null;
+    obtainPermanentIDsForObjects(objects){        
+        var array = [];
+        for(var index = 0; index < objects.length; index++){
+            let obj = objects[index];
+            array.addObject(obj.objectID);
+        }
+
+        return array;
     }
 
     //
-    // Methods only to be call byt the framework
+    // Methods only to be call by the framework
     //
 
+    _executeRequest(request: MIOPersistentStoreRequest, context: MIOManagedObjectContext) {
+        return this.executeRequest(request, context);
+    }
+
+    _obtainPermanentIDForObject(object:MIOManagedObject) {
+        return this.obtainPermanentIDsForObjects([object])[0];
+    }
+/*
     fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
         let obj: MIOManagedObject = this.objectsByID[objectID.identifier];
         if (obj == null) {
@@ -168,5 +182,20 @@ class MIOIncrementalStore extends MIOPersistentStore {
         }
 
         return obj;
+    }
+*/
+    // Private
+    _nodeForObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext):MIOIncrementalStoreNode {
+        return this.newValuesForObjectWithID(objectID, context);        
+    }
+
+    _objectIDForEntity(entity:MIOEntityDescription, referenceObject:string){
+        // TODO:Check if already exits
+        return this.newObjectIDForEntity(entity, referenceObject);
+    }
+
+    _fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){
+        // TODO: Make an normal query with object ID
+        // HACK: Now I override in subclass, not compatible with iOS
     }
 }
