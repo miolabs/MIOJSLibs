@@ -31,10 +31,9 @@ class MIOManagedObject extends MIOObject {
         
         let objectID = MIOManagedObjectID._objectIDWithEntity(entity);
         this._initWithObjectID(objectID, context);
-        
+
+        context.insertObject(this);        
         this.setDefaultValues();
-        
-        context.insertObject(this);
 
         MIOLog("ManagedObject ins create: " + this.entity.name + "/" + this.objectID._getReferenceObject());          
     }
@@ -47,7 +46,7 @@ class MIOManagedObject extends MIOObject {
 
             if (value == null) continue;
 
-            this.setPrimitiveValueForKey(value, key);
+            this.setValueForKey(value, key);
         }
     }
     
@@ -155,7 +154,7 @@ class MIOManagedObject extends MIOObject {
                     // Trick. I store the set in the managed object intead of dynamic
                     let set = this["_" + relationship.name];
                     set.removeAllObjects();
-                    storedValues[relationship.name] = set;                    
+                    storedValues[relationship.name] = set;
                     let objectIDs = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectIDs == null) continue;
                     
@@ -194,14 +193,7 @@ class MIOManagedObject extends MIOObject {
     willAccessValueForKey(key:string) {};
     didAccessValueForKey(key:string) {};
 
-    valueForKey(key:string){
-        if (key == null) return null;
-
-        let property = this.entity.propertiesByName[key];
-        if (property == null) {      
-            return super.valueForKey(key);
-        }      
-        
+    private _attributeValueForKey(key:string){
         this.willAccessValueForKey(key);        
         var value = this._changedValues[key];
         if (value == null) {
@@ -211,7 +203,26 @@ class MIOManagedObject extends MIOObject {
         this.didAccessValueForKey(key);
 
         return value;
+    }
 
+    valueForKey(key:string){
+        if (key == null) return null;
+
+        let property = this.entity.propertiesByName[key];
+        if (property == null) {      
+            return super.valueForKey(key);
+        }      
+        
+        if (property instanceof MIORelationshipDescription) {
+            let relationship = property as MIORelationshipDescription;
+            if (relationship.isToMany == true){
+                let value = this._attributeValueForKey(key);
+                if (value == null) value = this["_" + key];
+                return value;
+            }
+        }
+
+        return this._attributeValueForKey(key);
     }
 
     setValueForKey(value, key:string){
