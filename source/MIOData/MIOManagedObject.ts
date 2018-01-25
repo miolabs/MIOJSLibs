@@ -257,6 +257,7 @@ class MIOManagedObject extends MIOObject {
 
     _addObjectForKey(object, key:string){
         var set = this.valueForKey(key);
+        if (set == null) set = MIOSet.set();
         set.addObject(object);
         this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
@@ -264,7 +265,8 @@ class MIOManagedObject extends MIOObject {
 
     _removeObjectForKey(object, key:string){
         var set = this.valueForKey(key);
-        set.removeObject(object);
+        if (set == null) set = MIOSet.set();        
+        else set.removeObject(object);
         this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
     }
