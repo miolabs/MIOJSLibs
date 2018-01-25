@@ -211,7 +211,6 @@ class MIOManagedObject extends MIOObject {
         this.didAccessValueForKey(key);
 
         return value;
-
     }
 
     setValueForKey(value, key:string){
