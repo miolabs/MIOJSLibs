@@ -73,6 +73,11 @@ class MIOManagedObjectContext extends MIOObject {
             this.objectsByEntity[entityName] = array;
         }
         array.addObject(object);
+
+        if (object.objectID.persistentStore instanceof MIOIncrementalStore){
+            let is = object.objectID.persistentStore as MIOIncrementalStore;
+            is.managedObjectContextDidRegisterObjectsWithIDs([object.objectID]);
+        }        
     }
 
     private _unregisterObject(object: MIOManagedObject) {
@@ -83,7 +88,7 @@ class MIOManagedObjectContext extends MIOObject {
         let array = this.objectsByEntity[entityName];
         if (array != null) {
             array.removeObject(object);
-        }
+        }        
     }
 
     insertObject(object: MIOManagedObject) {
@@ -111,7 +116,6 @@ class MIOManagedObjectContext extends MIOObject {
         object._setIsUpdated(false);
         this.deletedObjects.addObject(object);
         object._setIsDeleted(true);
-        //this._unregisterObject(object);
     }
 
     _objectWithURIRepresentationString(urlString:string){
@@ -213,7 +217,7 @@ class MIOManagedObjectContext extends MIOObject {
         let entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, this);
         request.entity = entity;
 
-        //TODO: get the store from configuration name
+        //TODO: Get the store from configuration name
         let store: MIOPersistentStore = this.persistentStoreCoordinator.persistentStores[0];
         var objs = store._executeRequest(request, this);
 
@@ -317,10 +321,10 @@ class MIOManagedObjectContext extends MIOObject {
                 obj._didCommit();
             }
 
-            // for (var index = 0; index < this.deletedObjects.length; index++) {
-            //     let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
-            //     obj._didCommit();
-            // }
+            for (var index = 0; index < this.deletedObjects.length; index++) {
+                let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
+                this._unregisterObject(obj);
+            }
 
             // Clear
             this.insertedObjects = MIOSet.set();

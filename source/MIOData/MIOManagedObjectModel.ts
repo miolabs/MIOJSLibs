@@ -15,14 +15,6 @@ class MIOManagedObjectModel extends MIOObject
             throw ("MIOManagedObjectModel: Unkown entity (" + entityName + ")");
         }
         
-        //     // HACK!
-        //     // TODO: We need to build a object model file to read this values
-        //     entity = new MIOEntityDescription();
-        //     entity.initWithEntityName(entityName);
-
-        //     mom._setEntity(entity);
-        // }
-
         return entity;
     }
 
@@ -169,11 +161,6 @@ class MIOManagedObjectModel extends MIOObject
         }
         this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity);
     }
-
-    //TODO: Remove this function
-    // _setEntity(entity:MIOEntityDescription) {
-    //     this._entitiesByName[entity.managedObjectClassName] = entity;
-    //}
 
     private _setEntityForConfiguration(entity, configuration:string) {
         var array = this.entitiesForConfiguration[configuration];

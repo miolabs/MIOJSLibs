@@ -57,6 +57,14 @@ class MIOIncrementalStore extends MIOPersistentStore {
         return array;
     }
 
+    managedObjectContextDidRegisterObjectsWithIDs(objectIDs){
+
+    }
+
+    managedObjectContextDidUnregisterObjectsWithIDs(objectIDs){
+        
+    }
+
     //
     // Methods only to be call by the framework
     //
