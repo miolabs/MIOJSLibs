@@ -33,13 +33,17 @@ class MIONumberFormatter extends MIOFormatter {
 
         var result, parseString, numberString, type;
         [result, parseString, numberString, type] = this._parse(str);
-
+        
         if (result == true) {
+            let value = null;    
+            if (type == _MIONumberFormatterType.Int){
+                value =  parseInt(numberString);
+            }
+            else if (type == _MIONumberFormatterType.Decimal){
+                value = parseFloat(numberString);
+            }
             
-            if (type == _MIONumberFormatterType.Int)
-                return parseInt(numberString);
-            else if (type == _MIONumberFormatterType.Decimal)
-                return parseFloat(numberString);
+            return isNaN(value) ? null : value;
         }
 
         return null;

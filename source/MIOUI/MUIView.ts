@@ -9,6 +9,10 @@ function MUILayerSearchElementByID(layer, elementID)
     if (layer.tagName != "DIV" && layer.tagName != "INPUT")
             return null;
 
+    if (layer.getAttribute("data-outlet") == elementID)
+        return layer;
+    
+    // Deprecated. For old code we still mantein
     if (layer.getAttribute("id") == elementID)
         return layer;
 

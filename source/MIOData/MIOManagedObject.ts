@@ -25,8 +25,7 @@ class MIOManagedObject extends MIOObject {
 
         this.awakeFromFetch();
 
-        //this.setDefaultValues();
-        MIOLog("ManagedObject create: " + this.entity.name + "/" + this.objectID._getReferenceObject());
+        //MIOLog("ManagedObject create: " + this.entity.name + "/" + this.objectID._getReferenceObject());
     }
 
     initWithEntityAndInsertIntoManagedObjectContext(entity:MIOEntityDescription, context:MIOManagedObjectContext){        
@@ -39,7 +38,7 @@ class MIOManagedObject extends MIOObject {
 
         this.awakeFromInsert();
 
-        MIOLog("ManagedObject ins create: " + this.entity.name + "/" + this.objectID._getReferenceObject());                  
+        //MIOLog("ManagedObject ins create: " + this.entity.name + "/" + this.objectID._getReferenceObject());                  
     }
 
     private setDefaultValues(){

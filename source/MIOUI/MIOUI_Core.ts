@@ -32,7 +32,7 @@ function MUIOutlet(owner, elementID, className?, options?)
 
     if (layer == null)
         throw ("DIV identifier specified is not valid (" + elementID + ")");
-
+        
     if (className == null)
         className = layer.getAttribute("data-class");
 

@@ -31,6 +31,10 @@ Array.prototype.objectAtIndex = function(index){
     return this[index];
 }
 
-Array.prototype.count = function(){
-    return this.length;
-}
+Object.defineProperty(Array.prototype, "count", {
+    get: function () {
+        return this.length;
+    },
+    enumerable: true,
+    configurable: true
+});

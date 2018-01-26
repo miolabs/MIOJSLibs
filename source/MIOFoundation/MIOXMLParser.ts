@@ -117,7 +117,7 @@ class MIOXMLParser extends MIOObject
 
     parse(){
 
-        console.log("**** Start parser")
+        //console.log("**** Start parser")
 
         if (typeof this.delegate.parserDidStartDocument === "function")
             this.delegate.parserDidStartDocument(this);
@@ -141,7 +141,7 @@ class MIOXMLParser extends MIOObject
             [token, value] = this.nextToken();
         }
 
-        console.log("**** End parser")
+        //console.log("**** End parser")
 
         if (typeof this.delegate.parserDidEndDocument === "function")
             this.delegate.parserDidEndDocument(this);
@@ -149,7 +149,7 @@ class MIOXMLParser extends MIOObject
 
     private openTag(){
 
-        console.log("Open Tag");
+        //console.log("Open Tag");
         
         this.attributes = {};
 
@@ -178,7 +178,7 @@ class MIOXMLParser extends MIOObject
 
     private questionMark(){
         
-        console.log("Question mark");
+        //console.log("Question mark");
 
         var token, value;
         [token, value] = this.nextToken();
@@ -197,7 +197,7 @@ class MIOXMLParser extends MIOObject
 
     private xmlOpenTag(value){
      
-        console.log("XML open tag");
+        //console.log("XML open tag");
 
         var token, value;
         [token, value] = this.nextToken();
@@ -215,12 +215,12 @@ class MIOXMLParser extends MIOObject
     }
 
     private xmlCloseTag(){
-        console.log("XML close tag");
+        //console.log("XML close tag");
     }
 
     private beginElement(value){
 
-        console.log("Begin Element: " + value);
+        //console.log("Begin Element: " + value);
         
         this.elements.push(value);
         this.currentElement = value;
@@ -247,7 +247,7 @@ class MIOXMLParser extends MIOObject
 
     private endElement(value){
 
-        console.log("End Element: " + value);
+        //console.log("End Element: " + value);
 
         //this.elements.push(value);
         this.attributes = {};
@@ -271,7 +271,7 @@ class MIOXMLParser extends MIOObject
 
     private attribute(attr){
 
-        console.log("Attribute: " + attr);
+        //console.log("Attribute: " + attr);
 
         this.decodeAttribute(attr);
 
@@ -354,13 +354,13 @@ class MIOXMLParser extends MIOObject
 
     private closeTag(){        
         
-        console.log("Close Tag");
+        //console.log("Close Tag");
     }
 
     private didStartElement(){        
         
         let element = this.currentElement;
-        console.log("Start Element: " + element);
+        //console.log("Start Element: " + element);
         if (typeof this.delegate.parserDidStartElement === "function")
             this.delegate.parserDidStartElement(this, element, this.attributes);
 
@@ -371,19 +371,19 @@ class MIOXMLParser extends MIOObject
     private didEndElement(){        
         
         let element = this.elements.pop();
-        console.log("End Element " + element);        
+        //console.log("End Element " + element);        
         if (typeof this.delegate.parserDidEndElement === "function")
             this.delegate.parserDidEndElement(this, element);
     }
 
     private text(value){        
-        console.log("Text: " + value);
+        //console.log("Text: " + value);
         if (typeof this.delegate.parserFoundString === "function")
             this.delegate.parserFoundString(this, value);        
     }
 
     private error(expected){
-        console.log("Error: Unexpected token. " + expected);
+        MIOLog("Error: Unexpected token. " + expected);
     }
 
 }
