@@ -1,6 +1,7 @@
 
 /// <reference path="MWSRequest.ts" />
 
+
 class MWSJSONRequest extends MWSRequest 
 {    
     willStart() {        
@@ -16,10 +17,14 @@ class MWSJSONRequest extends MWSRequest
             try {
                 this.resultData = JSON.parse(this.resultData.replace(/(\r\n|\n|\r)/gm, ""));    
             } catch (error) {
-                MIOLog("JSON PARSER ERROR: BODY -> " + this.bodyDate);
+                MIOLog("JSON PARSER ERROR: BODY -> " + this.bodyData);
                 MIOLog("JSON PARSER ERROR: RESULT -> " + this.resultData);
             }
             
+        DBHelper.queryObjects_async("Client", "id_client=='dsfsdfsdf'","products", this, function(objects){
+            console.log(objects);
+        });
+
         }
     }
 }

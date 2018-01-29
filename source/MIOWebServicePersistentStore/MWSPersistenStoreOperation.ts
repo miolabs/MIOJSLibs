@@ -1,6 +1,8 @@
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
+/// <reference path="MWSJSONRequest.ts" />
 
-class MWSPersistenStoreUploadOperation extends MIOOperation {
+
+class MWSPersistenStoreOperation extends MIOOperation {
 
     request:MWSJSONRequest = null;
     dependencyIDs = null;
