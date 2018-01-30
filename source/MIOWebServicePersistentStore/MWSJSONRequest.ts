@@ -21,10 +21,6 @@ class MWSJSONRequest extends MWSRequest
                 MIOLog("JSON PARSER ERROR: RESULT -> " + this.resultData);
             }
             
-        DBHelper.queryObjects_async("Client", "id_client=='dsfsdfsdf'","products", this, function(objects){
-            console.log(objects);
-        });
-
         }
     }
 }
