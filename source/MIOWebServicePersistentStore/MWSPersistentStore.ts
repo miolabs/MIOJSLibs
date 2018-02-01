@@ -346,7 +346,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             let array = deletes[entityName];
             for (let index = 0; index < array.length; index++) {
                 let obj: MIOManagedObject = array[index];
-                this.deleteObjectOnServer(obj);
+                this.deleteObjectOnServer(obj);                
             }
         }
 
@@ -394,8 +394,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let serverID = this.delegate.serverIDForObject(this, object);
         let values = this.delegate.serverValuesForObject(this, object, true);
         
-        let node = this.nodeWithServerID(serverID, object.entity);
-        
+        let node = this.nodeWithServerID(serverID, object.entity);        
         this.updateNodeWithValuesAtServerID(serverID, values, node.version + 1, object.entity);
         
         var dependencyIDs = [];
@@ -426,7 +425,9 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let entityName = object.entity.name;
         
         let serverID = this.delegate.serverIDForObject(this, object);
-
+        let node = this.nodeWithServerID(serverID, object.entity);        
+        this.deleteNodeAtServerID(serverID, object.entity);
+        
         let request = this.delegate.deleteRequestForWebStore(this, object);
         if (request == null) return;
 
@@ -443,7 +444,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             //let version = this.delegate.serverVersionNumberForItem(this, values);
             MIOLog("Object " + serverID + " -> Deleted " + (result ? "OK" : "FAIL"));                     
-            this.deleteNodeAtServerID(serverID, object.entity);
         }  
     }
 
