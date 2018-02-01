@@ -60,7 +60,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         else {
             throw "MWSPersistentStoreError.InvalidRequest";
         }
-    }
+    }    
 
     newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode {
 
@@ -69,7 +69,12 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
         if (referenceID == null) throw ("MWSPersistentStore: Asking objectID without referenceID");
 
-        return this.nodesByReferenceID[referenceID];
+        let node = this.nodeWithServerID(serverID, objectID.entity);
+        if (node.version == -1){
+            this.fetchObjectWithReferenceID(serverID, objectID.entity.name, context);            
+        }
+
+        return node;
     }
 
     newValueForRelationship(relationship: MIORelationshipDescription, objectID: MIOManagedObjectID, context?: MIOManagedObjectContext) {
@@ -91,8 +96,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
             let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
             if (relNode == null) {
                 relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
-                this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
-                MIOLog("Downloading REFID: " + relRefID);
+                //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
+                //MIOLog("Downloading REFID: " + relRefID);
             }            
             return relNode.objectID;
         }
@@ -107,8 +112,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
                 let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
                 if (relNode == null) {                    
                     relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
-                    this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
-                    MIOLog("Downloading REFID: " + relRefID);
+                    //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
+                    //MIOLog("Downloading REFID: " + relRefID);
                 }
                 array.push(relNode.objectID);
             }
@@ -118,7 +123,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
     }
 
     obtainPermanentIDsForObjects(objects){
-
         var array = [];
 
         for (var index = 0; index < objects.length; index++){
@@ -130,6 +134,12 @@ class MWSPersistentStore extends MIOIncrementalStore {
         
         return array;
     }
+
+    managedObjectContextDidRegisterObjectsWithIDs(objectIDs){
+    }
+
+    managedObjectContextDidUnregisterObjectsWithIDs(objectIDs){
+    }
             
     _fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){        
         let serverID = objectID._getReferenceObject();
@@ -137,9 +147,15 @@ class MWSPersistentStore extends MIOIncrementalStore {
         this.fetchObjectWithReferenceID(serverID, entityName, context);
     }
 
+    private fetchingObjects = {};
     private fetchObjectWithReferenceID(referenceID: string, entityName: string, context: MIOManagedObjectContext) {
 
         if (this.delegate == null) return;
+
+        if (this.fetchingObjects[referenceID] != null) return;
+        
+        this.fetchingObjects[referenceID] = true;
+        MIOLog("Downloading REFID: " + referenceID);
 
         var fetchRequest = MIOFetchRequest.fetchRequestWithEntityName(entityName);
         fetchRequest.entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
@@ -151,6 +167,10 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
         request.send(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
+            
+            MIOLog("Downloaded REFID: " + referenceID);
+            delete this.fetchingObjects[referenceID];
+            
             if (result == true) {
                 this.updateObjectInContext(values, fetchRequest.entity, context);                
             }

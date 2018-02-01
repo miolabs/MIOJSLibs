@@ -89,6 +89,12 @@ class MIOManagedObjectContext extends MIOObject {
         if (array != null) {
             array.removeObject(object);
         }        
+
+        if (object.objectID.persistentStore instanceof MIOIncrementalStore){
+            let is = object.objectID.persistentStore as MIOIncrementalStore;
+            is.managedObjectContextDidUnregisterObjectsWithIDs([object.objectID]);
+        }        
+        
     }
 
     insertObject(object: MIOManagedObject) {

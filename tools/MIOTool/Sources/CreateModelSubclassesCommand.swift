@@ -155,7 +155,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "\n";
         fileContent += "    // Property: \(name)\n";
         // Var
-        fileContent += "    protected _\(name)\(t)\(dv)\n";
+        //fileContent += "    protected _\(name)\(t)\(dv)\n";
         // Setter
         fileContent += "    set \(name)(value\(t)) {\n";
         fileContent += "        this.setValueForKey(value, '\(name)');\n";
@@ -170,7 +170,6 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         fileContent += "    set \(name)PrimitiveValue(value\(t)) {\n";
         fileContent += "        this.setPrimitiveValueForKey(value, '\(name)');\n";
         fileContent += "    }\n";
-
         
         // Getter raw value
         fileContent += "    get \(name)PrimitiveValue()\(t) {\n";
@@ -181,7 +180,32 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     private func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:String) {
     
         if (toMany == "NO") {
-            appendAttribute(name:name, type:destinationEntity, optional:optional, defaultValue:nil);
+            //appendAttribute(name:name, type:destinationEntity, optional:optional, defaultValue:nil);
+            fileContent += "    // Relationship: \(name)\n";
+            // Var
+            //fileContent += "    protected _\(name):\(destinationEntity) = null;\n";
+
+            // Setter
+            fileContent += "    set \(name)(value:\(destinationEntity)) {\n";
+            fileContent += "        this.setValueForKey(value, '\(name)');\n";
+            fileContent += "    }\n";
+            
+            // Getter
+            fileContent += "    get \(name)():\(destinationEntity) {\n";
+            fileContent += "        return this.valueForKey('\(name)') as \(destinationEntity);\n";
+            fileContent += "    }\n";
+            
+//            // Setter raw value
+//            fileContent += "    set \(name)PrimitiveValue(value\(t)) {\n";
+//            fileContent += "        this.setPrimitiveValueForKey(value, '\(name)');\n";
+//            fileContent += "    }\n";
+//
+//
+//            // Getter raw value
+//            fileContent += "    get \(name)PrimitiveValue()\(t) {\n";
+//            fileContent += "        return this.primitiveValueForKey('\(name)');\n";
+//            fileContent += "    }\n";
+
         }
         else{
             
@@ -192,9 +216,9 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             
             fileContent += "    // Relationship: \(name)\n";
             // Var
-            fileContent += "    protected _\(name):MIOSet = MIOSet.set();\n";
+            fileContent += "    protected _\(name):MIOManagedObjectSet = null;\n";
             // Getter
-            fileContent += "    get \(name)():MIOSet {\n";
+            fileContent += "    get \(name)():MIOManagedObjectSet {\n";
             fileContent += "        return this.valueForKey('\(name)');\n";
             fileContent += "    }\n";
             // Add
@@ -206,9 +230,9 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             fileContent += "        this._removeObjectForKey(value, '\(name)');\n";
             fileContent += "    }\n";
             // Add objects
-            fileContent += "    add\(cname)(value:MIOSet) {\n";
-            fileContent += "        this.setValueForKey(value, '\(name)');\n";
-            fileContent += "    }\n";
+//            fileContent += "    add\(cname)(value:MIOMOanagedObjectSet) {\n";
+//            fileContent += "        this.setValueForKey(value, '\(name)');\n";
+//            fileContent += "    }\n";
             // Remove objects
 //            fileContent += "    remove\(cname)(value:MIOSet) {\n";
 //            fileContent += "        this.removeObjects('\(name)', value);\n";

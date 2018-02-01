@@ -15,26 +15,17 @@ class MIOSet extends MIOObject {
     private _objects = [];
 
     addObject(object){
-        if (this.containsObject(object) == true) return;
-        
-        this.willChangeValue("length");
+        if (this._objects.containsObject(object) == true) return;        
         this._objects.addObject(object);
-        this.didChangeValue("length");
     }
 
     removeObject(object){
-        let index = this.indexOfObject(object);
-        if (index == -1) return;
-        
-        this.willChangeValue("length");
-        this._objects.removeObjectAtIndex(index);
-        this.didChangeValue("length");
+        if (this._objects.containsObject(object) == true) return;        
+        this._objects.removeObject(object);
     }
 
     removeAllObjects(){
-        this.willChangeValue("length");        
         this._objects = [];
-        this.didChangeValue("length");
     }
 
     indexOfObject(object) {
@@ -42,7 +33,7 @@ class MIOSet extends MIOObject {
     }
 
     containsObject(object){
-        return this.indexOfObject(object) > -1 ? true : false;
+        return this._objects.indexOfObject(object) > -1 ? true : false;
     }
 
     objectAtIndex(index){
@@ -75,15 +66,14 @@ class MIOSet extends MIOObject {
     }
 
     filterWithPredicate(predicate:MIOPredicate) {
-
         var objs = _MIOPredicateFilterObjects(this._objects, predicate);
         return objs;
     }
 
     // Prevent KVO on special properties
     addObserver(obs, keypath:string, context?){
-        if (keypath == "count" || keypath == "length") throw "MIOSet: Can't observe count. It's not KVO Compilant";        
-        super.addObserver(obj, keypath, context);
+        if (keypath == "count" || keypath == "length") throw "MIOSet: Can't observe count. It's not KVO Compilant"; 
+        super.addObserver(obs, keypath, context);
     }
     
 

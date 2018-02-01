@@ -3,6 +3,7 @@ interface Array<T> {
     removeObject(object);
     removeObjectAtIndex(index);
     objectAtIndex(index);
+    indexOfObject(object);
     containsObject(object):boolean;
     count();
 }
@@ -20,6 +21,10 @@ Array.prototype.removeObject = function(object){
 
 Array.prototype.removeObjectAtIndex = function(index){        
     this.splice(index, 1);    
+}
+
+Array.prototype.indexOfObject = function(object){
+    return this.indexOf(object);
 }
 
 Array.prototype.containsObject = function(object):boolean{
