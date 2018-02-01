@@ -81,7 +81,7 @@ class MIOSet extends MIOObject {
     }
 
     // Prevent KVO on special properties
-    addObserver(obs, keypath:string, context?){
+    addObserver(obj, keypath:string, context?){
         if (keypath == "count" || keypath == "length") throw "MIOSet: Can't observe count. It's not KVO Compilant";        
         super.addObserver(obj, keypath, context);
     }
