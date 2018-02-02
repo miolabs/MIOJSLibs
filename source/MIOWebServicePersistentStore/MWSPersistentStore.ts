@@ -228,10 +228,6 @@ class MWSPersistentStore extends MIOIncrementalStore {
                 let objectValues = items[index];
                 let obj = this.updateObjectInContext(objectValues, entity, context, null, relationshipEntities);
                                         
-                // Check the objects inside values
-                let relationshipsObjects = relationshipEntities != null ? relationshipEntities : [];
-                this.checkRelationships(objectValues, entity, context, relationshipsObjects);
-
                 objects.addObject(obj);
             }
         });
@@ -241,11 +237,15 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
     private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID, relationshipEntities?) {
 
+        // Check the objects inside values
+        let relationshipsObjects = relationshipEntities != null ? relationshipEntities : [];
+        this.checkRelationships(values, entity, context, relationshipsObjects);
+
         let serverID = this.delegate.serverIDForItem(this, values, entity.name);
         if (serverID == null) return null;
         
-        let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);
-                        
+        let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);        
+
         var node = this.nodeWithServerID(serverID, entity);
         if (node == null) {
             MIOLog("New version: " + entity.name + " (" + version + ")");                        
