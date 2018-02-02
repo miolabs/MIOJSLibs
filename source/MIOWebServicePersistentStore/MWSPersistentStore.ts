@@ -226,8 +226,9 @@ class MWSPersistentStore extends MIOIncrementalStore {
             for (var index = 0; index < items.length; index++) {
 
                 let objectValues = items[index];
-                let obj = this.updateObjectInContext(objectValues, entity, context);
+                let obj = this.updateObjectInContext(objectValues, entity, context, null, relationshipEntities);
                                         
+                // Check the objects inside values
                 let relationshipsObjects = relationshipEntities != null ? relationshipEntities : [];
                 this.checkRelationships(objectValues, entity, context, relationshipsObjects);
 
@@ -238,7 +239,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         return objects;
     }
 
-    private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID) {
+    private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID, relationshipEntities?) {
 
         let serverID = this.delegate.serverIDForItem(this, values, entity.name);
         if (serverID == null) return null;

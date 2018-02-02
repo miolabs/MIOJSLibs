@@ -465,8 +465,8 @@ class MUICalendarView extends MUIScrollView {
 
         this._views = [];
 
-        var currentYear = this.today.getFullYear();
-        var currentMonth = this.today.getMonth() - 1;
+        var currentYear = 2017; //this.today.getFullYear();
+        var currentMonth = 0; //this.today.getMonth() - 1;
                         
         if (this.minDate != null) {
             
@@ -475,13 +475,19 @@ class MUICalendarView extends MUIScrollView {
                 currentMonth += 1;
         }
 
-        for (var index = 0; index < 3; index++) {
+        for (var index = 0; index < 13; index++) {
             var mv = new MUICalendarMonthView();
-            mv.initWithMonth(currentMonth + index, currentYear, this);
+            mv.initWithMonth(currentMonth, currentYear, this);
             mv.cellSpacingX = this.horizontalCellSpacing;
             mv.cellSpacingY = this.verticalCellSpacing;
             this.addSubview(mv);
             this._views.push(mv);
+
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
         }
         
         this.initialReload = true;
@@ -619,9 +625,7 @@ class MUICalendarView extends MUIScrollView {
     }
 
     observeValueForKeyPath(key, type, object) {
-
         if (key == "selected" && type == "did") {
-
             this._didChangeDayCellSelectedValue(object);
         }
     }

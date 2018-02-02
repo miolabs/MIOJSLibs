@@ -64,10 +64,12 @@ class MIOIncrementalStoreNode extends MIOObject {
                 }
             }
             else if (type == MIOAttributeType.Integer) {
-                return parseInt(value);
+                let v = parseInt(value);
+                return isNaN(v) ? 0 : v;
             }
             else if (type == MIOAttributeType.Float || type == MIOAttributeType.Number) {
-                return parseFloat(value);
+                let v = parseFloat(value); 
+                return isNaN(v) ? 0.0 : v;
             }
             else if (type == MIOAttributeType.String) {
                 return value;
