@@ -463,7 +463,8 @@ class MUITableView extends MUIScrollView {
         var section = this.sections[ip.section];
         section.cells[ip.row] = null;
 
-        cell.removeObserver(this, "selected");
+        cell.selected = false;
+        cell.removeObserver(this, "selected");        
 
         var array = this.reusableCellsByID[cell.reuseIdentifier];
         if (array == null) {
@@ -750,14 +751,13 @@ class MUITableView extends MUIScrollView {
             }
 
             this.selectedIndexPath = indexPath;
-
             this._selectCell(cell);
+
+            if (this.delegate != null && typeof this.delegate.didSelectCellAtIndexPath === "function") {
+                this.delegate.didSelectCellAtIndexPath(this, indexPath);
+            }                
         }
 
-        if (this.delegate != null) {
-            if (typeof this.delegate.didSelectCellAtIndexPath === "function")
-                this.delegate.didSelectCellAtIndexPath(this, indexPath);
-        }
     }
 
     cellOnDblClickFn(cell) {

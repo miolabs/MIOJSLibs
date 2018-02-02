@@ -163,6 +163,7 @@ class MUITableViewCell extends MUIView {
     }
 
     setSelected(value) {
+        if (this._selected == value) return;
 
         this.willChangeValue("selected");
         this._selected = value;

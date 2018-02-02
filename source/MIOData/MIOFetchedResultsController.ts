@@ -85,6 +85,8 @@ class MIOFetchedResultsController extends MIOObject
     performFetch(){
         this.resultObjects = this.managedObjectContext.executeFetch(this.fetchRequest);
         this._splitInSections();
+
+        return this.resultObjects;
     }
 
     private processObject(object:MIOManagedObject){

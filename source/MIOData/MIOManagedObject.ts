@@ -171,6 +171,9 @@ class MIOManagedObject extends MIOObject {
                 }
             }
         } 
+
+        let node = store._nodeForObjectID(this.objectID, this.managedObjectContext);
+        this._version = node.version;
         
         return storedValues;
     }
