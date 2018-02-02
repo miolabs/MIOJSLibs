@@ -475,7 +475,7 @@ class MUICalendarView extends MUIScrollView {
                 currentMonth += 1;
         }
 
-        for (var index = 0; index < 13; index++) {
+        for (var index = 0; index < 14; index++) {
             var mv = new MUICalendarMonthView();
             mv.initWithMonth(currentMonth, currentYear, this);
             mv.cellSpacingX = this.horizontalCellSpacing;

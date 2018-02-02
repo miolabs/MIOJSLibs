@@ -127,8 +127,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
         for (var index = 0; index < objects.length; index++){
             let obj:MIOManagedObject = objects[index];
-            let referenceID = this.delegate.serverIDForObject(this, obj);
-            let objID = this.newObjectIDForEntity(obj.entity, referenceID);
+            let serverID = this.delegate.serverIDForObject(this, obj);
+            let objID = this.newObjectIDForEntity(obj.entity, serverID);
             array.addObject(objID);
         }
         
@@ -361,9 +361,14 @@ class MWSPersistentStore extends MIOIncrementalStore {
         let entityName = object.entity.name;
         
         let serverID = this.delegate.serverIDForObject(this, object);
-        let values = this.delegate.serverValuesForObject(this, object, true);
+        // We need to create an empty node before we call server Values for object,
+        // because inside we call valueForKey that needs the a node.
+        this.newNodeWithValuesAtServerID(serverID, {}, -1, object.entity, object.objectID);
         
-        this.newNodeWithValuesAtServerID(serverID, values, 0, object.entity, object.objectID);
+        // We update the node with the values
+        let values = this.delegate.serverValuesForObject(this, object, true);
+        this.updateNodeWithValuesAtServerID(serverID, values, 0, object.entity);
+        
         var dependencyIDs = [];
 
         let request = this.delegate.insertRequestForWebStore(this, object, dependencyIDs);
