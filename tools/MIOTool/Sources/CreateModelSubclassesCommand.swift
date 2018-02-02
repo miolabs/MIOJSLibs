@@ -51,10 +51,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         
         if (elementName == "entity") {
             
-            let filename = attributeDict["name"];
+            let filename = attributeDict["name"]
             let classname = attributeDict["representedClassName"]
+            let parentName = attributeDict["parentEntity"]
             
-            openModelEntity(filename:filename!, classname:classname!);
+            openModelEntity(filename:filename!, classname:classname!, parentName:parentName)
         }
         else if (elementName == "attribute") {
             
@@ -91,17 +92,25 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     
     }
     
-    private func openModelEntity(filename:String, classname:String) {
+    private func openModelEntity(filename:String, classname:String, parentName:String?) {
     
         self.filename = "/\(filename)_ManagedObject.ts";
         let cn = classname + "_ManagedObject";
         self.currentClassEntityName = cn;
         self.currentClassName = classname;
         
+        let parentObject = parentName ?? "MIOManagedObject"
+        
         fileContent = "\n";
+        
+        if parentName != nil {
+            fileContent += "\n/// <reference path=\"\(parentName!).ts\" />\n"
+        }
+        
+        fileContent += "\n";
         fileContent += "// Generated class \(cn)\n";
         fileContent += "\n";
-        fileContent += "class \(cn) extends MIOManagedObject {\n";
+        fileContent += "class \(cn) extends \(parentObject)\n{\n";
     }
     
     private func appendAttribute(name:String, type:String, optional:String, defaultValue:String?) {
