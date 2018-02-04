@@ -150,22 +150,19 @@ class MIOManagedObject extends MIOObject {
                 if (relationship.isToMany == false) {                    
                     var objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectID != null){
-                    //     let value = this.managedObjectContext.objectWithID(objectID);
                         storedValues[relationship.name] = objectID;
                     }                        
                 }
-                else {                    
-                    // Trick. I store the set in the managed object intead of dynamic                    
-                    let set:MIOManagedObjectSet = this["_" + relationship.name];
-                    if (set == null) set = MIOManagedObjectSet._setWithManagedObject(this, relationship);                    
-                    storedValues[relationship.name] = set;                    
+                else {                  
+                    // Tick. I store the value in a private property when the object is temporary                      
+                    let set:MIOManagedObjectSet = MIOManagedObjectSet._setWithManagedObject(this, relationship);
+                    //storedValues[relationship.name] = set;
                     
                     let objectIDs = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectIDs == null) continue;
                     
                     for(let index = 0; index < objectIDs.length; index++){
                         let objID = objectIDs[index];
-                        //let obj = this._managedObjectContext.objectWithID(objID);
                         set._addObjectID(objID);
                     }                                            
                 }
@@ -208,25 +205,12 @@ class MIOManagedObject extends MIOObject {
             return super.valueForKey(key);
         }      
         
-        this.willAccessValueForKey(key);        
+        this.willAccessValueForKey(key);
         var value = this._changedValues[key];
         if (value == null) {
-            let committedValues = this.committedValues();
-            value = committedValues[key];
-        }
-
+            value = this.primitiveValueForKey(key);
+        }    
         this.didAccessValueForKey(key);
-
-        if (value == null) return null;
-
-        if (property instanceof MIORelationshipDescription){
-            let relationship = property as MIORelationshipDescription;
-            if (relationship.isToMany == false){
-                let objID = value as MIOManagedObjectID;
-                let obj = this.managedObjectContext.objectWithID(objID);
-                return obj;
-            }
-        }
         
         return value;
     }
@@ -266,19 +250,73 @@ class MIOManagedObject extends MIOObject {
     }
 
     primitiveValueForKey(key:string){
+        
+        let property = this.entity.propertiesByName[key];
+
         let committedValues = this.committedValues();
-        let value = committedValues[key];
-        return value;
+        
+        if (property instanceof MIORelationshipDescription){
+            let relationship = property as MIORelationshipDescription;
+            if (relationship.isToMany == false){                
+                let objID:MIOManagedObjectID = committedValues[key];
+                if (objID == null) return null;
+                let obj = this.managedObjectContext.objectWithID(objID);
+                return obj;
+            }
+            else {                
+                // Tick. I store the value in a private property when the object is temporary
+                let set:MIOManagedObjectSet = this["_" + relationship.name];
+                if (set == null) {
+                    set = MIOManagedObjectSet._setWithManagedObject(this, relationship);
+                    this["_" + relationship.name] = set;
+                }
+                return set;
+            }
+        }
+        
+        // Return attribute property
+        return committedValues[key];
     }
 
     setPrimitiveValueForKey(value, key:string){
-        let committedValues = this.committedValues();        
-        committedValues[key] = value;
+        
+        let property = this.entity.propertiesByName[key];
+        
+        let committedValues = this.committedValues(); 
+
+        if (value == null) {
+            committedValues[key] = null;
+        }
+        else if (property instanceof MIORelationshipDescription){
+            let relationship = property as MIORelationshipDescription;
+            if (relationship.isToMany == false){
+                let obj = value as MIOManagedObject;
+                committedValues[key] = obj.objectID;
+            }            
+            else {
+                if (value == null){
+                    this["_" + relationship.name] = MIOManagedObjectSet._setWithManagedObject(this, relationship);
+                }
+                else {
+                    if ((value instanceof MIOManagedObjectSet) == false) throw("MIOManagedObject: Trying to set a value in relation ships that is not a set.");
+                    this["_" + relationship.name] = value;
+                }
+            }
+            
+            let inverseRelationship = relationship.inverseRelationship;
+            if (inverseRelationship != null) {
+                // TODO:
+            }
+        }
+        else {
+            committedValues[key] = value;
+        }
+
     }
 
-    hasFaultForRelationshipNamed(relationsipName:string){
-        return this.relationshipNamesFaults.containsObject(relationsipName);
-    }
+    // hasFaultForRelationshipNamed(relationsipName:string){
+    //     return this.relationshipNamesFaults.containsObject(relationsipName);
+    // }
 
     //
     // PRIVATE 
