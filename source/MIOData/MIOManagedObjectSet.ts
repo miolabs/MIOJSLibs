@@ -29,6 +29,7 @@ class MIOManagedObjectSet extends MIOObject {
     _addObjectID(objectID:MIOManagedObjectID){
         if (this.objectIDs.containsObject(objectID) == true) return;
         this.objectIDs.addObject(objectID);
+        this.relationshipFault = true;        
     }
 
     addObject(object:MIOManagedObject){
@@ -36,8 +37,9 @@ class MIOManagedObjectSet extends MIOObject {
     }
 
     _removeObject(objectID:MIOManagedObjectID){
-        if (this.objectIDs.containsObject(objectID) == true) return;
+        if (this.objectIDs.containsObject(objectID) == false) return;
         this.objectIDs.removeObject(objectID);
+        this.relationshipFault = true;        
     }
 
     removeObject(object:MIOManagedObject){
