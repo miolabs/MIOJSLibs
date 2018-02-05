@@ -50,7 +50,9 @@ class MIOBundle_Webworker
                 if (item["Type"] == "CSS")
                 {
                     var basePath = MIOStringDeletingLastPathComponent(path);
-                    instance._loadCSS(item["Path"], item["CSSURL"], item["Media"]);
+                    if(item["CSSURL"] && item["Path"]){
+                        instance._loadCSS(item["Path"], item["CSSURL"], item["Media"]);
+                    }
                     
                     // var len = cssURL.lastIndexOf('/');
                     // var cssFile = cssURL.substring(len + 1);
@@ -61,7 +63,7 @@ class MIOBundle_Webworker
                     // MIOCoreLoadStyle(cssURL);
                     // console.log("BUNDLE: Adding CSS: " + cssURL);
                 }
-                else if (item["Type"] = "HTML")
+                else if (item["Type"] == "HTML")
                 {
                     var result = item["Result"];
                     instance.layerDidDownload(result.layout);
