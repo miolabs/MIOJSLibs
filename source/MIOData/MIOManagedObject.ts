@@ -164,7 +164,9 @@ class MIOManagedObject extends MIOObject {
                     for(let index = 0; index < objectIDs.length; index++){
                         let objID = objectIDs[index];
                         set._addObjectID(objID);
-                    }                                            
+                    }  
+                    
+                    this["_" + relationship.name] = set;                    
                 }
             }
         } 
