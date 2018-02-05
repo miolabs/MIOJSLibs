@@ -47,6 +47,9 @@ class MIOBundle_Webworker
             this._layoutWorker.onmessage = function (event) {
 
                 var item = event.data;
+
+                //console.log("Downloaded resource: " + item["Path"]);
+
                 if (item["Type"] == "CSS")
                 {
                     var basePath = MIOStringDeletingLastPathComponent(path);
@@ -67,7 +70,10 @@ class MIOBundle_Webworker
                 {
                     var result = item["Result"];
                     instance.layerDidDownload(result.layout);
-                }                
+                }     
+                else if (item["Error"] != null) {
+                    throw("MIOBundle: " + item["Error"]);
+                }           
             }
         }
 
@@ -120,6 +126,8 @@ class MIOBundle_Webworker
     private layerDidDownload(layer)
     {
         var item = this._layoutQueue[0];
+
+        console.log("Downloaded resource: " + item["URL"]);
 
         this._isDownloadingResource = false;
 
