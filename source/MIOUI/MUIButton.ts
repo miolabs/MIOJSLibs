@@ -78,7 +78,6 @@ class MUIButton extends MUIControl
 
         // Prevent click
         this.layer.addEventListener("click", function(e) {
-
             e.stopPropagation();
         });
 
@@ -95,7 +94,6 @@ class MUIButton extends MUIControl
         });
 
         this.layer.addEventListener("mouseup", function(e) {
-
             e.stopPropagation();
             if (instance.enabled) {
                 if (instance.type == MUIButtonType.MomentaryPushIn)

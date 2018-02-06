@@ -96,14 +96,18 @@ class MUITableViewCell extends MUIView {
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
 
-        this.layer.onclick = function () {
-            if (instance._onClickFn != null)
+        this.layer.onclick = function (e) {            
+            if (instance._onClickFn != null){
+                e.stopPropagation();
                 instance._onClickFn.call(instance._target, instance);
+            }
         };
 
-        this.layer.ondblclick = function () {
-            if (instance._onDblClickFn != null)
+        this.layer.ondblclick = function (e) {            
+            if (instance._onDblClickFn != null){
+                e.stopPropagation();
                 instance._onDblClickFn.call(instance._target, instance);
+            }
         };
     }
 
@@ -245,9 +249,11 @@ class MUITableViewCell extends MUIView {
             btn.layer.classList.add("tableviewcell_accessory_delete");
 
             var instance = this;
-            btn.layer.onclick = function () {
-                if (instance._onAccessoryClickFn != null)
+            btn.layer.onclick = function (e) {
+                if (instance._onAccessoryClickFn != null){
+                    e.stopPropagation();
                     instance._onAccessoryClickFn.call(instance._target, instance);
+                }
             };
 
             this.editingAccesoryView = btn;
