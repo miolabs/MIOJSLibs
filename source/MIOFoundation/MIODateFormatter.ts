@@ -135,7 +135,7 @@ class MIODateFormatter extends MIOFormatter {
             }
             else 
             {
-                var result, value;
+                let result, value;
                 
                 switch(step) {
 
@@ -143,8 +143,8 @@ class MIODateFormatter extends MIOFormatter {
                         [result, dd] = this._parseDay(ch, dd);
                         break;
 
-                    case 1: // mm
-                        [result, mm] = this._parseMonth(ch, mm);
+                    case 1: // mm                        
+                        [result, mm] = this._parseMonth(ch, mm);                        
                         break;
 
                     case 2: // yy or yyyy
@@ -159,6 +159,12 @@ class MIODateFormatter extends MIOFormatter {
             }            
         }
 
+        let result = true;
+        if (dd.length > 0) result = result && this._validateDay(dd);
+        if (mm.length > 0) result = result && this._validateMonth(mm);
+        if (yy.length > 0) result = result && this._validateYear(yy);
+        if (result == false) return [false, parseString, null];
+        
         var dateString = (yy[3]? yy : ("20" + yy)) + this.browserDateSeparatorSymbol + (mm[1]?mm:"0"+mm) + this.browserDateSeparatorSymbol + (dd[1]?dd:"0"+dd);
         return [true, parseString, dateString];
     }
@@ -168,26 +174,43 @@ class MIODateFormatter extends MIOFormatter {
         var c = parseInt(ch);
         if (isNaN(c)) return [false, dd];
         var v = parseInt(dd + ch);
-        if (v < 1 || v > 31) return [false, dd];
         return [true, dd + ch];
+    }
+
+    private _validateDay(dd):boolean {
+        var v = parseInt(dd);
+        if (isNaN(v)) return false;
+        if (dd < 1 || dd > 31) return false;
+        return true;
     }
     
     private _parseMonth(ch, mm):[boolean, string] {
-
         var c = parseInt(ch);
         if (isNaN(c)) return [false, mm];
-        var v = parseInt(mm + ch);
-        if (v < 1 || v > 12) return [false, mm];
+        var v = parseInt(mm + ch);        
         return [true, mm + ch];
     }
+
+    private _validateMonth(mm):boolean {
+        var v = parseInt(mm);
+        if (isNaN(v)) return false;
+        if (v < 1 || v > 12) return false;
+        return true;
+    }    
 
     private _parseYear(ch, yy):[boolean, string]{
 
         var c = parseInt(ch);
         if (isNaN(c)) return [false, yy];
         var v = parseInt(yy + ch);
-        if (v > 3000) return [false, yy];
         return [true, yy + ch];
+    }
+
+    private _validateYear(yy):boolean{
+        var v = parseInt(yy);
+        if (isNaN(yy) == true) return false;
+        if (v > 3000) return false;
+        return true;        
     }
 
     protected iso8601DateStyle(date:Date)
