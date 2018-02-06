@@ -380,10 +380,13 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.dependencyIDs = dependencyIDs;
         this.saveOperationsByReferenceID[serverID] = op;
 
+        MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID);
+
         op.target = this;
         op.completion = function () {
-            delete this.saveOperationsByReferenceID[serverID];
-            
+            delete this.saveOperationsByReferenceID[serverID];            
+            MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + " (OK)");
+
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);
             MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
@@ -414,9 +417,13 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.dependencyIDs = dependencyIDs;
         this.saveOperationsByReferenceID[serverID] = op;
 
+        MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID);
+
         op.target = this;
         op.completion = function () {
             delete this.saveOperationsByReferenceID[serverID];
+            MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + "(OK)");
+
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);            
             MIOLog("Object " + serverID + " -> Update " + (result ? "OK" : "FAIL") + " (" + version + ")");
@@ -443,10 +450,13 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.dependencyIDs = [];
         this.saveOperationsByReferenceID[serverID] = op;
 
+        MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID);
+
         op.target = this;
         op.completion = function () {
             delete this.saveOperationsByReferenceID[serverID];
-            
+            MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
+
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             //let version = this.delegate.serverVersionNumberForItem(this, values);
             MIOLog("Object " + serverID + " -> Deleted " + (result ? "OK" : "FAIL"));                     
@@ -462,9 +472,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (this.fetchOperationQueue == null) {
             this.fetchOperationQueue = new MIOOperationQueue();
             this.fetchOperationQueue.init();
-        }
-
-        
+        }        
     }
 
     private saveOperationQueue:MIOOperationQueue = null;
@@ -485,6 +493,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (this.saveOperationQueue == null) {
             this.saveOperationQueue = new MIOOperationQueue();
             this.saveOperationQueue.init();
+
+            this.saveOperationQueue.addObserver(this, "operationCount", null);
         }
 
         for (var refID in this.saveOperationsByReferenceID) {

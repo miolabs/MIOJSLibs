@@ -13,12 +13,17 @@ class MIOOperationQueue extends MIOObject {
             throw ("MIOOperationQueue: Tying to add an operation already finished");
         }
 
-        this._operations.addObject(operation);
+        this.willChangeValue("operationCount");
+        this.willChangeValue("operations");
+        this._operations.addObject(operation);        
+        this.didChangeValue("operationCount");                    
+        this.didChangeValue("operations");        
+
         if (operation.ready == false) {
             operation.addObserver(this, "ready", null);
         }
         else {
-            operation.addObserver(this, "isFinished", null);            
+            operation.addObserver(this, "isFinished", null);
             if (this.suspended == false) operation.start();
         }
     }
@@ -28,7 +33,11 @@ class MIOOperationQueue extends MIOObject {
         let index = this._operations.indexOf(operation);
         if (index == -1) return;
 
+        this.willChangeValue("operationCount");
+        this.willChangeValue("operations");
         this._operations.splice(index, 1);
+        this.didChangeValue("operationCount");                    
+        this.didChangeValue("operations");        
     }
 
     get operations(){

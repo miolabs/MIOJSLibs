@@ -4,6 +4,7 @@
 
 class MWSPersistenStoreOperation extends MIOOperation {
 
+    name:string = null;
     request:MWSJSONRequest = null;
     dependencyIDs = null;
 

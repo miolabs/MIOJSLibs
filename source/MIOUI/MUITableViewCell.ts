@@ -254,7 +254,7 @@ class MUITableViewCell extends MUIView {
                     e.stopPropagation();
                     instance._onAccessoryClickFn.call(instance._target, instance);
                 }
-            };
+            };            
 
             this.editingAccesoryView = btn;
             this.addSubview(this.editingAccesoryView);
