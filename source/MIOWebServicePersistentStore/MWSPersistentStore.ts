@@ -320,6 +320,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         }
     }    
 
+    private saveCount = 0;
     private saveObjects(request: MIOSaveChangesRequest, context?: MIOManagedObjectContext) {
 
         if (context == null) return;
@@ -352,6 +353,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         }
 
         this.uploadToServer();
+        this.saveCount++;
     }
 
     insertObjectToServer(object: MIOManagedObject) {
@@ -378,14 +380,14 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = dependencyIDs;
-        this.saveOperationsByReferenceID[serverID] = op;
+        op.saveCount = this.saveCount;
+        this.addOperation(op, serverID);        
 
-        MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID);
+        MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + this.saveCount);
 
         op.target = this;
         op.completion = function () {
-            delete this.saveOperationsByReferenceID[serverID];            
-            MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + " (OK)");
+            MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
 
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);
@@ -415,14 +417,14 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = dependencyIDs;
-        this.saveOperationsByReferenceID[serverID] = op;
+        op.saveCount = this.saveCount;
+        this.addOperation(op, serverID);        
 
-        MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID);
+        MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + this.saveCount);
 
         op.target = this;
         op.completion = function () {
-            delete this.saveOperationsByReferenceID[serverID];
-            MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + "(OK)");
+            MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
 
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);            
@@ -448,13 +450,13 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = [];
-        this.saveOperationsByReferenceID[serverID] = op;
+        op.saveCount = this.saveCount;
+        this.addOperation(op, serverID);        
 
         MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID);
 
         op.target = this;
         op.completion = function () {
-            delete this.saveOperationsByReferenceID[serverID];
             MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
 
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
@@ -466,6 +468,21 @@ class MWSPersistentStore extends MIOIncrementalStore {
     //
     // App to server comunication
     //
+
+    private addOperation(operation:MWSPersistenStoreOperation, serverID:string){
+        let opRef = serverID + "/" + operation.saveCount;
+        this.saveOperationsByReferenceID[opRef] = operation;
+    }
+
+    private removeOperation(operation:MWSPersistenStoreOperation, serverID:string){
+        let opRef = serverID + "/" + operation.saveCount;
+        delete this.saveOperationsByReferenceID[opRef];
+    }
+
+    operationAtServerID(serverID:string, saveCount){
+        let opRef = serverID + "/" + saveCount;
+        return this.saveOperationsByReferenceID[opRef];
+    }
 
     private fetchOperationQueue:MIOOperationQueue = null;
     private fetchFromServer(){
@@ -482,7 +499,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
         for (var index = 0; index < dependencies.length; index++) {
             let referenceID = dependencies[index];
-            let op = this.saveOperationsByReferenceID[referenceID];
+            let op = this.operationAtServerID(referenceID, this.saveCount);
             if (op == null) continue;
             operation.addDependency(op);
         }
@@ -502,6 +519,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
             this.checkOperationDependecies(op, op.dependencyIDs);
             this.saveOperationQueue.addOperation(op);
         }
+
+        this.saveOperationsByReferenceID = {};
     }
 
 }
