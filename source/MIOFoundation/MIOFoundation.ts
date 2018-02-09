@@ -11,6 +11,7 @@
 /// <reference path="MIOError.ts" />
 
 /// <reference path="MIOString.ts" />
+/// <reference path="MIODecimalNumber.ts" />
 /// <reference path="MIODate.ts" />
 /// <reference path="MIOUUID.ts" />
 /// <reference path="MIOPredicate.ts" />

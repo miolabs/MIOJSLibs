@@ -126,7 +126,7 @@ class MIONumberFormatter extends MIOFormatter {
 
     isPartialStringValid(str:string):[boolean, string]{
 
-        if (str.length == 0) return [true, str, str];
+        if (str.length == 0) return [true, str];
 
         var result, newStr;
         [result, newStr] = this._parse(str);
