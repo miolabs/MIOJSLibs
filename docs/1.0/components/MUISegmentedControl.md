@@ -1,8 +1,14 @@
-# MUISegmentedControl
+---
+layout: docs
+title: MUISegmentedControl
+description: MUISegmentedControl
+group: components
+toc: true
+---
 
 ## HTML template
 
-```html
+{% example %}
 <div class="mui-segmented-control">
     <div class="mui-segmented-button selected">
         <span class="mui-segmented-label">Selected Label</span>
@@ -11,23 +17,9 @@
         <span class="mui-segmented-label">Other label</span>
     </div>
 </div>
-```
-
-{% raw %}
-
-<div class="mui-segmented-control" style="background-color: red">
-    <div class="mui-segmented-button selected">
-        <span class="mui-segmented-label">Selected Label</span>
-    </div>
-    <div class="mui-segmented-button">
-        <span class="mui-segmented-label">Other label</span>
-    </div>
-</div>
-{% endraw %}
+{% endexample %}
 
 
 ## Connect with Typescript
 
-
-
-## Examples
+This is the way.
