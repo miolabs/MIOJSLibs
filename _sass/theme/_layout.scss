@@ -21,16 +21,18 @@
 
 .clear { clear: both; }
 
+$sidebar-width: 230px;
+
 #content {
   padding: 15px 30px 0 0;
 
 	#main-content {
-    margin-left: 175px;
+    margin-left: $sidebar-width;
 	}
 }
 
 #sidebar {
-	width: 145px;
+	width: $sidebar-width;
 	float: left;
 	padding: 0 0 0 15px;
 }

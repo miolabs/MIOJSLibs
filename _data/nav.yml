@@ -1,3 +1,7 @@
+- title: Tutorials
+  pages:
+    - title: Getting started
+
 - title: Components
   pages:
     - title: MUIActivityIndicator
@@ -34,8 +38,3 @@
     - title: MUIView
     - title: MUIWebView
     - title: MUIWindow
-
-- title: Tutorials
-  pages:
-    - title: Getting started
-  
