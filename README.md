@@ -1,13 +1,14 @@
 # MIOJSLibs Docs
 
-In order to see the big picture I have started from minima theme, to be able to completely restructure the page, not just override everything.
+This branch contains the documentation for MIOJSLibs. The generated static content is available on `gh-pages` branch. You can see it [here](https://miolabs.github.io/MIOJsLibs/).
 
 ## Jekyll
 
 The documentation is built with [Jekyll](https://jekyllrb.com/).
 You can find the [installation guide](https://jekyllrb.com/docs/installation/) and the [troubleshooting](https://jekyllrb.com/docs/troubleshooting/) page in the official docs.
 
-After that to start the develop server, you can run `jekyll serve`. To build the site you can run the build script in scripts.
+After that, to start the develop server, you can run `server` script from the `script` folder to start the development.
+If you only want to build the site you can run the `build` script.
 
 ## Site structrure
 
