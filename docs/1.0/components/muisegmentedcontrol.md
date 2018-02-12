@@ -8,7 +8,7 @@ toc: true
 
 ## HTML template
 
-{% example %}
+{% example html %}
 <div class="mui-segmented-control">
     <div class="mui-segmented-button selected">
         <span class="mui-segmented-label">Selected Label</span>
