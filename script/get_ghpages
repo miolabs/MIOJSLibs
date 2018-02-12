@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FOLDER='_site'
+BRANCH='gh-pages'
+rm -rf $FOLDER
+git worktree add $FOLDER $BRANCH

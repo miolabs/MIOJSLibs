@@ -1,0 +1,38 @@
+
+<nav id="sidebar">
+{%- assign page_slug = page.url | split: '/' | last | split: '.' | first -%}
+{%- for group in site.data.nav -%}
+{%- assign link = group.pages | first -%}
+{%- assign link_slug = link.title | slugify -%}
+{%- assign group_slug = group.title | slugify -%}
+{%- assign active = nil -%}
+
+{%- if page.group == group_slug -%}
+    {%- assign active = 'active' -%}
+{%- endif -%}
+
+<div class="toc-item{% unless active == nil %} {{ active }}{% endunless %}">
+    <a class="toc-link" href="{{ site.baseurl }}/docs/{{ site.docs_version }}/{{ group_slug }}/{{ link_slug }}">
+        {{ group.title }}
+    </a>
+
+    <ul class="sidenav">
+        {%- for doc in group.pages -%}
+        {%- assign doc_slug = doc.title | slugify -%}
+        {%- assign active = nil -%}
+
+        {%- if page.group == group_slug and page_slug == doc_slug -%}
+            {%- assign active = 'sidenav-active' -%}
+        {%- endif -%}
+
+        <li{% unless active == nil %} class="{{ active }}"{% endunless %}>
+            <a href="{{ site.baseurl }}/docs/{{ site.docs_version }}/{{ group_slug }}/{{ doc_slug }}">
+            {{ doc.title }}
+            </a>
+        </li>
+        {%- endfor -%}
+    </ul>
+    </div>
+{%- endfor -%}
+</nav>
+  

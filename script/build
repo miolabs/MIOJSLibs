@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+echo "Downloading dependencies..."
+bundle install
+echo "Building the site..."
+bundle exec jekyll build
