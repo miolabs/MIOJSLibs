@@ -1,6 +1,12 @@
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
+enum MIODeleteRule {
+    noActionDeleteRule,
+    nullifyDeleteRule,
+    cascadeDeleteRule,
+    denyDeleteRule
+}
 
 class MIORelationshipDescription extends MIOPropertyDescription
 {
@@ -8,6 +14,7 @@ class MIORelationshipDescription extends MIOPropertyDescription
     destinationEntity:MIOEntityDescription = null;
     inverseRelationship:MIORelationshipDescription = null;
     isToMany = false;
+    deleteRule = MIODeleteRule.noActionDeleteRule;
 
     private _serverName:string = null;
 
