@@ -67,6 +67,10 @@ class MIOManagedObjectID extends MIOObject {
     _setReferenceObject(object){
         this._isTemporaryID = false;
         this._referenceObject = object;
+
+        if (typeof(object) != "string") {
+            MIOLog("kkk");
+        }
     }
     
     // #endregion

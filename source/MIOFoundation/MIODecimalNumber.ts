@@ -61,7 +61,7 @@ class MIODecimalNumber extends MIONumber
 
     _initWithValue(value){
         super.init();
-        this.storeValue = new Decimal(value);
+        this.storeValue = new Decimal(value||0);
     }
 
     decimalNumberByAdding(value:MIODecimalNumber){
