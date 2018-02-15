@@ -475,7 +475,7 @@ class MUICalendarView extends MUIScrollView {
                 currentMonth += 1;
         }
 
-        for (var index = 0; index < 14; index++) {
+        for (var index = 0; index < 24; index++) {
             var mv = new MUICalendarMonthView();
             mv.initWithMonth(currentMonth, currentYear, this);
             mv.cellSpacingX = this.horizontalCellSpacing;
@@ -655,17 +655,31 @@ class MUICalendarView extends MUIScrollView {
 
     scrollToDate(date: Date) {
         
-        var firstMonthView = this._views[0];
-        var firstMonth = firstMonthView.month;
-        var currentMonth = date.getMonth();
+        var firstMonthView:MUICalendarMonthView = this._views[0];
 
-        if (firstMonth < currentMonth)
-        {
-            var h = this.getHeight();
-            var count = currentMonth - firstMonth;
-            var y = h * count;
-            this.scrollToPoint(0, y);
+        var firstMonth = firstMonthView.month;
+        var firstYear = firstMonthView.year;
+        
+        var currentMonth = date.getMonth();
+        var currentYear = date.getFullYear();
+
+        var h = this.getHeight();
+        var count = 0;
+
+        var yy = currentYear - firstYear;
+        if (yy <= 0){
+            count = currentMonth - firstMonth;            
         }
+        else {
+            count = 11 - firstMonth; // Counting 'til the end of the year
+            count += ((yy - 1) * 12); // add months per year change
+            count += currentMonth + 1; // Add the month of actual year
+        }
+
+        if (count != 0) {
+            var y = h * count;
+            this.scrollToPoint(0, y);            
+        }            
     }
 
     deselectCellAtDate(date:Date){
