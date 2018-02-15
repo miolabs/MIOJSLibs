@@ -14,7 +14,8 @@ class MUICheckButton extends MUIControl
     {
         super.initWithLayer(layer, owner, options);
 
-        this.layer.classList.add("check_button");
+        this.layer.classList.add("checkbox");
+        this.layer.classList.add("off");
         // this.layer.classList.add("check_button_state_off");
 
         var instance = this;
@@ -37,13 +38,13 @@ class MUICheckButton extends MUIControl
         this.on = on;
         if (on == true)
         {
-            // this.layer.classList.remove("check_button_state_off");
-            // this.layer.classList.add("check_button_state_on");
+             this.layer.classList.remove("off");
+             this.layer.classList.add("on");
         }
         else
         {
-            // this.layer.classList.remove("check_button_state_on");
-            // this.layer.classList.add("check_button_state_off");
+            this.layer.classList.remove("on");
+            this.layer.classList.add("off");
         }
     }
 
