@@ -339,10 +339,10 @@ class MIODateFormatter extends MIOFormatter {
 
     private _shortTimeStyle(date:Date) {
 
-        var h = date.getHours();
-        var m = date.getMinutes();
+        var h = date.getHours().toString();
+        var m = date.getMinutes().toString();
 
-        return h + ":" + m;
+        return (h[1]?h:"0"+h) + ":" + (m[1]?m:"0"+m);
     }
 
 }
