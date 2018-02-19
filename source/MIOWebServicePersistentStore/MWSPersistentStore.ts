@@ -259,11 +259,11 @@ class MWSPersistentStore extends MIOIncrementalStore {
             //       It's a limitation of laravel so I need to check if it's the same version, that the relationship are diferents
             //TODO: Change as soon as possible the behaviour at the server
 
-            let referenceID = entity.name + "://" + serverID;
-            if (this.partialRelationshipObjects[referenceID] == true){
-                delete this.partialRelationshipObjects[referenceID];
-                this.updateNodeWithValuesAtServerID(serverID, values, version, entity);              
-            }            
+            // let referenceID = entity.name + "://" + serverID;
+            // if (this.partialRelationshipObjects[referenceID] == true){
+            //     delete this.partialRelationshipObjects[referenceID];
+                this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
+            //}            
         }
 
         let obj = context.existingObjectWithID(node.objectID);
@@ -317,6 +317,11 @@ class MWSPersistentStore extends MIOIncrementalStore {
                 this.updateObjectInContext(value, relEntity.destinationEntity, context);
                 let serverID = this.delegate.serverIDForItem(this, value, relEntity.destinationEntity.name);                                
                 values[serverRelName] = serverID;
+
+                // TODO: Remove hack/patch
+                // let node = this.nodeWithServerID(serverID, relEntity.destinationEntityName);
+                // let referenceID = relEntity.destinationEntityName + "://" + serverID;
+                // this.partialRelationshipObjects[referenceID] = true;                
             }
             else {                
                 var array = [];
@@ -327,9 +332,9 @@ class MWSPersistentStore extends MIOIncrementalStore {
                     array.addObject(serverID);
 
                     // TODO: Remove hack/patch
-                    let node = this.nodeWithServerID(serverID, relEntity.destinationEntityName);
-                    let referenceID = relEntity.destinationEntityName + "://" + serverID;
-                    this.partialRelationshipObjects[referenceID] = true;
+                    // let node = this.nodeWithServerID(serverID, relEntity.destinationEntityName);
+                    // let referenceID = relEntity.destinationEntityName + "://" + serverID;
+                    // this.partialRelationshipObjects[referenceID] = true;
                 }
                 values[serverRelName] = array;
             }
