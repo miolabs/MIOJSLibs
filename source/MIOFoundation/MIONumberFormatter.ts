@@ -31,6 +31,8 @@ class MIONumberFormatter extends MIOFormatter {
 
     numberFromString(str:string){
 
+        if(str === null) return null;
+        
         var result, parseString, numberString, type;
         [result, parseString, numberString, type] = this._parse(str);
         
