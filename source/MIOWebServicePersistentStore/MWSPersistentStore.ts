@@ -65,13 +65,12 @@ class MWSPersistentStore extends MIOIncrementalStore {
     newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode {
 
         let serverID = this.referenceObjectForObjectID(objectID);
-        let referenceID = objectID.entity.name + "://" + serverID;
-
-        if (referenceID == null) throw ("MWSPersistentStore: Asking objectID without referenceID");
+        //let referenceID = objectID.entity.name + "://" + serverID;
+        if (serverID == null) throw ("MWSPersistentStore: Asking objectID without reference object");
 
         let node = this.nodeWithServerID(serverID, objectID.entity);
         if (node.version == -1){
-            this.fetchObjectWithReferenceID(serverID, objectID.entity.name, context);            
+            this.fetchObjectWithServerID(serverID, objectID.entity.name, context);            
         }
 
         return node;
@@ -144,23 +143,23 @@ class MWSPersistentStore extends MIOIncrementalStore {
     _fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){        
         let serverID = objectID._getReferenceObject();
         let entityName = objectID.entity.name;        
-        this.fetchObjectWithReferenceID(serverID, entityName, context);
+        this.fetchObjectWithServerID(serverID, entityName, context);
     }
 
     private fetchingObjects = {};
-    private fetchObjectWithReferenceID(referenceID: string, entityName: string, context: MIOManagedObjectContext) {
+    private fetchObjectWithServerID(serverID: string, entityName: string, context: MIOManagedObjectContext) {
 
         if (this.delegate == null) return;
 
-        if (this.fetchingObjects[referenceID] != null) return;
+        if (this.fetchingObjects[serverID] != null) return;
         
-        this.fetchingObjects[referenceID] = true;
-        MIOLog("Downloading REFID: " + referenceID);
+        this.fetchingObjects[serverID] = true;
+        MIOLog("Downloading REFID: " + serverID);
 
         var fetchRequest = MIOFetchRequest.fetchRequestWithEntityName(entityName);
         fetchRequest.entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
 
-        let request = this.delegate.fetchRequestForWebStore(this, fetchRequest, referenceID);
+        let request = this.delegate.fetchRequestForWebStore(this, fetchRequest, serverID);
         if (request == null) return;
 
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
@@ -168,8 +167,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
         request.send(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             
-            MIOLog("Downloaded REFID: " + referenceID);
-            delete this.fetchingObjects[referenceID];
+            MIOLog("Downloaded REFID: " + serverID);
+            delete this.fetchingObjects[serverID];
             
             if (result == true) {
                 this.updateObjectInContext(values, fetchRequest.entity, context);                
@@ -246,7 +245,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);        
 
-        var node = this.nodeWithServerID(serverID, entity);
+        var node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, entity);
         if (node == null) {
             MIOLog("New version: " + entity.name + " (" + version + ")");                        
             node = this.newNodeWithValuesAtServerID(serverID, values, version, entity, objectID);            
@@ -254,7 +253,18 @@ class MWSPersistentStore extends MIOIncrementalStore {
         else if (version > node.version){
             MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");            
             this.updateNodeWithValuesAtServerID(serverID, values, version, entity);              
-        }        
+        } 
+        else {
+            //PATCH: The server respond with object inside relationship entities with null objects even with is not null.
+            //       It's a limitation of laravel so I need to check if it's the same version, that the relationship are diferents
+            //TODO: Change as soon as possible the behaviour at the server
+
+            let referenceID = entity.name + "://" + serverID;
+            if (this.partialRelationshipObjects[referenceID] == true){
+                delete this.partialRelationshipObjects[referenceID];
+                this.updateNodeWithValuesAtServerID(serverID, values, version, entity);              
+            }            
+        }
 
         let obj = context.existingObjectWithID(node.objectID);
         if (obj != null) context.refreshObject(obj, true);                            
@@ -275,7 +285,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         var node = new MIOIncrementalStoreNode();
         node.initWithObjectID(objID, values, version);
         this.nodesByReferenceID[referenceID] = node;
-        MIOLog("Inserting REFID: " + referenceID);   
+        MIOLog("Inserting REFID: " + referenceID);
                 
         return node;
     }
@@ -293,6 +303,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         MIOLog("Deleting REFID: " + referenceID);        
     }    
 
+    private partialRelationshipObjects = {};
     private checkRelationships(values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipEntities){                
         
         for (var index = 0; index < relationshipEntities.length; index++){
@@ -311,9 +322,14 @@ class MWSPersistentStore extends MIOIncrementalStore {
                 var array = [];
                 for (var count = 0; count < value.length; count++){
                     let serverValues = value[count];
-                    this.updateObjectInContext(serverValues, relEntity.destinationEntity, context);
+                    let obj = this.updateObjectInContext(serverValues, relEntity.destinationEntity, context);                    
                     let serverID = this.delegate.serverIDForItem(this, serverValues, relEntity.destinationEntityName);                
                     array.addObject(serverID);
+
+                    // TODO: Remove hack/patch
+                    let node = this.nodeWithServerID(serverID, relEntity.destinationEntityName);
+                    let referenceID = relEntity.destinationEntityName + "://" + serverID;
+                    this.partialRelationshipObjects[referenceID] = true;
                 }
                 values[serverRelName] = array;
             }

@@ -4,6 +4,7 @@
 
 class MIOOperation extends MIOObject {
 
+    name:string = null;
     target = null;
     completion = null;
 
