@@ -2,7 +2,6 @@
 
 function MIOCoreLoadFromFile_async(path:string, target, completion){
 
-    
 }
 
 enum MIOCoreDebugOption {
@@ -106,4 +105,34 @@ function MIOCoreGetMainBundleURL()
     }
     
     return url;
+}
+
+let _miocore_languages = null;
+function MIOCoreAddLanguage(lang, url){
+    if (_miocore_languages == null) _miocore_languages = {};
+    _miocore_languages[lang] = url;
+}
+
+function MIOCoreGetLanguages(){
+    return _miocore_languages;
+}
+
+interface Navigator {
+    userLanguage;
+}
+
+function MIOCoreGetBrowserLocale(){
+    // navigator.languages:    Chrome & FF
+    // navigator.language:     Safari & Others
+    // navigator.userLanguage: IE & Others
+    return navigator.languages || navigator.language || navigator.userLanguage;
+}
+
+function MIOCoreGetBrowserLanguage(){
+    let locale = MIOCoreGetBrowserLocale();
+    if (typeof(locale) == "string") return locale.substring(0, 2);
+    else {
+        let l = locale[0];
+        return l.substring(0, 2);
+    }
 }

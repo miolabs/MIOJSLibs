@@ -109,7 +109,7 @@ class MIOManagedObject extends MIOObject {
     awakeFromInsert() {}
     awakeFromFetch() {}
 
-    _version = -1;
+    _version = 0;
 
     private _changedValues = {}; 
     get changedValues() {return this._changedValues;} 

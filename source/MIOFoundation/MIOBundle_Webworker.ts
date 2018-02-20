@@ -41,7 +41,7 @@ class MIOBundle_Webworker
         {
             this._layoutWorker = new Worker("webworkers/MIOBundleWebworker.js");
             // TODO: Set language so we can translate every html file in backgorund
-            //this._layoutWorker.postMessage({"CMD" : "SetLanguage", "LanguageStrings" : _MIOLocalizedStrings});
+            this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : _MIOLocalizedStrings});
             
             var instance = this;
             this._layoutWorker.onmessage = function (event) {

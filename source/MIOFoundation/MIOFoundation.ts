@@ -2,9 +2,13 @@
 /// <reference path="../MIOCore/MIOCore.ts" />
 
 /// <reference path="MIO_Core.ts" />
-/// <reference path="MIO_CoreTypes.ts" />
 /// <reference path="MIO_CoreEvents.ts" />
 /// <reference path="MIO_CoreEventTypes.ts" />
+
+/// <reference path="MIOPoint.ts" />
+/// <reference path="MIORange.ts" />
+/// <reference path="MIORect.ts" />
+/// <reference path="MIOSize.ts" />
 
 /// <reference path="MIOObject.ts" />
 /// <reference path="MIONull.ts" />

@@ -54,11 +54,37 @@ class MUIWebApplication {
     private _keyWindow:MUIWindow = null;
     private _mainWindow = null;
 
-    run() {
+    run(){
+
+        // Setup language        
+        var languages = MIOCoreGetLanguages();
+        if (languages == null){
+            this._run();
+            return;
+        }
+
+        var lang = MIOCoreGetBrowserLanguage();
+        var url = languages[lang];
+        if (url == null){
+            this._run();
+            return;
+        }
+        
+        let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString(url));
+        let con = new MIOURLConnection();
+        con.initWithRequestBlock(request, this, function(code, data){
+            if (code == 200) {
+                _MIOLocalizedStrings = data;
+            }
+            this._run();
+        });        
+    }
+
+    private _run() {        
 
         this.delegate.didFinishLaunching();
         this.delegate.window.makeKeyAndVisible();
-        this._mainWindow = this.delegate.window;
+        this._mainWindow = this.delegate.window;        
         
         this.delegate.window.rootViewController.onLoadView(this, function () {
             

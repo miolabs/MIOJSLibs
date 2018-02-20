@@ -12,7 +12,7 @@ self.addEventListener('message', function(e) {
 
     var cmd = item["CMD"];
 
-    if (cmd == "SetLanguage")
+    if (cmd == "SetLanguageStrings")
     {
         _languageStrings = item["LanguageStrings"];
     }

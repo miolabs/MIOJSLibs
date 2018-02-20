@@ -69,7 +69,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         if (serverID == null) throw ("MWSPersistentStore: Asking objectID without reference object");
 
         let node = this.nodeWithServerID(serverID, objectID.entity);
-        if (node.version == -1){
+        if (node.version == 0){
             this.fetchObjectWithServerID(serverID, objectID.entity.name, context);            
         }
 
@@ -241,7 +241,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
         this.checkRelationships(values, entity, context, relationshipsObjects);
 
         let serverID = this.delegate.serverIDForItem(this, values, entity.name);
-        if (serverID == null) return null;
+        if (serverID == null) throw("SERVER ID CAN NOT BE NULL");
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);        
 
@@ -413,7 +413,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);
             MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
-            if (version > 0) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
+            if (version > 1) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
         }  
     }
 
