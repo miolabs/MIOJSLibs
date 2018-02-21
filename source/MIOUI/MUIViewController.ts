@@ -1,6 +1,7 @@
 /**
  * Created by godshadow on 11/3/16.
  */
+/// <reference path="../MIOCore/MIOCore.ts" />
 
 /// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
@@ -49,21 +50,17 @@ class MUIViewController extends MIOObject
 
     _outlets = {};
 
-    constructor(layerID?) 
-    {
+    constructor(layerID?){
         super();
         this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
-    init()
-    {
-        super.init();
-        
+    init(){
+        super.init();        
         this.loadView();
     }
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.init();
 
         this.view = new MUIView(this.layerID);

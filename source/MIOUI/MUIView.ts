@@ -403,11 +403,11 @@ class MUIView extends MIOObject
     protected _getIntValueFromCSSProperty(property)
     {
         var v = this._getValueFromCSSProperty(property);
-        var r = MIOStringHasSuffix(v, "px");
+        var r = v.hasSuffix("px");
         if (r == true) v = v.substring(0, v.length - 2);
         else
         {
-            var r2 = MIOStringHasSuffix(v, "%");
+            var r2 = v.hasSuffix("%");
             if (r2 == true) v = v.substring(0, v.length - 1);
         }
 
