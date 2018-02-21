@@ -2,7 +2,7 @@
  * Created by godshadow on 22/3/16.
  */
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 /// <reference path="MUIScrollView.ts" />
 /// <reference path="MUILabel.ts" />

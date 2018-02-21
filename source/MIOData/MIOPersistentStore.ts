@@ -1,5 +1,5 @@
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 let MIOStoreUUIDKey = "MIOStoreUUIDKey";
 let MIOStoreTypeKey = "MIOStoreTypeKey";

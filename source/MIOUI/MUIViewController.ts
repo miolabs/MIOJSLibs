@@ -1,9 +1,7 @@
 /**
  * Created by godshadow on 11/3/16.
  */
-/// <reference path="../MIOCore/MIOCore.ts" />
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
 
 /// <reference path="MIOUI_Core.ts" />
 /// <reference path="MIOUI_CoreLayer.ts" />

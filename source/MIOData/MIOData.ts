@@ -1,4 +1,4 @@
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 /// <reference path="MIOAttributeDescription.ts" />
 /// <reference path="MIOEntityDescription.ts" />

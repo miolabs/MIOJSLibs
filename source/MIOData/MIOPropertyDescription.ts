@@ -1,5 +1,5 @@
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 class MIOPropertyDescription extends MIOObject {
     

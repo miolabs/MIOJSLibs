@@ -2,8 +2,6 @@
  * Created by godshadow on 21/3/16.
  */
 
-/// <reference path="../MIOCore/MIOCoreString.ts" />
-
 var _MIOLocalizedStrings = null;
 
 function MIOLocalizeString(key, defaultValue)

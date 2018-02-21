@@ -1,5 +1,5 @@
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 /// <reference path="MIORelationshipDescription.ts" />
 

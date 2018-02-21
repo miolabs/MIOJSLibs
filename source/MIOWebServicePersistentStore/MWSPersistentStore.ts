@@ -1,5 +1,4 @@
 
-/// <reference path="../MIOData/MIOData.ts" />
 /// <reference path="MWSPersistenStoreOperation.ts" />
 
 

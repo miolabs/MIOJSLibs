@@ -2,7 +2,7 @@
  * Created by godshadow on 12/4/16.
  */
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 /// <reference path="MIOFetchRequest.ts" />    
 /// <reference path="MIOManagedObjectContext.ts" />

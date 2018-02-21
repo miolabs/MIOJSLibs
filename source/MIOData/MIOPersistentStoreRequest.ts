@@ -1,4 +1,4 @@
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 
 enum MIORequestType{

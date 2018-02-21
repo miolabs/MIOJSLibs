@@ -1,4 +1,4 @@
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 /// <reference path="MWSJSONRequest.ts" />
 
 

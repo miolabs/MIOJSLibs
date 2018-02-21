@@ -2,7 +2,6 @@
  * Created by godshadow on 1/5/16.
  */
 
-/// <reference path="../MIOCore/MIOCoreLexer.ts" />
 /// <reference path="MIOObject.ts" />
 
 /// <reference path="MIOISO8601DateFormatter.ts" />

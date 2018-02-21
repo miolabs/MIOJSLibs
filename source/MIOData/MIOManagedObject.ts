@@ -2,7 +2,7 @@
  * Created by godshadow on 23/03/2017.
  */
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 /// <reference path="MIOEntityDescription.ts" />
 /// <reference path="MIOFetchRequest.ts" />

@@ -2,7 +2,7 @@
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 function MUILayerSearchElementByID(layer, elementID)
 {

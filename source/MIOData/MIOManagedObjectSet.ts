@@ -1,6 +1,6 @@
 
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 
 
 class MIOManagedObjectSet extends MIOObject {

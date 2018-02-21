@@ -2,7 +2,7 @@
  * Created by godshadow on 12/4/16.
  */
 
-/// <reference path="../MIOFoundation/MIOFoundation.ts" />
+
 /// <reference path="MIOManagedObject.ts" />
 /// <reference path="MIOPersistentStore.ts" />
 
