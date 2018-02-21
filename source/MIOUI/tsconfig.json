@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "sourceMap": true,
+        "removeComments": true,
+        "declaration": true,
+        "outDir": "../../dist/types/mioui",
+        "outFile": "../../dist/types/mioui/index.js",
+        "typeRoots": [
+            "../../dist/types"
+        ]
+    },
+    "include": [
+        "."
+    ]
+}

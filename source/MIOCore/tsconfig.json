@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "sourceMap": true,
+        "removeComments": true,
+        "declaration": true,
+        "outDir": "../../dist/types/miocore/",
+        "outFile": "../../dist/types/miocore/index.js",
+        "types": [
+            "miofoundation"
+        ],
+        "typeRoots": [
+            "../../dist/types"
+        ]
+    },
+    "include": [
+        "."
+    ]
+}

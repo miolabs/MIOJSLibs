@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "sourceMap": false,
+        "removeComments": true,
+        "declaration": false,
+        "outDir": "../../dist/webworkers",
+        "lib": ["webworker", "es5", "scripthost"],
+        "types":[
+            "miofoundation"
+        ],
+        "typeRoots": [
+            "../../dist/types"
+        ]
+    },
+    "include": [
+        "."
+    ]
+}

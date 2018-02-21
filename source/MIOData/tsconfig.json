@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "sourceMap": true,
+        "removeComments": true,
+        "declaration": true,
+        "outDir": "../../dist/types/miodata",
+        "outFile": "../../dist/types/miodata/index.js",
+        "typeRoots": [
+            "../../dist/types"
+        ]
+    },
+    "include": [
+        "."
+    ]
+}
