@@ -7,6 +7,7 @@
         "outDir": "../../dist/types/miodata",
         "outFile": "../../dist/types/miodata/index.js",
         "types":[
+            "miocore",
             "miofoundation"
         ],
         "typeRoots": [
