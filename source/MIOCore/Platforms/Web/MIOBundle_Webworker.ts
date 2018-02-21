@@ -1,4 +1,6 @@
 
+/// <reference path="../MIOCoreString.ts" />
+
 
 class MIOBundle_Webworker
 {
