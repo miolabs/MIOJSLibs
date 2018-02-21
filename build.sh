@@ -20,10 +20,10 @@ printf "${GREEN}Building MIOCore. Target: ${NC}";
 if [[ ("$1" == "ios") || ("$1" == "iOS") ]]
 then
     printf "${RED}iOS${NC}\n"
-    tsc -p source/MIOCore/iOS
+    tsc -p source/MIOCore/Platforms/iOS
 else
     printf "${RED}web${NC}\n"
-    tsc -p source/MIOCore/Web
+    tsc -p source/MIOCore/Platforms/Web
 fi
 printf "${GREEN}Building MIOFoundation ...${NC}\n";
 tsc -p source/MIOFoundation
