@@ -1,7 +1,6 @@
 /**
  * Created by godshadow on 11/3/16.
  */
-/// <reference path="../MIOCore/Web/MIOCore_Web.ts" />
 
 /// <reference path="MUIView.ts" />
 

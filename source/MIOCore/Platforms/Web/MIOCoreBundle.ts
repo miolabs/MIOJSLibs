@@ -1,10 +1,10 @@
 
-/// <reference path="../MIOCoreString.ts" />
+/// <reference path="../../MIOCoreString.ts" />
 
 
-class MIOBundle_Webworker
+class MIOCoreBundle
 {
-    baseURL:MIOURL = null;
+    baseURL:string = null;
 
     private _layoutWorker = null;
     private _layoutQueue = null;
@@ -14,29 +14,29 @@ class MIOBundle_Webworker
 
     private _loadingCSSCount = 0;
 
-    private _loadCSS(basePath, path, media?)
-    {
-        this._loadingCSSCount++;
+    // private _loadCSS(basePath, path, media?)
+    // {
+    //     this._loadingCSSCount++;
 
-        var url = MIOURL.urlWithString(path);
-        var urlString:string = null;
-        if (url.scheme != null)
-        {
-            // Absolute url            
-            urlString  = url.absoluteString;
-        }
-        else 
-        {            
-            urlString = MIOStringAppendPathComponent(basePath, path);
-            urlString = MIOStringStandardizingPath(urlString);
-        }                
+    //     var url = MIOURL.urlWithString(path);
+    //     var urlString:string = null;
+    //     if (url.scheme != null)
+    //     {
+    //         // Absolute url            
+    //         urlString  = url.absoluteString;
+    //     }
+    //     else 
+    //     {            
+    //         urlString = MIOCoreStringAppendPathComponent(basePath, path);
+    //         urlString = MIOCoreStringStandardizingPath(urlString);
+    //     }                
 
-        //console.log("BUNDLE_WEBWORKER: Adding CSS: " + urlString);
-        MIOCoreLoadStyle(urlString, media, this, function (){
-            this._loadingCSSCount--;
-            this._checkDownloadCount();
-        })
-    }
+    //     //console.log("BUNDLE_WEBWORKER: Adding CSS: " + urlString);
+    //     MIOCoreLoadStyle(urlString, media, this, function (){
+    //         this._loadingCSSCount--;
+    //         this._checkDownloadCount();
+    //     })
+    // }
     
     loadHMTLFromPath(path, layerID, target, completion)
     {
@@ -44,7 +44,7 @@ class MIOBundle_Webworker
         {
             this._layoutWorker = new Worker("webworkers/MIOBundleWebworker.js");
             // TODO: Set language so we can translate every html file in backgorund
-            this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : _MIOLocalizedStrings});
+            //this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : _MIOLocalizedStrings});
             
             var instance = this;
             this._layoutWorker.onmessage = function (event) {
@@ -55,10 +55,10 @@ class MIOBundle_Webworker
 
                 if (item["Type"] == "CSS")
                 {
-                    var basePath = MIOStringDeletingLastPathComponent(path);
-                    if(item["CSSURL"] && item["Path"]){
-                        instance._loadCSS(item["Path"], item["CSSURL"], item["Media"]);
-                    }
+                    // var basePath = MIOCoreStringDeletingLastPathComponent(path);
+                    // if(item["CSSURL"] && item["Path"]){
+                    //     instance._loadCSS(item["Path"], item["CSSURL"], item["Media"]);
+                    // }
                     
                     // var len = cssURL.lastIndexOf('/');
                     // var cssFile = cssURL.substring(len + 1);
@@ -101,8 +101,8 @@ class MIOBundle_Webworker
             //     url2 = url2.substr(0, url2.lastIndexOf('/'));
             // }
             // url2 = url2 + "/" + url;
-            var url = this.baseURL.urlByAppendingPathComponent(path);
-            var item = {"Key" : path, "Path" : MIOStringDeletingLastPathComponent(path), "URL": url.absoluteString, "LayerID": layerID, "Target" : target, "Completion" : completion};
+            var url = MIOCoreStringAppendPathComponent(this.baseURL, path);
+            var item = {"Key" : path, "Path" : MIOCoreStringDeletingLastPathComponent(path), "URL": url, "LayerID": layerID, "Target" : target, "Completion" : completion};
             this._layoutQueue.push(item);
 
             this.checkQueue();        

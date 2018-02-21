@@ -1,4 +1,32 @@
 
+enum MIOCoreLexerTokenType {
+    Identifier,
+    
+    UUIDValue,
+    StringValue,
+    NumberValue,
+    BooleanValue,    
+    NullValue,
+    PropertyValue,
+
+    MinorOrEqualComparator,
+    MinorComparator,
+    MajorOrEqualComparator,
+    MajorComparator,
+    EqualComparator,
+    DistinctComparator,
+    ContainsComparator,
+    NotContainsComparator,
+    InComparator,
+    NotIntComparator,
+    
+    OpenParenthesisSymbol,
+    CloseParenthesisSymbol,
+    Whitespace,
+
+    AND,
+    OR
+}
 
 class MIOCoreLexer {
 
@@ -41,7 +69,7 @@ class MIOCoreLexer {
             foundToken = false;  
             for (i = 0; i < numTokenTypes; i++) {
                 let regex = this.tokenTypes[i].regex;
-                let type:MIOPredicateTokenType = this.tokenTypes[i].type;
+                let type:MIOCoreLexerTokenType = this.tokenTypes[i].type;
     
                 match = regex.exec(this.input);
                 if (match) {

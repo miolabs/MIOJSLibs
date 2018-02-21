@@ -195,9 +195,9 @@ declare function main(args);
 
 window.onload = function(e) {
     
-    var mb = MIOBundle.mainBundle();
-    console.log("Main URL: " + mb.url.absoluteString);
-    var args = mb.url.params;
+    var url = MIOCoreGetMainBundleURLString();
+    console.log("Main URL: " + url);
+    var args = url; // Todo get only the query string
 
     main(args);
 };

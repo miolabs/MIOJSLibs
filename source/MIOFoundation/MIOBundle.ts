@@ -2,13 +2,8 @@
  * Created by godshadow on 9/4/16.
  */
 
-/// <reference path="MIO_Core.ts" />
-
 /// <reference path="MIOObject.ts" />
 /// <reference path="MIOURL.ts" />
-
-/// <reference path="MIOBundle_Webworker.ts" />
-
 
 class MIOBundle extends MIOObject
 {
@@ -24,7 +19,7 @@ class MIOBundle extends MIOObject
         {
             // Main url. Getting from broser window url search field
             
-            var url = MIOCoreGetMainBundleURL();
+            var url = MIOCoreGetMainBundleURLString();
 
             this._mainBundle = new MIOBundle();
             this._mainBundle.initWithURL(url);
