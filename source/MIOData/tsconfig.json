@@ -6,6 +6,9 @@
         "declaration": true,
         "outDir": "../../dist/types/miodata",
         "outFile": "../../dist/types/miodata/index.js",
+        "types":[
+            "miofoundation"
+        ],
         "typeRoots": [
             "../../dist/types"
         ]
