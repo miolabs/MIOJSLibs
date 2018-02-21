@@ -1,6 +1,7 @@
 #!/bin/bash
 
 GREEN='\033[0;32m'
+RED='\033[0;31m'
 YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 #Black        0;30     Dark Gray     1;30
@@ -15,10 +16,17 @@ NC='\033[0m' # No Color
 printf "${YELLOW}Empty dist directory ...${NC}\n"
 rm -r dist
 
+printf "${GREEN}Building MIOCore. Target: ${NC}";
+if [[ ("$1" == "ios") || ("$1" == "iOS") ]]
+then
+    printf "${RED}iOS${NC}\n"
+    tsc -p source/MIOCore/iOS
+else
+    printf "${RED}web${NC}\n"
+    tsc -p source/MIOCore/Web
+fi
 printf "${GREEN}Building MIOFoundation ...${NC}\n";
 tsc -p source/MIOFoundation
-printf "${GREEN}Building MIOCore ...${NC}\n";
-tsc -p source/MIOCore
 printf "${GREEN}Building MIOUI ...${NC}\n";
 tsc -p source/MIOUI
 printf "${GREEN}Building MIOData ...${NC}\n";
