@@ -4,15 +4,15 @@
         "sourceMap": true,
         "removeComments": true,
         "declaration": true,
-        "outDir": "../../../dist/types/miocore/",
-        "outFile": "../../../dist/types/miocore/index.js",
+        "outDir": "../../../../dist/types/miocore/",
+        "outFile": "../../../../dist/types/miocore/index.js",
         "types": [],
         "typeRoots": [
-            "../../../dist/types"
+            "../../../../dist/types"
         ]
     },
     "include": [
         ".",
-        "../*.ts"
+        "../../*.ts"
     ]
 }

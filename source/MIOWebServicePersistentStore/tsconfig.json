@@ -7,7 +7,6 @@
         "outDir": "../../dist/types/miowsps",
         "outFile": "../../dist/types/miowsps/index.js",
         "types":[
-            "miofoundation",
             "miodata"
         ],
         "typeRoots": [
