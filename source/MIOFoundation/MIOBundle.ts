@@ -40,7 +40,7 @@ class MIOBundle extends MIOObject
             if (this._webBundle == null)
             {
                 this._webBundle = new MIOCoreBundle();
-                this._webBundle.baseURL = this.url;
+                this._webBundle.baseURL = this.url.absoluteString;
             }
 
             this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
