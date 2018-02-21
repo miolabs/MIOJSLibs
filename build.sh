@@ -13,8 +13,8 @@ NC='\033[0m' # No Color
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-printf "${YELLOW}Empty dist directory ...${NC}\n"
-rm -r dist
+printf "${YELLOW}Empty build directory ...${NC}\n"
+rm -r build
 
 printf "${GREEN}Building MIOCore. Target: ${NC}";
 if [[ ("$1" == "ios") || ("$1" == "iOS") ]]

@@ -4,13 +4,13 @@
         "sourceMap": true,
         "removeComments": true,
         "declaration": true,
-        "outDir": "../../dist/types/miowsps",
-        "outFile": "../../dist/types/miowsps/index.js",
+        "outDir": "../../build/types/miowsps",
+        "outFile": "../../build/types/miowsps/index.js",
         "types":[
             "miodata"
         ],
         "typeRoots": [
-            "../../dist/types"
+            "../../build/types"
         ]
     },
     "include": [

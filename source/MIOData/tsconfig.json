@@ -4,14 +4,14 @@
         "sourceMap": true,
         "removeComments": true,
         "declaration": true,
-        "outDir": "../../dist/types/miodata",
-        "outFile": "../../dist/types/miodata/index.js",
+        "outDir": "../../build/types/miodata",
+        "outFile": "../../build/types/miodata/index.js",
         "types":[
             "miocore",
             "miofoundation"
         ],
         "typeRoots": [
-            "../../dist/types"
+            "../../build/types"
         ]
     },
     "include": [
