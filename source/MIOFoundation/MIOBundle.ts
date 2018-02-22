@@ -7,7 +7,7 @@
 
 class MIOBundle extends MIOObject
 {
-    url:MIOURL = null;
+    url:string = null;
 
     private static _mainBundle = null;
 
@@ -28,7 +28,7 @@ class MIOBundle extends MIOObject
         return this._mainBundle;
     }
 
-    initWithURL(url:MIOURL)
+    initWithURL(url:string)
     {
         this.url = url;
     }
@@ -40,7 +40,7 @@ class MIOBundle extends MIOObject
             if (this._webBundle == null)
             {
                 this._webBundle = new MIOCoreBundle();
-                this._webBundle.baseURL = this.url.absoluteString;
+                this._webBundle.baseURL = this.url;
             }
 
             this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
