@@ -39,6 +39,7 @@ function MIOHTMLParser(string, layerID, relativePath, callback)
             tagContent = "<";
             tag = "";
             attribute = "";
+            attributes = {} 
             value = "";
 
             stepIndex = 1;
@@ -103,6 +104,7 @@ function MIOHTMLParser(string, layerID, relativePath, callback)
 
                         case 3:
                             value = token;
+                            attributes[attribute] = value;
                             //console.log("<" + tag + " " + attribute + "=" + value + ">");
                             stepIndex = 2;
                             if (currentStyle != null)
@@ -166,9 +168,10 @@ function MIOHTMLParser(string, layerID, relativePath, callback)
 
                     case 3:
                         value = token;
+                        attributes[attribute] = value;
                         //console.log("<" + tag + " " + attribute + "=" + value + ">");
                         stepIndex = 2;
-                        if (attribute == "id" && value == layerID)
+                        if (attributes["id"] == layerID)
                         {
                             // Record
                             isCapturing = true;

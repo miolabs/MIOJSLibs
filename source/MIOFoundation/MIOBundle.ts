@@ -7,7 +7,7 @@
 
 class MIOBundle extends MIOObject
 {
-    url:string = null;
+    url:MIOURL = null;
 
     private static _mainBundle = null;
 
@@ -19,32 +19,52 @@ class MIOBundle extends MIOObject
         {
             // Main url. Getting from broser window url search field
 
-            var url = MIOCoreGetMainBundleURLString();
+            var urlString = MIOCoreGetMainBundleURLString();
 
             this._mainBundle = new MIOBundle();
-            this._mainBundle.initWithURL(url);
+            this._mainBundle.initWithURL(MIOURL.urlWithString(urlString));
         }
 
         return this._mainBundle;
     }
 
-    initWithURL(url:string)
+    initWithURL(url:MIOURL)
     {
         this.url = url;
     }
 
     loadHTMLNamed(path, layerID, target?, completion?)
     {
+            
+        // var conn = new MIOURLConnection();
+        // conn.initWithRequestBlock(MIOURLRequest.requestWithURL(MIOURL.urlWithString(path)), this, function(code, data){
+
+        //     var result = MIOHTMLParser(data, layerID, path, function(css) {
+
+        //     });
+
+        //     var domParser = new DOMParser();
+        //     var items = domParser.parseFromString(result.layout, "text/html");
+        //     var layer = items.getElementById(layerID);
+
+        //     //this.localizeSubLayers(layer.childNodes);
+
+        //     if (target != null && completion != null)
+        //         completion.call(target, layer);
+    
+        // });        
+        //return;
+
         if (MIOCoreGetAppType() == MIOCoreAppType.Web)
         {
             if (this._webBundle == null)
             {
                 this._webBundle = new MIOCoreBundle();
-                this._webBundle.baseURL = this.url;
+                this._webBundle.baseURL = this.url.absoluteString;
             }
 
-            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
-
+            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){                    
+                
                     var domParser = new DOMParser();
                     var items = domParser.parseFromString(layerData, "text/html");
                     var layer = items.getElementById(layerID);
