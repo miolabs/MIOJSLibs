@@ -261,7 +261,7 @@ class MWSPersistentStore extends MIOIncrementalStore {
             // let referenceID = entity.name + "://" + serverID;
             // if (this.partialRelationshipObjects[referenceID] == true){
             //     delete this.partialRelationshipObjects[referenceID];
-                this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
+            //    this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
             //}            
         }
 
