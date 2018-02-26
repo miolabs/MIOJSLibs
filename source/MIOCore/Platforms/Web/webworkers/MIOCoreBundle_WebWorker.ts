@@ -1,9 +1,12 @@
 
 //importScripts("MIOHTMLParser.js");
 
+const mySelf = (self as DedicatedWorkerGlobalScope)
+
+
 var _languageStrings = null;
 
-self.addEventListener('message', function(e) {
+mySelf.addEventListener('message', function(e) {
 
     var item = e.data;
 
