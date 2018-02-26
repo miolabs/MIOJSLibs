@@ -1,5 +1,5 @@
 
-//importScripts("MIOHTMLParser.js");
+importScripts("MIOHTMLParser.js");
 
 const mySelf = (self as DedicatedWorkerGlobalScope)
 

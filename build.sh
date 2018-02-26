@@ -22,8 +22,10 @@ then
     printf "${RED}iOS${NC}\n"
     tsc -p source/MIOCore/Platforms/iOS
 else
-    printf "${RED}web${NC}\n"
+    printf "${RED}web${NC}"
     tsc -p source/MIOCore/Platforms/Web
+    printf " with ${RED}webworkers${NC}\n"
+    tsc -p source/MIOCore/Platforms/Web_WebWorkers
 fi
 printf "${GREEN}Building MIOFoundation ...${NC}\n";
 tsc -p source/MIOFoundation
@@ -33,5 +35,3 @@ printf "${GREEN}Building MIOData ...${NC}\n";
 tsc -p source/MIOData
 printf "${GREEN}Building MIOWebServicePersistentStore ...${NC}\n";
 tsc -p source/MIOWebServicePersistentStore
-printf "${GREEN}Building webworkers ...${NC}\n";
-tsc -p source/webworkers
