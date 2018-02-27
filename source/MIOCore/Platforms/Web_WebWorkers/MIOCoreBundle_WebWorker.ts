@@ -1,10 +1,13 @@
 
-importScripts("../foundation.js");
+importScripts("../../libs/miocore/index.js");
+importScripts("../../libs/foundation/index.js");
 
 const mySelf = (self as DedicatedWorkerGlobalScope)
 
 
 var _languageStrings = null;
+
+console.log(MIOCoreLexerTokenType.Identifier);
 
 mySelf.addEventListener('message', function(e) {
 

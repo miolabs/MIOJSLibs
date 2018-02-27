@@ -264,7 +264,6 @@ function _MIOLibDownloadLibFiles()
     MIOLibDownloadLibFile("MIOPageController");
     MIOLibDownloadLibFile("MIOSplitViewController");
     MIOLibDownloadLibFile("MIOUIKit");
-    MIOLibDownloadLibFile("webworkers/MIOHTMLParser");
 }
 
 /*

@@ -7,13 +7,13 @@
         "outDir": "../../../../build/webworkers",
         "lib": ["webworker", "es5", "scripthost"],
         "types":[
-            "miocore"            
         ],
         "typeRoots": [
             "../../../../build/types"
         ]
     },
     "include": [
-        "."
+        ".",
+        "../../*.ts"
     ]
 }
