@@ -16,16 +16,19 @@ NC='\033[0m' # No Color
 printf "${YELLOW}Empty build directory ...${NC}\n"
 rm -r build
 
-printf "${GREEN}Building MIOCore. Target: ${NC}";
+printf "${GREEN}Building MIOCore\n";
+tsc -p source/MIOCore
+printf "${GREEN}Building MIOCorePlatform. Target: ${NC}";
 if [[ ("$1" == "ios") || ("$1" == "iOS") ]]
 then
     printf "${RED}iOS${NC}\n"
-    tsc -p source/MIOCore/Platforms/iOS
+    tsc -p source/MIOCorePlatforms/iOS
 else
-    printf "${RED}web${NC}"
-    tsc -p source/MIOCore/Platforms/Web
-    printf " with ${RED}webworkers${NC}\n"
-    tsc -p source/MIOCore/Platforms/Web_WebWorkers
+    printf "${RED}web${NC}\n"
+    tsc -p source/MIOCorePlatforms/Web
+    printf "  ${GREEN}Building WebWorkers: ${NC}\n"
+    printf "    ${GREEN}- MIOCoreBundle_WebWorker${NC}\n"
+    tsc -p source/MIOCoreWebWorkers/MIOCoreBundle_WebWorker
 fi
 printf "${GREEN}Building MIOFoundation ...${NC}\n";
 tsc -p source/MIOFoundation

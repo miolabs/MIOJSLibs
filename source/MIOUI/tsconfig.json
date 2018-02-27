@@ -8,6 +8,7 @@
         "outFile": "../../build/types/mioui/index.js",
         "types": [
             "miocore",
+            "miocoreplatform",
             "miofoundation"
         ],
         "typeRoots": [

@@ -1,7 +1,4 @@
 
-/// <reference path="../../MIOCoreString.ts" />
-
-
 class MIOCoreBundle
 {
     baseURL:string = null;

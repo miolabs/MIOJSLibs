@@ -4,13 +4,14 @@
         "sourceMap": false,
         "removeComments": true,
         "declaration": false,
-        "outDir": "../../build/webworkers",
+        "outDir": "../../../build/webworkers",
         "lib": ["webworker", "es5", "scripthost"],
         "types":[
-            "miofoundation"
+            "miocore",
+            "miocoreplatform"
         ],
         "typeRoots": [
-            "../../build/types"
+            "../../../build/types"
         ]
     },
     "include": [

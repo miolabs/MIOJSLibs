@@ -8,6 +8,7 @@
         "outFile": "../../build/types/miodata/index.js",
         "types":[
             "miocore",
+            "miocoreplatform",
             "miofoundation"
         ],
         "typeRoots": [

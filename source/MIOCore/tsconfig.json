@@ -4,12 +4,9 @@
         "sourceMap": true,
         "removeComments": true,
         "declaration": true,
-        "outDir": "../../build/types/miofoundation",
-        "outFile": "../../build/types/miofoundation/index.js",
-        "types": [
-            "miocore",
-            "miocoreplatform",
-        ],
+        "outDir": "../../build/types/miocore",
+        "outFile": "../../build/types/miocore/index.js",
+        "types":[],
         "typeRoots": [
             "../../build/types"
         ]
