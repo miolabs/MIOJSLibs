@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Set source folder to support build from another location.
+#
+# The first param sets the folder to load the config files from. 
+# If it is not available, it will default to 'source'
+SOURCE_FOLDER="${1:-source}"
+
+# Colorize the shell output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
@@ -13,28 +20,31 @@ NC='\033[0m' # No Color
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 
-printf "${YELLOW}Empty build directory ...${NC}\n"
+printf "${GREEN}Generate the libs from${NC} ${RED}${SOURCE_FOLDER}${NC} ${GREEN}directory ...${NC}\n";
+
+printf "${YELLOW}Empty${NC} ${RED}build${NC} ${YELLOW}directory ...${NC}\n"
 rm -r build
 
-printf "${GREEN}Building MIOCore\n";
-tsc -p source/MIOCore
+printf "${GREEN}Building MIOCore\n${NC}";
+tsc -p ${SOURCE_FOLDER}/MIOCore
 printf "${GREEN}Building MIOCorePlatform. Target: ${NC}";
-if [[ ("$1" == "ios") || ("$1" == "iOS") ]]
+if [[ ("$2" == "ios") || ("$2" == "iOS") ]]
 then
     printf "${RED}iOS${NC}\n"
-    tsc -p source/MIOCorePlatforms/iOS
+    tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/iOS
 else
     printf "${RED}web${NC}\n"
-    tsc -p source/MIOCorePlatforms/Web
-    printf "  ${GREEN}Building WebWorkers: ${NC}\n"
-    printf "    ${GREEN}- MIOCoreBundle_WebWorker${NC}\n"
-    tsc -p source/MIOCoreWebWorkers/MIOCoreBundle_WebWorker
+    tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/Web
+    printf "  ${GREEN}Building WebWorkers base: ${NC}\n"
+    tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/WebWorkers
+    printf "    ${GREEN}- Bundle_WebWorker${NC}\n"
+    tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/Web/WebWorkers/Bundle_WebWorker
 fi
 printf "${GREEN}Building MIOFoundation ...${NC}\n";
-tsc -p source/MIOFoundation
+tsc -p ${SOURCE_FOLDER}/MIOFoundation
 printf "${GREEN}Building MIOUI ...${NC}\n";
-tsc -p source/MIOUI
+tsc -p ${SOURCE_FOLDER}/MIOUI
 printf "${GREEN}Building MIOData ...${NC}\n";
-tsc -p source/MIOData
+tsc -p ${SOURCE_FOLDER}/MIOData
 printf "${GREEN}Building MIOWebServicePersistentStore ...${NC}\n";
-tsc -p source/MIOWebServicePersistentStore
+tsc -p ${SOURCE_FOLDER}/MIOWebServicePersistentStore
