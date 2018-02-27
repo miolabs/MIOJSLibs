@@ -6,6 +6,7 @@
         "declaration": true,
         "outDir": "../../../../../build/webworkers/",
         "lib": ["webworker", "es5", "scripthost"],
+        "sourceRoot": ".",
         "types":[
             "miocore",
             "miocoreplatformww"
