@@ -6,6 +6,8 @@ interface Array<T> {
     indexOfObject(object);
     containsObject(object):boolean;
     count();
+    firstObject();
+    lastObject();
 }
 
 Array.prototype.addObject = function(object){
@@ -43,3 +45,11 @@ Object.defineProperty(Array.prototype, "count", {
     enumerable: true,
     configurable: true
 });
+
+Array.prototype.firstObject = function(){
+    return this[0];
+}
+
+Array.prototype.lastObject = function(){
+    return this[this.count - 1];
+}

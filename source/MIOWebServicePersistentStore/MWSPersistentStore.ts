@@ -408,6 +408,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
+            //this.removeOperation(op, serverID);
+            this.removeUploadingOperationForServerID(serverID);            
 
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);
@@ -445,6 +447,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
+            //this.removeOperation(op, serverID);
+            this.removeUploadingOperationForServerID(serverID);
 
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, values);            
@@ -478,6 +482,8 @@ class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
+            //this.removeOperation(op, serverID);
+            this.removeUploadingOperationForServerID(serverID);
 
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             //let version = this.delegate.serverVersionNumberForItem(this, values);
@@ -490,18 +496,21 @@ class MWSPersistentStore extends MIOIncrementalStore {
     //
 
     private addOperation(operation:MWSPersistenStoreOperation, serverID:string){
-        let opRef = serverID + "/" + operation.saveCount;
-        this.saveOperationsByReferenceID[opRef] = operation;
+        //let opRef = serverID + "/" + operation.saveCount;
+        //this.saveOperationsByReferenceID[opRef] = operation;
+        this.saveOperationsByReferenceID[serverID] = operation;
     }
 
     private removeOperation(operation:MWSPersistenStoreOperation, serverID:string){
-        let opRef = serverID + "/" + operation.saveCount;
-        delete this.saveOperationsByReferenceID[opRef];
+        //let opRef = serverID + "/" + operation.saveCount;
+        //delete this.saveOperationsByReferenceID[opRef];
+        delete this.saveOperationsByReferenceID[serverID];
     }
 
     operationAtServerID(serverID:string, saveCount){
-        let opRef = serverID + "/" + saveCount;
-        return this.saveOperationsByReferenceID[opRef];
+        // let opRef = serverID + "/" + saveCount;
+        // return this.saveOperationsByReferenceID[opRef];
+        return this.saveOperationsByReferenceID[serverID];
     }
 
     private fetchOperationQueue:MIOOperationQueue = null;
@@ -514,12 +523,16 @@ class MWSPersistentStore extends MIOIncrementalStore {
 
     private saveOperationQueue:MIOOperationQueue = null;
     private saveOperationsByReferenceID = {};
+    private uploadingOperations = {};
 
     private checkOperationDependecies(operation: MWSPersistenStoreOperation, dependencies) {
 
         for (var index = 0; index < dependencies.length; index++) {
             let referenceID = dependencies[index];
-            let op = this.operationAtServerID(referenceID, this.saveCount);
+            var op = this.operationAtServerID(referenceID, this.saveCount);
+            if (op == null) {
+                op = this.lastUploadingOperationByServerID(referenceID);
+            }
             if (op == null) continue;
             operation.addDependency(op);
         }
@@ -537,10 +550,41 @@ class MWSPersistentStore extends MIOIncrementalStore {
         for (var refID in this.saveOperationsByReferenceID) {
             let op = this.saveOperationsByReferenceID[refID];
             this.checkOperationDependecies(op, op.dependencyIDs);
-            this.saveOperationQueue.addOperation(op);
+            this.addUploadingOperation(op, refID);            
+            this.saveOperationQueue.addOperation(op);            
         }
 
         this.saveOperationsByReferenceID = {};
     }
+
+    private addUploadingOperation(op:MWSPersistenStoreOperation, serverID){
+        
+        var array = this.uploadingOperations[serverID];
+        if (array == null){
+            array = [];
+            this.uploadingOperations[serverID] = array;
+        }
+        else {
+            let lastOP = array.lastObject();
+            op.addDependency(lastOP);
+        }
+
+        array.push(op);        
+    }
+
+    private lastUploadingOperationByServerID(serverID:string){
+        var array = this.uploadingOperations[serverID];
+        if (array == null) return null;
+        if (array.count == 0) return null;
+        return array.lastObject();
+    }
+
+    private removeUploadingOperationForServerID(serverID:string){
+        var array = this.uploadingOperations[serverID];
+        if (array == null) return;
+        if (array.count == 0) return;
+        array.removeObjectAtIndex(0);
+        if (array.count == 0) delete this.uploadingOperations[serverID];
+    }    
 
 }

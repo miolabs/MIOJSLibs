@@ -3,7 +3,7 @@
 
 
 class MWSPersistenStoreOperation extends MIOOperation {
-    
+        
     saveCount = 0;
     request:MWSJSONRequest = null;
     dependencyIDs = null;
