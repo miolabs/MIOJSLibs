@@ -28,20 +28,18 @@ rm -r build
 printf "${GREEN}Building MIOCore\n${NC}";
 tsc -p ${SOURCE_FOLDER}/MIOCore
 printf "${GREEN}Building MIOCorePlatform. Target: ${NC}";
-if [[ ("$2" == "ios") || ("$2" == "iOS") ]]
-then
-    printf "${RED}iOS${NC}\n"
-    tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/iOS
-else
     printf "${RED}web${NC}\n"
     tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/Web
+
     printf "  ${GREEN}Building WebWorkers base: ${NC}\n"
     tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/WebWorkers
+
+    printf "${GREEN}Building MIOFoundation ...${NC}\n";
+    tsc -p ${SOURCE_FOLDER}/MIOFoundation
+    
     printf "    ${GREEN}- Bundle_WebWorker${NC}\n"
     tsc -p ${SOURCE_FOLDER}/MIOCorePlatforms/Web/WebWorkers/Bundle_WebWorker
-fi
-printf "${GREEN}Building MIOFoundation ...${NC}\n";
-tsc -p ${SOURCE_FOLDER}/MIOFoundation
+
 printf "${GREEN}Building MIOUI ...${NC}\n";
 tsc -p ${SOURCE_FOLDER}/MIOUI
 printf "${GREEN}Building MIOData ...${NC}\n";

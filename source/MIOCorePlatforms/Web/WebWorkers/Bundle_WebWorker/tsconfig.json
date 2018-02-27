@@ -9,7 +9,8 @@
         "sourceRoot": ".",
         "types":[
             "miocore",
-            "miocoreplatformww"
+            "miocoreplatformww",
+            "miofoundation"
         ],
         "typeRoots": [
             "../../../../../build/types"

@@ -21,15 +21,15 @@ class MIOCoreBundle
             this._layoutWorker.onmessage = function (event) {
 
                 var item = event.data;
+                
 
                 if (item["Type"] == "HTML"){
                     var result = item["Result"];
 
-                    var domParser = new DOMParser();
-                    var items = domParser.parseFromString(result.layout, "text/html");
-                    var layer = items.getElementById(layerID);
+                    let layerID = item["LayerID"];
+                    console.log(" <- layerid: " + layerID);                    
     
-                    instance.layerDidDownload(layer);
+                    instance.layerDidDownload(result.layout);
                 }     
                 else if (item["Error"] != null) {
                     throw("MIOBundle: " + item["Error"]);
@@ -73,6 +73,7 @@ class MIOCoreBundle
         // Send only the information need
         console.log("Download resource: " + item["URL"]);
         var msg = {"CMD" : "DownloadHTML", "URL" : item["URL"], "Path" : item["Path"], "LayerID" : item["LayerID"]};
+        console.log(" -> layerid: " + item["LayerID"]);
         this._layoutWorker.postMessage(msg);
     }
 

@@ -42,10 +42,14 @@ class MIOBundle extends MIOObject
                 this._webBundle.baseURL = this.url.absoluteString;
             }
 
-            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layer){
+            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
                                 
-                    if (target != null && completion != null)
-                        completion.call(target, layer);
+                var domParser = new DOMParser();
+                var items = domParser.parseFromString(layerData, "text/html");
+                var layer = items.getElementById(layerID);
+
+                if (target != null && completion != null)
+                    completion.call(target, layer);
             });
         }
     }
