@@ -1,5 +1,5 @@
-importScripts("../../libs/miocore/index.js");
-importScripts("../../libs/miocoreplatformww/index.js");
+importScripts("../../libs/miojs/miocore/index.js");
+importScripts("../../libs/miojs/miocoreplatformww/index.js");
 var mySelf = self;
 var _languageStrings = null;
 mySelf.addEventListener('message', function (e) {
@@ -32,5 +32,6 @@ function downloadHTML(url, layerID, path) {
     xhr.send();
 }
 function parseHTML(url, data, layerID, path) {
+    console.log("ParseHTML", url, data, layerID, path);
 }
 //# sourceMappingURL=Bundle_WebWorker.js.map

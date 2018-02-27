@@ -1,6 +1,6 @@
 // Reference the dependencies relative to the runtime location
-importScripts("../../libs/miocore/index.js");
-importScripts("../../libs/miocoreplatformww/index.js");
+importScripts("../../libs/miojs/miocore/index.js");
+importScripts("../../libs/miojs/miocoreplatformww/index.js");
 
 const mySelf = (self as DedicatedWorkerGlobalScope)
 
@@ -55,5 +55,5 @@ function downloadHTML(url, layerID, path) {
 
 function parseHTML(url, data, layerID, path)
 {
-
+    console.log("ParseHTML", url, data, layerID, path);
 }
