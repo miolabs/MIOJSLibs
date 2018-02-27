@@ -34,43 +34,16 @@ class MIOBundle extends MIOObject
     }
 
     loadHTMLNamed(path, layerID, target?, completion?)
-    {
-            
-        // var conn = new MIOURLConnection();
-        // conn.initWithRequestBlock(MIOURLRequest.requestWithURL(MIOURL.urlWithString(path)), this, function(code, data){
-
-        //     var result = MIOHTMLParser(data, layerID, path, function(css) {
-
-        //     });
-
-        //     var domParser = new DOMParser();
-        //     var items = domParser.parseFromString(result.layout, "text/html");
-        //     var layer = items.getElementById(layerID);
-
-        //     //this.localizeSubLayers(layer.childNodes);
-
-        //     if (target != null && completion != null)
-        //         completion.call(target, layer);
-    
-        // });        
-        //return;
-
+    {            
         if (MIOCoreGetAppType() == MIOCoreAppType.Web)
         {
-            if (this._webBundle == null)
-            {
+            if (this._webBundle == null){
                 this._webBundle = new MIOCoreBundle();
                 this._webBundle.baseURL = this.url.absoluteString;
             }
 
-            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){                    
-                
-                    var domParser = new DOMParser();
-                    var items = domParser.parseFromString(layerData, "text/html");
-                    var layer = items.getElementById(layerID);
-
-                    //this.localizeSubLayers(layer.childNodes);
-
+            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layer){
+                                
                     if (target != null && completion != null)
                         completion.call(target, layer);
             });

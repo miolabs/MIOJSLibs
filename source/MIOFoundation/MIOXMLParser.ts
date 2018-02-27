@@ -99,6 +99,9 @@ class MIOXMLParser extends MIOObject
             case "?":
                 token = MIOXMLTokenType.QuestionMark;
                 break;
+
+            default:
+                break;
         }
 
         this.currentTokenValue = token;
@@ -136,6 +139,9 @@ class MIOXMLParser extends MIOObject
                 case MIOXMLTokenType.Identifier:
                     this.text(value);
                     break;                    
+
+                default:
+                    break;
             }
 
             [token, value] = this.nextToken();
@@ -191,7 +197,10 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.CloseTag:
                 this.xmlCloseTag();
-                break;                
+                break;   
+                
+            default:
+                break;
         }        
     }
 
@@ -210,6 +219,9 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.QuestionMark:
                 this.questionMark();
+                break;
+
+            default:
                 break;
         }
     }
@@ -241,6 +253,9 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.CloseTag:
                 this.closeTag();
+                break;
+
+            default:
                 break;
         }
     }
@@ -296,6 +311,9 @@ class MIOXMLParser extends MIOObject
                 this.closeTag();
                 this.didStartElement();                
                 break;
+
+            default:
+                break;
         }
     }
 
@@ -348,7 +366,10 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.Identifier:
                 this.endElement(value);
-                break;            
+                break;     
+                
+            default:
+                break;
         }
     }
 

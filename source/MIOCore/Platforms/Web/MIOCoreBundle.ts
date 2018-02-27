@@ -11,32 +11,6 @@ class MIOCoreBundle
     private _layoutCache = null;
 
     private _isDownloadingResource = false;
-
-    private _loadingCSSCount = 0;
-
-    // private _loadCSS(basePath, path, media?)
-    // {
-    //     this._loadingCSSCount++;
-
-    //     var url = MIOURL.urlWithString(path);
-    //     var urlString:string = null;
-    //     if (url.scheme != null)
-    //     {
-    //         // Absolute url            
-    //         urlString  = url.absoluteString;
-    //     }
-    //     else 
-    //     {            
-    //         urlString = MIOCoreStringAppendPathComponent(basePath, path);
-    //         urlString = MIOCoreStringStandardizingPath(urlString);
-    //     }                
-
-    //     //console.log("BUNDLE_WEBWORKER: Adding CSS: " + urlString);
-    //     MIOCoreLoadStyle(urlString, media, this, function (){
-    //         this._loadingCSSCount--;
-    //         this._checkDownloadCount();
-    //     })
-    // }
     
     loadHMTLFromPath(path, layerID, target, completion)
     {
@@ -51,28 +25,14 @@ class MIOCoreBundle
 
                 var item = event.data;
 
-                //console.log("Downloaded resource: " + item["Path"]);
-
-                if (item["Type"] == "CSS")
-                {
-                    // var basePath = MIOCoreStringDeletingLastPathComponent(path);
-                    // if(item["CSSURL"] && item["Path"]){
-                    //     instance._loadCSS(item["Path"], item["CSSURL"], item["Media"]);
-                    // }
-                    
-                    // var len = cssURL.lastIndexOf('/');
-                    // var cssFile = cssURL.substring(len + 1);
-                    // if (cssFile == "app.css") return;
-
-                    // var baseURL = url.substring(0, url.lastIndexOf('/')) + "/";
-                    // cssURL  = baseURL + cssURL;
-                    // MIOCoreLoadStyle(cssURL);
-                    // console.log("BUNDLE: Adding CSS: " + cssURL);
-                }
-                else if (item["Type"] == "HTML")
-                {
+                if (item["Type"] == "HTML"){
                     var result = item["Result"];
-                    instance.layerDidDownload(result.layout);
+
+                    var domParser = new DOMParser();
+                    var items = domParser.parseFromString(result.layout, "text/html");
+                    var layer = items.getElementById(layerID);
+    
+                    instance.layerDidDownload(layer);
                 }     
                 else if (item["Error"] != null) {
                     throw("MIOBundle: " + item["Error"]);
@@ -94,13 +54,6 @@ class MIOCoreBundle
         }
         else
         {
-            // add to a queue
-            // var url2 = document.URL;
-            // if (url2.lastIndexOf(".") > -1)
-            // {
-            //     url2 = url2.substr(0, url2.lastIndexOf('/'));
-            // }
-            // url2 = url2 + "/" + url;
             var url = MIOCoreStringAppendPathComponent(this.baseURL, path);
             var item = {"Key" : path, "Path" : MIOCoreStringDeletingLastPathComponent(path), "URL": url, "LayerID": layerID, "Target" : target, "Completion" : completion};
             this._layoutQueue.push(item);
@@ -145,8 +98,6 @@ class MIOCoreBundle
     private _checkDownloadCount()
     {
         if (this._isDownloadingResource == true) return;
-
-        if (this._loadingCSSCount > 0) return;
 
         var item = this._layoutQueue[0];
 

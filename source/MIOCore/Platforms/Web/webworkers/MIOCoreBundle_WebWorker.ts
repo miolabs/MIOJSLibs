@@ -1,5 +1,5 @@
 
-//importScripts("MIOHTMLParser.js");
+importScripts("../foundation.js");
 
 const mySelf = (self as DedicatedWorkerGlobalScope)
 
@@ -12,8 +12,7 @@ mySelf.addEventListener('message', function(e) {
 
     var cmd = item["CMD"];
 
-    if (cmd == "SetLanguageStrings")
-    {
+    if (cmd == "SetLanguageStrings"){
         _languageStrings = item["LanguageStrings"];
     }
     else if (cmd == "DownloadHTML")
