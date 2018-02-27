@@ -4,8 +4,8 @@
         "sourceMap": true,
         "removeComments": true,
         "declaration": true,
-        "outDir": "../../../build/types/miocoreplatform/",
-        "outFile": "../../../build/types/miocoreplatform/index.js",
+        "outDir": "../../../build/types/miocoreplatformww/",
+        "outFile": "../../../build/types/miocoreplatformww/index.js",
         "types": [
             "miocore"
         ],

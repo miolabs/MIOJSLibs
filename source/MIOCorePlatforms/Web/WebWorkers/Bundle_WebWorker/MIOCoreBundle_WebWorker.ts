@@ -7,8 +7,6 @@ const mySelf = (self as DedicatedWorkerGlobalScope)
 
 var _languageStrings = null;
 
-console.log(MIOCoreLexerTokenType.Identifier);
-
 mySelf.addEventListener('message', function(e) {
 
     var item = e.data;
