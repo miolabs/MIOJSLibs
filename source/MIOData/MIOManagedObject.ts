@@ -184,7 +184,7 @@ class MIOManagedObject extends MIOObject {
         var result = {};
         for (var key in keys){
             let obj = values[key];
-            if (obj != null) result[key] = obj;
+            result[key] = obj;
         }
 
         return result;
@@ -212,26 +212,31 @@ class MIOManagedObject extends MIOObject {
         var value = null;
 
         if (property instanceof MIOAttributeDescription){
-            value = this._changedValues[key];
-            if (value == null) {
+            if (key in this._changedValues) {
+                value = this._changedValues[key];
+            }
+            else {
                 value = this.primitiveValueForKey(key);
             }
         }
         else if (property instanceof MIORelationshipDescription){
             let relationship = property as MIORelationshipDescription;
             if (relationship.isToMany == false){
-                let objID:MIOManagedObjectID = this._changedValues[key];
-                if (objID != null) {
-                    value = this.managedObjectContext.objectWithID(objID);
+                if (key in this._changedValues) {
+                    let objID:MIOManagedObjectID = this._changedValues[key];
+                    if (objID != null) {
+                        value = this.managedObjectContext.objectWithID(objID);
+                    }
                 }
                 else {
                     value = this.primitiveValueForKey(key);
                 }
             }
             else {                
-                // Tick. I store the value in a private property when the object is temporary
-                value = this._changedValues[key];
-                if (value == null){
+                if (key in this._changedValues) {
+                    value = this._changedValues[key];
+                }
+                else {
                     value = this.primitiveValueForKey(key);                    
                 }
             }
