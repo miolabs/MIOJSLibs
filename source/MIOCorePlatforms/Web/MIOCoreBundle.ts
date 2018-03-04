@@ -29,7 +29,7 @@ class MIOCoreBundle
                     let layerID = item["LayerID"];
                     console.log(" <- layerid: " + layerID);                    
     
-                    instance.layerDidDownload(result.layout);
+                    instance.layerDidDownload(result);
                 }     
                 else if (item["Error"] != null) {
                     throw("MIOBundle: " + item["Error"]);
@@ -112,4 +112,5 @@ class MIOCoreBundle
 
         this.checkQueue();
     }
+    
 }

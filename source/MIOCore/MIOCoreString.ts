@@ -11,15 +11,17 @@ function MIOCoreStringHasSuffix(str, suffix)
 
 function MIOCoreStringAppendPathComponent(string:string, path):string
 {
-    var str = string;
-    
-    if (string.charAt(string.length - 2) != "/")
-        str += "/";
+    var str = string;    
 
-    if (path.charAt(0) != "/")
-        str += path;
-    else
+    if (string.charAt(string.length - 1) == "/" && path.charAt(0) == "/"){
         str += path.substr(1);
+    }
+    else if (string.charAt(string.length - 1) != "/" && path.charAt(0) != "/"){
+        str += "/" + path;
+    }
+    else {
+        str += path;
+    }
 
     return str;
 }

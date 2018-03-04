@@ -2,9 +2,21 @@
 /// <reference path="MIOObject.ts" />
 
 
+interface MIOXMLParserDelegate {
+    parserDidStartDocument?(parser:MIOXMLParser);
+    parserDidEndDocument?(parser:MIOXMLParser);
+    
+    parserDidStartElement?(parser:MIOXMLParser, element:string, attributes);
+    parserDidEndElement?(parser:MIOXMLParser, element:string);
+
+    parserFoundCharacters?(parser:MIOXMLParser, characters:string);
+    parserFoundComment?(parser:MIOXMLParser, comment:string);
+}
+
 enum MIOXMLTokenType{
     Identifier,
     QuestionMark,
+    ExclamationMark,
     OpenTag,
     CloseTag,
     Slash,
@@ -15,7 +27,7 @@ enum MIOXMLTokenType{
 class MIOXMLParser extends MIOObject
 {
     private str:string = null;
-    private delegate = null;
+    private delegate:MIOXMLParserDelegate = null;
 
     private strIndex = 0;
 
@@ -25,7 +37,7 @@ class MIOXMLParser extends MIOObject
     private currentTokenValue:MIOXMLTokenType = null;
     private lastTokenValue:MIOXMLTokenType = null;
 
-    initWithString(str:string, delegate){
+    initWithString(str:string, delegate:MIOXMLParserDelegate){
         this.str = str;
         this.delegate = delegate;
     }
@@ -54,7 +66,7 @@ class MIOXMLParser extends MIOObject
             let ch = this.nextChar();
             if (ch == null) return null;
 
-            if (ch == "<" || ch == ">" || ch == "/" || ch == "?"){
+            if (ch == "<" || ch == ">" || ch == "/" || ch == "?" || ch == "!"){
                 
                 if (value.length > 0) 
                     this.prevChar();                    
@@ -62,6 +74,16 @@ class MIOXMLParser extends MIOObject
                     value = ch;
                 exit = true;
             }
+            else if (ch == "\"" || ch == "'") {                
+                value += ch;
+                let ch2 = this.nextChar();
+                while(ch2 != ch){                    
+                    value += ch2;
+                    ch2 = this.nextChar();                    
+                }
+                value += ch2;
+            }
+
             else if (ch == " "){
                 exit = true;
             }                                
@@ -98,6 +120,10 @@ class MIOXMLParser extends MIOObject
 
             case "?":
                 token = MIOXMLTokenType.QuestionMark;
+                break;
+
+            case "!":
+                token = MIOXMLTokenType.ExclamationMark;
                 break;
 
             default:
@@ -164,13 +190,17 @@ class MIOXMLParser extends MIOObject
 
         switch(token){
 
-            case MIOXMLTokenType.QuestionMark:
-                this.questionMark();
-                break;
-
             case MIOXMLTokenType.Identifier:
                 this.beginElement(value);
                 break;                        
+
+            case MIOXMLTokenType.QuestionMark:
+                this.questionMark();
+                break;
+                
+            case MIOXMLTokenType.ExclamationMark:
+                this.exclamationMark();
+                break;
 
             case MIOXMLTokenType.Slash:
                 this.slash();
@@ -185,14 +215,13 @@ class MIOXMLParser extends MIOObject
     private questionMark(){
         
         //console.log("Question mark");
-
-        var token, value;
-        [token, value] = this.nextToken();
+        var token, val;
+        [token, val] = this.nextToken();
 
         switch (token){
 
             case MIOXMLTokenType.Identifier:
-                this.xmlOpenTag(value);
+                this.xmlOpenTag(val);
                 break;
 
             case MIOXMLTokenType.CloseTag:
@@ -204,17 +233,50 @@ class MIOXMLParser extends MIOObject
         }        
     }
 
+    private exclamationMark() {
+
+        let ch = this.nextChar();
+        let foundMark = 0;
+
+        if (ch == "-"){
+            foundMark++;
+            ch = this.nextChar();
+            if (ch == "-") {
+                foundMark++;
+            }
+        }
+
+        if (foundMark < 2) {
+            for (let i = 0; i < foundMark; i++) {
+                this.prevChar();
+            }
+        } else {
+
+            let comments = "";
+            let exit = false;
+
+            while (exit == false) {
+                let ch = this.nextChar();
+                if (ch == null) throw("MIOXMLParser: Unexpected end of file!");
+                comments += ch;                
+                if (comments.length >= 3 && comments.substr(-3) == "-->") exit = true;
+            }
+
+            this.comments(comments.substr(0, comments.length - 3));
+        }
+    }
+
     private xmlOpenTag(value){
      
         //console.log("XML open tag");
 
-        var token, value;
-        [token, value] = this.nextToken();
+        let token, val;
+        [token, val] = this.nextToken();
 
         switch (token){
 
             case MIOXMLTokenType.Identifier:
-                this.attribute(value);
+                this.attribute(val);
                 break;
 
             case MIOXMLTokenType.QuestionMark:
@@ -238,13 +300,13 @@ class MIOXMLParser extends MIOObject
         this.currentElement = value;
         this.attributes = {};
 
-        var token, value;
-        [token, value] = this.nextToken();
+        let token, val;
+        [token, val] = this.nextToken();
 
         switch (token){
 
             case MIOXMLTokenType.Identifier:
-                this.attribute(value);
+                this.attribute(val);
                 break;
 
             case MIOXMLTokenType.Slash:
@@ -253,6 +315,7 @@ class MIOXMLParser extends MIOObject
 
             case MIOXMLTokenType.CloseTag:
                 this.closeTag();
+                this.didStartElement();                                
                 break;
 
             default:
@@ -268,8 +331,8 @@ class MIOXMLParser extends MIOObject
         this.attributes = {};
         this.currentElement = null;
 
-        var token, value;
-        [token, value] = this.nextToken();
+        let token, val;
+        [token, val] = this.nextToken();
 
         switch (token){
 
@@ -290,7 +353,7 @@ class MIOXMLParser extends MIOObject
 
         this.decodeAttribute(attr);
 
-        var token, value;
+        let token, value;
         [token, value] = this.nextToken();
 
         switch (token){
@@ -323,7 +386,7 @@ class MIOXMLParser extends MIOObject
         var value = null;        
         var token = "";
 
-        for (var index = 0; index < attr.length; index++){
+        for (let index = 0; index < attr.length; index++){
 
             let ch = attr[index];
             if (ch == "=") {
@@ -399,8 +462,13 @@ class MIOXMLParser extends MIOObject
 
     private text(value){        
         //console.log("Text: " + value);
-        if (typeof this.delegate.parserFoundString === "function")
-            this.delegate.parserFoundString(this, value);        
+        if (typeof this.delegate.parserFoundCharacters === "function")
+            this.delegate.parserFoundCharacters(this, value);        
+    } 
+
+    private comments(comment:string){
+        if (typeof this.delegate.parserFoundComment === "function")
+            this.delegate.parserFoundComment(this, comment);                
     }
 
     private error(expected){

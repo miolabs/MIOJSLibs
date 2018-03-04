@@ -23,7 +23,7 @@ NC='\033[0m' # No Color
 printf "${GREEN}Generate the libs from${NC} ${RED}${SOURCE_FOLDER}${NC} ${GREEN}directory ...${NC}\n";
 
 printf "${YELLOW}Empty${NC} ${RED}build${NC} ${YELLOW}directory ...${NC}\n"
-rm -r build
+#rm -r build
 
 printf "${GREEN}Building MIOCore\n${NC}";
 tsc -p ${SOURCE_FOLDER}/MIOCore
