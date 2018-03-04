@@ -1,7 +1,7 @@
 // Reference the dependencies relative to the runtime location
-importScripts("../../libs/miojs/miocore/index.js");
-importScripts("../../libs/miojs/miocoreplatformww/index.js");
-importScripts("../../libs/miojs/miofoundation/index.js");
+importScripts("../miocore/index.js");
+importScripts("../miocoreplatformww/index.js");
+importScripts("../miofoundation/index.js");
 
 // workaround for typescript webworker self
 
