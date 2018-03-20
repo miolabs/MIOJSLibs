@@ -1,10 +1,10 @@
+import { MUILayerGetFirstElementWithTag, MUIView } from "./MUIView";
+
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIView.ts" />
-
-class MUIImageView extends MUIView
+export class MUIImageView extends MUIView
 {
     private _imageLayer = null;
 

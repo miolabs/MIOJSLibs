@@ -1,10 +1,10 @@
+import { MUIControl } from "./MUIControl";
+
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIControl.ts" />
-
-class MUICheckButton extends MUIControl
+export class MUICheckButton extends MUIControl
 {
     target = null;
     action = null;

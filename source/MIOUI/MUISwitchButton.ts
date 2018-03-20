@@ -1,11 +1,11 @@
+import { MUIControl } from "./MUIControl";
+import { MUILayerGetFirstElementWithTag } from "./MUIView";
 
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIControl.ts" />
-
-class MUISwitchButton extends MUIControl
+export class MUISwitchButton extends MUIControl
 {
     target = null;
     action = null;    

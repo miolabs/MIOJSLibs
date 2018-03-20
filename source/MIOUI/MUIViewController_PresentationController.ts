@@ -1,10 +1,15 @@
+import { MIOObject, MIORect, MIOSize } from "../MIOFoundation";
+import { MUIViewController } from "./MUIViewController";
+import { MIOCoreIsPhone, MIOCoreIsMobile } from "../MIOCorePlatforms";
+import { MUIWindowSize } from "./MIOUI_Core";
+import { MUIWindow } from "./MUIWindow";
+import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
+
 /**
  * Created by godshadow on 06/12/2016.
  */
 
-/// <reference path="MUIViewController.ts" />
-
-enum MUIModalPresentationStyle
+export enum MUIModalPresentationStyle
 {
     FullScreen,
     PageSheet, // normal modal sheet in osx
@@ -17,14 +22,14 @@ enum MUIModalPresentationStyle
     None
 }
 
-enum MUIModalTransitionStyle
+export enum MUIModalTransitionStyle
 {
     CoverVertical,
     FlipHorizontal,
     CrossDisolve
 }
 
-class MUIPresentationController extends MIOObject
+export class MUIPresentationController extends MIOObject
 {
     presentationStyle = MUIModalPresentationStyle.PageSheet;
     shouldPresentInFullscreen = false;
@@ -197,7 +202,7 @@ class MUIPresentationController extends MIOObject
 
 }
 
-class MIOModalTransitioningDelegate extends MIOObject
+export class MIOModalTransitioningDelegate extends MIOObject
 {
     modalTransitionStyle = null;
 
@@ -227,7 +232,7 @@ class MIOModalTransitioningDelegate extends MIOObject
     }
 }
 
-class MIOAnimationController extends MIOObject
+export class MIOAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {
@@ -252,7 +257,7 @@ class MIOAnimationController extends MIOObject
 
 }
 
-class MIOModalPresentAnimationController extends MIOObject
+export class MIOModalPresentAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {
@@ -289,7 +294,7 @@ class MIOModalPresentAnimationController extends MIOObject
     }
 }
 
-class MIOModalDismissAnimationController extends MIOObject
+export class MIOModalDismissAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {

@@ -1,12 +1,13 @@
+import { MIOObject } from "../MIOFoundation";
 
 
 
-enum MIORequestType{
+export enum MIORequestType{
     Fetch,
     Save
 }
 
-class MIOPersistentStoreRequest extends MIOObject
+export class MIOPersistentStoreRequest extends MIOObject
 {    
     requestType:MIORequestType;
 }

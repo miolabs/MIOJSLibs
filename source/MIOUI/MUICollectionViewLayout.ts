@@ -1,9 +1,8 @@
+import { MIOObject, MIOSize } from "../MIOFoundation";
+import { MUICollectionView } from "./MUICollectionView";
+import { MUIEdgeInsets } from "./MUIEdgeInsets";
 
-
-/// <reference path="MUIEdgeInsets.ts" />
-
-
-class MUICollectionViewLayout extends MIOObject
+export class MUICollectionViewLayout extends MIOObject
 {    
     collectionView:MUICollectionView = null;
 
@@ -25,7 +24,7 @@ class MUICollectionViewLayout extends MIOObject
     invalidateLayout(){}
 }
 
-class MUICollectionViewFlowLayout extends MUICollectionViewLayout
+export class MUICollectionViewFlowLayout extends MUICollectionViewLayout
 {
     init(){
         super.init();

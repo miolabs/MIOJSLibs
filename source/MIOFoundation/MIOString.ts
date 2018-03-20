@@ -2,9 +2,17 @@
  * Created by godshadow on 21/3/16.
  */
 
-var _MIOLocalizedStrings = null;
+import {
+    MIOCoreStringLastPathComponent,
+    MIOCoreStringAppendPathComponent,
+    MIOCoreStringDeletingLastPathComponent,
+    MIOCoreStringHasPreffix,
+    MIOCoreStringHasSuffix
+} from '../MIOCore'
 
-function MIOLocalizeString(key, defaultValue)
+export let _MIOLocalizedStrings:any = null;
+
+export function MIOLocalizeString(key, defaultValue)
 {
     var strings =  _MIOLocalizedStrings;
     if (strings == null)
@@ -17,7 +25,7 @@ function MIOLocalizeString(key, defaultValue)
     return value;
 }
 
-interface String {
+export interface String {
     stringByAppendingPathComponent(path:string):string;
     
     lastPathComponent():string;    
@@ -27,22 +35,22 @@ interface String {
     hasSuffix(suffix:string):boolean;
 }
 
-String.prototype.lastPathComponent = function():string{
+String.prototype['lastPathComponent'] = function():string{
     return MIOCoreStringLastPathComponent(this);
 }
 
-String.prototype.stringByAppendingPathComponent = function(path:string):string{
+String.prototype['stringByAppendingPathComponent'] = function(path:string):string{
     return MIOCoreStringAppendPathComponent(this, path);
 }
 
-String.prototype.stringByDeletingLastPathComponent = function():string{
+String.prototype['stringByDeletingLastPathComponent'] = function():string{
     return MIOCoreStringDeletingLastPathComponent(this);
 }
 
-String.prototype.hasPreffix = function(preffix:string):boolean{
+String.prototype['hasPreffix'] = function(preffix:string):boolean{
     return MIOCoreStringHasPreffix(this, preffix);
 }
 
-String.prototype.hasSuffix = function(suffix:string):boolean{
+String.prototype['hasSuffix'] = function(suffix:string):boolean{
     return MIOCoreStringHasSuffix(this, suffix);
 }

@@ -1,7 +1,9 @@
+import { MUIViewController } from "./MUIViewController";
+import { MIOSize, MIODateGetStringForMonth } from "../MIOFoundation";
+import { MUILabel } from "./MUILabel";
+import { MUICalendarView } from "./MUICalendarView";
 
-/// <reference path="MUIViewController.ts" />
-
-class MUIDatePickerController extends MUIViewController
+export class MUIDatePickerController extends MUIViewController
 {
     delegate = null;
     private calendarView = null;    

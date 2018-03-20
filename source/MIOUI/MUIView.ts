@@ -1,10 +1,15 @@
+import { MIOObject, MIORect } from "../MIOFoundation";
+import { MUIWindow } from "./MUIWindow";
+import { MUICoreLayerIDFromObject, MUICoreLayerCreate } from "./MIOUI_CoreLayer";
+import { MIOClassFromString } from "../MIOCorePlatforms";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
 
 
-function MUILayerSearchElementByID(layer, elementID)
+export function MUILayerSearchElementByID(layer, elementID)
 {
     if (layer.tagName != "DIV" && layer.tagName != "INPUT")
             return null;
@@ -30,7 +35,7 @@ function MUILayerSearchElementByID(layer, elementID)
     return null;
 }
 
-function MUILayerGetFirstElementWithTag(layer, tag)
+export function MUILayerGetFirstElementWithTag(layer, tag)
 {
     var foundLayer = null;
 
@@ -51,7 +56,7 @@ function MUILayerGetFirstElementWithTag(layer, tag)
     return foundLayer;
 }
 
-class MUIView extends MIOObject
+export class MUIView extends MIOObject
 {
     layerID = null;
     layer = null;

@@ -1,13 +1,11 @@
+import { MUIButton } from "./MUIButton";
+import { MUIMenuItem, MUIMenu } from "./MUIMenu";
+
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIButton.ts" />
-
-/// <reference path="MUIWebApplication.ts" />
-/// <reference path="MUIMenu.ts" />
-
-class MUIPopUpButton extends MUIButton
+export class MUIPopUpButton extends MUIButton
 {
     private _menu = null;
     private _isVisible = false;

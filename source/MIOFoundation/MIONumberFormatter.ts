@@ -1,20 +1,20 @@
+import { MIOFormatter } from "./MIOFormatter";
+import { MIOLocale } from "./MIOLocale";
 
-/// <reference path="MIOFormatter.ts" />
-
-enum MIONumberFormatterStyle {
+export enum MIONumberFormatterStyle {
     NoStyle,
     DecimalStyle,
     CurrencyStyle,
     PercentStyle
 }
 
-enum _MIONumberFormatterType {
+export enum _MIONumberFormatterType {
     
     Int,
     Decimal
 }
 
-class MIONumberFormatter extends MIOFormatter {
+export class MIONumberFormatter extends MIOFormatter {
 
     numberStyle = MIONumberFormatterStyle.NoStyle;
     locale = null;

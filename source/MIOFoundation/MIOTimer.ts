@@ -1,11 +1,10 @@
+import { MIOObject } from "./MIOObject";
 
 /**
  * Created by godshadow on 21/3/16.
  */
 
-/// <reference path="MIOObject.ts" />
-
-class MIOTimer extends MIOObject
+export class MIOTimer extends MIOObject
 {    
     private _timerInterval = 0;
     private _repeat = false;

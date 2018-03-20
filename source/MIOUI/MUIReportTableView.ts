@@ -1,13 +1,14 @@
+import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
+import { MIOObject, MIOFormatter, MIOIndexPath, MIOSize } from "../MIOFoundation";
+import { MUILabel } from "./MUILabel";
 
-/// <reference path="MUIView.ts" />
-
-enum MUIReportTableViewCellType {
+export enum MUIReportTableViewCellType {
     Custom,
     Label,
     Combox
 }
 
-class MUIReportTableViewCell extends MUIView {
+export class MUIReportTableViewCell extends MUIView {
 
     type = MUIReportTableViewCellType.Custom;
 
@@ -46,7 +47,7 @@ class MUIReportTableViewCell extends MUIView {
     }
 }
 
-class MUIReportTableViewRow extends MUIView {
+export class MUIReportTableViewRow extends MUIView {
     cells = [];
 
     removeFromSuperview() {
@@ -59,7 +60,7 @@ class MUIReportTableViewRow extends MUIView {
     }
 }
 
-class MUIReportTableViewColumn extends MIOObject {
+export class MUIReportTableViewColumn extends MIOObject {
 
     static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifer?: string) {
         let col = new MUIReportTableViewColumn();
@@ -119,7 +120,7 @@ class MUIReportTableViewColumn extends MIOObject {
     }
 }
 
-class MUIReportTableView extends MUIView {
+export class MUIReportTableView extends MUIView {
     dataSource = null;
     delegate = null;
 

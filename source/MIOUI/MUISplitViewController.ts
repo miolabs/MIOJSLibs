@@ -1,10 +1,13 @@
+import { _MIUShowViewController } from "./MIOUI_Core";
+import { MUIView } from "./MUIView";
+import { MUIViewController } from "./MUIViewController";
+
 /**
  * Created by godshadow on 05/08/16.
  */
 
-/// <reference path="MUIViewController.ts" />
 
-class MUISplitViewController extends MUIViewController
+export class MUISplitViewController extends MUIViewController
 {
     private _masterViewController = null;
     private _detailViewController = null;

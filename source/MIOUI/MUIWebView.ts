@@ -1,10 +1,10 @@
+import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
+
 /**
  * Created by godshadow on 04/08/16.
  */
 
-/// <reference path="MUIView.ts" />
-
-class MUIWebView extends MUIView
+export class MUIWebView extends MUIView
 {
     private _iframeLayer = null;
 

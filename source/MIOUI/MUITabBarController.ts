@@ -1,11 +1,11 @@
+import { MUITabBar } from "./MUITabBar";
+import { MUIViewController } from "./MUIViewController";
+
 /**
  * Created by godshadow on 24/08/16.
  */
 
-/// <reference path="MUIViewController.ts" />
-/// <reference path="MUITabBar.ts" />
-
-class MIOTabBarController extends MUIViewController
+export class MIOTabBarController extends MUIViewController
 {
     tabBar = null;
     private pageController = null;

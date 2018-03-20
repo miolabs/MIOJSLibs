@@ -1,10 +1,14 @@
+import { MIOObject, MIOURL, MIOUUID } from "../MIOFoundation";
+import { MIOPersistentStoreRequest } from "./MIOPersistentStoreRequest";
+import { MIOManagedObject } from "./MIOManagedObject";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOPersistentStoreCoordinator } from "./MIOPersistentStoreCoordinator";
+import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
 
+export let MIOStoreUUIDKey = "MIOStoreUUIDKey";
+export let MIOStoreTypeKey = "MIOStoreTypeKey";
 
-
-let MIOStoreUUIDKey = "MIOStoreUUIDKey";
-let MIOStoreTypeKey = "MIOStoreTypeKey";
-
-class MIOPersistentStore extends MIOObject
+export class MIOPersistentStore extends MIOObject
 {    
     // To override per class
     static get type ():string { return "MIOPersistentStore";}

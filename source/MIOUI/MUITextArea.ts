@@ -1,11 +1,11 @@
+import { MUIControl } from "./MUIControl";
+
 /**
  * Created by godshadow on 15/3/16.
  */
 
-/// <reference path="MUIControl.ts" />
 
-
-class MUITextArea extends MUIControl
+export class MUITextArea extends MUIControl
 {
     textareaLayer = null;
 

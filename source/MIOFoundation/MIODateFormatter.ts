@@ -1,7 +1,7 @@
+import {MIOFormatter} from './MIOFormatter'
+import {MIOCoreGetBrowser, MIOCoreBrowserType} from '../MIOCorePlatforms'
 
-/// <reference path="MIOFormatter.ts" />
-
-enum MIODateFormatterStyle {
+export enum MIODateFormatterStyle {
     NoStyle,
     ShortStyle,
     MediumStyle,
@@ -9,7 +9,7 @@ enum MIODateFormatterStyle {
     FullStyle
 }
 
-class MIODateFormatter extends MIOFormatter {
+export class MIODateFormatter extends MIOFormatter {
 
     dateStyle = MIODateFormatterStyle.ShortStyle;
     timeStyle = MIODateFormatterStyle.ShortStyle;    
@@ -162,7 +162,7 @@ class MIODateFormatter extends MIOFormatter {
         let result = true;
         if (dd.length > 0) result = result && this._validateDay(dd);
         if (mm.length > 0) result = result && this._validateMonth(mm);
-        if (yy.length > 0) result = result && this._validateYear(yy);
+        if (yy.length > 0) result = result && this._validateYear(yy);
         if (result == false) return [false, parseString, null];
         
         var dateString = (yy[3]? yy : ("20" + yy)) + this.browserDateSeparatorSymbol + (mm[1]?mm:"0"+mm) + this.browserDateSeparatorSymbol + (dd[1]?dd:"0"+dd);

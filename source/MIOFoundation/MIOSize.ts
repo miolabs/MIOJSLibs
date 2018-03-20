@@ -1,5 +1,5 @@
 
-class MIOSize
+export class MIOSize
 {
     width = 0;
     height = 0;

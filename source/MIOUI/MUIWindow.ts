@@ -1,11 +1,13 @@
+import { MUIWebApplication } from "./MUIWebApplication";
+import { MUIViewController } from "./MUIViewController";
+import { MUIView } from "./MUIView";
+import { MUIPopoverPresentationController } from "./MUIViewController_PopoverPresentationController";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MUIView.ts" />
-/// <reference path="MUIViewController.ts" />
-
-class MUIWindow extends MUIView
+export class MUIWindow extends MUIView
 {
     rootViewController:MUIViewController = null;
 

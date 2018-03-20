@@ -2,16 +2,6 @@
  * Created by godshadow on 20/5/16.
  */
 
-/// <reference path="MIOObject.ts" />
-
-/// <reference path="MIOUserDefaults.ts" />
-
-/// <reference path="MIOString.ts" />
-/// <reference path="MIODate.ts" />
-/// <reference path="MIOUUID.ts" />
-/// <reference path="MIONotificationCenter.ts" />
-
-
 var MIOLibIsLoaded = false;
 
 var _MIOLibLoadedTarget = null;
@@ -22,7 +12,7 @@ var _MIOLibFiles = [];
 
 var _mc_force_mobile = false;
 
-enum MIOLibInitType
+export enum MIOLibInitType
 {
     Release,
     Debug
@@ -30,7 +20,7 @@ enum MIOLibInitType
 
 var _MIOLibMainFn = null;
 
-function MIOLibInit(mainFn, type?:MIOLibInitType) {
+export function MIOLibInit(mainFn, type?:MIOLibInitType) {
 
     _MIOLibMainFn = mainFn;
 
@@ -48,7 +38,7 @@ function MIOLibInit(mainFn, type?:MIOLibInitType) {
     }
 }
 
-function MIOLibDownloadScript(url, target, completion)
+export function MIOLibDownloadScript(url, target, completion)
 {
     var xhr = new XMLHttpRequest();
     xhr.onload = function(){
@@ -67,7 +57,7 @@ function MIOLibDownloadScript(url, target, completion)
     xhr.send();
 }
 
-function MIOLibLoadStyle(url)
+export function MIOLibLoadStyle(url)
 {
     var ss = document.createElement("link");
     ss.type = "text/css";
@@ -76,7 +66,7 @@ function MIOLibLoadStyle(url)
     document.getElementsByTagName("head")[0].appendChild(ss);
 }
 
-function MIOLibLoadScript(url, callback)
+export function MIOLibLoadScript(url, callback)
 {
     // Adding the script tag to the head as suggested before
     var head = document.getElementsByTagName('head')[0];
@@ -93,7 +83,7 @@ function MIOLibLoadScript(url, callback)
     head.appendChild(script);
 }
 
-function MIOLibLoadScriptCallback()
+export function MIOLibLoadScriptCallback()
 {
     console.log("Download completed " + _MIOLibFileIndex);
     _MIOLibFileIndex++;
@@ -111,7 +101,7 @@ function MIOLibLoadScriptCallback()
     }
 }
 
-function MIOLibDownloadNextFile()
+export function MIOLibDownloadNextFile()
 {
     var file = _MIOLibFiles[_MIOLibFileIndex];
     var url = "src/miolib/" + file + ".js";
@@ -120,7 +110,7 @@ function MIOLibDownloadNextFile()
     MIOLibLoadScript(url, MIOLibLoadScriptCallback);
 }
 
-function MIOLibOnLoaded(target, completion)
+export function MIOLibOnLoaded(target, completion)
 {
     if (MIOLibIsLoaded == true)
     {
@@ -144,19 +134,19 @@ function MIOLibOnLoaded(target, completion)
     }
 }
 
-function MIOLibDownloadLibFile(file)
+export function MIOLibDownloadLibFile(file)
 {
     _MIOLibFiles.push(file);
     console.log("Added file to download: " + file);
 }
 
-function MIOLibDownloadFile(file)
+export function MIOLibDownloadFile(file)
 {
     _MIOLibFiles.push("../" + file);
     console.log("Added file to download: " + file);
 }
 
-function MIOLibIsRetina ()
+export function MIOLibIsRetina ()
 {
     var mediaQuery = "(-webkit-min-device-pixel-ratio: 1.5),\
             (min--moz-device-pixel-ratio: 1.5),\
@@ -171,7 +161,7 @@ function MIOLibIsRetina ()
     return false;
 }
 
-function MIOLibDecodeParams(string, target?, completion?)
+export function MIOLibDecodeParams(string, target?, completion?)
 {
     var param = "";
     var value = "";
@@ -209,14 +199,14 @@ function MIOLibDecodeParams(string, target?, completion?)
     MIOLibEvaluateParam(param, value, target, completion);
 }
 
-function MIOLibEvaluateParam(param, value, target, completion)
+export function MIOLibEvaluateParam(param, value, target, completion)
 {
     if (target != null && completion != null)
         completion.call(target, param, value);
 }
 
 // Download files individually in debug mode
-function _MIOLibDownloadLibFiles()
+export function _MIOLibDownloadLibFiles()
 {
     // MIOLib files
     MIOLibDownloadLibFile("MIOCore");

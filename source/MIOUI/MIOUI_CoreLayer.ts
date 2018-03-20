@@ -1,13 +1,13 @@
 
-var _MUICoreLayerIDCount = 0;
+export var _MUICoreLayerIDCount = 0;
 
-function MUICoreLayerIDFromObject(object): string {
+export function MUICoreLayerIDFromObject(object): string {
 
     var classname = object.constructor.name.substring(3);
     return MUICoreLayerIDFromClassname(classname);
 }
 
-function MUICoreLayerIDFromClassname(classname:string): string {
+export function MUICoreLayerIDFromClassname(classname:string): string {
 
     var digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
 
@@ -24,7 +24,7 @@ function MUICoreLayerIDFromClassname(classname:string): string {
     return layerID;
 }
 
-function MUICoreLayerCreate(layerID?) {
+export function MUICoreLayerCreate(layerID?) {
     var layer = document.createElement("DIV");
     if (layerID != null)
         layer.setAttribute("id", layerID);
@@ -34,17 +34,17 @@ function MUICoreLayerCreate(layerID?) {
     return layer;
 }
 
-function MUICoreLayerCreateWithStyle(style, layerID?) {
+export function MUICoreLayerCreateWithStyle(style, layerID?) {
     var layer = MUICoreLayerCreate(layerID);
     MUICoreLayerAddStyle(layer, style);
 
     return layer;
 }
 
-function MUICoreLayerAddStyle(layer, style) {
+export function MUICoreLayerAddStyle(layer, style) {
     layer.classList.add(style);
 }
 
-function MUICoreLayerRemoveStyle(layer, style) {
+export function MUICoreLayerRemoveStyle(layer, style) {
     layer.classList.remove(style);
 }

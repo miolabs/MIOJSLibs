@@ -1,8 +1,7 @@
+import { MIOObject } from "./MIOObject";
+import { MIOPredicate, _MIOPredicateFilterObjects } from "./MIOPredicate";
 
-/// <reference path="MIOObject.ts" />
-
-
-class MIOSet extends MIOObject {
+export class MIOSet extends MIOObject {
 
     static set() {
 

@@ -1,7 +1,7 @@
+import { MIOObject } from "./MIOObject";
+import { MIOURL } from "./MIOURL";
 
-/// <reference path="MIOObject.ts" />
-
-class MIOURLRequest extends MIOObject
+export class MIOURLRequest extends MIOObject
 {
     url:MIOURL = null;
     httpMethod:string = "GET";

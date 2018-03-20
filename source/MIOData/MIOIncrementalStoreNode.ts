@@ -1,11 +1,16 @@
+import { MIOObject, MIOISO8601DateFormatter } from "../MIOFoundation";
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
+import { MIOPropertyDescription } from "./MIOPropertyDescription";
+import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIOAttributeDescription, MIOAttributeType } from "./MIOAttributeDescription";
 
 
 
-class _MIOIncrementalStoreNodeDateTransformer {
+export class _MIOIncrementalStoreNodeDateTransformer {
     static sdf:MIOISO8601DateFormatter = MIOISO8601DateFormatter.iso8601DateFormatter();
 }
 
-class MIOIncrementalStoreNode extends MIOObject {
+export class MIOIncrementalStoreNode extends MIOObject {
 
     private _objectID:MIOManagedObjectID = null;
     get objectID():MIOManagedObjectID {return this._objectID;}

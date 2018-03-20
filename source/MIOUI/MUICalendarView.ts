@@ -1,16 +1,21 @@
+import { MUIView } from "./MUIView";
+import { MUIScrollView } from "./MUIScrollView";
+import { MUILabel } from "./MUILabel";
+import { MUICoreLayerCreateWithStyle } from "./MIOUI_CoreLayer";
+import { MIODateGetStringForDay, MIODateGetStringForMonth, MIODateGetDayFromDate, MIORect, MIOSize } from "../MIOFoundation";
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatforms";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MUIView.ts" />
-
-enum MUICalendarDayCellType
+export enum MUICalendarDayCellType
 {
     Default,
     Custom
 }
 
-class MUICalendarDayCell extends MUIView {
+export class MUICalendarDayCell extends MUIView {
     
     type = MUICalendarDayCellType.Default;
     identifier = null;
@@ -121,7 +126,7 @@ class MUICalendarDayCell extends MUIView {
     }
 }
 
-class MUICalendarMonthView extends MUIView {
+export class MUICalendarMonthView extends MUIView {
     private _month = null;
     get month() {
         return this._month;
@@ -280,7 +285,7 @@ class MUICalendarMonthView extends MUIView {
     }
 }
 
-class MUICalendarView extends MUIScrollView {
+export class MUICalendarView extends MUIScrollView {
     
     dataSource = null;
     delegate = null;
@@ -690,7 +695,7 @@ class MUICalendarView extends MUIScrollView {
 
 }
 
-function MIOCalendarGetStringFromDate(date) {
+export function MIOCalendarGetStringFromDate(date) {
     var yyyy = date.getFullYear().toString();
     var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
     var dd = date.getDate().toString();

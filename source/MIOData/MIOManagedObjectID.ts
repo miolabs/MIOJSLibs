@@ -1,9 +1,8 @@
+import { MIOObject, MIOURL, MIOUUID, MIOLog } from "../MIOFoundation";
+import { MIOPersistentStore } from "./MIOPersistentStore";
+import { MIOEntityDescription } from "./MIOEntityDescription";
 
-
-
-/// <reference path="MIOEntityDescription.ts" />
-
-class MIOManagedObjectID extends MIOObject {
+export class MIOManagedObjectID extends MIOObject {
         
     private _entity:MIOEntityDescription = null;
     get entity():MIOEntityDescription{return this._entity;}

@@ -1,14 +1,15 @@
+import { MIOPersistentStoreRequest, MIORequestType } from "./MIOPersistentStoreRequest";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOPredicate } from "../MIOFoundation";
 
-/// <reference path="MIOPersistentStoreRequest.ts" />
-
-enum MIOFetchRequestResultType{
+export enum MIOFetchRequestResultType{
     MIOManagedObject,
     MIOManagedObjectID,
     Dictionary,
     Count
 }
 
-class MIOFetchRequest extends MIOPersistentStoreRequest {
+export class MIOFetchRequest extends MIOPersistentStoreRequest {
     
     entityName:string = null;
     entity:MIOEntityDescription = null;

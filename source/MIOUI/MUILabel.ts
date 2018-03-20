@@ -1,10 +1,11 @@
+import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MUIView.ts" />
 
-class MUILabel extends MUIView
+export class MUILabel extends MUIView
 {
     private _textLayer = null;
     autoAdjustFontSize = "none";

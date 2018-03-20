@@ -1,14 +1,14 @@
+import { MUIWindow } from "./MUIWindow";
+import { MIOCoreGetLanguages } from "../MIOCore";
+import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType } from "../MIOCorePlatforms";
+import { MIOURLRequest, MIOURL, MIOURLConnection, _MIOLocalizedStrings } from "../MIOFoundation";
+import { MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCorePlatforms/Web/MIOCoreEvents";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
-
-
-/// <reference path="MUIViewController.ts" />
-
-/// <reference path="MUIWindow.ts" />
-
-class MUIWebApplication {
+export class MUIWebApplication {
 
     private static _sharedInstance: MUIWebApplication;
 

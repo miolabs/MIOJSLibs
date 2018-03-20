@@ -1,10 +1,12 @@
+import { MUIButton } from "./MUIButton";
+import { MUIView } from "./MUIView";
+
 /**
  * Created by godshadow on 22/5/16.
  */
 
-/// <reference path="MUIButton.ts" />
 
-class MUIToolbarButton extends MUIButton
+export class MUIToolbarButton extends MUIButton
 {
     public static buttonWithLayer(layer, owner)
     {        
@@ -16,7 +18,7 @@ class MUIToolbarButton extends MUIButton
     }
 }
 
-class MUIToolbar extends MUIView
+export class MUIToolbar extends MUIView
 {
     buttons = [];
 

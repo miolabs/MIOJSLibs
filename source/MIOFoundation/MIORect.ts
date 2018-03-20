@@ -1,7 +1,7 @@
-/// <reference path="MIOPoint.ts" />
-/// <reference path="MIOSize.ts" />
+import { MIOPoint } from "./MIOPoint";
+import { MIOSize } from "./MIOSize";
 
-class MIORect
+export class MIORect
 {
     origin:MIOPoint = null;
     size:MIOSize = null;

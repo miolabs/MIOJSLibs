@@ -1,12 +1,12 @@
+import { MIOCoreLexer } from "../MIOCore";
+import { MIOObject } from "./MIOObject";
+import { MIOISO8601DateFormatter } from "./MIOISO8601DateFormatter";
+
 /**
  * Created by godshadow on 1/5/16.
  */
 
-/// <reference path="MIOObject.ts" />
-
-/// <reference path="MIOISO8601DateFormatter.ts" />
-
-enum MIOPredicateComparatorType {
+export enum MIOPredicateComparatorType {
     Equal,
     Less,
     LessOrEqual,
@@ -19,18 +19,18 @@ enum MIOPredicateComparatorType {
     NotIn
 }
 
-enum MIOPredicateOperatorType {
+export enum MIOPredicateOperatorType {
     OR,
     AND
 }
 
-enum MIOPredicateType {
+export enum MIOPredicateType {
     Predicate,
     Item,
     Operation
 }
 
-class MIOPredicateOperator {
+export class MIOPredicateOperator {
     type = null;
 
     public static andPredicateOperatorType() {
@@ -48,7 +48,7 @@ class MIOPredicateOperator {
     }
 }
 
-enum MIOPredicateItemValueType {
+export enum MIOPredicateItemValueType {
     
     Undefined,
     UUID,
@@ -59,7 +59,7 @@ enum MIOPredicateItemValueType {
     Property
 }
 
-class MIOPredicateItem {
+export class MIOPredicateItem {
     key = null;
     comparator = null;
     value = null;
@@ -114,7 +114,7 @@ class MIOPredicateItem {
     }
 }
 
-class MIOPredicateGroup {
+export class MIOPredicateGroup {
 
     predicates = [];
 
@@ -160,7 +160,7 @@ class MIOPredicateGroup {
     }
 }
 
-enum MIOPredicateTokenType{
+export enum MIOPredicateTokenType{
     Identifier,
     
     UUIDValue,
@@ -189,7 +189,7 @@ enum MIOPredicateTokenType{
     OR
 }
 
-class MIOPredicate extends MIOObject {
+export class MIOPredicate extends MIOObject {
      
     predicateGroup = null;
 
@@ -313,7 +313,7 @@ class MIOPredicate extends MIOObject {
         return predicates;
     }
 
-    private property(item:MIOPredicateItem) {
+    private property(item:MIOPredicateItem) {
         
         var token = this.lexer.nextToken();
 
@@ -328,7 +328,7 @@ class MIOPredicate extends MIOObject {
         }                    
     }
 
-    private comparator(item:MIOPredicateItem) {
+    private comparator(item:MIOPredicateItem) {
         
         var token = this.lexer.nextToken();
 
@@ -465,13 +465,13 @@ class MIOPredicate extends MIOObject {
 // For internal purposes: Don't use it, could change
 //
 
-function _MIOPredicateFilterObjects(objs, predicate)
+export function _MIOPredicateFilterObjects(objs, predicate)
 {
     if (objs == null) return [];
 
     var resultObjects = null;    
 
-    if (objs.length == 0 || predicate == null) {
+    if (objs.length == 0 || predicate == null) {
         resultObjects = objs.slice(0);        
     } 
     else {    

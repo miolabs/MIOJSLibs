@@ -1,4 +1,4 @@
-class MIORange 
+export class MIORange 
 {
     location = 0;
     length = 0;
@@ -9,20 +9,20 @@ class MIORange
     }    
 }
 
-function MIOMaxRange(range:MIORange):Number{
+export function MIOMaxRange(range:MIORange):Number{
     return range.location + range.length;
  }
 
- function MIOEqualRanges(range1:MIORange, range2:MIORange):Boolean {
+export function MIOEqualRanges(range1:MIORange, range2:MIORange):Boolean {
     return (range1.location == range2.location && range1.length == range2.length);
  }
 
-function MIOLocationInRange(location:Number, range:MIORange){
+export function MIOLocationInRange(location:Number, range:MIORange){
     if (range == null) return false;
     return (location >= range.location && location < MIOMaxRange(range))? true : false;
  }
 
-function MIOIntersectionRange(range1:MIORange, range2:MIORange):MIORange {
+export function MIOIntersectionRange(range1:MIORange, range2:MIORange):MIORange {
 
     let max1 = MIOMaxRange(range1);
     let max2 = MIOMaxRange(range2);
@@ -43,7 +43,7 @@ function MIOIntersectionRange(range1:MIORange, range2:MIORange):MIORange {
     return result;
 }
 
-function MIOUnionRange(range1:MIORange, range2:MIORange):MIORange{
+export function MIOUnionRange(range1:MIORange, range2:MIORange):MIORange{
     
     let max1 = MIOMaxRange(range1);
     let max2 = MIOMaxRange(range2); 

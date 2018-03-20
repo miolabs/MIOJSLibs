@@ -1,17 +1,19 @@
+import { MUIButton, MUIButtonType } from "./MUIButton";
+import { MUIView } from "./MUIView";
+import { MUIOutletRegister } from "./MIOUI_Core";
+import { MIORect } from "../MIOFoundation";
+
 /**
  * Created by godshadow on 25/08/16.
  */
 
-/// <reference path="MUIView.ts" />
-/// <reference path="MUIButton.ts" />
 
-
-class MUITabBarItem extends MUIButton
+export class MUITabBarItem extends MUIButton
 {
     // TODO: Add more extra features. Comming soon
 }
 
-class MUITabBar extends MUIView
+export class MUITabBar extends MUIView
 {
     items = [];    
     selectedTabBarItemIndex = -1;

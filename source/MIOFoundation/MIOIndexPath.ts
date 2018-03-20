@@ -1,7 +1,6 @@
+import { MIOObject } from "./MIOObject";
 
-/// <reference path="MIOObject.ts" />
-
-function MIOIndexPathEqual(indexPath1:MIOIndexPath, indexPath2:MIOIndexPath):Boolean {
+export function MIOIndexPathEqual(indexPath1:MIOIndexPath, indexPath2:MIOIndexPath):Boolean {
 
     //TODO: CHECK REAL INDEX PATH
     if (indexPath1 == null || indexPath2 == null) return false;
@@ -14,7 +13,7 @@ function MIOIndexPathEqual(indexPath1:MIOIndexPath, indexPath2:MIOIndexPath):Boo
     return false;
 }
 
-class MIOIndexPath extends MIOObject
+export class MIOIndexPath extends MIOObject
 {
     static indexForRowInSection(row:number, section:number){
         let ip = new MIOIndexPath();

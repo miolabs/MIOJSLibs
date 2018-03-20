@@ -1,7 +1,6 @@
+import { MIOPersistentStoreRequest, MIORequestType } from "./MIOPersistentStoreRequest";
 
-/// <reference path="MIOPersistentStoreRequest.ts" />
-
-class MIOSaveChangesRequest extends MIOPersistentStoreRequest {
+export class MIOSaveChangesRequest extends MIOPersistentStoreRequest {
     
     insertedObjects = [];
     updatedObjects = [];

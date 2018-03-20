@@ -1,15 +1,13 @@
+import { MUIView } from "./MUIView";
 
-/// <reference path="MUIView.ts" />
-
-
-enum MUIChartViewType {
+export enum MUIChartViewType {
     Bar,
     HorizontalBar,
     Line,
     Pie
 }
 
-class MUIChartView extends MUIView {
+export class MUIChartView extends MUIView {
 
     title = "";
     backgroundChartColors = [

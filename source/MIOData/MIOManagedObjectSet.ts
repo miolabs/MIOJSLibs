@@ -1,9 +1,9 @@
+import { MIOObject, MIOPredicate, _MIOPredicateFilterObjects } from "../MIOFoundation";
+import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
+import { MIOManagedObject } from "./MIOManagedObject";
 
-
-
-
-
-class MIOManagedObjectSet extends MIOObject {
+export class MIOManagedObjectSet extends MIOObject {
 
     static _setWithManagedObject(object:MIOManagedObject, relationship:MIORelationshipDescription) {
         let mos = new MIOManagedObjectSet();

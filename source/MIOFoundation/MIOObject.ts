@@ -2,8 +2,8 @@
  * Created by godshadow on 26/3/16.
  */
 
-
-class MIOObject
+import { MIOClassFromString } from '../MIOCorePlatforms'
+export class MIOObject
 {
     get className() {
         let comp:any = this.constructor;
@@ -128,7 +128,7 @@ class MIOObject
         return this[key];
     }
 
-    valueForKeyPath(keyPath:string) {
+    valueForKeyPath(keyPath:string) {
 
         let [key, offset] = this._keyFromKeypath(keyPath);
         

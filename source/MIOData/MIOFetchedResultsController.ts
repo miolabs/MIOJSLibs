@@ -1,13 +1,17 @@
+import { MIOObject, MIONotificationCenter, MIONotification, MIOSet, MIOIndexPath } from "../MIOFoundation";
+import { MIOFetchRequest } from "./MIOFetchRequest";
+import { MIOManagedObjectContext, MIOManagedObjectContextDidSaveNotification, MIOManagedObjectContextObjectsDidChange, MIOUpdatedObjectsKey, MIOInsertedObjectsKey, MIODeletedObjectsKey, MIORefreshedObjectsKey } from "./MIOManagedObjectContext";
+import { MIOManagedObject } from "./MIOManagedObject";
+import { _MIOSortDescriptorSortObjects } from "../MIOFoundation/MIOSortDescriptor";
+
 /**
  * Created by godshadow on 12/4/16.
  */
 
 
 
-/// <reference path="MIOFetchRequest.ts" />    
-/// <reference path="MIOManagedObjectContext.ts" />
 
-class MIOFetchSection extends MIOObject
+export class MIOFetchSection extends MIOObject
 {
     objects = [];
 
@@ -16,7 +20,7 @@ class MIOFetchSection extends MIOObject
     }
 }
 
-class MIOFetchedResultsController extends MIOObject
+export class MIOFetchedResultsController extends MIOObject
 {
     sections = [];
 
@@ -55,7 +59,7 @@ class MIOFetchedResultsController extends MIOObject
                 
                 let entityName = this.fetchRequest.entityName;                
                 
-                if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
+                if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
                     this.updateContent( ins_objs[entityName]?ins_objs[entityName]:[], 
                                         upd_objs[entityName]?upd_objs[entityName]:[], 
                                         del_objs[entityName]?del_objs[entityName]:[]);

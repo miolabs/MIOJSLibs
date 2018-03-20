@@ -1,10 +1,10 @@
+import { MUIView } from "./MUIView";
+
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIView.ts" />
-
-class MUIControl extends MUIView
+export class MUIControl extends MUIView
 {
     enabled = true;
 

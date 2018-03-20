@@ -1,4 +1,4 @@
 
-function MIOLog(format) {
+export function MIOLog(format) {
     console.log(format);
 }

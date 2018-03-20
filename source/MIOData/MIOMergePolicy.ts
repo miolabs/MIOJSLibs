@@ -1,7 +1,8 @@
+import { MIOObject } from "../MIOFoundation";
 
 
 
-class MIOMergePolicy extends MIOObject 
+export class MIOMergePolicy extends MIOObject 
 {
     
 }

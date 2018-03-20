@@ -1,8 +1,7 @@
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatforms";
+import { MIODateFormatter, MIODateFormatterStyle } from "./MIODateFormatter";
 
-/// <reference path="MIODateFormatter.ts" />
-
-
-class MIOISO8601DateFormatter extends MIODateFormatter {
+export class MIOISO8601DateFormatter extends MIODateFormatter {
 
     static iso8601DateFormatter():MIOISO8601DateFormatter {
         var df = new MIOISO8601DateFormatter();

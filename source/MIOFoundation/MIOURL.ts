@@ -1,7 +1,6 @@
+import { MIOObject } from "./MIOObject";
 
-/// <reference path="MIOObject.ts" />
-
-enum MIOURLTokenType
+export enum MIOURLTokenType
 {
     Protocol,
     Host,
@@ -10,7 +9,7 @@ enum MIOURLTokenType
     Value
 }
 
-class MIOURL extends MIOObject
+export class MIOURL extends MIOObject
 {    
     baseURL:MIOURL = null;
     absoluteString:string = null;

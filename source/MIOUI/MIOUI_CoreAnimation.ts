@@ -3,7 +3,7 @@
     ANIMATIONS
  */
 
-enum MUIAnimationType
+export enum MUIAnimationType
 {
     None,
     BeginSheet,
@@ -24,7 +24,7 @@ enum MUIAnimationType
 }
 
 // ANIMATION TYPES
-function MUIClassListForAnimationType(type)
+export function MUIClassListForAnimationType(type)
 {
     var array = [];
     array.push("animated");
@@ -83,19 +83,19 @@ function MUIClassListForAnimationType(type)
     return array;
 }
 
-function _MUIAddAnimations(layer, animations)
+export function _MUIAddAnimations(layer, animations)
 {
     for (var index = 0; index < animations.length; index++)
         layer.classList.add(animations[index]);
 }
 
-function _MUIRemoveAnimations(layer, animations)
+export function _MUIRemoveAnimations(layer, animations)
 {
     for (var index = 0; index < animations.length; index++)
         layer.classList.remove(animations[index]);
 }
 
-function _MUIAnimationStart(layer, animationController, animationContext, target?, completion?)
+export function _MUIAnimationStart(layer, animationController, animationContext, target?, completion?)
 {
     if (animationController == null)
     {
@@ -135,7 +135,7 @@ function _MUIAnimationStart(layer, animationController, animationContext, target
     layer.addEventListener("animationend", _MUIAnimationDidFinish);
 }
 
-function _MUIAnimationDidFinish(event)
+export function _MUIAnimationDidFinish(event)
 {
     var animationController = event.target.animationParams["animationController"];
     var animations = event.target.animationParams["animations"];

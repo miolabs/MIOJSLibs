@@ -1,9 +1,13 @@
+import { MIOObject } from "../MIOFoundation";
+import { MIOPropertyDescription } from "./MIOPropertyDescription";
+import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
+import { MIOManagedObject } from "./MIOManagedObject";
+import { MIOAttributeType, MIOAttributeDescription } from "./MIOAttributeDescription";
+import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
 
-
-
-/// <reference path="MIORelationshipDescription.ts" />
-
-class MIOEntityDescription extends MIOObject {
+export class MIOEntityDescription extends MIOObject {
     
     name:string = null;
     attributes = [];

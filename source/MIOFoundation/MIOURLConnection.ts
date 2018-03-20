@@ -1,11 +1,10 @@
+import { MIOURLRequest } from "./MIOURLRequest";
+
 /**
  * Created by godshadow on 14/3/16.
  */
 
-/// <reference path="MIOURL.ts" />
-/// <reference path="MIOURLRequest.ts" />
-
-class MIOURLConnection
+export class MIOURLConnection
 {
     request:MIOURLRequest = null;
     delegate = null;
@@ -45,7 +44,7 @@ class MIOURLConnection
                     instance.delegate.connectionDidReceiveText(instance, this.responseText);
                 else if (instance.blockFN != null) {
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type').split(';')[0];
-                    if( type != 'application/json' && type != 'text/html') {
+                    if( type != 'application/json' && type != 'text/html') {
                         //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
                         var filename;
                         if(type == 'application/pdf')

@@ -1,6 +1,5 @@
+import { MIOPersistentStore } from "./MIOPersistentStore";
 
-/// <reference path="MIOPersistentStore.ts" />
-
-class MIOInMemoryStore extends MIOPersistentStore {
+export class MIOInMemoryStore extends MIOPersistentStore {
 
 }

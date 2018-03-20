@@ -1,7 +1,8 @@
+import { MIOObject } from "../MIOFoundation";
 
 
 
-function MIOEdgeInsetsMake(top, left, bottom, rigth){
+export function MIOEdgeInsetsMake(top, left, bottom, rigth){
 
     let ei = new MUIEdgeInsets();
     ei.initWithValues(top, left, bottom, rigth);
@@ -9,7 +10,7 @@ function MIOEdgeInsetsMake(top, left, bottom, rigth){
     return ei;
 }
 
-class MUIEdgeInsets extends MIOObject
+export class MUIEdgeInsets extends MIOObject
 {
     top = 0;
     left = 0;

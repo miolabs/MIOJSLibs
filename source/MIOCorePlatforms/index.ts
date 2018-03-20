@@ -3,6 +3,7 @@
 /// #endif
 /// #if TARGET === 'webapp'
     export * from './Web/MIOCore_Web'
+    export * from './Web/MIOCoreBundle'
 /// #endif
 
 /*

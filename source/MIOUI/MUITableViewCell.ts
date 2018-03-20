@@ -1,13 +1,14 @@
 
-/// <reference path="MUIView.ts" />
+import { MUIView } from "./MUIView";
+import { MUILabel } from "./MUILabel";
 
-enum MUITableViewCellStyle {
+export enum MUITableViewCellStyle {
 
     Custom,
     Default
 }
 
-enum MUITableViewCellAccessoryType {
+export enum MUITableViewCellAccessoryType {
 
     None,
     DisclosureIndicator,
@@ -15,27 +16,27 @@ enum MUITableViewCellAccessoryType {
     Checkmark
 }
 
-enum MIOTableViewCellEditingStyle {
+export enum MIOTableViewCellEditingStyle {
 
     None,
     Delete,
     Insert
 }
 
-enum MUITableViewCellSeparatorStyle {
+export enum MUITableViewCellSeparatorStyle {
 
     None,
     SingleLine,
     SingleLineEtched // TODO 
 }
 
-enum MUITableViewCellSelectionStyle {
+export enum MUITableViewCellSelectionStyle {
 
     None,
     Default
 }
 
-class MUITableViewCell extends MUIView {
+export class MUITableViewCell extends MUIView {
 
     reuseIdentifier:string = null;
 

@@ -1,28 +1,39 @@
 
-/// <reference path="MWSPersistenStoreOperation.ts" />
+import { MIOURL, MIOError, MIOUUID, MIONotificationCenter, MIOLog, MIOOperationQueue } from "../MIOFoundation";
+import { MIOPersistentStoreRequest } from "../MIOData/MIOPersistentStoreRequest";
+import { MIOManagedObjectID } from "../MIOData/MIOManagedObjectID";
+import { MIORelationshipDescription } from "../MIOData/MIORelationshipDescription";
+import { MWSPersistenStoreOperation } from "./MWSPersistenStoreOperation";
+import { MIOIncrementalStore } from "../MIOData/MIOIncrementalStore";
+import { MIOIncrementalStoreNode } from "../MIOData/MIOIncrementalStoreNode";
+import { MIOFetchRequest } from "../MIOData/MIOFetchRequest";
+import { MIOManagedObject } from "../MIOData/MIOManagedObject";
+import { MIOEntityDescription } from "../MIOData/MIOEntityDescription";
+import { MIOManagedObjectContext } from "../MIOData/MIOManagedObjectContext";
+import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
 
 
-let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
+export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
 
-enum MWSPersistentStoreFetchStatus{
+export enum MWSPersistentStoreFetchStatus{
     None,
     Downloading,
     Downloaded
 }
 
-enum MWSPersistentStoreRequestType {
+export enum MWSPersistentStoreRequestType {
     Fetch,
     Insert,
     Update,
     Delete
 }
 
-enum MWSPersistentStoreError {
+export enum MWSPersistentStoreError {
     NoStoreURL,
     InvalidRequest
 }
 
-class MWSPersistentStore extends MIOIncrementalStore {
+export class MWSPersistentStore extends MIOIncrementalStore {
     static get type(): string { return "MWSPersistentStore"; }
     get type(): string { return MWSPersistentStore.type; }
 

@@ -1,10 +1,11 @@
+import { MUIControl } from "./MUIControl";
+import { MUIButton } from "./MUIButton";
+
 /**
  * Created by godshadow on 31/08/16.
  */
 
-/// <reference path="MUIButton.ts" />
-
-class MUIPageControl extends MUIControl {
+export class MUIPageControl extends MUIControl {
 
     numberOfPages = 0;
 

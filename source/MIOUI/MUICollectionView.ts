@@ -1,12 +1,12 @@
+import { MUIView } from "./MUIView";
+import { MIOObject, MIOSize, MIOIndexPath } from "../MIOFoundation";
+import { MUICollectionViewFlowLayout } from "./MUICollectionViewLayout";
+
 /**
  * Created by godshadow on 09/11/2016.
  */
 
-/// <reference path="MUIView.ts" />
-/// <reference path="MUICollectionViewLayout.ts" />
-
-
-class MUICollectionViewCell extends MUIView
+export class MUICollectionViewCell extends MUIView
 {
     _target = null;
     _onClickFn = null;
@@ -38,14 +38,14 @@ class MUICollectionViewCell extends MUIView
     }
 }
 
-class MUICollectionViewSection extends MIOObject
+export class MUICollectionViewSection extends MIOObject
 {
     header = null;
     footer = null;
     cells = [];
 }
 
-class MUICollectionView extends MUIView
+export class MUICollectionView extends MUIView
 {
     dataSource = null;
     delegate = null;

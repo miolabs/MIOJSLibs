@@ -1,5 +1,4 @@
-
-/// <reference path="MIONumber.ts" />
+import { MIONumber } from "./MIONumber";
 
 // interface Decimal {    
 //     add(value);
@@ -10,7 +9,7 @@
 
 declare var Decimal;
 
-class MIODecimalNumber extends MIONumber
+export class MIODecimalNumber extends MIONumber
 {
     static decimalNumberWithString(str:string):MIODecimalNumber{
         let dn = new MIODecimalNumber();
@@ -51,7 +50,7 @@ class MIODecimalNumber extends MIONumber
 
     initWithDecimal(value){
         super.init;
-        if (isNaN(value) || value == null) {
+        if (isNaN(value) || value == null) {
             this.storeValue = new Decimal(0);
         }
         else {

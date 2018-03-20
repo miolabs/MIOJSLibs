@@ -1,14 +1,14 @@
+import { MIOPropertyDescription } from "./MIOPropertyDescription";
+import { MIOEntityDescription } from "./MIOEntityDescription";
 
-
-
-enum MIODeleteRule {
+export enum MIODeleteRule {
     noActionDeleteRule,
     nullifyDeleteRule,
     cascadeDeleteRule,
     denyDeleteRule
 }
 
-class MIORelationshipDescription extends MIOPropertyDescription
+export class MIORelationshipDescription extends MIOPropertyDescription
 {
     destinationEntityName:string = null;
     destinationEntity:MIOEntityDescription = null;

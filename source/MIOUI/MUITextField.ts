@@ -1,18 +1,20 @@
+import { MUIControl } from "./MUIControl";
+import { MIOFormatter, MIOLocalizeString } from "../MIOFoundation";
+import { MUILayerGetFirstElementWithTag } from "./MUIView";
+
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIView.ts" />
-/// <reference path="MUIControl.ts" />
 
 
-enum MUITextFieldType {
+export enum MUITextFieldType {
     NormalType,
     PasswordType,
     SearchType
 }
 
-class MUITextField extends MUIControl
+export class MUITextField extends MUIControl
 {
     placeHolder = null;
     private _inputLayer = null;

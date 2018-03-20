@@ -1,7 +1,6 @@
+import { MIOObject } from "./MIOObject";
 
-/// <reference path="MIOObject.ts" />
-
-class MIONumber extends MIOObject
+export class MIONumber extends MIOObject
 {    
     static numberWithBool(value):MIONumber{
         let n = new MIONumber();
@@ -24,7 +23,7 @@ class MIONumber extends MIOObject
     protected storeValue = null;
 
     initWithBool(value){
-        if (isNaN(value) || value == null) {
+        if (isNaN(value) || value == null) {
             this.storeValue = 1;
         }
         else {
@@ -33,7 +32,7 @@ class MIONumber extends MIOObject
     }
 
     initWithInteger(value){
-        if (isNaN(value) || value == null) {
+        if (isNaN(value) || value == null) {
             this.storeValue = 0;
         }
         else {
@@ -42,7 +41,7 @@ class MIONumber extends MIOObject
     }
 
     initWithFloat(value){
-        if (isNaN(value) || value == null) {
+        if (isNaN(value) || value == null) {
             this.storeValue = 0.0;
         }
         else {

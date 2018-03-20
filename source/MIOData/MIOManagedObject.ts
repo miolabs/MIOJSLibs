@@ -1,17 +1,18 @@
+import { MIOObject } from "../MIOFoundation";
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
+import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOIncrementalStore } from "./MIOIncrementalStore";
+import { MIOAttributeDescription } from "./MIOAttributeDescription";
+import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIOManagedObjectSet } from "./MIOManagedObjectSet";
+
 /**
  * Created by godshadow on 23/03/2017.
  */
 
 
-
-/// <reference path="MIOEntityDescription.ts" />
-/// <reference path="MIOFetchRequest.ts" />
-
-/// <reference path="MIOManagedObjectID.ts" />
-/// <reference path="MIOManagedObjectSet.ts" />
-
-
-class MIOManagedObject extends MIOObject {        
+export class MIOManagedObject extends MIOObject {        
 
     init(){
         throw("MIOManagedObject: Can't initialize an MIOManagedObject with -init");

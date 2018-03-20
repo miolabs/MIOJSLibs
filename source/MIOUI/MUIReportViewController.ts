@@ -1,7 +1,6 @@
+import { MUIViewController } from "./MUIViewController";
 
-/// <reference path="MUIViewController.ts" />
-
-class MUIReportViewController extends MUIViewController
+export class MUIReportViewController extends MUIViewController
 {
     private _tableView = null;
 }

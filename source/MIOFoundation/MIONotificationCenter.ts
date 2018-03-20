@@ -2,7 +2,7 @@
  * Created by godshadow on 11/3/16.
  */
 
-class MIONotification
+export class MIONotification
 {
     name = null;
     object = null;
@@ -16,7 +16,7 @@ class MIONotification
     }
 }
 
-class MIONotificationCenter
+export class MIONotificationCenter
 {
     private static _sharedInstance:MIONotificationCenter = new MIONotificationCenter();
     notificationNames = {};

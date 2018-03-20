@@ -2,7 +2,7 @@
  * Created by godshadow on 15/3/16.
  */
 
-class MIOUUID
+export class MIOUUID
 {
     constructor()
     {

@@ -11,13 +11,7 @@
     "types": []
   },
   "include": [
-    //"source", //TODO: make this the default
-    "source/MIOCore",
-    "source/MIOCorePlatforms",
-    // "source/MIOData",
-    // "source/MIOFoundation",
-    // "source/MIOUI",
-    // "source/MIOWebServicePersistentStore",
+    "source"
   ],
   "exclude": [
     "node_modules",

@@ -1,19 +1,28 @@
+import { MIOObject, MIOSize, MIOIndexPath } from "../MIOFoundation";
+import { MUITextField } from "./MUITextField";
+import { MUIComboBox } from "./MUIComboBox";
+import { MUIViewController } from "./MUIViewController";
+import { MUIView } from "./MUIView";
+import { MUITableView } from "./MUITableView";
+import { MUIModalPresentationStyle } from "./MUIViewController_PresentationController";
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatforms";
+import { MUITableViewCell, MUITableViewCellSeparatorStyle, MUITableViewCellStyle } from "./MUITableViewCell";
+import { MUILabel } from "./MUILabel";
+import { MUIAnimationType, MUIClassListForAnimationType } from "./MIOUI_CoreAnimation";
 
-/// <reference path="MUIViewController.ts" />
-
-enum MUIAlertViewStyle
+export enum MUIAlertViewStyle
 {
     Default
 }
 
-enum MUIAlertActionStyle
+export enum MUIAlertActionStyle
 {
     Default,
     Cancel,
     Destructive
 }
 
-enum MUIAlertItemType {
+export enum MUIAlertItemType {
 
     None,
     Action,
@@ -21,7 +30,7 @@ enum MUIAlertItemType {
     ComboBox
 }
 
-class MUIAlertItem extends MIOObject
+export class MUIAlertItem extends MIOObject
 {
     type = MUIAlertItemType.None;
 
@@ -31,7 +40,7 @@ class MUIAlertItem extends MIOObject
     }
 }
 
-class MUIAlertTextField extends MUIAlertItem
+export class MUIAlertTextField extends MUIAlertItem
 {
     textField:MUITextField = null;
 
@@ -49,7 +58,7 @@ class MUIAlertTextField extends MUIAlertItem
     }
 }
 
-class MUIAlertComboBox extends MUIAlertItem
+export class MUIAlertComboBox extends MUIAlertItem
 {
     comboBox:MUIComboBox = null;
 
@@ -67,7 +76,7 @@ class MUIAlertComboBox extends MUIAlertItem
     }
 }
 
-class MUIAlertAction extends MUIAlertItem
+export class MUIAlertAction extends MUIAlertItem
 {
     title = null;
     style = MUIAlertActionStyle.Default;
@@ -94,7 +103,7 @@ class MUIAlertAction extends MUIAlertItem
     }
 }
 
-class MUIAlertViewController extends MUIViewController
+export class MUIAlertViewController extends MUIViewController
 {
     textFields = [];
     comboBoxes = [];
@@ -412,7 +421,7 @@ class MUIAlertViewController extends MUIViewController
     }
 }
 
-class MUIAlertFadeInAnimationController extends MIOObject
+export class MUIAlertFadeInAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {
@@ -438,7 +447,7 @@ class MUIAlertFadeInAnimationController extends MIOObject
 
 }
 
-class MUIAlertFadeOutAnimationController extends MIOObject
+export class MUIAlertFadeOutAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {

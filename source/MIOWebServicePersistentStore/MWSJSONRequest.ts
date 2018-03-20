@@ -1,8 +1,7 @@
+import { MWSRequest } from "./MWSRequest";
+import { MIOLog } from "../MIOFoundation";
 
-/// <reference path="MWSRequest.ts" />
-
-
-class MWSJSONRequest extends MWSRequest 
+export class MWSJSONRequest extends MWSRequest 
 {    
     willStart() {        
         this.setHeaderValue("application/json", "Content-Type");

@@ -1,11 +1,16 @@
+
+import { MIOCoreGetMainBundleURLString, MIOCoreBundle } from "../MIOCorePlatforms";
+import { MIOCoreAppType, MIOCoreGetAppType } from "../MIOCore";
+import { MIOObject } from "./MIOObject";
+import { MIOURL } from "./MIOURL";
+import { MIOURLRequest } from "./MIOURLRequest";
+import { MIOURLConnection } from "./MIOURLConnection";
+
 /**
  * Created by godshadow on 9/4/16.
  */
 
-/// <reference path="MIOObject.ts" />
-/// <reference path="MIOURL.ts" />
-
-class MIOBundle extends MIOObject
+export class MIOBundle extends MIOObject
 {
     url:MIOURL = null;
 

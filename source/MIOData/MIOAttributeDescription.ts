@@ -1,9 +1,6 @@
+import { MIOPropertyDescription } from "./MIOPropertyDescription";
 
-
-
-/// <reference path="MIOPropertyDescription.ts" />
-
-enum MIOAttributeType {
+export enum MIOAttributeType {
 
     Undefined,
     Boolean,
@@ -14,7 +11,7 @@ enum MIOAttributeType {
     Date   
 }
 
-class MIOAttributeDescription extends MIOPropertyDescription
+export class MIOAttributeDescription extends MIOPropertyDescription
 {    
     private _attributeType = MIOAttributeType.Undefined;
     private _defaultValue = null;

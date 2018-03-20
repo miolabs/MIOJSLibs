@@ -1,10 +1,11 @@
+import { MIOObject } from "./MIOObject";
+
+
 /**
  * Created by godshadow on 28/09/2016.
  */
 
-/// <reference path="MIOObject.ts" />
-
-class MIOSortDescriptor extends MIOObject
+export class MIOSortDescriptor extends MIOObject
 {
     key = null;
     ascending = false;
@@ -27,7 +28,7 @@ class MIOSortDescriptor extends MIOObject
 // For internal purposes: Don't use it, could change
 //
 
-function _MIOSortDescriptorSortObjects(objs, sortDescriptors)
+export function _MIOSortDescriptorSortObjects(objs, sortDescriptors)
 {
     var resultObjects = null;
     

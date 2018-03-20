@@ -1,7 +1,6 @@
+import { MIOObject } from "./MIOObject";
 
-/// <reference path="MIOObject.ts" />
-
-class MIOFormatter extends MIOObject {
+export class MIOFormatter extends MIOObject {
 
     stringForObjectValue(value) {
         return value;

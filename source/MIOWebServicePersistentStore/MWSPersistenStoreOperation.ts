@@ -1,8 +1,7 @@
+import { MIOOperation } from "../MIOFoundation";
+import { MWSJSONRequest } from "./MWSJSONRequest";
 
-/// <reference path="MWSJSONRequest.ts" />
-
-
-class MWSPersistenStoreOperation extends MIOOperation {
+export class MWSPersistenStoreOperation extends MIOOperation {
         
     saveCount = 0;
     request:MWSJSONRequest = null;

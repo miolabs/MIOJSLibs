@@ -1,8 +1,7 @@
+import { MIOLog } from "./MIOLog";
+import { MIOObject } from "./MIOObject";
 
-/// <reference path="MIOObject.ts" />
-
-
-enum MIOXMLTokenType{
+export enum MIOXMLTokenType{
     Identifier,
     QuestionMark,
     OpenTag,
@@ -12,7 +11,7 @@ enum MIOXMLTokenType{
     End
 }
 
-class MIOXMLParser extends MIOObject
+export class MIOXMLParser extends MIOObject
 {
     private str:string = null;
     private delegate = null;

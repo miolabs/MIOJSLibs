@@ -1,7 +1,5 @@
-
-
-
-class MWSRequest extends MIOObject
+import { MIOObject, MIOURL, MIOURLRequest, MIOURLConnection } from "../MIOFoundation";
+export class MWSRequest extends MIOObject
 {
     url:MIOURL = null;
     httpMethod = "GET"

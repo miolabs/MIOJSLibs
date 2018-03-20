@@ -1,11 +1,13 @@
+import { MUIView } from "./MUIView";
+import { MIOTimer, MIOPoint, MIORect, MIOSize } from "../MIOFoundation";
+import { MUICoreLayerCreate } from "./MIOUI_CoreLayer";
+
 /**
  * Created by godshadow on 01/09/16.
  */
 
-/// <reference path="MUIView.ts" />
 
-
-class MUIScrollView extends MUIView {
+export class MUIScrollView extends MUIView {
     pagingEnabled = false;
     delegate = null;
     scrolling = false;

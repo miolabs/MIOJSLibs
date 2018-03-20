@@ -1,8 +1,13 @@
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
+import { MIOPersistentStoreRequest } from "./MIOPersistentStoreRequest";
+import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIOPersistentStore } from "./MIOPersistentStore";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
+import { MIOIncrementalStoreNode } from "./MIOIncrementalStoreNode";
+import { MIOManagedObject } from "./MIOManagedObject";
 
-/// <reference path="MIOPersistentStore.ts" />
-/// <reference path="MIOIncrementalStoreNode.ts" />
-
-class MIOIncrementalStore extends MIOPersistentStore {
+export class MIOIncrementalStore extends MIOPersistentStore {
     
     //
     // Can't be overriden 

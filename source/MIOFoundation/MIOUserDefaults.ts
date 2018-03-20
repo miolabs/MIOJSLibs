@@ -2,10 +2,7 @@
  * Created by godshadow on 29/09/2016.
  */
 
-
-/// <reference path="MIOObject.ts" />
-
-class MIOUserDefaults
+export class MIOUserDefaults
 {
     private static _sharedInstance:MIOUserDefaults = new MIOUserDefaults();
 

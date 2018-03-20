@@ -1,8 +1,6 @@
+import { MIOObject } from "./MIOObject";
 
-/// <reference path="MIOObject.ts" />
-
-
-class MIOOperation extends MIOObject {
+export class MIOOperation extends MIOObject {
 
     name:string = null;
     target = null;

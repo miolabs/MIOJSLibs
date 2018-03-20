@@ -1,9 +1,7 @@
+import { MIOObject } from "./MIOObject";
+import { MIOOperation } from "./MIOOperation";
 
-/// <reference path="MIOObject.ts" />
-/// <reference path="MIOOperation.ts" />
-
-
-class MIOOperationQueue extends MIOObject {
+export class MIOOperationQueue extends MIOObject {
 
     private _operations = [];
 

@@ -1,12 +1,12 @@
+import { MIOObject } from "./MIOObject";
+
 /**
  * Created by godshadow on 30/3/16.
  */
 
-/// <reference path="MIOObject.ts" />
-
 var _mio_currentLocale;
 
-class MIOLocale extends MIOObject
+export class MIOLocale extends MIOObject
 {
     languageIdentifier = "es";
     countryIdentifier = "ES";

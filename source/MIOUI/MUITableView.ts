@@ -1,21 +1,21 @@
+import { MIOObject, MIOIndexPath, MIOLocationInRange, MIORange, MIOSize, MIOBundle, MIOUUID, MIOIndexPathEqual } from "../MIOFoundation";
+import { MUIScrollView } from "./MUIScrollView";
+import { MUIView } from "./MUIView";
+import { MUITableViewCell, MIOTableViewCellEditingStyle } from "./MUITableViewCell";
+import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MUILabel } from "./MUILabel";
+
 /**
  * Created by godshadow on 22/3/16.
  */
 
-
-
-/// <reference path="MUIScrollView.ts" />
-/// <reference path="MUILabel.ts" />
-
-/// <reference path="MUITableViewCell.ts" />
-
-interface MUITableViewDataSource {
+export interface MUITableViewDataSource {
     
     viewForHeaderInSection?(tableView:MUITableView, section):MUIView;
     titleForHeaderInSection?(tableView:MUITableView, section):string;
 }
 
-class MUITableViewSection extends MIOObject {
+export class MUITableViewSection extends MIOObject {
     header: MUIView = null;
     title: String = null;
 
@@ -41,7 +41,7 @@ class MUITableViewSection extends MIOObject {
     }
 }
 
-enum MUITableViewRowType {
+export enum MUITableViewRowType {
     Header,
     SectionHeader,
     Cell,
@@ -49,7 +49,7 @@ enum MUITableViewRowType {
     Footer
 }
 
-class MUITableViewRow extends MIOObject {
+export class MUITableViewRow extends MIOObject {
     type: MUITableViewRowType;
     view: MUIView = null;
     height = 0;
@@ -59,13 +59,13 @@ class MUITableViewRow extends MIOObject {
     }
 }
 
-class MUITableViewCellNode extends MIOObject {
+export class MUITableViewCellNode extends MIOObject {
 
     identifier: String = null;
     section: MUITableViewSection = null;
 }
 
-class MUITableView extends MUIScrollView {
+export class MUITableView extends MUIScrollView {
     dataSource = null;
     delegate = null;
 

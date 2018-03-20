@@ -1,10 +1,13 @@
+import { MUIViewController } from "./MUIViewController";
+import { MIOObject } from "../MIOFoundation";
+import { _MIUShowViewController } from "./MIOUI_Core";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
-/// <reference path="MUIViewController.ts" />
 
-class MUIPageController extends MUIViewController
+export class MUIPageController extends MUIViewController
 {
     selectedViewControllerIndex = 0;
     pageControllersCount = 0;
@@ -126,7 +129,7 @@ class MUIPageController extends MUIViewController
  ANIMATIONS
  */
 
-class MIOPageAnimationController extends MIOObject
+export class MIOPageAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {

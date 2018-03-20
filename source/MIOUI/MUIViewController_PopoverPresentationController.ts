@@ -1,10 +1,13 @@
+import { MUIPresentationController } from "./MUIViewController_PresentationController";
+import { MIOObject, MIORect } from "../MIOFoundation";
+import { MUIView } from "./MUIView";
+import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
+
 /**
  * Created by godshadow on 11/11/2016.
  */
 
-/// <reference path="MUIViewController_PresentationController.ts" />
-
-enum MUIPopoverArrowDirection
+export enum MUIPopoverArrowDirection
 {
     Any,
     Up,
@@ -13,7 +16,7 @@ enum MUIPopoverArrowDirection
     Right
 }
 
-class MUIPopoverPresentationController extends MUIPresentationController
+export class MUIPopoverPresentationController extends MUIPresentationController
 {
     permittedArrowDirections = MUIPopoverArrowDirection.Any;
 
@@ -112,7 +115,7 @@ class MUIPopoverPresentationController extends MUIPresentationController
 
 }
 
-class MIOModalPopOverTransitioningDelegate extends MIOObject
+export class MIOModalPopOverTransitioningDelegate extends MIOObject
 {
     modalTransitionStyle = null;
 
@@ -142,7 +145,7 @@ class MIOModalPopOverTransitioningDelegate extends MIOObject
     }
 }
 
-class MIOPopOverPresentAnimationController extends MIOObject
+export class MIOPopOverPresentAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {
@@ -168,7 +171,7 @@ class MIOPopOverPresentAnimationController extends MIOObject
 
 }
 
-class MIOPopOverDismissAnimationController extends MIOObject
+export class MIOPopOverDismissAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {

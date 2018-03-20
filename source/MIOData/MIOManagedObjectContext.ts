@@ -1,31 +1,39 @@
+import { MIOObject, MIOSet, MIONotificationCenter, _MIOPredicateFilterObjects, MIONotification } from "../MIOFoundation";
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
+import { MIOClassFromString } from "../MIOCorePlatforms";
+import { _MIOSortDescriptorSortObjects } from "../MIOFoundation/MIOSortDescriptor";
+import { MIOManagedObject } from "./MIOManagedObject";
+import { MIOIncrementalStore } from "./MIOIncrementalStore";
+import { MIOIncrementalStoreNode } from "./MIOIncrementalStoreNode";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOFetchRequest } from "./MIOFetchRequest";
+import { MIOPersistentStoreCoordinator } from "./MIOPersistentStoreCoordinator";
+import { MIOPersistentStore } from "./MIOPersistentStore";
+import { MIOSaveChangesRequest } from "./MIOSaveChangesRequest";
+
 /**
  * Created by godshadow on 12/4/16.
  */
 
+export let MIOManagedObjectContextWillSaveNotification = "MIOManagedObjectContextWillSaveNotification";
+export let MIOManagedObjectContextDidSaveNotification = "MIOManagedObjectContextDidSaveNotification";
+export let MIOManagedObjectContextObjectsDidChange = "MIOManagedObjectContextObjectsDidChange";
 
-/// <reference path="MIOManagedObject.ts" />
-/// <reference path="MIOPersistentStore.ts" />
+export let MIOInsertedObjectsKey = "MIOInsertedObjectsKey";
+export let MIOUpdatedObjectsKey = "MIOUpdatedObjectsKey";
+export let MIODeletedObjectsKey = "MIODeletedObjectsKey";
+export let MIORefreshedObjectsKey = "MIORefreshedObjectsKey";
 
-
-let MIOManagedObjectContextWillSaveNotification = "MIOManagedObjectContextWillSaveNotification";
-let MIOManagedObjectContextDidSaveNotification = "MIOManagedObjectContextDidSaveNotification";
-let MIOManagedObjectContextObjectsDidChange = "MIOManagedObjectContextObjectsDidChange";
-
-let MIOInsertedObjectsKey = "MIOInsertedObjectsKey";
-let MIOUpdatedObjectsKey = "MIOUpdatedObjectsKey";
-let MIODeletedObjectsKey = "MIODeletedObjectsKey";
-let MIORefreshedObjectsKey = "MIORefreshedObjectsKey";
-
-enum MIOManagedObjectContextConcurrencyType {
+export enum MIOManagedObjectContextConcurrencyType {
     PrivateQueue,
     MainQueue
 }
 
-enum NSMergePolicy {
+export enum NSMergePolicy {
     None
 }
 
-class MIOManagedObjectContext extends MIOObject {
+export class MIOManagedObjectContext extends MIOObject {
     persistentStoreCoordinator: MIOPersistentStoreCoordinator = null;
 
     concurrencyType = MIOManagedObjectContextConcurrencyType.MainQueue;

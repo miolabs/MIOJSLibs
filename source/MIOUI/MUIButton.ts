@@ -1,17 +1,19 @@
+import { MUIControl } from "./MUIControl";
+import { MUILayerGetFirstElementWithTag } from "./MUIView";
+import { MIOLocalizeString } from "../MIOFoundation";
+
 /**
  * Created by godshadow on 12/3/16.
  */
 
-/// <reference path="MUIControl.ts" />
-
-enum MUIButtonType
+export enum MUIButtonType
 {
     MomentaryPushIn,
     PushOnPushOff,
     PushIn
 }
 
-class MUIButton extends MUIControl
+export class MUIButton extends MUIControl
 {
     private _statusStyle = null;
 

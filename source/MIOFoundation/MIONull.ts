@@ -1,6 +1,6 @@
-/// <reference path="MIOObject.ts" />
+import { MIOObject } from "./MIOObject";
 
-class MIONull extends MIOObject
+export class MIONull extends MIOObject
 {            
     static nullValue():MIONull {
         var n = new MIONull();

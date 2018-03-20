@@ -1,11 +1,11 @@
+import { MUIView } from "./MUIView";
+import { MUIWebApplication } from "./MUIWebApplication";
+
 /**
  * Created by godshadow on 5/5/16.
  */
 
-/// <reference path="MUIView.ts" />
-/// <reference path="MUIWebApplication.ts" />
-
-class MUIMenuItem extends MUIView
+export class MUIMenuItem extends MUIView
 {
     checked = false;
     title = null;
@@ -115,7 +115,7 @@ class MUIMenuItem extends MUIView
     }
 }
 
-class MUIMenu extends MUIView
+export class MUIMenu extends MUIView
 {
     items = [];
     private _isVisible = false;

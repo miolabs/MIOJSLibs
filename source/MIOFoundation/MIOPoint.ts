@@ -1,5 +1,4 @@
-
-class MIOPoint
+export class MIOPoint
 {
     x = 0;
     y = 0;

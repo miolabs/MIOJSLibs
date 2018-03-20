@@ -1,11 +1,13 @@
+import { MUIViewController } from "./MUIViewController";
+import { MIOObject } from "../MIOFoundation";
+import { _MUIHideViewController, _MIUShowViewController } from "./MIOUI_Core";
+import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
+
 /**
  * Created by godshadow on 9/4/16.
  */
 
-/// <reference path="MUIViewController.ts" />
-
-
-class MUINavigationController extends MUIViewController
+export class MUINavigationController extends MUIViewController
 {
     rootViewController = null;
     viewControllersStack = [];
@@ -195,7 +197,7 @@ class MUINavigationController extends MUIViewController
     ANIMATIONS
  */
 
-class MUIPushAnimationController extends MIOObject
+export class MUIPushAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {
@@ -221,7 +223,7 @@ class MUIPushAnimationController extends MIOObject
 
 }
 
-class MUIPopAnimationController extends MIOObject
+export class MUIPopAnimationController extends MIOObject
 {
     transitionDuration(transitionContext)
     {

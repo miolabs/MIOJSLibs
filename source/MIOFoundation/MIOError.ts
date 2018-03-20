@@ -1,6 +1,6 @@
-/// <reference path="MIOObject.ts" />
+import { MIOObject } from "./MIOObject";
 
-class MIOError extends MIOObject
+export class MIOError extends MIOObject
 {
     errorCode = 0;
 }

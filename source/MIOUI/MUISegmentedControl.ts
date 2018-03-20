@@ -1,11 +1,12 @@
+import { MUIControl } from "./MUIControl";
+import { MUIButton, MUIButtonType } from "./MUIButton";
+import { MUIOutletRegister } from "./MIOUI_Core";
+
 /**
  * Created by godshadow on 29/08/16.
  */
 
-/// <reference path="MUIControl.ts" />
-/// <reference path="MUIButton.ts" />
-
-class MUISegmentedControl extends MUIControl
+export class MUISegmentedControl extends MUIControl
 {
     segmentedItems = [];
     selectedSegmentedIndex = -1;

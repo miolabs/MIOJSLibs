@@ -1,7 +1,12 @@
+import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString } from "../MIOFoundation";
+import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOAttributeType } from "./MIOAttributeDescription";
+import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
 
 
 
-class MIOManagedObjectModel extends MIOObject
+export class MIOManagedObjectModel extends MIOObject
 {    
     private _entitiesByName = {};
     private _entitiesByConfigName = {};

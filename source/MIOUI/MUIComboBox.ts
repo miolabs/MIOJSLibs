@@ -1,10 +1,11 @@
+import { MUIControl } from "./MUIControl";
+import { MUILayerGetFirstElementWithTag } from "./MUIView";
+
 /**
  * Created by godshadow on 2/5/16.
  */
 
-/// <reference path="MUIControl.ts" />
-
-class MUIComboBox extends MUIControl
+export class MUIComboBox extends MUIControl
 {
     private _selectLayer = null;
 

@@ -1,16 +1,17 @@
+import { MIOObject, MIOSize, MIOLocalizeString, MIOBundle } from "../MIOFoundation";
+import { MUIView, MUILayerSearchElementByID } from "./MUIView";
+import { MUINavigationController } from "./MUINavigationController";
+import { MUIPresentationController, MUIModalPresentationStyle, MUIModalTransitionStyle } from "./MUIViewController_PresentationController";
+import { MUIPopoverPresentationController } from "./MUIViewController_PopoverPresentationController";
+import { MUICoreLayerIDFromObject } from "./MIOUI_CoreLayer";
+import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
+import { MUIWindow } from "./MUIWindow";
+
 /**
  * Created by godshadow on 11/3/16.
  */
 
-
-/// <reference path="MIOUI_Core.ts" />
-/// <reference path="MIOUI_CoreLayer.ts" />
-/// <reference path="MUIViewController_PresentationController.ts" />
-/// <reference path="MUIViewController_PopoverPresentationController.ts" />
-
-/// <reference path="MUIWindow.ts" />
-
-class MUIViewController extends MIOObject
+export class MUIViewController extends MIOObject
 {
     layerID:string = null;
 

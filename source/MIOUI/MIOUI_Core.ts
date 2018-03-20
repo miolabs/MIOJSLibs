@@ -1,23 +1,25 @@
+import { MUIView, MUILayerSearchElementByID } from "./MUIView";
+import { MUIViewController } from "./MUIViewController";
+import { MIOClassFromString, MIOCoreIsPhone } from "../MIOCorePlatforms";
+import { MUIModalPresentationStyle, MUIPresentationController } from "./MUIViewController_PresentationController";
+import { _MUIAnimationStart } from "./MIOUI_CoreAnimation";
+import { MIOSize } from "../MIOFoundation";
 
-/// <reference path="MIOUI_CoreAnimation.ts" />
-/// <reference path="MUIView.ts" />
-/// <reference path="MUIViewController.ts" />
-
-interface Window {
+export interface Window {
     prototype;
 }
 
-function MUIOutletRegister(owner, layerID, c)
+export function MUIOutletRegister(owner, layerID, c)
 {
     owner._outlets[layerID] = c;
 }
 
-function MUIOutletQuery(owner, layerID)
+export function MUIOutletQuery(owner, layerID)
 {
     return owner._outlets[layerID];
 }
 
-function MUIOutlet(owner, elementID, className?, options?)
+export function MUIOutlet(owner, elementID, className?, options?)
 {
     //var layer = document.getElementById(elementID);
     var c = MUIOutletQuery(owner, elementID);
@@ -61,7 +63,7 @@ function MUIOutlet(owner, elementID, className?, options?)
     return c;
 }
 
-function MUIWindowSize()
+export function MUIWindowSize()
 {
     var w = document.body.clientWidth;
     //var h = document.body.clientHeight;window.innerHeight
@@ -70,7 +72,7 @@ function MUIWindowSize()
     return new MIOSize(w, h);
 }
 
-function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
+export function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     toVC.viewWillAppear();
     //toVC._childControllersWillAppear();
@@ -142,7 +144,7 @@ function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
     });
 }
 
-function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
+export function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext
@@ -216,7 +218,7 @@ function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
     });
 }
 
-function _MUITransitionFromViewControllerToViewController(fromVC, toVC, sourceVC, target?, completion?)
+export function _MUITransitionFromViewControllerToViewController(fromVC, toVC, sourceVC, target?, completion?)
 {
     toVC.viewWillAppear();
     //toVC._childControllersWillAppear();

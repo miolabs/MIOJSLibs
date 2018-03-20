@@ -1,9 +1,12 @@
+import { MIOObject, MIOURL } from "../MIOFoundation";
+import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
+import { MIOEntityDescription } from "./MIOEntityDescription";
+import { MIOManagedObject } from "./MIOManagedObject";
+import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
+import { MIOPersistentStore } from "./MIOPersistentStore";
 
-
-/// <reference path="MIOManagedObjectModel.ts" />
-
-
-class MIOPersistentStoreCoordinator extends MIOObject
+export class MIOPersistentStoreCoordinator extends MIOObject
 {
     private _managedObjectModel:MIOManagedObjectModel = null;
     get managedObjectModel() { return this._managedObjectModel;}
