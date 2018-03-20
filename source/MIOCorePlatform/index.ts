@@ -29,7 +29,7 @@ export { MIOCorePlatform };
 In the code it can be used like this, to get type information of the interface:
 
 ```typescript
-import {MIOCorePlatform} from '../MIOCorePlatforms'
+import {MIOCorePlatform} from '../MIOCorePlatform'
 const platform:MIOCorePlatform = MIOCorePlatform;
 ```
 */

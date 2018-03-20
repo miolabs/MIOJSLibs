@@ -1,7 +1,7 @@
 import { MIOObject, MIORect } from "../MIOFoundation";
 import { MUIWindow } from "./MUIWindow";
 import { MUICoreLayerIDFromObject, MUICoreLayerCreate } from "./MIOUI_CoreLayer";
-import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MIOClassFromString } from "../MIOCorePlatform";
 
 /**
  * Created by godshadow on 11/3/16.

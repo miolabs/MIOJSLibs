@@ -5,7 +5,7 @@ import { MUIViewController } from "./MUIViewController";
 import { MUIView } from "./MUIView";
 import { MUITableView } from "./MUITableView";
 import { MUIModalPresentationStyle } from "./MUIViewController_PresentationController";
-import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatforms";
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatform";
 import { MUITableViewCell, MUITableViewCellSeparatorStyle, MUITableViewCellStyle } from "./MUITableViewCell";
 import { MUILabel } from "./MUILabel";
 import { MUIAnimationType, MUIClassListForAnimationType } from "./MIOUI_CoreAnimation";

@@ -1,6 +1,6 @@
 import { MIOObject, MIORect, MIOSize } from "../MIOFoundation";
 import { MUIViewController } from "./MUIViewController";
-import { MIOCoreIsPhone, MIOCoreIsMobile } from "../MIOCorePlatforms";
+import { MIOCoreIsPhone, MIOCoreIsMobile } from "../MIOCorePlatform";
 import { MUIWindowSize } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";

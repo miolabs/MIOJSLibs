@@ -2,7 +2,7 @@ import { MIOObject, MIOIndexPath, MIOLocationInRange, MIORange, MIOSize, MIOBund
 import { MUIScrollView } from "./MUIScrollView";
 import { MUIView } from "./MUIView";
 import { MUITableViewCell, MIOTableViewCellEditingStyle } from "./MUITableViewCell";
-import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MIOClassFromString } from "../MIOCorePlatform";
 import { MUILabel } from "./MUILabel";
 
 /**
@@ -685,6 +685,7 @@ export class MUITableView extends MUIScrollView {
 
         cell.setNeedsDisplay();
 
+        //TODO: these are private properties, can not be used from outside
         cell._target = this;
         cell._onClickFn = this.cellOnClickFn;
         cell._onDblClickFn = this.cellOnDblClickFn;

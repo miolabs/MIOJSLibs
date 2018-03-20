@@ -3,7 +3,7 @@ import { MUIScrollView } from "./MUIScrollView";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerCreateWithStyle } from "./MIOUI_CoreLayer";
 import { MIODateGetStringForDay, MIODateGetStringForMonth, MIODateGetDayFromDate, MIORect, MIOSize } from "../MIOFoundation";
-import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatforms";
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatform";
 
 /**
  * Created by godshadow on 11/3/16.

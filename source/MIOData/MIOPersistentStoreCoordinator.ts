@@ -1,5 +1,5 @@
 import { MIOObject, MIOURL } from "../MIOFoundation";
-import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MIOClassFromString } from "../MIOCorePlatform";
 import { MIOManagedObjectID } from "./MIOManagedObjectID";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOManagedObject } from "./MIOManagedObject";

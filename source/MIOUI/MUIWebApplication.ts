@@ -1,8 +1,8 @@
 import { MUIWindow } from "./MUIWindow";
 import { MIOCoreGetLanguages } from "../MIOCore";
-import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType } from "../MIOCorePlatforms";
+import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType } from "../MIOCorePlatform";
 import { MIOURLRequest, MIOURL, MIOURLConnection, setMIOLocalizedStrings } from "../MIOFoundation";
-import { MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCorePlatforms/Web/MIOCoreEvents";
+import { MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCorePlatform/Web/MIOCoreEvents";
 
 /**
  * Created by godshadow on 11/3/16.

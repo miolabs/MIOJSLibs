@@ -1,6 +1,6 @@
 import { MIOObject } from "../MIOFoundation";
 import { MIOPropertyDescription } from "./MIOPropertyDescription";
-import { MIOClassFromString } from "../MIOCorePlatforms";
+import { MIOClassFromString } from "../MIOCorePlatform";
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
 import { MIOManagedObject } from "./MIOManagedObject";

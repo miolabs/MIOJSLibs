@@ -2,7 +2,7 @@
  * Created by godshadow on 26/3/16.
  */
 
-import { MIOClassFromString } from '../MIOCorePlatforms'
+import { MIOClassFromString } from '../MIOCorePlatform'
 export class MIOObject
 {
     get className() {
