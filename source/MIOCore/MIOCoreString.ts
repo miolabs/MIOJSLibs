@@ -1,15 +1,15 @@
 
-function MIOCoreStringHasPreffix(str, preffix)
+export function MIOCoreStringHasPreffix(str, preffix)
 {
     return str.substring( 0, preffix.length ) === preffix;
 }
 
-function MIOCoreStringHasSuffix(str, suffix)
+export function MIOCoreStringHasSuffix(str, suffix)
 {
     return str.match(suffix+"$")==suffix;
 }
 
-function MIOCoreStringAppendPathComponent(string:string, path):string
+export function MIOCoreStringAppendPathComponent(string:string, path):string
 {
     var str = string;
     
@@ -24,7 +24,7 @@ function MIOCoreStringAppendPathComponent(string:string, path):string
     return str;
 }
 
-function MIOCoreStringLastPathComponent(string:string)
+export function MIOCoreStringLastPathComponent(string:string)
 {
     let index = string.lastIndexOf("/");
     let len = string.length - index;
@@ -33,7 +33,7 @@ function MIOCoreStringLastPathComponent(string:string)
     return str;
 }
 
-function MIOCoreStringDeletingLastPathComponent(string:string)
+export function MIOCoreStringDeletingLastPathComponent(string:string)
 {
     var index = string.lastIndexOf("/");
     var str = string.substr(0, index);
@@ -41,7 +41,7 @@ function MIOCoreStringDeletingLastPathComponent(string:string)
     return str;
 }
 
-function MIOCoreStringStandardizingPath(string)
+export function MIOCoreStringStandardizingPath(string)
 {
     var array = string.split("/");
 

@@ -1,5 +1,5 @@
 
-enum MIOCoreLexerTokenType {
+export enum MIOCoreLexerTokenType {
     Identifier,
     
     UUIDValue,
@@ -28,7 +28,7 @@ enum MIOCoreLexerTokenType {
     OR
 }
 
-class MIOCoreLexer {
+export class MIOCoreLexer {
 
     private input:string = null;
     private tokenTypes = [];

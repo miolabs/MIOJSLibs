@@ -1,0 +1,37 @@
+{
+  "name": "miojslibs",
+  "version": "3.0.0",
+  "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
+  "main": "webpack.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "dependencies": {
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2"
+  },
+  "devDependencies": {
+    "webpack": "^4.1.1",
+    "typescript": "^2.7.2",
+    "webpack-cli": "^2.0.11",
+    "ts-loader": "^4.0.1",
+    "ifdef-loader": "^2.0.3",
+    "worker-loader": "^1.1.1"
+  },
+  "scripts": {
+    "dev": "webpack -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MIOLabs/MIOJSLibs.git"
+  },
+  "keywords": [],
+  "author": "miogds",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
+  },
+  "homepage": "https://github.com/MIOLabs/MIOJSLibs#readme"
+}
