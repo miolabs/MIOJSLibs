@@ -1,5 +1,5 @@
 
-enum MIOCoreEventKeyCode
+export enum MIOCoreEventKeyCode
 {    
     Enter = 13,
     Escape = 27,
@@ -9,7 +9,7 @@ enum MIOCoreEventKeyCode
     ArrowDown = 40
 }
 
-enum MIOCoreEventType
+export enum MIOCoreEventType
 {
     KeyUp,
     KeyDown,
@@ -23,7 +23,7 @@ enum MIOCoreEventType
     Resize
 }
 
-class MIOCoreEvent
+export class MIOCoreEvent
 {
     coreEvent:Event;
     eventType = null;
@@ -41,7 +41,7 @@ class MIOCoreEvent
     }
 }
 
-class MIOCoreKeyEvent extends MIOCoreEvent 
+export class MIOCoreKeyEvent extends MIOCoreEvent 
 {
     keyCode = null;
 
@@ -52,7 +52,7 @@ class MIOCoreKeyEvent extends MIOCoreEvent
     }
 }
 
-class MIOCoreEventInput extends MIOCoreEvent
+export class MIOCoreEventInput extends MIOCoreEvent
 {
     target = null;
     x = 0;
@@ -61,7 +61,7 @@ class MIOCoreEventInput extends MIOCoreEvent
     deltaY = 0;
 }
 
-enum MIOCoreEventMouseButtonType{
+export enum MIOCoreEventMouseButtonType{
     
     None,
     Left,
@@ -69,7 +69,7 @@ enum MIOCoreEventMouseButtonType{
     Middle
 }
 
-class MIOCoreEventMouse extends MIOCoreEventInput
+export class MIOCoreEventMouse extends MIOCoreEventInput
 {
     button = MIOCoreEventMouseButtonType.None;
 
@@ -91,7 +91,7 @@ class MIOCoreEventMouse extends MIOCoreEventInput
 //     changedTouches:TouchList;
 // };
 
-class MIOCoreEventTouch extends MIOCoreEventInput
+export class MIOCoreEventTouch extends MIOCoreEventInput
 {
     initWithType(eventType:MIOCoreEventType, coreEvent:TouchEvent) {   
 

@@ -1,9 +1,20 @@
-
+import {
+    _MIOCoreDebugOptions,
+    MIOCoreDebugOption
+} from '../../MIOCore'
+import {
+    MIOCoreEvent,
+    MIOCoreEventInput,
+    MIOCoreEventType,
+    MIOCoreKeyEvent,
+    MIOCoreEventMouse,
+    MIOCoreEventTouch
+} from './MIOCoreEvents'
 interface Navigator {
     userLanguage;
 }
 
-enum MIOCoreBrowserType
+export enum MIOCoreBrowserType
 {
     Safari,
     Chrome,
@@ -12,7 +23,7 @@ enum MIOCoreBrowserType
     Other
 }
 
-function MIOCoreGetBrowser():MIOCoreBrowserType
+export function MIOCoreGetBrowser():MIOCoreBrowserType
 {
     var agent = navigator.userAgent.toLowerCase();
     var browserType:MIOCoreBrowserType;    
@@ -23,14 +34,14 @@ function MIOCoreGetBrowser():MIOCoreBrowserType
     return browserType;
 }
 
-function MIOCoreGetBrowserLocale(){
+export function MIOCoreGetBrowserLocale(){
     // navigator.languages:    Chrome & FF
     // navigator.language:     Safari & Others
     // navigator.userLanguage: IE & Others
-    return navigator.languages || navigator.language || navigator.userLanguage;
+    return navigator.languages || navigator.language || navigator['userLanguage'];
 }
 
-function MIOCoreGetBrowserLanguage(){
+export function MIOCoreGetBrowserLanguage(){
     let locale = MIOCoreGetBrowserLocale();
     if (typeof(locale) == "string") return locale.substring(0, 2);
     else {
@@ -40,18 +51,18 @@ function MIOCoreGetBrowserLanguage(){
 }
 
 /*
-function MIOGetDefaultLanguage()
+export function MIOGetDefaultLanguage()
 {
     var string = window.location.search;
     console.log(string);
 }
 */
 
-function MIOCoreGetMainBundleURLString():string{
+export function MIOCoreGetMainBundleURLString():string{
     return window.location.href;
 }
 
-function MIOCoreIsPhone(){
+export function MIOCoreIsPhone(){
 
     // Debug
     var value = _MIOCoreDebugOptions[MIOCoreDebugOption.Phone];
@@ -66,7 +77,7 @@ function MIOCoreIsPhone(){
     return false;
 }
 
-function MIOCoreIsPad(){
+export function MIOCoreIsPad(){
 
     // Debug
     var value = _MIOCoreDebugOptions[MIOCoreDebugOption.Pad];
@@ -82,7 +93,7 @@ function MIOCoreIsPad(){
     return false;    
 }
 
-function MIOCoreIsMobile()
+export function MIOCoreIsMobile()
 {
     // Debug
     var value = _MIOCoreDebugOptions[MIOCoreDebugOption.Mobile];
@@ -98,7 +109,7 @@ function MIOCoreIsMobile()
     return false;
 }
 
-function MIOCoreLoadScript(url)
+export function MIOCoreLoadScript(url)
 {
     // Adding the script tag to the head as suggested before
     var head = document.getElementsByTagName('head')[0];
@@ -145,7 +156,7 @@ function _MIOCoreLoadStyle_test2(url, target?, completion?)
  
     var fi = setInterval(function() {
     try {
-        style.sheet.cssRules; // <--- MAGIC: only populated when file is loaded
+        style.sheet['cssRules']; // <--- MAGIC: only populated when file is loaded
         clearInterval(fi);
         if (target != null && completion != null)
             completion.call(target);
@@ -157,7 +168,7 @@ function _MIOCoreLoadStyle_test2(url, target?, completion?)
     head.appendChild(style);
 }
 
-function MIOCoreLoadStyle(url, media, target?, completion?)
+export function MIOCoreLoadStyle(url, media, target?, completion?)
 {
     // Prevent loading the same css files
     if (_stylesCache[url] != null) 
@@ -189,7 +200,7 @@ function MIOCoreLoadStyle(url, media, target?, completion?)
 }
 
 
-function MIOClassFromString(className)
+export function MIOClassFromString(className)
 {
     //instance creation here
     var object = null;
@@ -225,7 +236,7 @@ window.onerror = function (e) {
 
 var _miocore_events_event_observers = {};
 
-function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, observer, completion)
+export function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, observer, completion)
 {
     var item = {"Target" : observer, "Completion" : completion};
 
@@ -239,7 +250,7 @@ function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, observe
     array.push(item);
 }
 
-function MIOCoreEventUnregisterObserverForType(eventType:MIOCoreEventType, observer)
+export function MIOCoreEventUnregisterObserverForType(eventType:MIOCoreEventType, observer)
 {    
     var obs = _miocore_events_event_observers[eventType];
     if (obs == null) return;

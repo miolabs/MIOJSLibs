@@ -21,6 +21,8 @@
   ],
   "exclude": [
     "node_modules",
-    "build"
+    "build",
+    //TODO: fix webworkers
+    "source/MIOCorePlatforms/Web/WebWorkers"
   ]
 }

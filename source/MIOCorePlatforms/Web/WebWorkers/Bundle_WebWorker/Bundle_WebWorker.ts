@@ -1,13 +1,7 @@
-// Reference the dependencies relative to the runtime location
-importScripts("../miocore/index.js");
-importScripts("../miocoreplatformww/index.js");
-importScripts("../miofoundation/index.js");
-
-// workaround for typescript webworker self
 
 // "the issue occurs because postMessage is not in the WorkerGlobalScope interface but --lib 'webworker' makes self of type WorkerGlobalScope"
 // Source: https://github.com/Microsoft/TypeScript/issues/12657#issuecomment-365633337
-const ww = (self as DedicatedWorkerGlobalScope)
+const ww = (self)
 
 var _languageStrings = null;
 

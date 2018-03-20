@@ -1,5 +1,9 @@
+import {
+    MIOCoreStringAppendPathComponent,
+    MIOCoreStringDeletingLastPathComponent
+} from '../../MIOCore'
 
-class MIOCoreBundle
+export class MIOCoreBundle
 {
     baseURL:string = null;
 
