@@ -2,17 +2,21 @@
  * Created by godshadow on 21/3/16.
  */
 
-export let _MIOLocalizedStrings:any = null;
+let _MIOLocalizedStrings = null;
 
 export function MIOLocalizeString(key, defaultValue)
 {
-    var strings =  _MIOLocalizedStrings;
+    const strings =  _MIOLocalizedStrings;
     if (strings == null)
         return defaultValue;
 
-    var value = strings[key];
+    const value = strings[key];
     if (value == null)
         return defaultValue;
 
     return value;
+}
+
+export function setMIOLocalizedStrings(data) {
+    _MIOLocalizedStrings = data
 }

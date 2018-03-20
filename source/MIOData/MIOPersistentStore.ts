@@ -4,6 +4,7 @@ import { MIOManagedObject } from "./MIOManagedObject";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOPersistentStoreCoordinator } from "./MIOPersistentStoreCoordinator";
 import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
+import { MIOManagedObjectID } from "./MIOManagedObjectID";
 
 export let MIOStoreUUIDKey = "MIOStoreUUIDKey";
 export let MIOStoreTypeKey = "MIOStoreTypeKey";
@@ -60,7 +61,7 @@ export class MIOPersistentStore extends MIOObject
         this.metadata = metadata;        
     }
 
-    _obtainPermanentIDForObject(object:MIOManagedObject) {
+    _obtainPermanentIDForObject(object:MIOManagedObject):MIOManagedObjectID {
         return object.objectID;
     }        
 

@@ -21,3 +21,8 @@ interface String {
     hasPreffix(preffix:string):boolean;
     hasSuffix(suffix:string):boolean;
 }
+
+// Browser specific additions
+interface Window {
+    webkitURL?: any;
+}

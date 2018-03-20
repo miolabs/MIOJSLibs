@@ -1,7 +1,7 @@
 import { MUIWindow } from "./MUIWindow";
 import { MIOCoreGetLanguages } from "../MIOCore";
 import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType } from "../MIOCorePlatforms";
-import { MIOURLRequest, MIOURL, MIOURLConnection, _MIOLocalizedStrings } from "../MIOFoundation";
+import { MIOURLRequest, MIOURL, MIOURLConnection, setMIOLocalizedStrings } from "../MIOFoundation";
 import { MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCorePlatforms/Web/MIOCoreEvents";
 
 /**
@@ -74,7 +74,7 @@ export class MUIWebApplication {
         let con = new MIOURLConnection();
         con.initWithRequestBlock(request, this, function(code, data){
             if (code == 200) {
-                _MIOLocalizedStrings = data;
+                setMIOLocalizedStrings(data);
             }
             this._run();
         });        
@@ -119,7 +119,7 @@ export class MUIWebApplication {
 
             if (data != null) {
                 var json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-                _MIOLocalizedStrings = json;
+                setMIOLocalizedStrings(json);
             }
 
             fn.call(this);
