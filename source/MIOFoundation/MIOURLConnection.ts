@@ -78,7 +78,7 @@ export class MIOURLConnection
                                     var a = document.createElement("a");
                                     // safari doesn't support this yet
                                     if (typeof a.download === 'undefined') {
-                                        window.location = downloadUrl;
+                                        window.location.href = downloadUrl; // TODO: maybe location.href
                                     } else {
                                         a.href = downloadUrl;
                                         a.download = filename;
@@ -86,7 +86,7 @@ export class MIOURLConnection
                                         a.click();
                                     }
                                 } else {
-                                    window.location = downloadUrl;
+                                    window.location.href = downloadUrl; // TODO: maybe location.href 
                                 }
 
                                 setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup

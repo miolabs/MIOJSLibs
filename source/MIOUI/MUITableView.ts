@@ -228,7 +228,7 @@ export class MUITableView extends MUIScrollView {
             // if (bg != null) {
             //     cell.layer.style.background = bg;
             // }
-            cell.initWithLayer(newLayer);
+            cell.initWithLayer(newLayer, this);
             //cell._addLayerToDOM();
             cell.awakeFromHTML();
         }

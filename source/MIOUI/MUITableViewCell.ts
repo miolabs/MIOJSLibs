@@ -58,10 +58,10 @@ export class MUITableViewCell extends MUIView {
     editingAccessoryType = MUITableViewCellAccessoryType.None;
     editingAccesoryView: MUIView = null;
 
-    private _target = null;
-    private _onClickFn = null;
-    private _onDblClickFn = null;
-    private _onAccessoryClickFn = null;
+    _target = null;
+    _onClickFn = null;
+    _onDblClickFn = null;
+    _onAccessoryClickFn = null;
     private _row = 0;
     private _section = 0;
 
@@ -85,7 +85,7 @@ export class MUITableViewCell extends MUIView {
         this._setupLayer();
     }
 
-    initWithLayer(layer, owner, options) {
+    initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
         this._setupLayer();
