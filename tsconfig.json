@@ -13,7 +13,8 @@
       "./types/"
     ],
     "types": [
-      "chart.js"
+      "chart.js",
+      "miojs"
     ]
   },
   "include": [

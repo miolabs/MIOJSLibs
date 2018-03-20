@@ -8,12 +8,11 @@ export * from './MIOObject'
 export * from './MIONull'
 export * from './MIOError'
 
-export * from './MIOString'
+export * from './MIOLocalizeString'
 export * from './MIODecimalNumber'
 export * from './MIODate'
 export * from './MIOUUID'
 export * from './MIOPredicate'
-export * from './MIOArray'
 export * from './MIOSet'
 export * from './MIOIndexPath'
 
