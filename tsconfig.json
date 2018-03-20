@@ -8,7 +8,13 @@
     "noImplicitThis": false,        /* Raise error on 'this' expressions with an implied 'any' type. */
     "removeComments": true,
     "noImplicitAny": false,
-    "types": []
+    "typeRoots": [
+      "./node_modules/@types/",
+      "./types/"
+    ],
+    "types": [
+      "chart.js"
+    ]
   },
   "include": [
     "source"
