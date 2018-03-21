@@ -1,14 +1,10 @@
-import { MIOLog } from "../../../../MIOFoundation/MIOLog";
-// import { MIOURLRequest } from "../../../../MIOFoundation/MIOURLRequest";
-// import { MIOURLConnection } from "../../../../MIOFoundation/MIOURLConnection";
-// import { MIOURL } from "../../../../MIOFoundation/MIOURL";
-import { MIOObject } from "../../../../MIOFoundation/MIOObject";
-MIOLog("Hello world")
-// const asd = new MIOObject()
-// asd.init()
-var ww:Worker = (self as any)
-var _languageStrings = null;
+import { MIOURLRequest } from "../../../MIOFoundation/MIOURLRequest";
+import { MIOURLConnection } from "../../../MIOFoundation/MIOURLConnection";
+import { MIOURL } from "../../../MIOFoundation/MIOURL";
+import { MIOObject } from "../../../MIOFoundation/MIOObject";
 
+var ww = (self as DedicatedWorkerGlobalScope)
+var _languageStrings = null;
 ww.addEventListener('message', function(e) {
 
     var item = e.data;

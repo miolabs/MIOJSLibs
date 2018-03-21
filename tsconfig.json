@@ -23,6 +23,6 @@
   "exclude": [
     "node_modules",
     "build",
-    "source/MIOCorePlatforms/Web/WebWorkers"
+    "source/MIOCorePlatform/WebWorkerClasses"
   ]
 }

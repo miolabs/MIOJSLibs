@@ -43,6 +43,7 @@ export class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidReceiveText(instance, this.responseText);
                 else if (instance.blockFN != null) {
+                    /// #if TARGET !== 'webworker'
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type').split(';')[0];
                     if( type != 'application/json' && type != 'text/html') {
                         //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
@@ -102,6 +103,7 @@ export class MIOURLConnection
                     }
                     else
                         instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
+                /// #endif
                 }
             }
             else
