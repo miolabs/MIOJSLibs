@@ -2,7 +2,6 @@ import {
     MIOCoreStringAppendPathComponent,
     MIOCoreStringDeletingLastPathComponent
 } from '../../MIOCore'
-import { Bundle_WebWorker } from './WebWorkers';
 
 export class MIOCoreBundle
 {
@@ -18,7 +17,7 @@ export class MIOCoreBundle
     {
         if (this._layoutWorker == null)
         {
-            this._layoutWorker = new Bundle_WebWorker();
+            this._layoutWorker = new Worker('ww/Bundle_WebWorker.js');
             // TODO: Set language so we can translate every html file in backgorund
             //this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : _MIOLocalizedStrings});
             

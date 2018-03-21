@@ -11,10 +11,11 @@
     "chart.js": "^2.7.2"
   },
   "devDependencies": {
+    "awesome-typescript-loader": "^4.0.1",
     "ifdef-loader": "^2.0.3",
     "ts-loader": "^4.1.0",
     "typescript": "^2.7.2",
-    "webpack": "^4.1.1",
+    "webpack": "^4.2.0",
     "webpack-cli": "^2.0.12",
     "worker-loader": "^1.1.1"
   },
