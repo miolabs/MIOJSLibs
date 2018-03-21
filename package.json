@@ -24,8 +24,10 @@
   "scripts": {
     "dev": "webpack -w --display-error-details --verbose",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webworkers": "./tools/build_project/webworkers.sh",
-    "types": "./tools/build_project/bundle_typing/dts-bundle.sh"
+    "build": "npm run build:libs && npm run build:webworkers && npm run build:typing",
+    "build:webworkers": "./tools/build_project/webworkers.sh",
+    "build:libs": "webpack && cp build/miojslibs.js* dist/js",
+    "build:typing": "./tools/build_project/bundle_typing/bundle_typing.sh"
   },
   "repository": {
     "type": "git",
