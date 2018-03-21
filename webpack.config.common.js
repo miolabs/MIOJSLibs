@@ -10,30 +10,30 @@ module.exports = {
   },
   module: {
     rules: [{
-        test: /\.tsx?$/,
-        use: ['ts-loader',
-        { 
-          loader: "ifdef-loader", 
+      test: /\.ts$/,
+      use: ['ts-loader',
+        {
+          loader: "ifdef-loader",
           options: {
             TARGET, // can be: ios, web, webapp(default)
             DEV,
             "ifdef-verbose": true, // show matches during build
-            "ifdef-triple-slash": true  // false: use double slash comment instead of default triple slash
-         } 
-        }],
-        exclude: /node_modules/
-      },
-      {
-        test: /\._WebWorker\.ts$/,
-        use: {
+            "ifdef-triple-slash": true // false: use double slash comment instead of default triple slash
+          }
+        }
+      ],
+      exclude: /node_modules|_WebWorker\.ts$/
+    }, {
+      test: /_WebWorker\.ts$/,
+      use: [{
           loader: 'worker-loader',
           options: {
             publicPath: '/build/',
-            filename: "[name].js"
+            name: "[name].js"
           }
-        }
-      }
-    ]
+        }, 'ts-loader'
+      ]
+    }]
   },
   resolve: {
     extensions: ['.ts', '.js']

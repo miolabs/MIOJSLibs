@@ -1,8 +1,12 @@
-
-// "the issue occurs because postMessage is not in the WorkerGlobalScope interface but --lib 'webworker' makes self of type WorkerGlobalScope"
-// Source: https://github.com/Microsoft/TypeScript/issues/12657#issuecomment-365633337
-const ww = (self)
-
+import { MIOLog } from "../../../../MIOFoundation/MIOLog";
+// import { MIOURLRequest } from "../../../../MIOFoundation/MIOURLRequest";
+// import { MIOURLConnection } from "../../../../MIOFoundation/MIOURLConnection";
+// import { MIOURL } from "../../../../MIOFoundation/MIOURL";
+import { MIOObject } from "../../../../MIOFoundation/MIOObject";
+MIOLog("Hello world")
+// const asd = new MIOObject()
+// asd.init()
+var ww:Worker = (self as any)
 var _languageStrings = null;
 
 ww.addEventListener('message', function(e) {
