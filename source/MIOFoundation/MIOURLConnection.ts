@@ -32,7 +32,7 @@ export class MIOURLConnection
     {
         this.xmlHttpRequest = new XMLHttpRequest();
        // this.xmlHttpRequest.responseType = "arraybuffer";
-       
+
 
         var instance = this;
         this.xmlHttpRequest.onload = function(){
@@ -43,17 +43,16 @@ export class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidReceiveText(instance, this.responseText);
                 else if (instance.blockFN != null) {
-                    /// #if TARGET !== 'webworker'
                     var type = instance.xmlHttpRequest.getResponseHeader('Content-Type').split(';')[0];
                     if( type != 'application/json' && type != 'text/html') {
                         //instance.xmlHttpRequest.overrideMimeType('text/plain; charset=x-user-defined');
                         var filename;
                         if(type == 'application/pdf')
-                            filename = 'document.pdf';
+                        filename = 'document.pdf';
                         else if(type == 'application/csv')
-                            filename = 'document.csv';    
+                        filename = 'document.csv';
                         else
-                            filename = "manager_document.xls";
+                        filename = "manager_document.xls";
 
                         var disposition = instance.xmlHttpRequest.getResponseHeader('Content-Disposition');
                         if (disposition && disposition.indexOf('attachment') !== -1) {
@@ -62,9 +61,10 @@ export class MIOURLConnection
                             if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
                         }
 
-                        var data = new Uint8Array(this.response);                        
+                        var data = new Uint8Array(this.response);
 
                         if (instance.request.download == true) {
+                            /// #if TARGET !== 'webworker'
 
                             var blob = new Blob([data] , { type: type});
                             if (typeof window.navigator.msSaveBlob !== 'undefined') {
@@ -87,23 +87,23 @@ export class MIOURLConnection
                                         a.click();
                                     }
                                 } else {
-                                    window.location.href = downloadUrl; // TODO: maybe location.href 
+                                    window.location.href = downloadUrl; // TODO: maybe location.href
                                 }
 
                                 setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
-                                instance.blockFN.call(instance.blockTarget, this.status, null, null);                                
+                                instance.blockFN.call(instance.blockTarget, this.status, null, null);
                             }
+                            /// #endif
                         }
                         else {
                             var arr = new Array();
                             for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
                             var bstr = arr.join("");
-                            instance.blockFN.call(instance.blockTarget, this.status, null, bstr);                                
-                        }                            
+                            instance.blockFN.call(instance.blockTarget, this.status, null, bstr);
+                        }
                     }
                     else
                         instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
-                /// #endif
                 }
             }
             else
@@ -129,8 +129,8 @@ export class MIOURLConnection
             this.xmlHttpRequest.responseType = "arraybuffer";
         if (this.request.httpMethod == "GET" || this.request.httpBody == null)
             this.xmlHttpRequest.send();
-        else             
+        else
             this.xmlHttpRequest.send(this.request.httpBody);
-        
+
     }
 }

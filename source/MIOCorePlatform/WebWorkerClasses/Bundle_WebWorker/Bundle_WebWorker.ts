@@ -30,7 +30,7 @@ function downloadHTML(url, layerID, path) {
     
     var conn = new MIOURLConnection();
     conn.initWithRequestBlock(MIOURLRequest.requestWithURL(MIOURL.urlWithString(url)), this, function(code, data){
-        this.parseHTML(url, data, layerID, path);
+        parseHTML(url, data, layerID, path);
     });
     
     // var instance = this;

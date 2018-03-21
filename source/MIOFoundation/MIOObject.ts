@@ -5,10 +5,11 @@
 import { MIOClassFromString } from '../MIOCorePlatform'
 export class MIOObject
 {
-    get className() {
-        let comp:any = this.constructor;
-        return comp.name;
-    }
+    // get className() {
+    //     let comp:any = this.constructor;
+    //     return comp.name;
+    // }
+    className = "MIOObject";
 
     keyPaths = {};
 
