@@ -6,7 +6,8 @@ function MIOCoreStringHasPreffix(str, preffix)
 
 function MIOCoreStringHasSuffix(str, suffix)
 {
-    return str.match(suffix+"$")==suffix;
+    let s = str.substr(str.length - suffix.length);
+    return s == suffix;
 }
 
 function MIOCoreStringAppendPathComponent(string:string, path):string
@@ -65,7 +66,7 @@ function MIOCoreStringStandardizingPath(string)
     if (index > 0)
         str = newArray[0];
 
-    for (var count = 1; count < index; count++)
+    for (let count = 1; count < index; count++)
     {
         str += "/" + newArray[count];
     }

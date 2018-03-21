@@ -87,15 +87,13 @@ class BundleFileParser {
     }
 
     parse(){
-        let parser = new MIOXMLParser();
+        let parser = new MIOCoreHTMLParser();
         parser.initWithString(this.text, this);
 
         parser.parse();
 
         return this.result;
-    }
-
-    private exceptionsTags = ["area", "base", "br", "col", "hr", "img", "input", "link", "meta", "param", "keygen", "source"];
+    }    
 
     // XML Parser delegate
     parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
@@ -113,15 +111,13 @@ class BundleFileParser {
 
         if (this.isCapturing == true) {            
             this.openTag(element, attributes);
-            if (this.exceptionsTags.containsObject(element.toLocaleLowerCase()) == false) {
-                this.elementCapturingCount++;
-            }
+            this.elementCapturingCount++;
         }
     }
 
     parserFoundCharacters(parser:MIOXMLParser, characters:string){
         if (this.isCapturing == true) {
-            this.result += characters;
+            this.result += " " + characters;
         }
     }
 
@@ -138,16 +134,15 @@ class BundleFileParser {
 
         if (this.isCapturing == true) {            
                 this.closeTag(element);                
-                if (this.exceptionsTags.containsObject(element.toLocaleLowerCase()) == false) {                
                 this.elementCapturingCount--;            
-            }
         }
 
         if (this.elementCapturingCount == 0) this.isCapturing = false;
     }
 
     parserDidEndDocument(parser:MIOXMLParser){
-        //console.log("datamodel.xml parser finished");
+        console.log("datamodel.xml parser finished");
+        console.log(this.result);
     }
 
     private openTag(element, attributes){

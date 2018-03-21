@@ -22,7 +22,6 @@ class MIOCoreBundle
 
                 var item = event.data;
                 
-
                 if (item["Type"] == "HTML"){
                     var result = item["Result"];
 
