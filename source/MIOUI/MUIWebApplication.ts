@@ -15,7 +15,6 @@ class MUIWebApplication {
     static sharedInstance(): MUIWebApplication {
 
         if (MUIWebApplication._sharedInstance == null) {
-
             MUIWebApplication._sharedInstance = new MUIWebApplication();
         }
 
@@ -54,30 +53,32 @@ class MUIWebApplication {
     private _keyWindow:MUIWindow = null;
     private _mainWindow = null;
 
-    run(){
-
-        // Setup language        
+    private setLanguage(lang, target, completion){
         var languages = MIOCoreGetLanguages();
-        if (languages == null){
-            this._run();
-            return;
-        }
-
-        var lang = MIOCoreGetBrowserLanguage();
-        var url = languages[lang];
-        if (url == null){
-            this._run();
-            return;
+        if (languages == null) {
+            completion.call(target);
         }
         
+        var url = languages[lang];
+        if (url == null){
+            completion.call(target);
+        }
+
         let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString(url));
         let con = new MIOURLConnection();
         con.initWithRequestBlock(request, this, function(code, data){
             if (code == 200) {
-                _MIOLocalizedStrings = data;
+                _MIOLocalizedStrings = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
             }
-            this._run();
+            completion.call(target);
         });        
+    }
+
+    run(){
+        var lang = MIOCoreGetBrowserLanguage();
+        this.setLanguage(lang, this, function(){
+            this._run();
+        });     
     }
 
     private _run() {        

@@ -97,16 +97,13 @@ class BundleFileParser {
 
     // XML Parser delegate
     parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
-
+        
         if (element.toLocaleLowerCase() == "div"){
             
             if (attributes["id"] == this.layerID) {
                 // Start capturing   
                 this.isCapturing = true;
             }
-        }
-        else if (element.toLocaleLowerCase() == "span") {
-            // Translate text if there is a localized key
         }
 
         if (this.isCapturing == true) {            
@@ -115,9 +112,17 @@ class BundleFileParser {
         }
     }
 
+    private currentString = null;
+    private currentStringLocalizedKey = null;
     parserFoundCharacters(parser:MIOXMLParser, characters:string){
         if (this.isCapturing == true) {
-            this.result += " " + characters;
+            if (this.currentString == null) {
+                this.currentString = characters;
+            }
+            else 
+                this.currentString += " " + characters;
+            
+            //this.result += " " + characters;
         }
     }
 
@@ -127,10 +132,7 @@ class BundleFileParser {
         }
     }
 
-    parserDidEndElement(parser:MIOXMLParser, element:string){
-
-        if (element.toLocaleLowerCase() == "span"){
-        }
+    parserDidEndElement(parser:MIOXMLParser, element:string){        
 
         if (this.isCapturing == true) {            
                 this.closeTag(element);                
@@ -138,6 +140,8 @@ class BundleFileParser {
         }
 
         if (this.elementCapturingCount == 0) this.isCapturing = false;
+
+        this.currentString = null;        
     }
 
     parserDidEndDocument(parser:MIOXMLParser){
@@ -146,6 +150,8 @@ class BundleFileParser {
     }
 
     private openTag(element, attributes){
+
+        this.translateCharacters();
 
         this.result += "<" + element;        
 
@@ -160,10 +166,27 @@ class BundleFileParser {
         }
 
         this.result += ">";
+
+        if (element == "span") {
+            this.currentStringLocalizedKey = attributes["localized-key"] || attributes["data-localized-key"];
+        }
     }
 
     private closeTag(element){
+        this.translateCharacters();
         this.result += "</" + element + ">";        
+    }
+
+    private translateCharacters(){
+        if (this.currentString != null) {
+            if (this.currentStringLocalizedKey == null) {
+                this.result += this.currentString;
+            }else {
+                this.result += MIOLocalizeString(this.currentStringLocalizedKey, this.currentString);
+            }
+        }
+        this.currentString = null;
+        this.currentStringLocalizedKey = null;        
     }
 
 }
