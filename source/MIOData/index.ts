@@ -18,3 +18,10 @@ export * from "./MIOIncrementalStore"
 
 export * from "./MIOFetchedResultsController"
 
+export * from './MIOIncrementalStoreNode'
+export * from './MIOManagedObjectID'
+export * from './MIOManagedObjectSet'
+export * from './MIOMergePolicy'
+export * from './MIOPersistentStoreRequest'
+export * from './MIOPropertyDescription'
+export * from './MIORelationshipDescription'

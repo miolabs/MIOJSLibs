@@ -40,3 +40,6 @@ export * from './MIOBundle'
 
 export * from './MIOLog'
 
+export * from './MIOLib'
+export * from './MIONumber'
+export * from './MIOSortDescriptor'

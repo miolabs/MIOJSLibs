@@ -13,7 +13,9 @@ export * from "./MUITextField"
 export * from "./MUITextArea"
 export * from "./MUIScrollView"
 export * from "./MUITableView"
+export * from "./MUITableViewCell"
 export * from "./MUICollectionView"
+export * from "./MUICollectionViewLayout"
 export * from "./MUIWebView"
 
 export * from "./MUIControl"
@@ -47,3 +49,10 @@ export * from "./MUIReportViewController"
 
 export * from "./MUIReportTableView"
 
+export * from './MIOUI_Core'
+export * from './MIOUI_CoreAnimation'
+export * from './MIOUI_CoreLayer'
+export * from './MUIActivityIndicator'
+export * from './MUIEdgeInsets'
+export * from './MUIViewController_PopoverPresentationController'
+export * from './MUIViewController_PresentationController'
