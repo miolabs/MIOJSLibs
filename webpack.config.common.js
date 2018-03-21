@@ -12,10 +12,9 @@ module.exports = {
     rules: [{
       test: /\.ts$/,
       use: [{
-        loader: 'awesome-typescript-loader',
-        options: {
-          // forceIsolatedModules: true
-        }
+        loader: 'ts-loader', 
+        // awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
+        options: {}
       },
       {
         loader: "ifdef-loader",
