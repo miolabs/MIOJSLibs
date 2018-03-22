@@ -45,7 +45,7 @@ export class MIOEntityDescription extends MIOObject {
         this._managedObjectClassName = entityName;
     }
 
-    get properties():Array<MIOPropertyDescription>{
+    get properties():MIOPropertyDescription[]{
         return this._properties;
     }
     

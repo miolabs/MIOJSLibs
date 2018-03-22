@@ -17,7 +17,7 @@ export class MIOISO8601DateFormatter extends MIODateFormatter {
         if (str == null) return null;
         let dateString;
         if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari)
-            dateString = str.split('-').join( "/");
+            dateString = str.split('-').join("/");
         else 
             dateString = str;
         var d = new Date(dateString);

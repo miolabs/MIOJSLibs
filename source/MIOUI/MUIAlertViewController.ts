@@ -175,7 +175,7 @@ export class MUIAlertViewController extends MUIViewController
         }
     }
 
-     get preferredContentSize()
+    get preferredContentSize()
     {
         return this._alertViewSize;
     }

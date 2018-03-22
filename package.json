@@ -28,7 +28,8 @@
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "build:libs": "webpack && cp build/miojslibs.js* dist/js",
     "build:typing": "./tools/build_project/bundle_typing/bundle_typing.sh",
-    "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py"
+    "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",
+    "lint": "tslint -p ."
   },
   "repository": {
     "type": "git",

@@ -17,7 +17,7 @@ export interface MUITableViewDataSource {
 
 export class MUITableViewSection extends MIOObject {
     header: MUIView = null;
-    title: String = null;
+    title: string = null;
 
     rows = 0;
     cells = [];
@@ -61,7 +61,7 @@ export class MUITableViewRow extends MIOObject {
 
 export class MUITableViewCellNode extends MIOObject {
 
-    identifier: String = null;
+    identifier: string = null;
     section: MUITableViewSection = null;
 }
 
@@ -492,7 +492,7 @@ export class MUITableView extends MUIScrollView {
         }
     }
 
-    private addRowsForNewVisibleRange(range: MIORange, scrollDown: Boolean) {
+    private addRowsForNewVisibleRange(range: MIORange, scrollDown: boolean) {
 
         var row: MUITableViewRow;
         var start;

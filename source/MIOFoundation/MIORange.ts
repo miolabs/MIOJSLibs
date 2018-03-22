@@ -9,15 +9,15 @@ export class MIORange
     }    
 }
 
-export function MIOMaxRange(range:MIORange):Number{
+export function MIOMaxRange(range:MIORange):number{
     return range.location + range.length;
  }
 
-export function MIOEqualRanges(range1:MIORange, range2:MIORange):Boolean {
+export function MIOEqualRanges(range1:MIORange, range2:MIORange):boolean {
     return (range1.location == range2.location && range1.length == range2.length);
  }
 
-export function MIOLocationInRange(location:Number, range:MIORange){
+export function MIOLocationInRange(location:number, range:MIORange){
     if (range == null) return false;
     return (location >= range.location && location < MIOMaxRange(range))? true : false;
  }

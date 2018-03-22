@@ -109,7 +109,7 @@ export class MUICollectionView extends MUIView
         item["layer"] = subLayer;
         var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null) item["size"] = size;
-        var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
+        var bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
         if (bg != null) item["bg"] = bg;
 
         this._cellPrototypes[cellIdentifier] = item;
@@ -125,7 +125,7 @@ export class MUICollectionView extends MUIView
         item["layer"] = subLayer;
         var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null) item["size"] = size;
-        var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
+        var bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
         if (bg != null) item["bg"] = bg;
 
         this._supplementaryViews[viewIdentifier] = item;

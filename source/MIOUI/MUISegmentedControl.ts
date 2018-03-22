@@ -18,7 +18,7 @@ export class MUISegmentedControl extends MUIControl
         // Check for segmented items
         var opts = {};
         var sp = layer.getAttribute("data-status-style-prefix");
-         if (sp != null) opts["status-style-prefix"] = sp;
+        if (sp != null) opts["status-style-prefix"] = sp;
 
         for (var index = 0; index < this.layer.childNodes.length; index++)
         {

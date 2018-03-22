@@ -1,6 +1,6 @@
 import { MIOObject } from "./MIOObject";
 
-export function MIOIndexPathEqual(indexPath1:MIOIndexPath, indexPath2:MIOIndexPath):Boolean {
+export function MIOIndexPathEqual(indexPath1:MIOIndexPath, indexPath2:MIOIndexPath):boolean {
 
     //TODO: CHECK REAL INDEX PATH
     if (indexPath1 == null || indexPath2 == null) return false;

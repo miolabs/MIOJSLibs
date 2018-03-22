@@ -58,7 +58,7 @@ export class MUIDatePickerController extends MUIViewController
         this.dismissViewController(true);
     }
 
-     public get preferredContentSize()
+    public get preferredContentSize()
     {
         return new MIOSize(320, 320);
     }

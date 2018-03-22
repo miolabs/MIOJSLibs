@@ -101,7 +101,7 @@ export function _MUIAnimationStart(layer, animationController, animationContext,
     {
         if (target != null && completion != null)
                 completion.call(target);        
-            return;
+        return;
     }
 
     var duration = animationController.transitionDuration(animationContext);

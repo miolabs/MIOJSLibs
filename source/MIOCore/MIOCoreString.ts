@@ -1,7 +1,7 @@
 
 export function MIOCoreStringHasPreffix(str, preffix)
 {
-    return str.substring( 0, preffix.length ) === preffix;
+    return str.substring(0, preffix.length) === preffix;
 }
 
 export function MIOCoreStringHasSuffix(str, suffix)

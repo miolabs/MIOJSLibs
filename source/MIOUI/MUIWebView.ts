@@ -39,7 +39,7 @@ export class MUIWebView extends MUIView
     }
 
     setHTML(html) {
-        var iframe = this._iframeLayer.contentWindow || ( this._iframeLayer.contentDocument.document || this._iframeLayer.contentDocument);
+        var iframe = this._iframeLayer.contentWindow || (this._iframeLayer.contentDocument.document || this._iframeLayer.contentDocument);
         
         iframe.document.open();
         iframe.document.write(html);

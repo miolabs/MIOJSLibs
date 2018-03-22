@@ -60,7 +60,7 @@ export class MIOFetchedResultsController extends MIOObject
                 let entityName = this.fetchRequest.entityName;                
                 
                 if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
-                    this.updateContent( ins_objs[entityName]?ins_objs[entityName]:[], 
+                    this.updateContent(ins_objs[entityName]?ins_objs[entityName]:[], 
                                         upd_objs[entityName]?upd_objs[entityName]:[], 
                                         del_objs[entityName]?del_objs[entityName]:[]);
             });

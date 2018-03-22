@@ -60,8 +60,8 @@ export class MUIButton extends MUIControl
                 this._titleStatusStyle = opts["status-style-prefix"] + "_title_status";
         }
 
-         var key = this.layer.getAttribute("data-title");
-         if (key != null)
+        var key = this.layer.getAttribute("data-title");
+        if (key != null)
              this.setTitle(MIOLocalizeString(key, key));
 
         // Check for img layer

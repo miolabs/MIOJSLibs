@@ -24,8 +24,8 @@ export class MUIControl extends MUIView
             this.layer.style.opacity = "0.10";
     }
 
-     setOnMouseOverAction(target, action)
-     {
+    setOnMouseOverAction(target, action)
+    {
          this.mouseOverTarget = target;
          this.mouseOverAction = action;
          var instance = this;
@@ -35,10 +35,10 @@ export class MUIControl extends MUIView
              if (instance.enabled)
                  instance.mouseOverAction.call(target);
          }
-     }
+    }
 
-     setOnMouseOutAction(target, action)
-     {
+    setOnMouseOutAction(target, action)
+    {
          this.mouseOutTarget = target;
          this.mouseOutAction = action;
          var instance = this;
@@ -48,6 +48,6 @@ export class MUIControl extends MUIView
              if (instance.enabled)
                  instance.mouseOutAction.call(target);
          }
-     }
+    }
 }
 
