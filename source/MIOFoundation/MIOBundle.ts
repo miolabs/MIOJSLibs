@@ -5,7 +5,7 @@ import { MIOObject } from "./MIOObject";
 import { MIOURL } from "./MIOURL";
 import { MIOURLRequest } from "./MIOURLRequest";
 import { MIOURLConnection } from "./MIOURLConnection";
-import { MIOXMLParser, MIOLocalizeString } from ".";
+import { MIOLocalizeString } from "./MIOLocalizeString";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -77,7 +77,7 @@ export class MIOBundle extends MIOObject
 
 }
 
-export class BundleFileParser {
+export class BundleFileParser implements MIOCoreHTMLParserDelegate {
 
     private text = null;
     private layerID = null;
@@ -100,8 +100,8 @@ export class BundleFileParser {
         return this.result;
     }    
 
-    // XML Parser delegate
-    parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
+    // HTML Parser delegate
+    parserDidStartElement(parser:MIOCoreHTMLParser, element:string, attributes){
         
         if (element.toLocaleLowerCase() == "div"){
             
@@ -119,7 +119,7 @@ export class BundleFileParser {
 
     private currentString = null;
     private currentStringLocalizedKey = null;
-    parserFoundCharacters(parser:MIOXMLParser, characters:string){
+    parserFoundCharacters(parser:MIOCoreHTMLParser, characters:string){
         if (this.isCapturing == true) {
             if (this.currentString == null) {
                 this.currentString = characters;
@@ -131,13 +131,13 @@ export class BundleFileParser {
         }
     }
 
-    parserFoundComment(parser:MIOXMLParser, comment:string) {
+    parserFoundComment(parser:MIOCoreHTMLParser, comment:string) {
         if (this.isCapturing == true) {
             this.result += "<!-- " + comment + "-->";
         }
     }
 
-    parserDidEndElement(parser:MIOXMLParser, element:string){        
+    parserDidEndElement(parser:MIOCoreHTMLParser, element:string){        
 
         if (this.isCapturing == true) {            
                 this.closeTag(element);                
@@ -149,7 +149,11 @@ export class BundleFileParser {
         this.currentString = null;        
     }
 
-    parserDidEndDocument(parser:MIOXMLParser){
+    parserDidStartDocument(parser:MIOCoreHTMLParser){
+        console.log("parser started");
+    }
+
+    parserDidEndDocument(parser:MIOCoreHTMLParser){
         console.log("datamodel.xml parser finished");
         console.log(this.result);
     }
