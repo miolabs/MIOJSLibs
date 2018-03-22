@@ -1,5 +1,8 @@
-import { MIOURL, MIOURLConnection, MIOURLRequest, MIOXMLParser } from "../../../MIOFoundation";
-import { MIOCoreLoadFileFromURL } from "../..";
+import { MIOURL} from "../../../MIOFoundation/MIOURL";
+import { MIOURLConnection } from "../../../MIOFoundation/MIOURLConnection"
+import { MIOURLRequest } from "../../../MIOFoundation/MIOURLRequest"
+import { MIOXMLParser } from "../../../MIOFoundation/MIOXMLParser"
+import { MIOCoreLoadFileFromURL } from "../../WebWorker/MIOCore_WebWorker";
 
 var ww = (self as DedicatedWorkerGlobalScope)
 var _languageStrings = null;
