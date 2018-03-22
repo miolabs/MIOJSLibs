@@ -24,8 +24,7 @@ export class MIOCoreBundle
             var instance = this;
             this._layoutWorker.onmessage = function (event) {
 
-                var item = event.data;
-                
+                let item = event.data;
 
                 if (item["Type"] == "HTML"){
                     var result = item["Result"];
@@ -56,7 +55,7 @@ export class MIOCoreBundle
         else
         {
             var url = MIOCoreStringAppendPathComponent(this.baseURL, path);
-            var item = {"Key" : path, "Path" : MIOCoreStringDeletingLastPathComponent(path), "URL": url, "LayerID": layerID, "Target" : target, "Completion" : completion};
+            let item = {"Key" : path, "Path" : MIOCoreStringDeletingLastPathComponent(path), "URL": url, "LayerID": layerID, "Target" : target, "Completion" : completion};
             this._layoutQueue.push(item);
 
             this.checkQueue();        
@@ -72,7 +71,7 @@ export class MIOCoreBundle
             return;
 
         this._isDownloadingResource = true;
-        var item = this._layoutQueue[0];
+        let item = this._layoutQueue[0];
 
         // Send only the information need
         console.log("Download resource: " + item["URL"]);
@@ -83,7 +82,7 @@ export class MIOCoreBundle
 
     private layerDidDownload(layer)
     {
-        var item = this._layoutQueue[0];
+        let item = this._layoutQueue[0];
 
         console.log("Downloaded resource: " + item["URL"]);
 
@@ -101,7 +100,7 @@ export class MIOCoreBundle
     {
         if (this._isDownloadingResource == true) return;
 
-        var item = this._layoutQueue[0];
+        let item = this._layoutQueue[0];
 
         this._layoutQueue.splice(0, 1);
 

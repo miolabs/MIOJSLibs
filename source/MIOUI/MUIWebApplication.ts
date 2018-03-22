@@ -175,7 +175,7 @@ export class MUIWebApplication {
     
         // Checking popup menus
         if (this._popUpMenu != null) {
-            var controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
+            let controlRect = this._popUpMenuControl.layer.getBoundingClientRect();
 
             if ((x > controlRect.left && x < controlRect.right)
                 && (y > controlRect.top && y < controlRect.bottom)) {

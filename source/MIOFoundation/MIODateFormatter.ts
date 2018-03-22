@@ -28,7 +28,7 @@ export class MIODateFormatter extends MIOFormatter {
 
     dateFromString(str:string):Date {
 
-        var result, value, dateString;
+        let result, value, dateString;
 
         if(!str || str.length <= 0) return null;
         
@@ -80,7 +80,7 @@ export class MIODateFormatter extends MIOFormatter {
 
         if (str.length == 0) return [true, str];
 
-        var result, newStr;
+        let result, newStr;
         [result, newStr] = this._parse(str);                
 
         return [result, newStr];
@@ -88,7 +88,7 @@ export class MIODateFormatter extends MIOFormatter {
 
     private _parse(str:string):[boolean, string, string]{
 
-        var result, newStr, value;
+        let result, newStr, value;
         var dateString = "";
 
         if (this.dateStyle != MIODateFormatterStyle.NoStyle) {
@@ -123,7 +123,7 @@ export class MIODateFormatter extends MIOFormatter {
         var yy = "";
 
         // Check dd-mm-yy or dd-mm-yyyy
-        for (var index = 0; index < str.length; index++) {
+        for (let index = 0; index < str.length; index++) {
             var ch = str[index];
 
             if (ch == "-" || ch == "." || ch == "/")
@@ -263,7 +263,7 @@ export class MIODateFormatter extends MIOFormatter {
             }
             else 
             {
-                var result, value;
+                let result, value;
                 
                 switch(step) {
 
