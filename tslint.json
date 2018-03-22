@@ -24,7 +24,7 @@
       false,
       "spaces"
     ],
-    "interface-over-type-literal": false,
+    "interface-over-type-literal": true,
     "label-position": false,
     "max-classes-per-file": false,
     "max-line-length": [
@@ -43,9 +43,9 @@
         ]
       }
     ],
-    "no-arg": false,
+    "no-arg": true,
     "no-bitwise": false,
-    "no-reference": false,
+    "no-reference": true,
     "no-console": [
       false,
       "debug",
@@ -55,28 +55,35 @@
       "trace"
     ],
     "no-consecutive-blank-lines": false,
-    "no-construct": false,
-    "no-debugger": false,
-    "no-duplicate-super": false,
+    "no-construct": true,
+    "no-debugger": true,
+    "no-duplicate-super": true,
+    "no-duplicate-switch-case": true,
+    "no-dynamic-delete": false, // TODO: this could be useful
     "no-empty": false,
-    "no-empty-interface": false,
-    "no-eval": false,
+    "no-empty-interface": true,
+    "no-eval": true,
+    "no-floating-promises": true,
     "no-inferrable-types": [
       false,
       "ignore-params"
     ],
-    "no-misused-new": false,
-    "no-non-null-assertion": false,
-    "no-shadowed-variable": false,
+    "no-invalid-template-strings": true,
+    "no-misused-new": true,
+    "no-non-null-assertion": true,
+    "no-parameter-reassignment": false, // This would be useful
+    "no-shadowed-variable": true,
     "no-string-literal": false,
-    "no-string-throw": false,
+    "no-string-throw": true,
     "no-switch-case-fall-through": false,
     "no-this-assignment": false,
     "no-trailing-whitespace": false,
-    "no-unnecessary-initializer": false,
-    "no-unused-expression": false,
-    "no-use-before-declare": false,
-    "no-var-keyword": false, //TODO: this would be useful
+    "no-unnecessary-initializer": true,
+    "no-unused-expression": true,
+    "no-unsafe-finally": true,
+    "no-magic-numbers": false,
+    "no-use-before-declare": true,
+    "no-var-keyword": false, //TODO: this could be useful
     "object-literal-key-quotes": false,
     "object-literal-shorthand": false,
     "object-literal-sort-keys": false,
@@ -98,16 +105,19 @@
       "single"
     ],
     "radix": false,
+    "restrict-plus-operands": false, // TODO: this could be useful
     "semicolon": [
       false,
       "always"
     ],
     "space-before-function-paren": false,
+    "switch-default": false, // TODO: this could be useful
     "trailing-comma": false,
     "triple-equals": [
       false,
       "allow-null-check"
     ],
+    "typedef": [false, "call-signature", "parameter", "member-variable-declaration"], //TODO: this could be useful
     "typedef-whitespace": [
       false,
       {
@@ -118,8 +128,15 @@
         "variable-declaration": "nospace"
       }
     ],
-    "unified-signatures": false,
+    "unified-signatures": true,
+    "use-isnan": true,
     "variable-name": false,
-    "whitespace": false
+    "whitespace": false,
+    "no-default-export": true,
+    "no-duplicate-imports": true,
+    "encoding": true,
+    "no-irregular-whitespace": true,
+    "prefer-switch": true,
+    "prefer-template": [false, "allow-single-concat"] //TODO: this would be useful
   }
 }
