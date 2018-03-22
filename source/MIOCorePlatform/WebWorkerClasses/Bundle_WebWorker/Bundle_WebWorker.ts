@@ -1,6 +1,5 @@
-import { MIOURLRequest } from "../../../MIOFoundation/MIOURLRequest";
-import { MIOURLConnection } from "../../../MIOFoundation/MIOURLConnection";
-import { MIOURL } from "../../../MIOFoundation/MIOURL";
+import { MIOURL, MIOURLConnection, MIOURLRequest, MIOXMLParser } from "../../../MIOFoundation";
+import { MIOCoreLoadFileFromURL } from "../..";
 
 var ww = (self as DedicatedWorkerGlobalScope)
 var _languageStrings = null;
@@ -27,56 +26,37 @@ ww.addEventListener('message', function(e) {
 
 function downloadHTML(url, layerID, path) {
     
-    var conn = new MIOURLConnection();
-    conn.initWithRequestBlock(MIOURLRequest.requestWithURL(MIOURL.urlWithString(url)), this, function(code, data){
+    MIOCoreLoadFileFromURL(url, function(code, data){
         parseHTML(url, data, layerID, path);
     });
-    
-    // var instance = this;
-
-    // var xhr = new XMLHttpRequest();
-    // xhr.onload = function(){
-
-    //     if(this.status == 200 && this.responseText != null)
-    //     {
-    //         // success!
-    //         instance.parseHTML.call(instance, url, this.responseText, layerID, path);
-    //     }
-    //     else
-    //     {
-    //         // something went wrong
-    //         console.log("BUNDLE_WORKER: Error downloading resource at " + url + " (Code: " + this.status + ")");
-    //         instance.parseHTML.call(instance);
-    //     }
-    // };
-
-    // console.log("BUNDLE_WORKER: Downloading resource at " + url);
-    // xhr.open("GET", url);
-    // xhr.send();
 }
 
 function parseHTML(url, data, layerID, path)
 {
     if (data == null) {
-        ww.postMessage({"Error" : "Couldn't download resource"});
+        ww.postMessage({"Error" : "Couldn't download resource: " + url});
     }
     else
     {
-        var result = MIOHTMLParser(data, layerID, path, function(css) {
+        // let parser = new BundleFileParser(data, layerID);
+        // let result = parser.parse();
 
-            // Found link
-            // var item = [];
-            // item["Type"] = "CSS";
-            // item["CSSURL"] = css["url"];
-            // item["BaseURL"] = url;
-            // item["Path"] = path;
-            // item["Media"] = css["media"];
-            // ww.postMessage(item);
-        });
+        // var result = MIOHTMLParser(data, layerID, path, function(css) {
+
+        //     // Found link
+        //     // var item = [];
+        //     // item["Type"] = "CSS";
+        //     // item["CSSURL"] = css["url"];
+        //     // item["BaseURL"] = url;
+        //     // item["Path"] = path;
+        //     // item["Media"] = css["media"];
+        //     // ww.postMessage(item);
+        // });
 
         var item = [];
         item["Type"] = "HTML";
-        item["Result"] = result;
+        //item["Result"] = result;
+        item["Result"] = data;
         item["LayerID"] = layerID;
         ww.postMessage(item);
     }
@@ -311,5 +291,84 @@ function FoundLink(link, callback)
         if (media != null) css["media"] = media;        
         callback(css);
         console.log("Send CSS: " + css);
+    }
+}
+
+class BundleFileParser 
+{
+    private text = null;
+    private layerID = null;
+
+    private result = "";
+    private isCapturing = false;
+    private elementCapturingCount = 0;
+
+    constructor(text, layerID) {
+        this.text = text;
+        this.layerID = layerID;
+    }
+
+    parse(){
+        let parser = new MIOXMLParser();
+        parser.initWithString(this.text, this);
+
+        parser.parse();
+
+        return this.result;
+    }
+
+    // XML Parser delegate
+    parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
+
+        if (element.toLocaleLowerCase() == "div"){
+            
+            if (attributes["id"] == this.layerID) {
+                // Start capturing   
+                this.isCapturing = true;
+            }
+        }
+        else if (element.toLocaleLowerCase() == "span") {
+            // Translate text if there is a localized key
+        }
+
+        if (this.isCapturing == true) {
+            this.elementCapturingCount++;
+            this.addTag(element, attributes);        
+        }
+    }
+
+    parserFoundString(parser:MIOXMLParser, text:string){
+        this.result += text;
+    }
+
+    parserDidEndElement(parser:MIOXMLParser, element:string){
+
+        if (element.toLocaleLowerCase() == "span"){
+        }
+
+        if (this.isCapturing == true) {
+            this.elementCapturingCount--;
+            this.closeTag(element);
+        }
+    }
+
+    parserDidEndDocument(parser:MIOXMLParser){
+        //console.log("datamodel.xml parser finished");
+    }
+
+    private addTag(element, attributes){
+
+        this.result += "<" + element;        
+
+        attributes.forEach((key) => {
+            let value = attributes[key];
+            this.result += " key" + "=" + value;
+        });
+
+        this.result += ">" + element;
+    }
+
+    private closeTag(element){
+        this.result += "</" + element + ">";        
     }
 }

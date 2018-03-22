@@ -1,10 +1,11 @@
 
 import { MIOCoreGetMainBundleURLString, MIOCoreBundle } from "../MIOCorePlatform";
-import { MIOCoreAppType, MIOCoreGetAppType } from "../MIOCore";
+import { MIOCoreAppType, MIOCoreGetAppType, MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../MIOCore";
 import { MIOObject } from "./MIOObject";
 import { MIOURL } from "./MIOURL";
 import { MIOURLRequest } from "./MIOURLRequest";
 import { MIOURLConnection } from "./MIOURLConnection";
+import { MIOXMLParser, MIOLocalizeString } from ".";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -49,8 +50,12 @@ export class MIOBundle extends MIOObject
 
             this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
                                 
+                let parser = new BundleFileParser(layerData, layerID);
+                let result = parser.parse();
+        
+
                 var domParser = new DOMParser();
-                var items = domParser.parseFromString(layerData, "text/html");
+                var items = domParser.parseFromString(result, "text/html");
                 var layer = items.getElementById(layerID);
 
                 if (target != null && completion != null)
@@ -69,5 +74,124 @@ export class MIOBundle extends MIOObject
         });
     }
 
+
+}
+
+export class BundleFileParser {
+
+    private text = null;
+    private layerID = null;
+
+    private result = "";
+    private isCapturing = false;
+    private elementCapturingCount = 0;
+
+    constructor(text, layerID) {
+        this.text = text;
+        this.layerID = layerID;
+    }
+
+    parse(){
+        let parser = new MIOCoreHTMLParser();
+        parser.initWithString(this.text, this);
+
+        parser.parse();
+
+        return this.result;
+    }    
+
+    // XML Parser delegate
+    parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
+        
+        if (element.toLocaleLowerCase() == "div"){
+            
+            if (attributes["id"] == this.layerID) {
+                // Start capturing   
+                this.isCapturing = true;
+            }
+        }
+
+        if (this.isCapturing == true) {            
+            this.openTag(element, attributes);
+            this.elementCapturingCount++;
+        }
+    }
+
+    private currentString = null;
+    private currentStringLocalizedKey = null;
+    parserFoundCharacters(parser:MIOXMLParser, characters:string){
+        if (this.isCapturing == true) {
+            if (this.currentString == null) {
+                this.currentString = characters;
+            }
+            else 
+                this.currentString += " " + characters;
+            
+            //this.result += " " + characters;
+        }
+    }
+
+    parserFoundComment(parser:MIOXMLParser, comment:string) {
+        if (this.isCapturing == true) {
+            this.result += "<!-- " + comment + "-->";
+        }
+    }
+
+    parserDidEndElement(parser:MIOXMLParser, element:string){        
+
+        if (this.isCapturing == true) {            
+                this.closeTag(element);                
+                this.elementCapturingCount--;            
+        }
+
+        if (this.elementCapturingCount == 0) this.isCapturing = false;
+
+        this.currentString = null;        
+    }
+
+    parserDidEndDocument(parser:MIOXMLParser){
+        console.log("datamodel.xml parser finished");
+        console.log(this.result);
+    }
+
+    private openTag(element, attributes){
+
+        this.translateCharacters();
+
+        this.result += "<" + element;        
+
+        for (let key in attributes){            
+            let value = attributes[key];
+            if (value != null) {
+                this.result += " " + key + "='" + value + "'";
+            }
+            else {
+                this.result += " " + key;
+            }
+        }
+
+        this.result += ">";
+
+        if (element == "span") {
+            this.currentStringLocalizedKey = attributes["localized-key"] || attributes["data-localized-key"];
+        }
+    }
+
+    private closeTag(element){
+        this.translateCharacters();
+        this.result += "</" + element + ">";        
+    }
+
+    private translateCharacters(){
+        if (this.currentString != null) {
+            if (this.currentStringLocalizedKey == null) {
+                this.result += this.currentString;
+            }else {
+                this.result += MIOLocalizeString(this.currentStringLocalizedKey, this.currentString);
+            }
+        }
+        this.currentString = null;
+        this.currentStringLocalizedKey = null;        
+    }
 
 }

@@ -5,5 +5,6 @@ import './MIOArray'
 import './MIOString'
 
 export * from './MIOCore'
+export * from './MIOCoreHTMLParser'
 export * from './MIOCoreLexer'
 export * from './MIOCoreString'

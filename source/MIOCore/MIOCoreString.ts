@@ -6,20 +6,23 @@ export function MIOCoreStringHasPreffix(str, preffix)
 
 export function MIOCoreStringHasSuffix(str, suffix)
 {
-    return str.match(suffix+"$")==suffix;
+    let s = str.substr(str.length - suffix.length);
+    return s == suffix;
 }
 
 export function MIOCoreStringAppendPathComponent(string:string, path):string
 {
     let str = string;
-    
-    if (string.charAt(string.length - 2) != "/")
-        str += "/";
 
-    if (path.charAt(0) != "/")
-        str += path;
-    else
+    if (string.charAt(string.length - 1) == "/" && path.charAt(0) == "/"){
         str += path.substr(1);
+    }
+    else if (string.charAt(string.length - 1) != "/" && path.charAt(0) != "/"){
+        str += "/" + path;
+    }
+    else {
+        str += path;
+    }
 
     return str;
 }
