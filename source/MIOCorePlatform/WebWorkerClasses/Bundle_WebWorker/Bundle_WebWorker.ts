@@ -1,7 +1,6 @@
 import { MIOURLRequest } from "../../../MIOFoundation/MIOURLRequest";
 import { MIOURLConnection } from "../../../MIOFoundation/MIOURLConnection";
 import { MIOURL } from "../../../MIOFoundation/MIOURL";
-import { MIOObject } from "../../../MIOFoundation/MIOObject";
 
 var ww = (self as DedicatedWorkerGlobalScope)
 var _languageStrings = null;

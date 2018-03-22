@@ -48,5 +48,5 @@ module.exports = {
         extensions: ['.ts', '.js']
     },
     mode: 'development',
-    target: 'web'
+    target: 'webworker'
 };
