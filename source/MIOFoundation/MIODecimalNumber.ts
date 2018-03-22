@@ -49,7 +49,7 @@ export class MIODecimalNumber extends MIONumber
     }
 
     initWithDecimal(value){
-        super.init;
+        super.init();
         if (isNaN(value) || value == null) {
             this.storeValue = new Decimal(0);
         }
