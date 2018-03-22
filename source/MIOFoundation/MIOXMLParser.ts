@@ -207,7 +207,7 @@ export class MIOXMLParser extends MIOObject
      
         //console.log("XML open tag");
 
-        var token, value;
+        let token;
         [token, value] = this.nextToken();
 
         switch (token){
@@ -237,7 +237,7 @@ export class MIOXMLParser extends MIOObject
         this.currentElement = value;
         this.attributes = {};
 
-        var token, value;
+        let token; // TODO: value variable was redefined here, might change the element in the list.
         [token, value] = this.nextToken();
 
         switch (token){
@@ -267,7 +267,7 @@ export class MIOXMLParser extends MIOObject
         this.attributes = {};
         this.currentElement = null;
 
-        var token, value;
+        let token;
         [token, value] = this.nextToken();
 
         switch (token){

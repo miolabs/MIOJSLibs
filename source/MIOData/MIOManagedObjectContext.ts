@@ -200,7 +200,7 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     private addObjectToTracking(objectTracking, object: MIOManagedObject) {
-        var array = objectTracking[object.entity.name];
+        let array = objectTracking[object.entity.name];
         if (array == null) {
             array = [];
             objectTracking[object.entity.name] = array;
@@ -209,7 +209,7 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     private removeObjectFromTracking(objectTracking, object: MIOManagedObject) {
-        var array = objectTracking[object.entity.name];
+        let array = objectTracking[object.entity.name];
         if (array == null) return;
         let index = array.indexOf(object);
         if (index > -1) array.splice(index, 1);
@@ -218,7 +218,7 @@ export class MIOManagedObjectContext extends MIOObject {
     removeAllObjectsForEntityName(entityName) {
         var objs = this.objectsByEntity[entityName];
         if (objs != null) {
-            for (var index = objs.length - 1; index >= 0; index--) {
+            for (let index = objs.length - 1; index >= 0; index--) {
                 var o = objs[index];
                 this.deleteObject(o);
             }
@@ -235,7 +235,7 @@ export class MIOManagedObjectContext extends MIOObject {
         let store: MIOPersistentStore = this.persistentStoreCoordinator.persistentStores[0];
         var objs = store._executeRequest(request, this);
 
-        for (var index = 0; index < objs.length; index++) {
+        for (let index = 0; index < objs.length; index++) {
             let o = objs[index];
             this._registerObject(o);
         }
@@ -271,12 +271,12 @@ export class MIOManagedObjectContext extends MIOObject {
 
         // Deleted objects
         var deletedObjectsByEntityName = {};
-        for (var index = 0; index < this.deletedObjects.count; index++) {
+        for (let index = 0; index < this.deletedObjects.count; index++) {
             let delObj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
 
             // Track object for save notification
             let entityName = delObj.entity.name;
-            var array = deletedObjectsByEntityName[entityName];
+            let array = deletedObjectsByEntityName[entityName];
             if (array == null) {
                 array = [];
                 deletedObjectsByEntityName[entityName] = array;
@@ -286,14 +286,14 @@ export class MIOManagedObjectContext extends MIOObject {
 
         // Inserted objects
         var insertedObjectsByEntityName = {};
-        for (var index = 0; index < this.insertedObjects.count; index++) {
+        for (let index = 0; index < this.insertedObjects.count; index++) {
             let insObj: MIOManagedObject = this.insertedObjects.objectAtIndex(index);
 
             this._obtainPermanentIDForObject(insObj);
 
             // Track object for save notification
             let entityName = insObj.entity.name;
-            var array = insertedObjectsByEntityName[entityName];
+            let array = insertedObjectsByEntityName[entityName];
             if (array == null) {
                 array = [];
                 insertedObjectsByEntityName[entityName] = array;
@@ -303,12 +303,12 @@ export class MIOManagedObjectContext extends MIOObject {
 
         // Updated objects
         var updatedObjectsByEntityName = {};
-        for (var index = 0; index < this.updatedObjects.count; index++) {
+        for (let index = 0; index < this.updatedObjects.count; index++) {
             let updObj: MIOManagedObject = this.updatedObjects.objectAtIndex(index);
 
             // Track object for save notification
             let entityName = updObj.entity.name;
-            var array = updatedObjectsByEntityName[entityName];
+            let array = updatedObjectsByEntityName[entityName];
             if (array == null) {
                 array = [];
                 updatedObjectsByEntityName[entityName] = array;
@@ -325,17 +325,17 @@ export class MIOManagedObjectContext extends MIOObject {
             store._executeRequest(saveRequest, this);
 
             //Clear values
-            for (var index = 0; index < this.insertedObjects.length; index++) {
+            for (let index = 0; index < this.insertedObjects.length; index++) {
                 let obj: MIOManagedObject = this.insertedObjects.objectAtIndex(index);
                 obj._didCommit();
             }
 
-            for (var index = 0; index < this.updatedObjects.length; index++) {
+            for (let index = 0; index < this.updatedObjects.length; index++) {
                 let obj: MIOManagedObject = this.updatedObjects.objectAtIndex(index);
                 obj._didCommit();
             }
 
-            for (var index = 0; index < this.deletedObjects.length; index++) {
+            for (let index = 0; index < this.deletedObjects.length; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
                 this._unregisterObject(obj);
             }
@@ -366,17 +366,17 @@ export class MIOManagedObjectContext extends MIOObject {
         let deletedObjects = notification.userInfo[MIODeletedObjectsKey];
 
         // Inserted objects        
-        for (var entityName in insertedObjects) {
+        for (let entityName in insertedObjects) {
             var ins_objs = insertedObjects[entityName];
 
             // save changes and add to context
-            var array = this.insertedObjects[entityName];
+            let array = this.insertedObjects[entityName];
             if (array == null) {
                 array = [];
                 this.insertedObjects[entityName] = array;
             }
 
-            for (var i = 0; i < ins_objs.length; i++) {
+            for (let i = 0; i < ins_objs.length; i++) {
                 let o = ins_objs[i];
                 let index = array.indexOf(o);
                 if (index == -1)
@@ -385,16 +385,16 @@ export class MIOManagedObjectContext extends MIOObject {
         }
 
         // Update objects
-        for (var entityName in updateObjects) {
+        for (let entityName in updateObjects) {
             var upd_objs = updateObjects[entityName];
 
-            var array = this.updatedObjects[entityName];
+            let array = this.updatedObjects[entityName];
             if (array == null) {
                 array = [];
                 this.updatedObjects[entityName] = array;
             }
 
-            for (var i = 0; i < upd_objs.length; i++) {
+            for (let i = 0; i < upd_objs.length; i++) {
                 let o = upd_objs[i];
                 let index = array.indexOf(o);
                 if (index == -1)
@@ -403,16 +403,16 @@ export class MIOManagedObjectContext extends MIOObject {
         }
 
         // Delete objects
-        for (var entityName in deletedObjects) {
+        for (let entityName in deletedObjects) {
             var del_objs = deletedObjects[entityName];
 
-            var array = this.deletedObjects[entityName];
+            let array = this.deletedObjects[entityName];
             if (array == null) {
                 array = [];
                 this.deletedObjects[entityName] = array;
             }
 
-            for (var i = 0; i < del_objs.length; i++) {
+            for (let i = 0; i < del_objs.length; i++) {
                 let o = del_objs[i];
                 let index = array.indexOf(o);
                 if (index == -1)

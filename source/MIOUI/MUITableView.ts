@@ -520,7 +520,7 @@ export class MUITableView extends MUIScrollView {
             row = this.rows[start];
             posY = row.view.getY();
 
-            for (var index = start; index < end; index++) {
+            for (let index = start; index < end; index++) {
 
                 row = this.rows[index];
                 if (MIOLocationInRange(index, this.visibleRange) == true) {
@@ -539,7 +539,7 @@ export class MUITableView extends MUIScrollView {
         }
         else {
 
-            for (var index = end; index >= start; index--) {
+            for (let index = end; index >= start; index--) {
 
                 if (MIOLocationInRange(index, this.visibleRange) == false) {
 

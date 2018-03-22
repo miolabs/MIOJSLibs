@@ -291,7 +291,7 @@ export class MUIViewController extends MIOObject
 
     presentViewController(vc:MUIViewController, animate:boolean)
     {           
-        var pc:MUIPresentationController = vc.presentationController;
+        let pc:MUIPresentationController = vc.presentationController;
         if (pc == null) {
             pc = new MUIPresentationController();
             pc.init();
@@ -341,7 +341,7 @@ export class MUIViewController extends MIOObject
 
     dismissViewController(animate)
     {
-        var pc = this.presentationController;
+        let pc = this.presentationController;
         var toVC = pc.presentingViewController;
         var fromVC = pc.presentedViewController;
         var fromView = pc.presentedView;
@@ -351,14 +351,14 @@ export class MUIViewController extends MIOObject
             if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
             {
                 toVC.removeChildViewController(fromVC);
-                var pc = fromVC.presentationController;
+                let pc = fromVC.presentationController;
                 var view = pc.presentedView;
                 view.removeFromSuperview();
             }
             else
             {
                 // It's a window instead of a view
-                var pc = fromVC.presentationController;
+                let pc = fromVC.presentationController;
                 var w:MUIWindow = pc.window;
                 w.setHidden(true);
             }

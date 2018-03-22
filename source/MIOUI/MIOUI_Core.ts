@@ -22,10 +22,10 @@ export function MUIOutletQuery(owner, layerID)
 export function MUIOutlet(owner, elementID, className?, options?)
 {
     //var layer = document.getElementById(elementID);
-    var c = MUIOutletQuery(owner, elementID);
-    if (c != null) return c;
+    let query = MUIOutletQuery(owner, elementID);
+    if (query != null) return query;
 
-    var layer = null;
+    let layer = null;
 
     if (owner instanceof MUIView)
         layer = MUILayerSearchElementByID(owner.layer, elementID);
@@ -41,26 +41,26 @@ export function MUIOutlet(owner, elementID, className?, options?)
     if (className == null)
         className = "MUIView";
 
-    var c = MIOClassFromString(className);
-    c.initWithLayer(layer, owner, options);
+    let classInstance = MIOClassFromString(className);
+    classInstance.initWithLayer(layer, owner, options);
     // Track outlets inside view controller (owner)
-    MUIOutletRegister(owner, elementID, c);
+    MUIOutletRegister(owner, elementID, classInstance);
 
     if (owner instanceof MUIView)
-        owner._linkViewToSubview(c);
+        owner._linkViewToSubview(classInstance);
     else if (owner instanceof MUIViewController){
 
-        if (c instanceof MUIView)
-            owner.view._linkViewToSubview(c);
-        else if (c instanceof MUIViewController)
-            owner.addChildViewController(c);
+        if (classInstance instanceof MUIView)
+            owner.view._linkViewToSubview(classInstance);
+        else if (classInstance instanceof MUIViewController)
+            owner.addChildViewController(classInstance);
         else throw ("MUIOutlet: Wrong type");        
     }
 
-    if (c instanceof MUIView)
-        c.awakeFromHTML();
+    if (classInstance instanceof MUIView)
+        classInstance.awakeFromHTML();
 
-    return c;
+    return classInstance;
 }
 
 export function MUIWindowSize()

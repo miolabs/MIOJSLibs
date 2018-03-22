@@ -193,7 +193,7 @@ export class MIOFetchedResultsController extends MIOObject
         {
             let section = new MIOFetchSection();
             //section.objects = this.resultObjects;
-            for (var index = 0; index < this.resultObjects.length; index++){
+            for (let index = 0; index < this.resultObjects.length; index++){
                 let obj:MIOManagedObject = this.resultObjects[index];                
                 // Cache to for checking updates
                 let ref = obj.objectID._getReferenceObject();
@@ -207,7 +207,7 @@ export class MIOFetchedResultsController extends MIOObject
         {
             var currentSection = null;
             var currentSectionKeyPathValue = "";
-            for (var index = 0; index < this.resultObjects.length; index++)
+            for (let index = 0; index < this.resultObjects.length; index++)
             {
                 let obj:MIOManagedObject = this.resultObjects[index];                
                 // Cache to for checking updates

@@ -51,7 +51,7 @@ export class MUIReportTableViewRow extends MUIView {
     cells = [];
 
     removeFromSuperview() {
-        for (var index = 0; index < this.cells.length; index++) {
+        for (let index = 0; index < this.cells.length; index++) {
             let cell: MUIReportTableViewCell = this.cells[index];
             cell.removeFromSuperview();
         }
@@ -139,7 +139,7 @@ export class MUIReportTableView extends MUIView {
 
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
-            for (var index = 0; index < this.layer.childNodes.length; index++) {
+            for (let index = 0; index < this.layer.childNodes.length; index++) {
                 var subLayer = this.layer.childNodes[index];
 
                 if (subLayer.tagName != "DIV")
@@ -183,7 +183,7 @@ export class MUIReportTableView extends MUIView {
     }
 
     removeAllColumns() {
-        for (var index = 0; index < this.columns.length; index++) {
+        for (let index = 0; index < this.columns.length; index++) {
 
             let col: MUIReportTableViewColumn = this.columns[index];
             let header = col.columnHeaderView();
@@ -228,7 +228,7 @@ export class MUIReportTableView extends MUIView {
 
         // Remove all subviews
 
-        for (var index = 0; index < this.rows.length; index++) {
+        for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
             row.removeFromSuperview();
         }
@@ -238,7 +238,7 @@ export class MUIReportTableView extends MUIView {
         this.cells = [];
         this.selectedIndexPath = null;
 
-        for (var index = 0; index < this.columns.length; index++) {
+        for (let index = 0; index < this.columns.length; index++) {
 
             let col: MUIReportTableViewColumn = this.columns[index];
             let header = col.columnHeaderView();
@@ -252,7 +252,7 @@ export class MUIReportTableView extends MUIView {
         for (var rowIndex = 0; rowIndex < rows; rowIndex++) {
             let row = new MUIReportTableViewRow();
             row.init();
-            for (var colIndex = 0; colIndex < this.columns.length; colIndex++) {
+            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
                 let col = this.columns[colIndex];
                 let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
                 let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
@@ -280,7 +280,7 @@ export class MUIReportTableView extends MUIView {
         var y = 0;
         var w = this.getWidth();
 
-        for (var colIndex = 0; colIndex < this.columns.length; colIndex++) {
+        for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
             let col: MUIReportTableViewColumn = this.columns[colIndex];
             let header: MUIView = col.columnHeaderView();
             header.setX(x);
@@ -295,7 +295,7 @@ export class MUIReportTableView extends MUIView {
         var offsetY = 0;
         for (var rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
             let row: MUIReportTableViewRow = this.rows[rowIndex];
-            for (var colIndex = 0; colIndex < this.columns.length; colIndex++) {
+            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
                 let col = this.columns[colIndex];
                 let cell = row.cells[colIndex];
                 cell.setX(x);

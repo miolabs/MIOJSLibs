@@ -22,12 +22,12 @@ export class MIOObject
 
         // copy the array so we can iterating safetly
         var obs = [];
-        for(var count = 0; count < observers.length; count++) {
+        for(let count = 0; count < observers.length; count++) {
             let item = observers[count];
             obs.push(item);
         }        
 
-        for(var count = 0; count < obs.length; count++) {
+        for(let count = 0; count < obs.length; count++) {
             let item = obs[count];
             let o = item["OBS"];            
             if (typeof o.observeValueForKeyPath === "function") {

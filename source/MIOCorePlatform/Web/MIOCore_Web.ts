@@ -331,27 +331,27 @@ window.addEventListener('mouseup', function(e){
         var event = new MIOCoreEventMouse();
         event.initWithType(MIOCoreEventType.MouseUp, e);
 
-        var observers = _miocore_events_event_observers[MIOCoreEventType.MouseUp];
-        _MIOCoreEventSendToObservers(observers, event);
+        let observers_mouseup = _miocore_events_event_observers[MIOCoreEventType.MouseUp];
+        _MIOCoreEventSendToObservers(observers_mouseup, event);
 
         // Send click event
-        var observers = _miocore_events_event_observers[MIOCoreEventType.Click];
-        _MIOCoreEventSendToObservers(observers, event);
+        let observers_click = _miocore_events_event_observers[MIOCoreEventType.Click];
+        _MIOCoreEventSendToObservers(observers_click, event);
     },
 false);
 
 window.addEventListener('touchend', function(e){
     
         // Create event
-        var event = new MIOCoreEventTouch();
+        let event = new MIOCoreEventTouch();
         event.initWithType(MIOCoreEventType.TouchEnd, e);
 
-        var observers = _miocore_events_event_observers[MIOCoreEventType.TouchEnd];
-        _MIOCoreEventSendToObservers(observers, event);
+        let observers_touchend = _miocore_events_event_observers[MIOCoreEventType.TouchEnd];
+        _MIOCoreEventSendToObservers(observers_touchend, event);
 
         // Send click event
-        var observers = _miocore_events_event_observers[MIOCoreEventType.Click];
-        _MIOCoreEventSendToObservers(observers, event);
+        let observers_click = _miocore_events_event_observers[MIOCoreEventType.Click];
+        _MIOCoreEventSendToObservers(observers_click, event);
 
 }, false);
 

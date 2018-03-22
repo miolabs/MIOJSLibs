@@ -37,11 +37,11 @@ export function MUILayerSearchElementByID(layer, elementID)
 
 export function MUILayerGetFirstElementWithTag(layer, tag)
 {
-    var foundLayer = null;
+    let foundLayer = null;
 
     if (layer.childNodes.length > 0) {
         var index = 0;
-        var foundLayer = layer.childNodes[index];
+        foundLayer = layer.childNodes[index];
         while (foundLayer.tagName != tag) {
             index++;
             if (index >= layer.childNodes.length) {
@@ -285,12 +285,12 @@ export class MUIView extends MIOObject
     {
         if (a == null)
         {
-            var value = "rgb(" + r + ", " + g + ", " + b + ")";
+            let value = "rgb(" + r + ", " + g + ", " + b + ")";
             this.layer.style.backgroundColor = value;
         }
         else
         {
-            var value = "rgba(" + r + ", " + g + ", " + b + ", " + a +")";
+            let value = "rgba(" + r + ", " + g + ", " + b + ", " + a +")";
             this.layer.style.backgroundColor = value;
         }
     }

@@ -99,7 +99,7 @@ export class MUIPresentationController extends MIOObject
 
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsPhone() == true)
         {
-            //var ws = MUIWindowSize();
+            //let ws = MUIWindowSize();
             //view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
             view.layer.style.left = "0px";
             view.layer.style.top = "0px";
@@ -108,22 +108,22 @@ export class MUIPresentationController extends MIOObject
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
         {
-            var w = fromVC.view.getWidth();
-            var h = fromVC.view.getHeight();
+            let w = fromVC.view.getWidth();
+            let h = fromVC.view.getHeight();
 
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOCoreIsPhone() == false)
         {
             // Present like desktop sheet window
-            var ws = MUIWindowSize();
+            let ws = MUIWindowSize();
 
-            var size = toVC.preferredContentSize;
+            let size = toVC.preferredContentSize;
             if (size == null) size = new MIOSize(320, 200);
 
-            var w = toVC.preferredContentSize.width;
-            var h = toVC.preferredContentSize.height;
-            var x = (ws.width - w) / 2;
+            let w = toVC.preferredContentSize.width;
+            let h = toVC.preferredContentSize.height;
+            let x = (ws.width - w) / 2;
 
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
             this.window.setFrame(MIORect.rectWithValues(x, 0, w, h))
@@ -133,15 +133,15 @@ export class MUIPresentationController extends MIOObject
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
         {
             // Present at the center of the screen
-            var ws = MUIWindowSize();
+            let ws = MUIWindowSize();
 
-            var size = toVC.preferredContentSize;
+            let size = toVC.preferredContentSize;
             if (size == null) size = new MIOSize(320, 200);
 
-            var w = size.width;
-            var h = size.height;
-            var x = (ws.width - w) / 2;
-            var y = (ws.height - h) / 2;
+            let w = size.width;
+            let h = size.height;
+            let x = (ws.width - w) / 2;
+            let y = (ws.height - h) / 2;
 
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
             this.window.setFrame(MIORect.rectWithValues(x, y, w, h))
@@ -150,8 +150,8 @@ export class MUIPresentationController extends MIOObject
         }
         else
         {
-            var w = toVC.preferredContentSize.width;
-            var h = toVC.preferredContentSize.height;
+            let w = toVC.preferredContentSize.width;
+            let h = toVC.preferredContentSize.height;
 
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
         }        

@@ -31,7 +31,7 @@ export class MUIToolbar extends MUIView
         {
             for (var index = 0; index < this.layer.childNodes.length; index++)
             {
-                var layer = this.layer.childNodes[index];
+                let layer = this.layer.childNodes[index]; // TODO: variablename shadows parameter
                 if (layer.tagName == "DIV")
                 {
                     var lid = layer.getAttribute("id");

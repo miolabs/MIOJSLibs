@@ -22,7 +22,7 @@ export class MUIPageControl extends MUIControl {
             var itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV")
             {
-                var i = new MUIButton();
+                let i = new MUIButton();
                 i.initWithLayer(itemLayer, owner, options);
                 this._items.push(i);
             }
@@ -39,11 +39,11 @@ export class MUIPageControl extends MUIControl {
 
         if (this._currentPage > -1)
         {
-            var i = this._items[this._currentPage];
+            let i = this._items[this._currentPage];
             i.setSelected(false);
         }
 
-        var i = this._items[index];
+        let i = this._items[index];
         i.setSelected(true);
 
         this._currentPage = index;

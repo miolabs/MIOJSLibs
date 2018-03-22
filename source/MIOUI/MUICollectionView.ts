@@ -227,7 +227,7 @@ export class MUICollectionView extends MUIView
         if (this.dataSource == null) return;
 
         // Remove all subviews
-        for (var index = 0; index < this._sections.length; index++)
+        for (let index = 0; index < this._sections.length; index++)
         {
             var sectionView = this._sections[index];
             if (sectionView.header != null)
@@ -265,7 +265,7 @@ export class MUICollectionView extends MUIView
             }
 
             var items = this.dataSource.numberOfItemsInSection(this, sectionIndex);
-            for (var index = 0; index < items; index++) {
+            for (let index = 0; index < items; index++) {
 
                 let ip = MIOIndexPath.indexForRowInSection(index, sectionIndex);
                 let cell = this.dataSource.cellForItemAtIndexPath(this, ip);
@@ -379,7 +379,7 @@ export class MUICollectionView extends MUIView
             if (section.header != null)
             {
                 section.header.setY(y);
-                var offsetY = section.header.getHeight();
+                let offsetY = section.header.getHeight();
                 if (offsetY <= 0) offsetY = 23;
                 y += offsetY + this.collectionViewLayout.headerReferenceSize.height;
             }
@@ -413,7 +413,7 @@ export class MUICollectionView extends MUIView
             if (section.footer != null)
             {
                 section.footer.setY(y);
-                var offsetY = section.footer.getHeight();
+                let offsetY = section.footer.getHeight();
                 if (offsetY <= 0) offsetY = 23;
                 y += offsetY + this.collectionViewLayout.footerReferenceSize.height;
             }

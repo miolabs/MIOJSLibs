@@ -191,7 +191,7 @@ export class MUIWebApplication {
 
         if (this._keyWindow != null) 
         {        
-            var controlRect = this._keyWindow.layer.getBoundingClientRect();
+            let controlRect = this._keyWindow.layer.getBoundingClientRect();
 
             //console.log("x: " + controlRect.left + " mx: " + x);
 

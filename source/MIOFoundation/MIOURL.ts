@@ -128,7 +128,7 @@ export class MIOURL extends MIOObject
             }
             else if (ch == "&")
             {
-                var item = {"Key" : param, "Value":value};
+                let item = {"Key" : param, "Value":value};
                 this.params.push(item);
                 step = MIOURLTokenType.Param;
                 param = "";
@@ -165,7 +165,7 @@ export class MIOURL extends MIOObject
             }
             else if (step == MIOURLTokenType.Value)
             {
-                var item = {"Key" : param, "Value" : token};
+                let item = {"Key" : param, "Value" : token};
                 this.params.push(item);                
             }
         }

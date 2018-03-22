@@ -170,7 +170,7 @@ export class MUICalendarMonthView extends MUIView {
         this._header.addSubview(this._headerTitleLabel);
 
         var w = 100 / 7;
-        for (var index = 0; index < 7; index++){
+        for (let index = 0; index < 7; index++){
 
                 var dayLabel = new MUILabel();
                 dayLabel.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header_day_title"), this);
@@ -272,7 +272,7 @@ export class MUICalendarMonthView extends MUIView {
         var marginY = this.cellSpacingY / 2;
         var marginH = marginY * 2;
 
-        for (var index = 0; index < this._dayViews.length; index++) {
+        for (let index = 0; index < this._dayViews.length; index++) {
             var dv = this._dayViews[index];
 
             x = offsetX[MIODateGetDayFromDate(dv.date)];
@@ -327,7 +327,7 @@ export class MUICalendarView extends MUIScrollView {
 
                 // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
-            for (var index = 0; index < this.layer.childNodes.length; index++) {
+            for (let index = 0; index < this.layer.childNodes.length; index++) {
                 var subLayer = this.layer.childNodes[index];
 
                 if (subLayer.tagName != "DIV")
@@ -463,7 +463,7 @@ export class MUICalendarView extends MUIScrollView {
 
     reloadData() {
         // Remove all subviews
-        for (var index = 0; index < this._views.length; index++) {
+        for (let index = 0; index < this._views.length; index++) {
             var view = this._views[index];
             view.removeFromSuperview();
         }
@@ -471,7 +471,7 @@ export class MUICalendarView extends MUIScrollView {
         this._views = [];
 
         var currentYear = 2017; //this.today.getFullYear();
-        var currentMonth = 0; //this.today.getMonth() - 1;
+        let currentMonth = 0; //this.today.getMonth() - 1;
                         
         if (this.minDate != null) {
             
@@ -480,7 +480,7 @@ export class MUICalendarView extends MUIScrollView {
                 currentMonth += 1;
         }
 
-        for (var index = 0; index < 24; index++) {
+        for (let index = 0; index < 24; index++) {
             var mv = new MUICalendarMonthView();
             mv.initWithMonth(currentMonth, currentYear, this);
             mv.cellSpacingX = this.horizontalCellSpacing;
@@ -524,7 +524,7 @@ export class MUICalendarView extends MUIScrollView {
         var x = 0;
         var y = 0;
 
-        for (var index = 0; index < this._views.length; index++) {
+        for (let index = 0; index < this._views.length; index++) {
             var mv = this._views[index];
             mv.setFrame(MIORect.rectWithValues(x, y, w, h));
             mv.layer.style.top = "";
@@ -550,7 +550,7 @@ export class MUICalendarView extends MUIScrollView {
     private scrollLayout() {
         
         var scrollDown = false;
-        var offsetY = 0;
+        let offsetY = 0;
         if (this.contentOffset.y == this.lastContentOffsetY) return;
         if (this.contentOffset.y > this.lastContentOffsetY) {
             offsetY = this.contentOffset.y - this.lastContentOffsetY;
@@ -567,9 +567,9 @@ export class MUICalendarView extends MUIScrollView {
         if (scrollDown == false) {
                         
             // Going up
-            var firstMonth = this._views[0];
-            var currentMonth = this._views[1];
-            var lastMonth = this._views[2];
+            let firstMonth = this._views[0];
+            let currentMonth = this._views[1];
+            let lastMonth = this._views[2];
 
             if (this.minDate != null && firstMonth.firstDate <= this.minDate) return;
 
@@ -589,16 +589,16 @@ export class MUICalendarView extends MUIScrollView {
             lastMonth.layoutSubviews();
 
             if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari) {
-                var offsetY = this.getHeight() + this.contentOffset.y;
+                let offsetY = this.getHeight() + this.contentOffset.y;
                 this.scrollToPoint(0, offsetY);
             }
         }
         else {
             // Going down
 
-            var firstMonth = this._views[0];
-            var currentMonth = this._views[1];
-            var lastMonth = this._views[2];
+            let firstMonth = this._views[0];
+            let currentMonth = this._views[1];
+            let lastMonth = this._views[2];
 
             if (this.maxDate != null && lastMonth.lastDate > this.maxDate) return;
 
@@ -660,12 +660,12 @@ export class MUICalendarView extends MUIScrollView {
 
     scrollToDate(date: Date) {
         
-        var firstMonthView:MUICalendarMonthView = this._views[0];
+        let firstMonthView:MUICalendarMonthView = this._views[0];
 
         var firstMonth = firstMonthView.month;
         var firstYear = firstMonthView.year;
         
-        var currentMonth = date.getMonth();
+        let currentMonth = date.getMonth();
         var currentYear = date.getFullYear();
 
         var h = this.getHeight();

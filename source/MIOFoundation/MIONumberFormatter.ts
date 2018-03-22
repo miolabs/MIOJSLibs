@@ -82,13 +82,13 @@ export class MIONumberFormatter extends MIOFormatter {
                 offset--;
             var posArray = [];
             var intLen = intValue.length;
-            for (var index = offset; index > 0; index--){
+            for (let index = offset; index > 0; index--){
                 posArray.push(intLen - (index * 3));
             }
 
             var posArrayIndex = 0;
             var groupPos = posArray[0];
-            for (var index = 0; index < intLen; index++)
+            for (let index = 0; index < intLen; index++)
             {
                 if (index == groupPos) {
                     res += this.groupingSeparator;

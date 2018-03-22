@@ -11,7 +11,7 @@ export function MIOCoreStringHasSuffix(str, suffix)
 
 export function MIOCoreStringAppendPathComponent(string:string, path):string
 {
-    var str = string;
+    let str = string;
     
     if (string.charAt(string.length - 2) != "/")
         str += "/";
@@ -47,7 +47,7 @@ export function MIOCoreStringStandardizingPath(string)
 
     var newArray = []; 
     var index = 0;
-    for (var count = 0; count < array.length; count++)
+    for (let count = 0; count < array.length; count++)
     {
         var component:string = array[count];
         if (component.substr(0,2) == "..")
@@ -63,7 +63,7 @@ export function MIOCoreStringStandardizingPath(string)
     if (index > 0)
         str = newArray[0];
 
-    for (var count = 1; count < index; count++)
+    for (let count = 1; count < index; count++)
     {
         str += "/" + newArray[count];
     }
