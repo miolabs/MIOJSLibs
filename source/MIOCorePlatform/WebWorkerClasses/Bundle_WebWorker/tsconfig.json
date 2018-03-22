@@ -1,18 +1,6 @@
 {
-  "extends": "../../../../tsconfig.json",
-  "compilerOptions":{
-    "lib": [
-      "es6",
-      "scripthost",
-      "webworker"
-    ],
-    "declaration": false,
-    "typeRoots": ["../../../../types"],
-    "types": [
-      "miojs"
-    ],
-  },
+  "extends": "../tsconfig.common.json",
   "include": [
     "."
-  ],
+  ]
 }
