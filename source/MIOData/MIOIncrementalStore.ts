@@ -15,7 +15,7 @@ export class MIOIncrementalStore extends MIOPersistentStore {
 
     newObjectIDForEntity(entity: MIOEntityDescription, referenceObject: string): MIOManagedObjectID {
 
-        if (entity == null) throw("MIOIncrementalStore: Trying to create and object ID with NULL entity");
+        if (entity == null) throw new Error("MIOIncrementalStore: Trying to create and object ID with NULL entity");
 
         let objID = MIOManagedObjectID._objectIDWithEntity(entity, referenceObject);
         objID._setPersistentStore(this);

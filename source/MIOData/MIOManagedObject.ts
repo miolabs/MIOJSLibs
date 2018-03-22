@@ -15,7 +15,7 @@ import { MIOManagedObjectSet } from "./MIOManagedObjectSet";
 export class MIOManagedObject extends MIOObject {        
 
     init(){
-        throw("MIOManagedObject: Can't initialize an MIOManagedObject with -init");
+        throw new Error("MIOManagedObject: Can't initialize an MIOManagedObject with -init");
     }
 
     _initWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext) {
@@ -125,7 +125,7 @@ export class MIOManagedObject extends MIOObject {
                 this._storedValues = this.storeValuesFromIncrementalStore(this.objectID.persistentStore);
             }
             else{
-                throw("MIOManagedObject: Only Incremental store is supported.");
+                throw new Error("MIOManagedObject: Only Incremental store is supported.");
             }
             this._setIsFault(false);
         }
@@ -331,7 +331,7 @@ export class MIOManagedObject extends MIOObject {
                     this["_" + relationship.name] = MIOManagedObjectSet._setWithManagedObject(this, relationship);
                 }
                 else {
-                    if ((value instanceof MIOManagedObjectSet) == false) throw("MIOManagedObject: Trying to set a value in relation ships that is not a set.");
+                    if ((value instanceof MIOManagedObjectSet) == false) throw new Error("MIOManagedObject: Trying to set a value in relation ships that is not a set.");
                     this["_" + relationship.name] = value;
                 }
             }

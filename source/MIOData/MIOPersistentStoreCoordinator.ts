@@ -29,11 +29,11 @@ export class MIOPersistentStoreCoordinator extends MIOObject
     
         if (type == null) {
             //TODO: Check the configuration type from store metada
-            throw ("MIOPersistentStoreCoordinator: Unimplemeted method with type null");
+            throw new Error("MIOPersistentStoreCoordinator: Unimplemeted method with type null");
         }
 
         let className = MIOPersistentStoreCoordinator._storeClasses[type];
-        if (className == null) throw("MIOPersistentStoreCoordinator: Unkown persistent store type.");
+        if (className == null) throw new Error("MIOPersistentStoreCoordinator: Unkown persistent store type.");
         
         var ps:MIOPersistentStore = MIOClassFromString(className);
         ps.initWithPersistentStoreCoordinator(this, configuration, url, options);
@@ -70,7 +70,7 @@ export class MIOPersistentStoreCoordinator extends MIOObject
 
     _persistentStoreForObjectID(objectID:MIOManagedObjectID):MIOPersistentStore{
         
-        if (this._stores.length == 0) throw("MIOPersistentStoreCoordinator: There's no stores!");
+        if (this._stores.length == 0) throw new Error("MIOPersistentStoreCoordinator: There's no stores!");
         
         let entity = objectID.entity;
         var storeIdentifier = objectID._getStoreIdentifier();

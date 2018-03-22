@@ -83,7 +83,7 @@ export class MIOCoreLexer {
             }
             
             if (foundToken == false) {
-                throw("MIOCoreLexer: Token doesn't match any pattern. (" + this.input + ")");
+                throw new Error(`MIOCoreLexer: Token doesn't match any pattern. (${this.input})`);
             }
             
         } while (this.input.length > 0);

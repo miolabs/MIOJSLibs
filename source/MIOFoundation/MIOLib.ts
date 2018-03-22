@@ -49,7 +49,7 @@ export function MIOLibDownloadScript(url, target, completion)
             completion.call(target, xhr.responseText);
         }
         else {
-            throw "We couldn't download the mio libs";
+            throw new Error("We couldn't download the mio libs");
         }
     };
 

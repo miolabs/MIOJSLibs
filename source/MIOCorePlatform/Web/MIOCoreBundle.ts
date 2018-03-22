@@ -35,7 +35,7 @@ export class MIOCoreBundle
                     instance.layerDidDownload(result.layout);
                 }     
                 else if (item["Error"] != null) {
-                    throw("MIOBundle: " + item["Error"]);
+                    throw new Error(`MIOBundle: ${item["Error"]}`);
                 }           
             }
         }

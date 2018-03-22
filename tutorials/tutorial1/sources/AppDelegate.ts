@@ -56,7 +56,7 @@ class AppDelegate {
             return this._persistentStoreCoordinator;
     
         var mom = this.managedObjectModel;
-        if (!mom) throw ("No model to generate a store from app delegate"); //[self class], NSStringFromSelector(_cmd));
+        if (!mom) throw new Error("No model to generate a store from app delegate"); //[self class], NSStringFromSelector(_cmd));
     
         var coordinator = new MIOPersistentStoreCoordinator();
         coordinator.initWithManagedObjectModel(mom);

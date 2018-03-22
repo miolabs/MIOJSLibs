@@ -47,7 +47,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     loadMetadata(): MIOError {
 
-        if (this.url == null) throw "MWSPersistentStoreError.NoStoreURL";
+        if (this.url == null) throw new Error("MWSPersistentStoreError.NoStoreURL");
         this.storeURL = this.url;
 
         let uuid = MIOUUID.uuid();
@@ -68,7 +68,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             return [];
         }
         else {
-            throw "MWSPersistentStoreError.InvalidRequest";
+            throw new Error("MWSPersistentStoreError.InvalidRequest");
         }
     }    
 
@@ -76,7 +76,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let serverID = this.referenceObjectForObjectID(objectID);
         //let referenceID = objectID.entity.name + "://" + serverID;
-        if (serverID == null) throw ("MWSPersistentStore: Asking objectID without reference object");
+        if (serverID == null) throw new Error("MWSPersistentStore: Asking objectID without reference object");
 
         let node = this.nodeWithServerID(serverID, objectID.entity);
         if (node.version == 0){
@@ -91,7 +91,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let serverID = this.referenceObjectForObjectID(objectID);
         let referenceID = objectID.entity.name + "://" + serverID;
 
-        if (referenceID == null) throw ("MWSPersistentStore: Asking objectID without referenceID");
+        if (referenceID == null) throw new Error("MWSPersistentStore: Asking objectID without referenceID");
 
         let node:MIOIncrementalStoreNode = this.nodesByReferenceID[referenceID];
 
@@ -251,7 +251,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         this.checkRelationships(values, entity, context, relationshipsObjects);
 
         let serverID = this.delegate.serverIDForItem(this, values, entity.name);
-        if (serverID == null) throw("SERVER ID CAN NOT BE NULL");
+        if (serverID == null) throw new Error("SERVER ID CAN NOT BE NULL");
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);        
 

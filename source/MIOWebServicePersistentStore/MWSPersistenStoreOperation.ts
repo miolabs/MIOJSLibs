@@ -32,7 +32,7 @@ export class MWSPersistenStoreOperation extends MIOOperation {
     }
 
     start() {
-        if (this.uploading == true) throw("MWSPersistenStoreUploadOperation: Trying to start again on an executing operation");
+        if (this.uploading == true) throw new Error("MWSPersistenStoreUploadOperation: Trying to start again on an executing operation");
 
         this.setUploading(true);
 

@@ -424,7 +424,7 @@ export class MUICalendarView extends MUIScrollView {
             {
                 //instance creation here
                 var item = this._cellPrototypes[identifier];
-                if (item == null) throw ("Calendar day identifier doesn't exist.");
+                if (item == null) throw new Error("Calendar day identifier doesn't exist.");
                 
                 var className = item["class"];
                 dv = Object.create(window[className].prototype);

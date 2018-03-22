@@ -8,7 +8,7 @@ export class MIOOperationQueue extends MIOObject {
     addOperation(operation: MIOOperation) {
 
         if (operation.isFinished == true) {
-            throw ("MIOOperationQueue: Tying to add an operation already finished");
+            throw new Error("MIOOperationQueue: Tying to add an operation already finished");
         }
 
         this.willChangeValue("operationCount");

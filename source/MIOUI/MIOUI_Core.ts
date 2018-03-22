@@ -33,7 +33,7 @@ export function MUIOutlet(owner, elementID, className?, options?)
         layer = MUILayerSearchElementByID(owner.view.layer, elementID);
 
     if (layer == null)
-        throw ("DIV identifier specified is not valid (" + elementID + ")");
+        throw new Error(`DIV identifier specified is not valid (${elementID})`);
         
     if (className == null)
         className = layer.getAttribute("data-class");
@@ -54,7 +54,7 @@ export function MUIOutlet(owner, elementID, className?, options?)
             owner.view._linkViewToSubview(classInstance);
         else if (classInstance instanceof MUIViewController)
             owner.addChildViewController(classInstance);
-        else throw ("MUIOutlet: Wrong type");        
+        else throw new Error("MUIOutlet: Wrong type");        
     }
 
     if (classInstance instanceof MUIView)

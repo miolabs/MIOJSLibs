@@ -103,7 +103,7 @@ export class MIOObject
                     [key, offset] = this._keyFromKeypath(offset);
                 }
 
-                if (obj == null) throw ("ERROR: Registering observer to null object");
+                if (obj == null) throw new Error("ERROR: Registering observer to null object");
             }
         }
     }

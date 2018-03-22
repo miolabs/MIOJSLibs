@@ -48,7 +48,7 @@ export class MIOPersistentStore extends MIOObject
         this._type = this.metadata[MIOStoreTypeKey];
 
         if (this._identifier == null || this._type == null) {
-            throw ("MIOPersistentStore: Invalid metada information");
+            throw new Error("MIOPersistentStore: Invalid metada information");
         }
     }    
 

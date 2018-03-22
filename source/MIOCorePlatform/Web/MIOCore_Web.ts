@@ -210,7 +210,7 @@ export function MIOClassFromString(className)
         object.className = className;
     }
     catch (e){
-        throw 'Error, class (' + className + ') not found.';
+        throw new Error(`Error, class (${className}) not found.`);
     }
 
     return object;

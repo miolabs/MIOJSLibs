@@ -17,7 +17,7 @@ export class MIOManagedObjectSet extends MIOObject {
     private relationshipFault = true;
 
     init(){
-        throw("MIOManagedObjectSet: Can't initialize an MIOManagedObjectSet with -init")
+        throw new Error("MIOManagedObjectSet: Can't initialize an MIOManagedObjectSet with -init")
     }
 
     _initWithManagedObject(object:MIOManagedObject, relationship:MIORelationshipDescription){
@@ -96,7 +96,7 @@ export class MIOManagedObjectSet extends MIOObject {
     
     // Prevent KVO on special properties
     addObserver(obs, keypath:string, context?){
-        if (keypath == "count" || keypath == "length") throw "MIOSet: Can't observe count. It's not KVO Compilant"; 
+        if (keypath == "count" || keypath == "length") throw new Error("MIOSet: Can't observe count. It's not KVO Compilant"); 
         super.addObserver(obs, keypath, context);
     }
 

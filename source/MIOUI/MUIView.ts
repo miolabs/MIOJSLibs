@@ -143,14 +143,14 @@ export class MUIView extends MIOObject
 
     _linkViewToSubview(view)
     {
-        if ((view instanceof MUIView) == false) throw ("_linkViewToSubview: Trying to add an object that is not a view");
+        if ((view instanceof MUIView) == false) throw new Error("_linkViewToSubview: Trying to add an object that is not a view");
         
         this.subviews.push(view);
     }
 
     addSubview(view, index?)
     {
-        if ((view instanceof MUIView) == false) throw ("addSubview: Trying to add an object that is not a view");
+        if ((view instanceof MUIView) == false) throw new Error("addSubview: Trying to add an object that is not a view");
 
         view.setParent(this);
 
@@ -230,7 +230,7 @@ export class MUIView extends MIOObject
         for(var index = 0; index < this.subviews.length; index++)
         {
             var v = this.subviews[index];
-            if ((v instanceof MUIView) == false) throw ("layout: Trying to layout an object that is not a view");
+            if ((v instanceof MUIView) == false) throw new Error("layout: Trying to layout an object that is not a view");
             v.setNeedsDisplay();
         }
     }

@@ -70,7 +70,7 @@ export class MUIViewController extends MIOObject
 
     initWithResource(path)
     {
-        if (path == null) throw ("MIOViewController:initWithResource can't be null");
+        if (path == null) throw new Error("MIOViewController:initWithResource can't be null");
 
         super.init();        
 
@@ -301,7 +301,7 @@ export class MUIViewController extends MIOObject
         }
         else if (pc.isPresented == true)
         {
-            throw ("You try to present a view controller that is already presented"); 
+            throw new Error("You try to present a view controller that is already presented"); 
         }
 
         if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 

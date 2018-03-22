@@ -139,7 +139,7 @@ export class MIOPredicateGroup {
                 result = null;
             }
             else {
-                throw("MIOPredicate: Error. Predicate class type invalid. (" + o + ")");
+                throw new Error(`MIOPredicate: Error. Predicate class type invalid. (${o})`);
             }
 
             if (op != null && result != null) {
@@ -302,7 +302,7 @@ export class MIOPredicate extends MIOObject {
                     break;
 
                 default:
-                    throw("MIOPredicate: Error. Unexpected token. (" + token.value + ")");
+                    throw new Error(`MIOPredicate: Error. Unexpected token. (${token.value})`);
             }
 
             if (exit != true) {
@@ -324,7 +324,7 @@ export class MIOPredicate extends MIOObject {
                 break;
 
             default:
-                throw("MIOPredicate: Error. Unexpected identifier key. (" + token.value + ")");
+                throw new Error(`MIOPredicate: Error. Unexpected identifier key. (${token.value})`);
         }                    
     }
 
@@ -371,7 +371,7 @@ export class MIOPredicate extends MIOObject {
                 break;
 
             default:
-                throw("MIOPredicate: Error. Unexpected comparator. (" + token.value + ")");                                
+                throw new Error(`MIOPredicate: Error. Unexpected comparator. (${token.value})`);                                
         }
 
     }
@@ -413,7 +413,7 @@ export class MIOPredicate extends MIOObject {
                 break;
 
             default:
-                throw("MIOPredicate: Error. Unexpected comparator. (" + token.value + ")");
+                throw new Error(`MIOPredicate: Error. Unexpected comparator. (${token.value})`);
         }            
     }
 
@@ -435,7 +435,7 @@ export class MIOPredicate extends MIOObject {
                 break;
 
             default:
-                throw("MIOPredicate: Error. Cann't convert '" + value + "' to boolean");
+                throw new Error(`MIOPredicate: Error. Can't convert '${value}' to boolean`);
         }
 
         return bv;
@@ -454,7 +454,7 @@ export class MIOPredicate extends MIOObject {
                 break;
 
             default:
-                throw("MIOPredicate: Error. Cann't convert '" + value + "' to null");
+                throw new Error(`MIOPredicate: Error. Can't convert '${value}' to null`);
         }
 
         return nv;
