@@ -1,14 +1,14 @@
 
 interface MIOCoreHTMLParserDelegate {
-    parserDidStartElement(parser:MIOCoreHTMLParser, element, attributes);
-    parserDidEndElement(parser:MIOCoreHTMLParser, element);
+    parserDidStartElement?(parser:MIOCoreHTMLParser, element, attributes);
+    parserDidEndElement?(parser:MIOCoreHTMLParser, element);
 
-    parserFoundCharacters(parser:MIOCoreHTMLParser, characters:string);
+    parserFoundCharacters?(parser:MIOCoreHTMLParser, characters:string);
 
-    parserFoundComment(parser:MIOCoreHTMLParser, comment:string);
+    parserFoundComment?(parser:MIOCoreHTMLParser, comment:string);
 
-    parserDidStartDocument(parser:MIOCoreHTMLParser);
-    parserDidEndDocument(parser:MIOCoreHTMLParser);
+    parserDidStartDocument?(parser:MIOCoreHTMLParser);
+    parserDidEndDocument?(parser:MIOCoreHTMLParser);
 }
 
 enum MIOCoreHTMLParserTokenType {
@@ -184,7 +184,7 @@ class MIOCoreHTMLParser
         if (ch == "-") {
             let ch2 = this.nextChar();
             if (ch2 == "-") {
-                return "!--";
+                return "<!--";
             }
             else this.unexpectedToken();
         }
@@ -228,7 +228,7 @@ class MIOCoreHTMLParser
                 type = MIOCoreHTMLParserTokenType.InlineCloseTag;
                 break;
 
-            case "!--":
+            case "<!--":
                 type = MIOCoreHTMLParserTokenType.Commentary;                
                 break;
 
@@ -317,12 +317,6 @@ class MIOCoreHTMLParser
     private openElement(element){        
         let attributes = this.attributes();
         this.closeTag(element, attributes);
-    }
-
-    private element(){
-        let [type, value] = this.nextToken();        
-        if (type != MIOCoreHTMLParserTokenType.Identifier) this.unexpectedToken();            
-        return value;;        
     }
 
     private attributes(){        

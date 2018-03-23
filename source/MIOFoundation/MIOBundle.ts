@@ -35,7 +35,6 @@ class MIOBundle extends MIOObject
 
     loadHTMLNamed(path, layerID, target?, completion?)
     {            
-
         if (MIOCoreGetAppType() == MIOCoreAppType.Web)
         {
             if (this._webBundle == null){
@@ -45,12 +44,11 @@ class MIOBundle extends MIOObject
 
             this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
                                 
-                let parser = new BundleFileParser(layerData, layerID);
-                let result = parser.parse();
-        
+                // let parser = new BundleFileParser(layerData, layerID);
+                // let result = parser.parse();
 
                 var domParser = new DOMParser();
-                var items = domParser.parseFromString(result, "text/html");
+                var items = domParser.parseFromString(layerData, "text/html");
                 var layer = items.getElementById(layerID);
 
                 if (target != null && completion != null)
@@ -71,7 +69,7 @@ class MIOBundle extends MIOObject
 
 
 }
-
+/*
 class BundleFileParser {
 
     private text = null;
@@ -189,4 +187,4 @@ class BundleFileParser {
         this.currentStringLocalizedKey = null;        
     }
 
-}
+}*/

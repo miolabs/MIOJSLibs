@@ -2,8 +2,6 @@
  * Created by godshadow on 11/3/16.
  */
 
-
-
 /// <reference path="MUIViewController.ts" />
 
 /// <reference path="MUIWindow.ts" />
@@ -53,6 +51,7 @@ class MUIWebApplication {
     private _keyWindow:MUIWindow = null;
     private _mainWindow = null;
 
+    //TODO: Set language in the webworker also.
     private setLanguage(lang, target, completion){
         var languages = MIOCoreGetLanguages();
         if (languages == null) {

@@ -9,8 +9,6 @@ importScripts("../miofoundation/index.js");
 // Source: https://github.com/Microsoft/TypeScript/issues/12657#issuecomment-365633337
 const ww = (self as DedicatedWorkerGlobalScope)
 
-var _languageStrings = null;
-
 ww.addEventListener('message', function(e) {
 
     var item = e.data;
@@ -18,7 +16,7 @@ ww.addEventListener('message', function(e) {
     var cmd = item["CMD"];
 
     if (cmd == "SetLanguageStrings"){
-        _languageStrings = item["LanguageStrings"];
+        _MIOLocalizedStrings = item["LanguageStrings"];
     }
     else if (cmd == "DownloadHTML")
     {
@@ -46,8 +44,8 @@ function parseHTML(url, data, layerID, path)
     }
     else
     {
-        // let parser = new BundleFileParser(data, layerID);
-        // let result = parser.parse();
+        let parser = new BundleFileParser(data, layerID);
+        let result = parser.parse();
 
         // var result = MIOHTMLParser(data, layerID, path, function(css) {
 
@@ -63,14 +61,12 @@ function parseHTML(url, data, layerID, path)
 
         var item = [];
         item["Type"] = "HTML";
-        //item["Result"] = result;
-        item["Result"] = data;
+        item["Result"] = result;
+        //item["Result"] = data;
         item["LayerID"] = layerID;
         ww.postMessage(item);
     }
 }
-
-
 
 function MIOHTMLParser(string, layerID, relativePath, callback)
 {
@@ -303,8 +299,8 @@ function FoundLink(link, callback)
     }
 }
 
-class BundleFileParser 
-{
+class BundleFileParser {
+
     private text = null;
     private layerID = null;
 
@@ -313,22 +309,22 @@ class BundleFileParser
     private elementCapturingCount = 0;
 
     constructor(text, layerID) {
-        this.text;
+        this.text = text;
         this.layerID = layerID;
     }
 
     parse(){
-        let parser = new MIOXMLParser();
+        let parser = new MIOCoreHTMLParser();
         parser.initWithString(this.text, this);
 
         parser.parse();
 
         return this.result;
-    }
+    }    
 
     // XML Parser delegate
-    parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
-
+    parserDidStartElement(parser:MIOCoreHTMLParser, element:string, attributes){
+        
         if (element.toLocaleLowerCase() == "div"){
             
             if (attributes["id"] == this.layerID) {
@@ -336,49 +332,88 @@ class BundleFileParser
                 this.isCapturing = true;
             }
         }
-        else if (element.toLocaleLowerCase() == "span") {
-            // Translate text if there is a localized key
-        }
 
-        if (this.isCapturing == true) {
+        if (this.isCapturing == true) {            
+            this.openTag(element, attributes);
             this.elementCapturingCount++;
-            this.addTag(element, attributes);        
         }
     }
 
-    parserFoundString(parser:MIOXMLParser, text:string){
-        this.result += text;
-    }
-
-    parserDidEndElement(parser:MIOXMLParser, element:string){
-
-        if (element.toLocaleLowerCase() == "span"){
-        }
-
+    private currentString = null;
+    private currentStringLocalizedKey = null;
+    parserFoundCharacters(parser:MIOCoreHTMLParser, characters:string){
         if (this.isCapturing == true) {
-            this.elementCapturingCount--;
-            this.closeTag(element);
+            if (this.currentString == null) {
+                this.currentString = characters;
+            }
+            else 
+                this.currentString += " " + characters;
+            
+            //this.result += " " + characters;
         }
     }
 
-    parserDidEndDocument(parser:MIOXMLParser){
-        //console.log("datamodel.xml parser finished");
+    parserFoundComment(parser:MIOCoreHTMLParser, comment:string) {
+        if (this.isCapturing == true) {
+            this.result += "<!-- " + comment + "-->";
+        }
     }
 
-    private addTag(element, attributes){
+    parserDidEndElement(parser:MIOCoreHTMLParser, element:string){        
+
+        if (this.isCapturing == true) {            
+                this.closeTag(element);                
+                this.elementCapturingCount--;            
+        }
+
+        if (this.elementCapturingCount == 0) this.isCapturing = false;
+
+        this.currentString = null;        
+    }
+
+    parserDidEndDocument(parser:MIOCoreHTMLParser){
+        console.log("datamodel.xml parser finished");
+        console.log(this.result);
+    }
+
+    private openTag(element, attributes){
+
+        this.translateCharacters();
 
         this.result += "<" + element;        
 
-        attributes.forEach(key => {
+        for (let key in attributes){            
             let value = attributes[key];
-            this.result += " key" + "=" + value;
-        });
+            if (value != null) {
+                this.result += " " + key + "='" + value + "'";
+            }
+            else {
+                this.result += " " + key;
+            }
+        }
 
-        this.result += ">" + element;
+        this.result += ">";
+
+        if (element == "span") {
+            this.currentStringLocalizedKey = attributes["localized-key"] || attributes["data-localized-key"];
+        }
     }
 
     private closeTag(element){
+        this.translateCharacters();
         this.result += "</" + element + ">";        
+    }
+
+    private translateCharacters(){
+        if (this.currentString != null) {
+            if (this.currentStringLocalizedKey == null) {
+                this.result += this.currentString;
+            }else {
+                this.result += MIOLocalizeString(this.currentStringLocalizedKey, this.currentString);
+            }
+        }
+        this.currentString = null;
+        this.currentStringLocalizedKey = null;        
     }
 
 }

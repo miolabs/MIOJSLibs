@@ -73,3 +73,19 @@ function MIOCoreStringStandardizingPath(string)
 
     return str;
 }
+
+
+var _MIOLocalizedStrings = null;
+
+function MIOLocalizeString(key, defaultValue)
+{
+    var strings =  _MIOLocalizedStrings;
+    if (strings == null)
+        return defaultValue;
+
+    var value = strings[key];
+    if (value == null)
+        return defaultValue;
+
+    return value;
+}

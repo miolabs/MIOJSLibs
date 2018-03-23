@@ -2,21 +2,6 @@
  * Created by godshadow on 21/3/16.
  */
 
-var _MIOLocalizedStrings = null;
-
-function MIOLocalizeString(key, defaultValue)
-{
-    var strings =  _MIOLocalizedStrings;
-    if (strings == null)
-        return defaultValue;
-
-    var value = strings[key];
-    if (value == null)
-        return defaultValue;
-
-    return value;
-}
-
 interface String {
     stringByAppendingPathComponent(path:string):string;
     
