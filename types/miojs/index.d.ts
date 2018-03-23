@@ -1,5 +1,5 @@
 //Implemented in: MIOCore/MIOArray.ts
-interface Array<T> {
+declare interface Array<T> {
     addObject(object);
     removeObject(object);
     removeObjectAtIndex(index);
@@ -12,7 +12,7 @@ interface Array<T> {
 }
 
 //Implemented in: MIOCore/MIOString.ts
-interface String {
+declare interface String {
     stringByAppendingPathComponent(path:string):string;
     
     lastPathComponent():string;    
@@ -20,17 +20,4 @@ interface String {
 
     hasPreffix(preffix:string):boolean;
     hasSuffix(suffix:string):boolean;
-}
-
-// Browser specific additions
-interface Window {
-    webkitURL?: any;
-}
-
-// Webpack worker-loader module
-declare module "worker-loader?*" {
-    class WebpackWorker extends Worker {
-        constructor();
-    }
-    export = WebpackWorker;
 }

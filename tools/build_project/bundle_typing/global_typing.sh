@@ -1,6 +1,8 @@
 #! /bin/bash
 
-# this script bundles the definitions built by webpack into one file with dts-bundle node module.
+# This script bundles the definitions built by webpack into one file 
+# It uses dts-bundle node module.
+# The definitions will be available in the global scope in order to support projects without modules
 # author: budavariam <budavariam.github.io>
 
 # os: mac/linux
@@ -14,4 +16,4 @@ NAME=miojslibs
 node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME
 
 mkdir -p ./dist/typings/${NAME}
-python3 ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --target dist/typings/${NAME}/index.d.ts
+python3 ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --legacy --target dist/typings/${NAME}/index.d.ts

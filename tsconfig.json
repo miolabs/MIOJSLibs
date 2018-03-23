@@ -14,7 +14,8 @@
     ],
     "types": [
       "chart.js",
-      "miojs"
+      "miojs",
+      "miojs_internal"
     ]
   },
   "include": [
