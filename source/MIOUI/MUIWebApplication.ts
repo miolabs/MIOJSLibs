@@ -1,7 +1,7 @@
 import { MUIWindow } from "./MUIWindow";
-import { MIOCoreGetLanguages } from "../MIOCore";
+import { MIOCoreGetLanguages, setMIOLocalizedStrings } from "../MIOCore";
 import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCorePlatform";
-import { MIOURLRequest, MIOURL, MIOURLConnection, setMIOLocalizedStrings } from "../MIOFoundation";
+import { MIOURLRequest, MIOURL, MIOURLConnection } from "../MIOFoundation";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -53,6 +53,7 @@ export class MUIWebApplication {
     private _keyWindow:MUIWindow = null;
     private _mainWindow = null;
 
+    //TODO: Set language in the webworker also.
     private setLanguage(lang, target, completion){
         var languages = MIOCoreGetLanguages();
         if (languages == null) {

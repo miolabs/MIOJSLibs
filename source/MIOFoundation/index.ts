@@ -8,7 +8,6 @@ export * from './MIOObject'
 export * from './MIONull'
 export * from './MIOError'
 
-export * from './MIOLocalizeString'
 export * from './MIODecimalNumber'
 export * from './MIODate'
 export * from './MIOUUID'

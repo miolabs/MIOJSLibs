@@ -3,6 +3,8 @@ import { MIOURLConnection } from "../../../MIOFoundation/MIOURLConnection"
 import { MIOURLRequest } from "../../../MIOFoundation/MIOURLRequest"
 import { MIOXMLParser } from "../../../MIOFoundation/MIOXMLParser"
 import { MIOCoreLoadFileFromURL } from "../../WebWorker/MIOCore_WebWorker";
+import { setMIOLocalizedStrings } from "../../../MIOCore/MIOCoreString";
+import { BundleFileParser } from "../../../MIOFoundation/MIOBundle";
 
 var ww = (self as DedicatedWorkerGlobalScope)
 var _languageStrings = null;
@@ -13,7 +15,7 @@ ww.addEventListener('message', function(e) {
     var cmd = item["CMD"];
 
     if (cmd == "SetLanguageStrings"){
-        _languageStrings = item["LanguageStrings"];
+        setMIOLocalizedStrings(item["LanguageStrings"]);
     }
     else if (cmd == "DownloadHTML")
     {
@@ -41,8 +43,8 @@ function parseHTML(url, data, layerID, path)
     }
     else
     {
-        // let parser = new BundleFileParser(data, layerID);
-        // let result = parser.parse();
+        let parser = new BundleFileParser(data, layerID);
+        let result = parser.parse();
 
         // var result = MIOHTMLParser(data, layerID, path, function(css) {
 
@@ -58,8 +60,8 @@ function parseHTML(url, data, layerID, path)
 
         var item = [];
         item["Type"] = "HTML";
-        //item["Result"] = result;
-        item["Result"] = data;
+        item["Result"] = result;
+        //item["Result"] = data;
         item["LayerID"] = layerID;
         ww.postMessage(item);
     }
@@ -89,7 +91,7 @@ function MIOHTMLParser(string, layerID, relativePath, callback)
 
     var stepIndex = 0; // 0 -> None, 1 -> Tag, 2 -> Attribute, 3 -> value, 4 -> html
 
-    for (var index = 0; index < string.length; index++)
+    for (let index = 0; index < string.length; index++)
     {
         var ch = string.charAt(index);
         if (isCapturing == true)
@@ -294,84 +296,5 @@ function FoundLink(link, callback)
         if (media != null) css["media"] = media;        
         callback(css);
         console.log("Send CSS: " + css);
-    }
-}
-
-class BundleFileParser 
-{
-    private text = null;
-    private layerID = null;
-
-    private result = "";
-    private isCapturing = false;
-    private elementCapturingCount = 0;
-
-    constructor(text, layerID) {
-        this.text = text;
-        this.layerID = layerID;
-    }
-
-    parse(){
-        let parser = new MIOXMLParser();
-        parser.initWithString(this.text, this);
-
-        parser.parse();
-
-        return this.result;
-    }
-
-    // XML Parser delegate
-    parserDidStartElement(parser:MIOXMLParser, element:string, attributes){
-
-        if (element.toLocaleLowerCase() == "div"){
-            
-            if (attributes["id"] == this.layerID) {
-                // Start capturing   
-                this.isCapturing = true;
-            }
-        }
-        else if (element.toLocaleLowerCase() == "span") {
-            // Translate text if there is a localized key
-        }
-
-        if (this.isCapturing == true) {
-            this.elementCapturingCount++;
-            this.addTag(element, attributes);        
-        }
-    }
-
-    parserFoundString(parser:MIOXMLParser, text:string){
-        this.result += text;
-    }
-
-    parserDidEndElement(parser:MIOXMLParser, element:string){
-
-        if (element.toLocaleLowerCase() == "span"){
-        }
-
-        if (this.isCapturing == true) {
-            this.elementCapturingCount--;
-            this.closeTag(element);
-        }
-    }
-
-    parserDidEndDocument(parser:MIOXMLParser){
-        //console.log("datamodel.xml parser finished");
-    }
-
-    private addTag(element, attributes){
-
-        this.result += "<" + element;        
-
-        attributes.forEach((key) => {
-            let value = attributes[key];
-            this.result += " key" + "=" + value;
-        });
-
-        this.result += ">" + element;
-    }
-
-    private closeTag(element){
-        this.result += "</" + element + ">";        
     }
 }

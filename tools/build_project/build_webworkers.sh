@@ -8,4 +8,4 @@ for d in ${WEBWORKERS_FOLDER}/*/ ; do
     (cd "$d" && [[ -f webpack.config.js ]] && npx webpack); 
 done;
 
-cp build/ww/* dist/js/ww
+cp build/webworkers/* dist/js/webworkers

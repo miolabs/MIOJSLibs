@@ -185,7 +185,7 @@ export class MIOCoreHTMLParser
         if (ch == "-") {
             let ch2 = this.nextChar();
             if (ch2 == "-") {
-                return "!--";
+                return "<!--";
             }
             else this.unexpectedToken();
         }
@@ -229,7 +229,7 @@ export class MIOCoreHTMLParser
                 type = MIOCoreHTMLParserTokenType.InlineCloseTag;
                 break;
 
-            case "!--":
+            case "<!--":
                 type = MIOCoreHTMLParserTokenType.Commentary;                
                 break;
 
@@ -318,12 +318,6 @@ export class MIOCoreHTMLParser
     private openElement(element){        
         let attributes = this.attributes();
         this.closeTag(element, attributes);
-    }
-
-    private element(){
-        let [type, value] = this.nextToken();        
-        if (type != MIOCoreHTMLParserTokenType.Identifier) this.unexpectedToken();            
-        return value;;        
     }
 
     private attributes(){        

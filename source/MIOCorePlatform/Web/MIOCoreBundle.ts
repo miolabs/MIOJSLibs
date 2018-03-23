@@ -1,6 +1,7 @@
 import {
     MIOCoreStringAppendPathComponent,
-    MIOCoreStringDeletingLastPathComponent
+    MIOCoreStringDeletingLastPathComponent,
+    getMIOLocalizedStrings
 } from '../../MIOCore'
 
 export class MIOCoreBundle
@@ -17,9 +18,9 @@ export class MIOCoreBundle
     {
         if (this._layoutWorker == null)
         {
-            this._layoutWorker = new Worker('libs/ww/Bundle_WebWorker.js');
-            // TODO: Set language so we can translate every html file in backgorund
-            //this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : _MIOLocalizedStrings});
+            this._layoutWorker = new Worker("libs/webworkers/Bundle_WebWorker.js");
+            // TODO: Set language so we can translate every html file in background
+            this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : getMIOLocalizedStrings()});
             
             var instance = this;
             this._layoutWorker.onmessage = function (event) {

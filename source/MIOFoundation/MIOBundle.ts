@@ -1,11 +1,10 @@
 
 import { MIOCoreGetMainBundleURLString, MIOCoreBundle } from "../MIOCorePlatform";
-import { MIOCoreAppType, MIOCoreGetAppType, MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../MIOCore";
+import { MIOCoreAppType, MIOCoreGetAppType, MIOCoreHTMLParser, MIOCoreHTMLParserDelegate, MIOLocalizeString } from "../MIOCore";
 import { MIOObject } from "./MIOObject";
 import { MIOURL } from "./MIOURL";
 import { MIOURLRequest } from "./MIOURLRequest";
 import { MIOURLConnection } from "./MIOURLConnection";
-import { MIOLocalizeString } from "./MIOLocalizeString";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -50,12 +49,11 @@ export class MIOBundle extends MIOObject
 
             this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
                                 
-                let parser = new BundleFileParser(layerData, layerID);
-                let result = parser.parse();
-        
+                // let parser = new BundleFileParser(layerData, layerID);
+                // let result = parser.parse();
 
                 var domParser = new DOMParser();
-                var items = domParser.parseFromString(result, "text/html");
+                var items = domParser.parseFromString(layerData, "text/html");
                 var layer = items.getElementById(layerID);
 
                 if (target != null && completion != null)

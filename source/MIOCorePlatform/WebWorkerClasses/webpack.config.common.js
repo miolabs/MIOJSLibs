@@ -6,7 +6,7 @@ module.exports = {
     mode: (!!process.env.PROD)?'production': 'development', // development is the default if PROD environmetal variable is not defined ,
     output: {
         libraryTarget: "umd",
-        path: path.resolve(__dirname, '..', '..', '..', 'build', 'ww')
+        path: path.resolve(__dirname, '..', '..', '..', 'build', 'webworkers')
     },
     resolve: {
         extensions: ['.ts', '.js']

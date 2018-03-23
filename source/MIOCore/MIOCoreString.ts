@@ -73,3 +73,27 @@ export function MIOCoreStringStandardizingPath(string)
 
     return str;
 }
+
+
+let _MIOLocalizedStrings = null;
+
+export function MIOLocalizeString(key, defaultValue)
+{
+    let strings =  _MIOLocalizedStrings;
+    if (strings == null)
+        return defaultValue;
+
+    let value = strings[key];
+    if (value == null)
+        return defaultValue;
+
+    return value;
+}
+
+export function setMIOLocalizedStrings(data) {
+    _MIOLocalizedStrings = data
+}
+
+export function getMIOLocalizedStrings() {
+    return _MIOLocalizedStrings
+}
