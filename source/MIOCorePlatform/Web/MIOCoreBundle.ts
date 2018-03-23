@@ -18,7 +18,7 @@ export class MIOCoreBundle
     {
         if (this._layoutWorker == null)
         {
-            this._layoutWorker = new Worker("libs/webworkers/Bundle_WebWorker.js");
+            this._layoutWorker = new Worker("libs/miojslibs/webworkers/Bundle_WebWorker.js");
             // TODO: Set language so we can translate every html file in background
             this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : getMIOLocalizedStrings()});
             
