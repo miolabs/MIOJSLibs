@@ -1,6 +1,7 @@
 import { MUIControl } from "./MUIControl";
-import { MIOFormatter, MIOLocalizeString } from "../MIOFoundation";
+import { MIOFormatter } from "../MIOFoundation";
 import { MUILayerGetFirstElementWithTag } from "./MUIView";
+import { MIOLocalizeString } from "../MIOCore";
 
 /**
  * Created by godshadow on 12/3/16.

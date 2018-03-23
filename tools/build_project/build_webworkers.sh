@@ -8,4 +8,5 @@ for d in ${WEBWORKERS_FOLDER}/*/ ; do
     (cd "$d" && [[ -f webpack.config.js ]] && npx webpack); 
 done;
 
+mkdir -p dist/js/webworkers
 cp build/webworkers/* dist/js/webworkers

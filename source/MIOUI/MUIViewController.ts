@@ -1,4 +1,4 @@
-import { MIOObject, MIOSize, MIOLocalizeString, MIOBundle } from "../MIOFoundation";
+import { MIOObject, MIOSize, MIOBundle } from "../MIOFoundation";
 import { MUIView, MUILayerSearchElementByID } from "./MUIView";
 import { MUINavigationController } from "./MUINavigationController";
 import { MUIPresentationController, MUIModalPresentationStyle, MUIModalTransitionStyle } from "./MUIViewController_PresentationController";
@@ -6,6 +6,7 @@ import { MUIPopoverPresentationController } from "./MUIViewController_PopoverPre
 import { MUICoreLayerIDFromObject } from "./MIOUI_CoreLayer";
 import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
+import { MIOLocalizeString } from "../MIOCore";
 
 /**
  * Created by godshadow on 11/3/16.

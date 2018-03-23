@@ -26,7 +26,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:libs && npm run build:webworkers && npm run build:typing",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
-    "build:libs": "webpack && cp build/miojslibs.js* dist/js",
+    "build:libs": "webpack && mkdir -p dist/js && cp build/miojslibs.js* dist/js",
     "build:typing": "./tools/build_project/bundle_typing/bundle_typing.sh",
     "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",
     "lint": "tslint -p ."

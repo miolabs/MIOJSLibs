@@ -75,6 +75,7 @@ export class MIOBundle extends MIOObject
 
 }
 
+/*
 export class BundleFileParser implements MIOCoreHTMLParserDelegate {
 
     private text = null;
@@ -196,4 +197,4 @@ export class BundleFileParser implements MIOCoreHTMLParserDelegate {
         this.currentStringLocalizedKey = null;        
     }
 
-}
+} */
