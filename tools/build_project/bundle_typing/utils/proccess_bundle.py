@@ -42,7 +42,8 @@ def process_legacy(data):
     rule_remove_inner_export = re.compile(r'export \* from')
     rule_remove_toplevel_closebracket = re.compile(r'^}')
     rule_remove_empty_block = re.compile(r'(declare|export) {}')
-    rule_replace_exported = re.compile(r'export ')
+    rule_replace_exported_from = re.compile(r'export ')
+    rule_replace_exported_to = 'declare '
     count_removed_lines = 0
     count_modified_lines = 0
     for index, line in enumerate(data):
@@ -57,8 +58,8 @@ def process_legacy(data):
             #print(line)
             count_removed_lines += 1
             data[index] = ''
-        elif rule_replace_exported.search(line):
-            data[index] = re.sub(rule_replace_exported, 'declare ', line)
+        elif rule_replace_exported_from.search(line):
+            data[index] = re.sub(rule_replace_exported_from, rule_replace_exported_to, line)
             count_modified_lines += 1
     print("INFO: The definition-file-bundler-util legacy support removed {} lines and modified {} lines from the original bundled definitions file".format(count_removed_lines, count_modified_lines))
     return data
