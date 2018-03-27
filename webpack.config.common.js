@@ -46,6 +46,7 @@ module.exports = {
       cacheGroups: {
         default: false,
         commons: {
+          // Split code: create a separate "vendor.js" file from the modules imported from "node_modules" folder.
           test: /[\\/]node_modules[\\/]/,
           name: "vendor",
           chunks: "all"
@@ -63,5 +64,14 @@ module.exports = {
         debug: 'info'
       }
     )
-  ]
+  ],
+  /*
+  // You can exclude dependent vendor modules from the bundle.
+  // Upon exclusion the library users have to include these libraries themselves (host it themselves, or use a CDN)
+  // @see: https://webpack.js.org/configuration/externals/
+  externals: {
+    "chart.js": 'chart.js',
+    "decimal": 'decimal'
+  }
+  */
 };
