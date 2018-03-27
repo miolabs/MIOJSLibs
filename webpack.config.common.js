@@ -14,7 +14,7 @@ module.exports = {
       test: /\.ts$/,
       use: [{
         loader: 'ts-loader', 
-        // the main reason for ts-loader is that awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
+        // the main reason for ts-loader over awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
         options: {}
       },
       {
