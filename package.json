@@ -8,7 +8,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "chart.js": "^2.7.2"
+    "chart.js": "^2.7.2",
+    "decimal.js": "^10.0.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^4.0.1",

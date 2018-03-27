@@ -1,13 +1,5 @@
 import { MIONumber } from "./MIONumber";
-
-// interface Decimal {    
-//     add(value);
-//     sub(value);
-//     div(value);
-//     mul(value);
-// }
-
-declare var Decimal;
+import { Decimal } from 'decimal.js';
 
 export class MIODecimalNumber extends MIONumber
 {
