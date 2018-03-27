@@ -1,26 +1,26 @@
 const path = require('path');
 
 const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
-const DEV = !!process.env.DEV; // true if defined, false if undefined
+const PROD = !!process.env.PROD; // true if defined, false if undefined
 
 module.exports = {
   devtool: 'source-map',
   entry: {
-    'index': `./source/index.${TARGET}.ts`
+    'miojslibs': `./source/index.${TARGET}.ts`
   },
   module: {
     rules: [{
       test: /\.ts$/,
       use: [{
         loader: 'ts-loader', 
-        // awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
+        // the main reason for ts-loader is that awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
         options: {}
       },
       {
         loader: "ifdef-loader",
         options: {
           TARGET, // can be: ios, web, webapp(default)
-          DEV,
+          PROD,
           "ifdef-verbose": true, // show matches during build
           "ifdef-triple-slash": true // false: use double slash comment instead of default triple slash
         }
@@ -36,8 +36,21 @@ module.exports = {
   mode: 'development',
   target: 'web',
   output: {
-    filename: 'miojslibs.js',
+    filename: '[name].js',
     libraryTarget: "umd",
     path: path.resolve(__dirname, 'build')
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        default: false,
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendor",
+          chunks: "all"
+        }
+      }
+    },
+    minimize: true // !PROD // for development it might be more suitable
   }
 };
