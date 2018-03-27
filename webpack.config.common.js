@@ -4,6 +4,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
 const PROD = !!process.env.PROD; // true if defined, false if undefined
 
+const buildPath = path.resolve(__dirname, 'build')
+const targetPath = '../dist/js'
+
 module.exports = {
   devtool: 'source-map',
   entry: {
@@ -39,7 +42,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     libraryTarget: "umd",
-    path: path.resolve(__dirname, 'build')
+    path: buildPath
   },
   optimization: {
     splitChunks: {
@@ -58,7 +61,7 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin(
       [
-        {from: 'build/*.js*', to: '../dist/js', flatten: true}
+        {from: `${buildPath}/*.js*`, to: targetPath, flatten: true}
       ], 
       {
         debug: 'info'
