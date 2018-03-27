@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^4.0.1",
+    "copy-webpack-plugin": "^4.5.1",
     "dts-bundle": "^0.7.3",
     "ifdef-loader": "^2.0.3",
     "npx": "^10.0.1",
@@ -26,7 +27,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:libs && npm run build:webworkers && npm run build:global_typing",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
-    "build:libs": "webpack && mkdir -p dist/js && cp build/*.js* dist/js",
+    "build:libs": "webpack",
     "build:typing": "./tools/build_project/bundle_typing/bundle_typing.sh",
     "build:global_typing": "./tools/build_project/bundle_typing/global_typing.sh",
     "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",

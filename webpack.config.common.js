@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
 const PROD = !!process.env.PROD; // true if defined, false if undefined
@@ -52,5 +53,15 @@ module.exports = {
       }
     },
     minimize: true // !PROD // for development it might be more suitable
-  }
+  },
+  plugins: [
+    new CopyWebpackPlugin(
+      [
+        {from: 'build/*.js*', to: '../dist/js', flatten: true}
+      ], 
+      {
+        debug: 'info'
+      }
+    )
+  ]
 };

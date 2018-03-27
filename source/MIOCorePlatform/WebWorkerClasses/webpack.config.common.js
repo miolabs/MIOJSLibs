@@ -1,4 +1,9 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
+// the paths are relative to this file
+const buildTargetLocation = path.resolve(__dirname, '..', '..', '..', 'build', 'webworkers')
+const deployLocation = path.resolve(__dirname, '..', '..', '..', 'dist', 'js', 'webworkers')
 
 module.exports = {
     //devtool: 'inline-source-map',
@@ -6,7 +11,7 @@ module.exports = {
     mode: (!!process.env.PROD)?'production': 'development', // development is the default if PROD environmetal variable is not defined ,
     output: {
         libraryTarget: "umd",
-        path: path.resolve(__dirname, '..', '..', '..', 'build', 'webworkers')
+        path: buildTargetLocation
     },
     resolve: {
         extensions: ['.ts', '.js']
@@ -38,5 +43,16 @@ module.exports = {
             ],
             exclude: /node_modules/
         }]
-    }
+    },
+    plugins: [
+        new CopyWebpackPlugin(
+            [
+                // due to the flatten property webworkers with the same name will result in nondeterministic behaviour
+                {from: `${buildTargetLocation}/*.js*`, to: deployLocation, flatten: true}
+            ], 
+            {
+                debug: 'info'
+            }
+        )
+    ]
 }
