@@ -10,3 +10,4 @@
 webpack.config*
 tslint.json
 tsconfig.json
+/types/
