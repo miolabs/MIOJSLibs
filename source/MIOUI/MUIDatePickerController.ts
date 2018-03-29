@@ -1,7 +1,7 @@
 import { MUIViewController } from "./MUIViewController";
 import { MIOSize, MIODateGetStringForMonth } from "../MIOFoundation";
 import { MUILabel } from "./MUILabel";
-import { MUICalendarView } from "./_MUICalendarView";
+import { MUICalendarView } from "./MUICalendarView";
 
 export class MUIDatePickerController extends MUIViewController
 {

@@ -1591,6 +1591,54 @@
         makeKeyWindow(window: any): void;
     }
 
+    declare enum MUICalendarDayCellType {
+        Default = 0,
+        Custom = 1,
+    }
+    declare class MUICalendarDayCell extends MUIView {
+        type: MUICalendarDayCellType;
+        identifier: any;
+        weekRow: number;
+        readonly date: Date;
+        selected: boolean;
+        init(): void;
+        initWithLayer(layer: any, owner: any, options?: any): void;
+        setDate(date: Date): void;
+        setToday(value: boolean): void;
+        setSelected(value: boolean): void;
+    }
+    declare class MUICalendarMonthView extends MUIView {
+        readonly month: any;
+        readonly year: any;
+        firstDate: any;
+        lastDate: any;
+        cellSpacingX: number;
+        cellSpacingY: number;
+        initWithMonth(month: any, year: any, delegate: any): void;
+        setMonth(month: any, year: any): void;
+        layoutSubviews(): void;
+    }
+    declare class MUICalendarView extends MUIScrollView {
+        dataSource: any;
+        delegate: any;
+        minDate: Date;
+        maxDate: Date;
+        horizontalCellSpacing: number;
+        verticalCellSpacing: number;
+        selectedDate: any;
+        readonly today: Date;
+        init(): void;
+        initWithLayer(layer: any, owner: any, options?: any): void;
+        _reuseDayCell(cell: any, identifier?: string): void;
+        cellDayAtDate(date: any): any;
+        dequeueReusableDayCellWithIdentifier(identifier?: string): any;
+        reloadData(): void;
+        layoutSubviews(): void;
+        observeValueForKeyPath(key: any, type: any, object: any): void;
+        scrollToDate(date: Date): void;
+        deselectCellAtDate(date: Date): void;
+    }
+    declare function MIOCalendarGetStringFromDate(date: any): string;
 
     declare class MUIDatePickerController extends MUIViewController {
         delegate: any;

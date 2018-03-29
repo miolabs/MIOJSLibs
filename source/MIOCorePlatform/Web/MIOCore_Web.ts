@@ -340,7 +340,7 @@ window.addEventListener('mouseup', function(e){
     },
 false);
 
-window.addEventListener('touchend', function(e){
+window.addEventListener('touchend', function(e:TouchEvent){
     
         // Create event
         let event = new MIOCoreEventTouch();
