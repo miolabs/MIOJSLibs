@@ -7,3 +7,6 @@
 *.swift
 *.tgz
 /source/
+webpack.config*
+tslint.json
+tsconfig.json
