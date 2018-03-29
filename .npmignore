@@ -1,0 +1,9 @@
+/tutorials/
+/tools/
+/tests/
+/templates/
+/build/
+*.sh
+*.swift
+*.tgz
+/source/
