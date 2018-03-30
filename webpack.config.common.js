@@ -3,13 +3,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
-const PROD = !!process.env.PROD; // true if defined, false if undefined
+const PROD = process.env.NODE_ENV === 'prod';
+
+console.log(`BUILD MIOJSLibs for '${process.env.NODE_ENV}' `)
 
 const buildPath = path.resolve(__dirname, 'build')
 const targetPath = path.resolve(__dirname, 'dist', 'js')
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: PROD ? '':'cheap-eval-source-map',
   entry: {
     'miojslibs': `./source/index.${TARGET}.ts`
   },
@@ -58,7 +60,7 @@ module.exports = {
     //     }
     //   }
     // },
-    minimize: true // !PROD // for development it might be more suitable
+    minimize: PROD
   },
   plugins: [
     new CopyWebpackPlugin(
