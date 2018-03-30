@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
 const PROD = !!process.env.PROD; // true if defined, false if undefined
@@ -65,9 +66,12 @@ module.exports = {
         {from: `${buildPath}/*`, to: targetPath, flatten: true}
       ], 
       {
-        debug: 'debug'
+        debug: 'warning'
       }
-    )
+    ),
+    new WebpackShellPlugin({
+      onBuildEnd: ['npm run build:typing']
+    })
   ],
   /*
   // You can exclude dependent vendor modules from the bundle.
