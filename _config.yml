@@ -31,6 +31,8 @@ exclude:
   - utils
   - script
   - TODO.md
+  - DEVELOPERS.md
+  - README.md
   - node_modules
 
 highlighter: rouge
