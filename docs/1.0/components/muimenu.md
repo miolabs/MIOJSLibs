@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIMenu
-description: MUIMenu
+description:
 group: components
 toc: true
 ---
+# MUIMenu

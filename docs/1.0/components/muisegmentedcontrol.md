@@ -5,6 +5,7 @@ description: MUISegmentedControl
 group: components
 toc: true
 ---
+# MUISegmentedControl
 
 ## HTML template
 

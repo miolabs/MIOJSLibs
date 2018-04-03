@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUICalendarView
-description: MUICalendarView
+description:
 group: components
 toc: true
 ---
+# MUICalendarView

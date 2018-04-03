@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUICollectionView
-description: MUICollectionView
+description:
 group: components
 toc: true
 ---
+# MUICollectionView

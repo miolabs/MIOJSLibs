@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIComboBox
-description: MUIComboBox
+description:
 group: components
 toc: true
 ---
+# MUIComboBox

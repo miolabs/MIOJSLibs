@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUITextArea
-description: MUITextArea
+description:
 group: components
 toc: true
 ---
+# MUITextArea

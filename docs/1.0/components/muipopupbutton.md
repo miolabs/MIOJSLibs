@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIPopUpButton
-description: MUIPopUpButton
+description:
 group: components
 toc: true
 ---
+# MUIPopUpButton

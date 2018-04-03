@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIAlertViewController
-description: MUIAlertViewController
+description:
 group: components
 toc: true
 ---
+# MUIAlertViewController

@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIWindow
-description: MUIWindow
+description:
 group: components
 toc: true
 ---
+# MUIWindow

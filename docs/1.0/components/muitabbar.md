@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUITabBar
-description: MUITabBar
+description:
 group: components
 toc: true
 ---
+# MUITabBar

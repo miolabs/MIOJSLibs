@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUISplitViewController
-description: MUISplitViewController
+description:
 group: components
 toc: true
 ---
+# MUISplitViewController

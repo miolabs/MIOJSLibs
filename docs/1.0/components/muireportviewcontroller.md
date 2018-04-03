@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIReportViewController
-description: MUIReportViewController
+description:
 group: components
 toc: true
 ---
+# MUIReportViewController

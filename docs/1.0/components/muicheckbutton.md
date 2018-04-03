@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUICheckButton
-description: MUICheckButton
+description:
 group: components
 toc: true
 ---
+# MUICheckButton

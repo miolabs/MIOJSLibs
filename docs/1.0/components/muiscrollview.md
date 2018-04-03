@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIScrollView
-description: MUIScrollView
+description:
 group: components
 toc: true
 ---
+# MUIScrollView

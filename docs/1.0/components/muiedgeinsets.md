@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIEdgeInsets
-description: MUIEdgeInsets
+description:
 group: components
 toc: true
 ---
+# MUIEdgeInsets

@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUINavigationController
-description: MUINavigationController
+description:
 group: components
 toc: true
 ---
+# MUINavigationController

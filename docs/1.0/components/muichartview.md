@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIChartView
-description: MUIChartView
+description:
 group: components
 toc: true
 ---
+# MUIChartView

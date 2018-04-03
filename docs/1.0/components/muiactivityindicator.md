@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIActivityIndicator
-description: MUIActivityIndicator
+description:
 group: components
 toc: true
 ---
+# MUIActivityIndicator

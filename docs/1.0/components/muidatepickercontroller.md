@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIDatePickerController
-description: MUIDatePickerController
+description:
 group: components
 toc: true
 ---
+# MUIDatePickerController

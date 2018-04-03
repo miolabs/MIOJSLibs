@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUISwitchButton
-description: MUISwitchButton
+description:
 group: components
 toc: true
 ---
+# MUISwitchButton

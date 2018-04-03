@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUILabel
-description: MUILabel
+description:
 group: components
 toc: true
 ---
+# MUILabel

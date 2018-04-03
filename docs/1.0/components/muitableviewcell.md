@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUITableViewCell
-description: MUITableViewCell
+description:
 group: components
 toc: true
 ---
+# MUITableViewCell

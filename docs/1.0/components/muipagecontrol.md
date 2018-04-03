@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIPageControl
-description: MUIPageControl
+description:
 group: components
 toc: true
 ---
+# MUIPageControl

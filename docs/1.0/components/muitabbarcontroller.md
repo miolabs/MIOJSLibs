@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUITabBarController
-description: MUITabBarController
+description:
 group: components
 toc: true
 ---
+# MUITabBarController

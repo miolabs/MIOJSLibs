@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIToolbar
-description: MUIToolbar
+description:
 group: components
 toc: true
 ---
+# MUIToolbar

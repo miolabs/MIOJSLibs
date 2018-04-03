@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIImageView
-description: MUIImageView
+description:
 group: components
 toc: true
 ---
+# MUIImageView

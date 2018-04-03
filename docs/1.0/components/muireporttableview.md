@@ -1,7 +1,8 @@
 ---
 layout: docs
 title: MUIReportTableView
-description: MUIReportTableView
+description:
 group: components
 toc: true
 ---
+# MUIReportTableView
