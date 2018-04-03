@@ -1,0 +1,21 @@
+{
+  "name": "miojslibs",
+  "version": "0.0.1",
+  "description": "Docs of MIOJSLibs",
+  "main": "",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "./script/build",
+    "publish": "./script/publish",
+    "initgh": "./script/get_ghpages",
+    "dev": "./script/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MIOLabs/MIOJSLibs.git"
+  },
+  "author": "Mátyás Budavári <budavariam@gmail.com> (https://budavariam.github.io)",
+  "license": "MIT"
+}

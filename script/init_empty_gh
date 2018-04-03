@@ -6,6 +6,6 @@ mkdir $FOLDER
 git checkout --orphan $BRANCH
 git reset
 git commit --allow-empty -m 'Initial commit'
-git checkout --force master
+git checkout --force docs
 git worktree add $FOLDER $BRANCH
 printf "\n$FOLDER" >> .gitignore

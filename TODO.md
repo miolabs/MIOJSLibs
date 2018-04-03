@@ -13,3 +13,7 @@
 * [+] Create workflow for static site generation.
 * [+] Create workflow for deployment to gh-pages.
 * [+] Add collection pages
+* [ ] Add the actual elements
+* [+] Create clearer publish workflow
+* [ ] Create templates
+* [ ] Add collection pages
