@@ -31,6 +31,7 @@ exclude:
   - utils
   - script
   - TODO.md
+  - node_modules
 
 highlighter: rouge
 highlight-style: github
