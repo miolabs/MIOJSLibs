@@ -15,6 +15,7 @@
   "devDependencies": {
     "awesome-typescript-loader": "^4.0.1",
     "copy-webpack-plugin": "^4.5.1",
+    "copyfiles": "^2.0.0",
     "cross-env": "^5.1.4",
     "dts-bundle": "^0.7.3",
     "ifdef-loader": "^2.0.3",
@@ -28,16 +29,24 @@
   },
   "scripts": {
     "clean:build": "rimraf build/*",
+    "clean:dist": "rimraf dist/*",
+    
     "predev": "npm run clean:build",
     "dev": "webpack -w",
+    
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preprod": "npm run clean:build",
-    "prod": "cross-env NODE_ENV=prod npm run build:libs && npm run build:webworkers",
+    
+    "preprod": "npm run clean:build && npm run clean:dist",
+    "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
+    "copy:dist": "copyfiles \"build/**/*.js\" dist/js --up 1",
+    "postprod": "npm run copy:dist",
+
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "build:libs": "webpack",
     "build:typing": "npm run build:typing_global",
     "build:typing_module": "./tools/build_project/bundle_typing/bundle_typing.sh",
     "build:typing_global": "./tools/build_project/bundle_typing/global_typing.sh",
+
     "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",
     "lint": "tslint -p ."
   },
