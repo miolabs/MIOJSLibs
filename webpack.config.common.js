@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const pjson = require('./package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
@@ -64,8 +66,12 @@ module.exports = {
   plugins: [
     new WebpackShellPlugin({
       onBuildEnd: [
-        'npm run build:typing'
+        'npm run build:typing',
+        'npm run copy:dist'
       ]
+    }),
+    new webpack.BannerPlugin({
+      banner: `date: ${new Date()}, version: ${pjson.version}`
     })
   ],
   /*

@@ -35,7 +35,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "preprod": "npm run clean:build && npm run clean:dist",
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
-    "copy:dist": "copyfiles \"build/**/*.js\" dist/js --up 1",
+    "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "postprod": "npm run copy:dist",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "build:libs": "webpack",
