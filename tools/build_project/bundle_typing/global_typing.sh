@@ -16,4 +16,4 @@ NAME=miojslibs
 node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME
 
 mkdir -p ./dist/typings/${NAME}
-python3 ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --legacy --target dist/typings/${NAME}/index.d.ts
+python ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --legacy --target dist/typings/${NAME}/index.d.ts

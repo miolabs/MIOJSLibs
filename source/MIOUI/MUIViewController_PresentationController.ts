@@ -121,8 +121,8 @@ export class MUIPresentationController extends MIOObject
             let size = toVC.preferredContentSize;
             if (size == null) size = new MIOSize(320, 200);
 
-            let w = toVC.preferredContentSize.width;
-            let h = toVC.preferredContentSize.height;
+            let w = size.width;
+            let h = size.height;
             let x = (ws.width - w) / 2;
 
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));

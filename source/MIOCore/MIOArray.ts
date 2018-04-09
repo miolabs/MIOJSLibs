@@ -34,7 +34,7 @@ Object.defineProperty(Array.prototype, "count", {
     },
     enumerable: true,
     configurable: true
-});
+})
 
 Array.prototype.firstObject = function(){
     return this[0];
