@@ -1,4 +1,5 @@
 import { MUIControl } from "./MUIControl";
+import { MUILayerGetFirstElementWithTag } from "./MUIView";
 
 /**
  * Created by godshadow on 15/3/16.
@@ -16,25 +17,33 @@ export class MUITextArea extends MUIControl
     {
         super.initWithLayer(layer, owner, options);
 
-        this.textareaLayer = document.createElement("textarea");
-        this.textareaLayer.style.width = "98%";
-        this.textareaLayer.style.height = "90%";
-        //this.textareaLayer.backgroundColor = "transparent";
-        this.textareaLayer.style.resize = "none";
-        this.textareaLayer.style.borderStyle = "none";
-        this.textareaLayer.style.borderColor = "transparent";
-        this.textareaLayer.style.outline = "none";
-        this.textareaLayer.overflow = "auto";
-        this.layer.appendChild(this.textareaLayer);
+        this.textareaLayer = MUILayerGetFirstElementWithTag(this.layer, "TEXTAREA");
+
+        this.setupLayer();
     }
 
-    get text()
-    {
+    private setupLayer(){
+
+        if (this.textareaLayer == null) {
+
+            this.textareaLayer = document.createElement("textarea");
+            this.textareaLayer.style.width = "98%";
+            this.textareaLayer.style.height = "90%";
+            //this.textareaLayer.backgroundColor = "transparent";
+            this.textareaLayer.style.resize = "none";
+            this.textareaLayer.style.borderStyle = "none";
+            this.textareaLayer.style.borderColor = "transparent";
+            this.textareaLayer.style.outline = "none";
+            this.textareaLayer.overflow = "auto";
+            this.layer.appendChild(this.textareaLayer);
+        }
+    }
+
+    get text(){
         return this.textareaLayer.value;
     }
 
-    set text(text)
-    {
+    set text(text){
         this.textareaLayer.value = text;
     }
 

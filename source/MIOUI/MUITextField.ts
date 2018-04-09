@@ -33,15 +33,12 @@ export class MUITextField extends MUIControl
 
     formatter:MIOFormatter = null;
 
-    init()
-    {
+    init(){
         super.init();
-
         this._setupLayer();
     }
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
         this._inputLayer = MUILayerGetFirstElementWithTag(this.layer, "INPUT");

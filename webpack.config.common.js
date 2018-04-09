@@ -59,7 +59,7 @@ module.exports = {
     //     }
     //   }
     // },
-    minimize: PROD
+    minimize: false
   },
   plugins: [
     new WebpackShellPlugin({

@@ -668,7 +668,7 @@ export class MUITableView extends MUIScrollView {
         cell.setX(0);
         cell.setY(posY);
 
-        if (typeof this.delegate.willDisplayCellAtIndexPath === "function") {
+        if (this.delegate != null && typeof this.delegate.willDisplayCellAtIndexPath === "function") {
             this.delegate.willDisplayCellAtIndexPath(this, cell, indexPath);
         }
 
