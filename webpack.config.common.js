@@ -12,7 +12,7 @@ console.log(`BUILD MIOJSLibs for '${process.env.NODE_ENV==="prod"?"prod":"dev"}'
 const buildPath = path.resolve(__dirname, 'build')
 
 module.exports = {
-  devtool: PROD ? '':'cheap-eval-source-map',
+  devtool: PROD ? '':'eval-source-map',
   entry: {
     'miojslibs': `./source/index.${TARGET}.ts`
   },
