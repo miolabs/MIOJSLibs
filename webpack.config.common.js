@@ -10,6 +10,7 @@ const PROD = process.env.NODE_ENV === 'prod';
 console.log(`BUILD MIOJSLibs for '${process.env.NODE_ENV==="prod"?"prod":"dev"}' `)
 
 const buildPath = path.resolve(__dirname, 'build')
+const targetPath = path.resolve(__dirname, 'dist', 'js')
 
 module.exports = {
   devtool: PROD ? '':'eval-source-map',
@@ -70,8 +71,18 @@ module.exports = {
         'npm run copy:dist'
       ]
     }),
+    //this copy plugin is necessary for watch mode, if started from a different folder
+    new CopyWebpackPlugin(
+      [
+        {from: `${buildPath}/*`, to: targetPath, flatten: true},
+        {from: `${buildPath}/webworkers/*`, to: `${targetPath}/webworkers`, flatten: true}
+      ],
+      {
+        debug: 'warning'
+      }
+    ),
     new webpack.BannerPlugin({
-      banner: `date: ${new Date()}, version: ${pjson.version}`
+      banner: `hash: [hash] date: ${new Date()}, version: ${pjson.version}`
     })
   ],
   /*

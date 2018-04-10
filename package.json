@@ -30,7 +30,6 @@
   "scripts": {
     "clean:build": "rimraf build/*",
     "clean:dist": "rimraf dist/*",
-    "predev": "npm run clean:build",
     "dev": "webpack -w",
     "test": "echo \"Error: no test specified\" && exit 1",
     "preprod": "npm run clean:build && npm run clean:dist",
