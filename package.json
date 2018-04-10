@@ -30,7 +30,8 @@
   "scripts": {
     "clean:build": "rimraf build/*",
     "clean:dist": "rimraf dist/*",
-    "dev": "webpack -w",
+    "dev": "webpack",
+    "postdev": "npm run copy:dist && npm run build:typing",
     "test": "echo \"Error: no test specified\" && exit 1",
     "preprod": "npm run clean:build && npm run clean:dist",
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",

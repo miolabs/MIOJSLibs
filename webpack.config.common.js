@@ -65,22 +65,6 @@ module.exports = {
     minimize: PROD
   },
   plugins: [
-    new WebpackShellPlugin({
-      onBuildEnd: [
-        'npm run build:typing',
-        'npm run copy:dist'
-      ]
-    }),
-    //this copy plugin is necessary for watch mode, if started from a different folder
-    new CopyWebpackPlugin(
-      [
-        {from: `${buildPath}/*`, to: targetPath, flatten: true},
-        {from: `${buildPath}/webworkers/*`, to: `${targetPath}/webworkers`, flatten: true}
-      ],
-      {
-        debug: 'warning'
-      }
-    ),
     new webpack.BannerPlugin({
       banner: `hash: [hash] date: ${new Date()}, version: ${pjson.version}`
     })
