@@ -9,6 +9,7 @@
     "test": "tests"
   },
   "dependencies": {
+    "ace-builds": "^1.3.3",
     "chart.js": "^2.7.2",
     "decimal.js": "^10.0.0"
   },
