@@ -1,6 +1,6 @@
 {
   "name": "miojslibs",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
   "main": "dist/js/miojslibs.js",
   "types": "./typings/miojslibs/index.d.ts",
@@ -36,7 +36,7 @@
     "preprod": "npm run clean:build && npm run clean:dist",
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
-    "postprod": "npm run copy:dist",
+    "postprod": "npm run copy:dist && npm run build:typing",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "build:libs": "webpack",
     "build:typing": "npm run build:typing_global",

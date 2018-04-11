@@ -73,7 +73,7 @@ export class MUITextField extends MUIControl
             this.layer.appendChild(this._inputLayer);
         }
 
-        var placeholderKey = this.layer.getAttribute("data-placeholder");
+        const placeholderKey = this._inputLayer.getAttribute("data-placeholder");
         if (placeholderKey != null)
             this._inputLayer.setAttribute("placeholder", MIOLocalizeString(placeholderKey, placeholderKey));
 

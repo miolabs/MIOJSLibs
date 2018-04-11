@@ -39,6 +39,7 @@ export class MUIScrollView extends MUIView {
         this.layer.style.overflow = "scroll";
 
         var contentLayer = MUICoreLayerCreate();
+        contentLayer.style.position = "absolute";
         contentLayer.style.width = "100%";
         contentLayer.style.height = "100%";
         contentLayer.style.overflow = "hidden";
