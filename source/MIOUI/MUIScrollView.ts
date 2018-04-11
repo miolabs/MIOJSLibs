@@ -1,5 +1,5 @@
 import { MUIView } from "./MUIView";
-import { MIOTimer, MIOPoint, MIORect, MIOSize } from "../MIOFoundation";
+import { MIOTimer, MIOPoint, MIORect, MIOSize, MIOLog } from "../MIOFoundation";
 import { MUICoreLayerCreate } from "./MIOUI_CoreLayer";
 
 /**
@@ -49,15 +49,19 @@ export class MUIScrollView extends MUIView {
 
         var instance = this;
         this.contentView.layer.onscroll = function (e) {
-            instance.scrollEventCallback.call(instance, e);
+        //window.onscroll = function (e) {
+            console.log("scroll");
+            if (e.target === instance.contentView.layer) instance.scrollEventCallback.call(instance);
         };
 
         this.contentView.layer.onwheel = function (e) {
-            instance.scrollEventCallback.call(instance, e);
+            instance.scrollEventCallback.call(instance);
         };
     }
 
-    private scrollEventCallback(event) {
+    private scrollEventCallback() {
+
+        console.log("scroll callback");
 
         this.setNeedsDisplay()
 
