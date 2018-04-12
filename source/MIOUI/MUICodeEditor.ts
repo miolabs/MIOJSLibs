@@ -6,7 +6,7 @@ import * as ace from 'brace';
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
 
-class MUICoreEditor extends MUIView 
+export class MUICoreEditor extends MUIView 
 {
     private editorView:MUIView = null;
     private editor = null;
