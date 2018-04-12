@@ -362,7 +362,7 @@ export class MUITableView extends MUIScrollView {
         }
 
         this.visibleRange = new MIORange(0, this.rows.length);
-
+        
         let size = new MIOSize(0, this.contentHeight);
         this.contentSize = size;
         this.lastContentOffsetY = 0;

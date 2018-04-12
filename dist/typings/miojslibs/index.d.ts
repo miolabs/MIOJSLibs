@@ -1681,9 +1681,11 @@
     }
     declare class MUIReportTableViewRow extends MUIView {
         cells: any[];
+        y: number;
+        height: number;
         removeFromSuperview(): void;
     }
-    declare class MUIReportTableViewColumn extends MIOObject {
+    declare class MUIReportTableViewColumn extends MUIView {
         static labelColumnWithTitle(title: string, width: any, minWidth: any, alignment: any, key?: any, formatter?: MIOFormatter, identifer?: string): MUIReportTableViewColumn;
         identifier: string;
         title: string;
@@ -1698,7 +1700,7 @@
         _onHeaderClickFn: any;
         columnHeaderView(): MUIView;
     }
-    declare class MUIReportTableView extends MUIView {
+    declare class MUIReportTableView extends MUIScrollView {
         dataSource: any;
         delegate: any;
         columns: any[];

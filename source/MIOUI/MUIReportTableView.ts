@@ -1,6 +1,7 @@
 import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
-import { MIOObject, MIOFormatter, MIOIndexPath, MIOSize } from "../MIOFoundation";
+import { MIOObject, MIOFormatter, MIOIndexPath, MIOSize, MIORange } from "../MIOFoundation";
 import { MUILabel } from "./MUILabel";
+import { MUIScrollView } from "./MUIScrollView";
 
 export enum MUIReportTableViewCellType {
     Custom,
@@ -49,6 +50,8 @@ export class MUIReportTableViewCell extends MUIView {
 
 export class MUIReportTableViewRow extends MUIView {
     cells = [];
+    y = 0;
+    height = 0;
 
     removeFromSuperview() {
         for (let index = 0; index < this.cells.length; index++) {
@@ -60,7 +63,7 @@ export class MUIReportTableViewRow extends MUIView {
     }
 }
 
-export class MUIReportTableViewColumn extends MIOObject {
+export class MUIReportTableViewColumn extends MUIView {
 
     static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifer?: string) {
         let col = new MUIReportTableViewColumn();
@@ -120,15 +123,18 @@ export class MUIReportTableViewColumn extends MIOObject {
     }
 }
 
-export class MUIReportTableView extends MUIView {
+export class MUIReportTableView extends MUIScrollView {
     dataSource = null;
     delegate = null;
 
     private cellPrototypes = {};
     private cells = [];
     private rows = [];
-    columns = [];
+    private rowsCount = 0;
+    columns = [];    
 
+    private defaultRowHeight = 44;
+    private contentHeight = 0;
     private rowByCell = {};
 
     selectedIndexPath = null;
@@ -248,34 +254,54 @@ export class MUIReportTableView extends MUIView {
         }
 
         let rows = this.dataSource.numberOfRows(this);
+        this.contentHeight += rows * this.defaultRowHeight;
+        this.rowsCount = rows;
 
-        for (var rowIndex = 0; rowIndex < rows; rowIndex++) {
-            let row = new MUIReportTableViewRow();
-            row.init();
-            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
-                let col = this.columns[colIndex];
-                let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
-                let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
-                cell._target = this;
-                cell._onClickFn = this.cellOnClickFn;                
-                this.addSubview(cell);
+        // for (var rowIndex = 0; rowIndex < rows; rowIndex++) {
+        //     let row = new MUIReportTableViewRow();
+        //     row.init();
+        //     for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
+        //         let col = this.columns[colIndex];
+        //         let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
+        //         let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
+        //         cell._target = this;
+        //         cell._onClickFn = this.cellOnClickFn;                
+        //         this.addSubview(cell);
                 
-                cell.parentRow = row;
-                row.cells.push(cell); 
-            }
-            this.rows.push(row);
-        }
+        //         cell.parentRow = row;
+        //         row.cells.push(cell); 
+        //     }
+        //     this.rows.push(row);
+        // }
+
+        let size = new MIOSize(0, this.contentHeight);
+        this.contentSize = size;        
+        this.scrollToTop();
+
+        this.reloadLayoutSubviews = true;
 
         this.setNeedsDisplay();
     }
 
+    private reloadLayoutSubviews = false;
     layoutSubviews() {
-
-        if (this._viewIsVisible == false) return;
-        if (this.hidden == true) return;
-        // if (this._needDisplay == false) return;
-        // this._needDisplay = false;
  
+        if (this.reloadLayoutSubviews == true) {
+            this.reloadLayoutSubviews = false;
+            this.initialLayoutSubviews();
+        }
+        else {
+            this.scrollLayoutSubviews();
+        }
+    }
+
+    private initialLayoutSubviews() {
+
+        //if (this.rowsCount == 0) return;
+        
+        //let posY = this.addHeader();
+        let maxY = this.getHeight() + (this.defaultRowHeight * 2);
+
         var x = 0;
         var y = 0;
         var w = this.getWidth();
@@ -288,16 +314,34 @@ export class MUIReportTableView extends MUIView {
             if (col.minWidth > 0 && col.pixelWidth < col.minWidth) col.pixelWidth = col.minWidth;
             header.setWidth(col.pixelWidth);
             x += col.pixelWidth;
-        }
+        }    
         y += 23;
-
         x = 0;
-        var offsetY = 0;
-        for (var rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
-            let row: MUIReportTableViewRow = this.rows[rowIndex];
+
+        if (this.rowsCount == 0) return;
+
+        var exit = false;
+
+        var currentRow = 0;
+        while (exit == false){
+            
+            // New row
+            let row = new MUIReportTableViewRow();
+            row.init();
+
+            var offsetY = 0;
             for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
                 let col = this.columns[colIndex];
-                let cell = row.cells[colIndex];
+                let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, currentRow, 0);
+                let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
+                
+                //TODO: Review why is not absoute
+                cell.layer.style.postion = "absolute";
+
+                cell._target = this;
+                cell._onClickFn = this.cellOnClickFn;                
+                this.addSubview(cell);
+                
                 cell.setX(x);
                 cell.setY(y);
                 cell.setWidth(col.pixelWidth);
@@ -305,12 +349,138 @@ export class MUIReportTableView extends MUIView {
 
                 let h = cell.getHeight();
                 if (offsetY < h) offsetY = h;
-            }
+
+                cell.parentRow = row;
+                row.cells.push(cell); 
+            }            
+            this.lastIndexPath = MIOIndexPath.indexForRowInSection(currentRow, 0);
+            this.rows.push(row);
+            currentRow++;
             x = 0;
+
+            if (offsetY == 0) offsetY = this.defaultRowHeight;            
+            row.y = y;
+            row.height = offsetY;
             y += offsetY;
-            if (offsetY == 0) y += 40;
+            
+            if (offsetY != this.defaultRowHeight) {
+                this.contentHeight -= this.defaultRowHeight;
+                this.contentHeight += offsetY;
+            }
+
+            if (y >= maxY) {                
+                exit = true;
+            }
         }
+
+        this.visibleRange = new MIORange(0, this.rows.length);
+
+        let size = new MIOSize(0, this.contentHeight);
+        this.contentSize = size;
+        this.lastContentOffsetY = 0;
     }
+
+    private lastIndexPath:MIOIndexPath = null;
+    private visibleRange:MIORange = null;
+    private lastContentOffsetY = 0;
+    private scrollLayoutSubviews() {
+
+        if (this.rowsCount == 0) return;
+
+        var scrollDown = false;
+        var offsetY = 0;
+        if (this.contentOffset.y == this.lastContentOffsetY) return;
+        if (this.contentOffset.y > this.lastContentOffsetY) {
+            offsetY = this.contentOffset.y - this.lastContentOffsetY;
+            scrollDown = true;
+        }
+        else if (this.contentOffset.y < this.lastContentOffsetY) {
+            offsetY = this.lastContentOffsetY - this.contentOffset.y;
+            scrollDown = false;
+        }
+
+        if (offsetY < (this.defaultRowHeight / 2)) return;
+        this.lastContentOffsetY = this.contentOffset.y;
+
+        if (scrollDown == true) {
+
+            var start = this.visibleRange.location;
+            var end = this.visibleRange.location + this.visibleRange.length - 1;
+            var row = this.rows[end];
+            var posY = row.y + row.height;
+            let maxY = this.contentOffset.y + this.getHeight() + (this.defaultRowHeight * 2);
+            var startRowIndex = this.lastIndexPath.row + 1;
+
+            var nextRow = end + 1;
+            var exit = false;
+
+            let x = 0;
+            let y = posY;
+
+            var currentRow = startRowIndex;
+            while (exit == false){
+                
+                // New row
+                row = new MUIReportTableViewRow();
+                row.init();
+    
+                offsetY = 0;
+                for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
+                    let col = this.columns[colIndex];
+                    let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, currentRow, 0);
+                    let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
+                    
+                    //TODO: Review why is not absoute
+                    cell.layer.style.postion = "absolute";
+    
+                    cell._target = this;
+                    cell._onClickFn = this.cellOnClickFn;                
+                    this.addSubview(cell);
+                    
+                    cell.setX(x);
+                    cell.setY(y);
+                    cell.setWidth(col.pixelWidth);
+                    x += col.pixelWidth;
+    
+                    let h = cell.getHeight();
+                    if (offsetY < h) offsetY = h;
+    
+                    cell.parentRow = row;
+                    row.cells.push(cell); 
+                }            
+                this.lastIndexPath = MIOIndexPath.indexForRowInSection(currentRow, 0);
+                this.rows.push(row);
+                currentRow++;
+                x = 0;
+    
+                if (offsetY == 0) offsetY = this.defaultRowHeight;
+                row.y = y;
+                row.height = offsetY;
+                y += offsetY;
+                    
+                if (offsetY != this.defaultRowHeight) {
+                    this.contentHeight -= this.defaultRowHeight;
+                    this.contentHeight += offsetY;
+                }
+    
+                if (y >= maxY) {                
+                    exit = true;
+                }
+            }
+    
+            this.visibleRange = new MIORange(0, this.rows.length);
+    
+            let size = new MIOSize(0, this.contentHeight);
+            this.contentSize = size;
+            this.lastContentOffsetY = 0;
+        }
+        else {
+            // TODO
+        }
+            
+    }
+
+
 
     onHeaderClickFn(col:MUIReportTableViewColumn){
 
