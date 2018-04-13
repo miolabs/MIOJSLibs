@@ -56,7 +56,3 @@ export function MIOCoreAddLanguage(lang, url){
 export function MIOCoreGetLanguages(){
     return _miocore_languages;
 }
-
-export function MIOCoreSetLanguage(lang){
-    let url = _miocore_languages[lang];
-}
