@@ -1,5 +1,4 @@
 
-import { Chart } from 'chart.js'
 import { MUIView } from "./MUIView";
 
 import * as ace from 'brace';
