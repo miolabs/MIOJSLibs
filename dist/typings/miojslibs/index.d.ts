@@ -1679,13 +1679,13 @@
         label: MUILabel;
         initWithLayer(layer: any, owner: any, options: any): void;
     }
-    declare class MUIReportTableViewRow extends MUIView {
+    declare class MUIReportTableViewRow extends MIOObject {
         cells: any[];
         y: number;
         height: number;
         removeFromSuperview(): void;
     }
-    declare class MUIReportTableViewColumn extends MUIView {
+    declare class MUIReportTableViewColumn extends MIOObject {
         static labelColumnWithTitle(title: string, width: any, minWidth: any, alignment: any, key?: any, formatter?: MIOFormatter, identifer?: string): MUIReportTableViewColumn;
         identifier: string;
         title: string;
@@ -1699,6 +1699,7 @@
         _target: any;
         _onHeaderClickFn: any;
         columnHeaderView(): MUIView;
+        removeFromSuperview(): void;
     }
     declare class MUIReportTableView extends MUIScrollView {
         dataSource: any;

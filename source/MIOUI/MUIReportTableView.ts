@@ -48,7 +48,7 @@ export class MUIReportTableViewCell extends MUIView {
     }
 }
 
-export class MUIReportTableViewRow extends MUIView {
+export class MUIReportTableViewRow extends MIOObject {
     cells = [];
     y = 0;
     height = 0;
@@ -63,7 +63,7 @@ export class MUIReportTableViewRow extends MUIView {
     }
 }
 
-export class MUIReportTableViewColumn extends MUIView {
+export class MUIReportTableViewColumn extends MIOObject {
 
     static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifer?: string) {
         let col = new MUIReportTableViewColumn();
@@ -118,8 +118,11 @@ export class MUIReportTableViewColumn extends MUIView {
                 instance._onHeaderClickFn.call(instance._target, instance);
         };
         
-
         return this._colHeader;
+    }
+
+    removeFromSuperview(){
+        if (this._colHeader != null) this._colHeader.removeFromSuperview();
     }
 }
 
@@ -233,46 +236,20 @@ export class MUIReportTableView extends MUIScrollView {
     reloadData() {
 
         // Remove all subviews
+        for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
+            let col: MUIReportTableViewColumn = this.columns[colIndex];            
+            col.removeFromSuperview();
+        }
 
         for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
             row.removeFromSuperview();
         }
 
-        this.rowByCell = {};
-        this.rows = [];
-        this.cells = [];
-        this.selectedIndexPath = null;
-
-        for (let index = 0; index < this.columns.length; index++) {
-
-            let col: MUIReportTableViewColumn = this.columns[index];
-            let header = col.columnHeaderView();
-            col._target = this;
-            col._onHeaderClickFn = this.onHeaderClickFn;
-            this.addSubview(header);
-        }
-
+        this.contentHeight = 23;
         let rows = this.dataSource.numberOfRows(this);
         this.contentHeight += rows * this.defaultRowHeight;
         this.rowsCount = rows;
-
-        // for (var rowIndex = 0; rowIndex < rows; rowIndex++) {
-        //     let row = new MUIReportTableViewRow();
-        //     row.init();
-        //     for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
-        //         let col = this.columns[colIndex];
-        //         let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, rowIndex, 0);
-        //         let cell = this.dataSource.cellAtIndexPath(this, col, indexPath);
-        //         cell._target = this;
-        //         cell._onClickFn = this.cellOnClickFn;                
-        //         this.addSubview(cell);
-                
-        //         cell.parentRow = row;
-        //         row.cells.push(cell); 
-        //     }
-        //     this.rows.push(row);
-        // }
 
         let size = new MIOSize(0, this.contentHeight);
         this.contentSize = size;        
@@ -307,13 +284,18 @@ export class MUIReportTableView extends MUIScrollView {
         var w = this.getWidth();
 
         for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
-            let col: MUIReportTableViewColumn = this.columns[colIndex];
+            let col: MUIReportTableViewColumn = this.columns[colIndex];            
             let header: MUIView = col.columnHeaderView();
+            
             header.setX(x);
             col.pixelWidth = (col.width * this.getWidth()) / 100;
             if (col.minWidth > 0 && col.pixelWidth < col.minWidth) col.pixelWidth = col.minWidth;
-            header.setWidth(col.pixelWidth);
+            header.setWidth(col.pixelWidth);            
             x += col.pixelWidth;
+
+            col._onHeaderClickFn = this.onHeaderClickFn;                        
+            col._target = this;
+            this.addSubview(header);
         }    
         y += 23;
         x = 0;
