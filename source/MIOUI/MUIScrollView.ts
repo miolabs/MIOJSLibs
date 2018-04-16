@@ -1,6 +1,6 @@
 import { MUIView } from "./MUIView";
 import { MIOTimer, MIOPoint, MIORect, MIOSize, MIOLog } from "../MIOFoundation";
-import { MUICoreLayerCreate } from "./MIOUI_CoreLayer";
+import { MUICoreLayerCreate, MUICoreLayerRemoveSublayer, MUICoreLayerAddSublayer } from "./MIOUI_CoreLayer";
 
 /**
  * Created by godshadow on 01/09/16.
@@ -23,7 +23,7 @@ export class MUIScrollView extends MUIView {
     private scrollTimer = null;
     private lastOffsetY = 0;
 
-    protected contentView = null;
+    protected contentView:MUIView = null;
 
     init() {
         super.init();
@@ -48,16 +48,65 @@ export class MUIScrollView extends MUIView {
         this.contentView.initWithLayer(contentLayer, this);
         super.addSubview(this.contentView);
 
-        var instance = this;
+        // var instance = this;
+        // this.contentView.layer.onwheel = function (e) {
+        //     instance.scrollEventCallback.call(instance);
+        // };
+
+        /*
         this.contentView.layer.onscroll = function (e) {
-        //window.onscroll = function (e) {
-            console.log("scroll");
             if (e.target === instance.contentView.layer) instance.scrollEventCallback.call(instance);
         };
+        */
 
-        this.contentView.layer.onwheel = function (e) {
-            instance.scrollEventCallback.call(instance);
-        };
+        // FIX: Scroll event don't get fire when you scroll with a scrollbar because the system thinks that
+        //      has to take care by himself to scroll a "prerender" page so if you have a dynamic page that 
+        //      has to be notify when the user scrolls to load more content, you're out of luck. You code doesn't get call.
+        //      The onwheel event, instead, fire an event becuase it's a hardware thing, not like the scrollbar...
+        //
+        // NOTE: Really, who the hell make this kind of crap implementation in the html???
+
+        var options = {
+            root: contentLayer,
+            rootMargin: '0px',
+            threshold: 0
+        }
+
+        var instance = this;
+        this.io = new IntersectionObserver(function(entries){
+            instance.scrollEventCallback();
+        });        
+    }
+
+    private io:IntersectionObserver = null;
+    private ioMarkers = [];
+    private createIntersectionObserverMarkers(height){
+        
+        // I use layer (html divs) instead of view because I don't need al the wrapper code around. So it's ligther
+        for (let index = 0; index < this.ioMarkers.length; index++){
+            let marker = this.ioMarkers[index];
+            MUICoreLayerRemoveSublayer(this.contentView.layer, marker);
+            this.io.unobserve(marker);
+        }
+        this.ioMarkers = [];
+        
+        let viewportHeight = this.getHeight() || 0;
+        if (viewportHeight == 0) return;
+        if (height < viewportHeight) return; // We don't need markers
+        
+        let heightDivision = viewportHeight / 4;
+        let count = (height / heightDivision) | 0; // convert to int -> value OR 0
+        for(let index = 0; index < count; index++){
+            let marker = MUICoreLayerCreate();
+            marker.style.top = ((index + 1) * heightDivision) + "px";
+            marker.style.height = "1px";
+            marker.style.width = "100%";
+            //marker.style.background = "rgb(255, 0, 0)";
+            //marker.style.zIndex = "1000";
+            this.ioMarkers.push(marker);
+            MUICoreLayerAddSublayer(this.contentView.layer, marker);
+            this.io.observe(marker);
+        }
     }
 
     private scrollEventCallback() {
@@ -159,6 +208,8 @@ export class MUIScrollView extends MUIView {
         }
         if (size.height > 0) {
             this.contentView.setHeight(size.height);
+            // create markers for intersection observer (see fix note below)
+            this.createIntersectionObserverMarkers(size.height);
         }
     }
 

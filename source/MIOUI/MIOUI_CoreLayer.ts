@@ -34,6 +34,14 @@ export function MUICoreLayerCreate(layerID?) {
     return layer;
 }
 
+export function MUICoreLayerAddSublayer(layer, subLayer){    
+    layer.appendChild(subLayer);
+}
+
+export function MUICoreLayerRemoveSublayer(layer, subLayer){    
+    layer.removeChild(subLayer);
+}
+
 export function MUICoreLayerCreateWithStyle(style, layerID?) {
     var layer = MUICoreLayerCreate(layerID);
     MUICoreLayerAddStyle(layer, style);

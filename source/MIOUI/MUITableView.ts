@@ -331,7 +331,7 @@ export class MUITableView extends MUIScrollView {
 
         // Add Header
         let posY = this.addHeader();
-        let maxY = this.getHeight() + (this.defaultRowHeight * 2);
+        let maxY = this.getHeight() + (this.defaultRowHeight * 4);
 
         var exit = false;
 
@@ -393,7 +393,7 @@ export class MUITableView extends MUIScrollView {
             var end = this.visibleRange.location + this.visibleRange.length - 1;
             var row = this.rows[end];
             var posY = row.view.getY() + row.height;
-            let maxY = this.contentOffset.y + this.getHeight() + (this.defaultRowHeight * 2);
+            let maxY = this.contentOffset.y + this.getHeight() + (this.defaultRowHeight * 4);
             let startSectionIndex = this.lastIndexPath.section;
             var startRowIndex = this.lastIndexPath.row + 1;
 
