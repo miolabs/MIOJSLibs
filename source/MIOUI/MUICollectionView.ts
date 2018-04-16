@@ -329,8 +329,7 @@ export class MUICollectionView extends MUIView
 
     }
 
-    _selectCell(cell)
-    {
+    _selectCell(cell){
         cell.setSelected(true);
     }
 
