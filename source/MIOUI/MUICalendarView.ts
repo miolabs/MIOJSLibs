@@ -162,7 +162,7 @@ export class MUICalendarMonthView extends MUIView {
         this.layer.style.background = "";
 
         this._header = new MUIView();
-        this._header.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header"), this);        
+        this._header.initWithLayer(MUICoreLayerCreateWithStyle("calendarview_month_header"), this);
         this.addSubview(this._header);
 
         this._headerTitleLabel = new MUILabel();

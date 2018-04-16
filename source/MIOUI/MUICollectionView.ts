@@ -229,7 +229,7 @@ export class MUICollectionView extends MUIView
         // Remove all subviews
         for (let index = 0; index < this._sections.length; index++)
         {
-            var sectionView = this._sections[index];
+            let sectionView = this._sections[index];
             if (sectionView.header != null)
                 sectionView.header.removeFromSuperview();
 
@@ -237,7 +237,7 @@ export class MUICollectionView extends MUIView
                 sectionView.footer.removeFromSuperview();
 
             for (var count = 0; count < sectionView.cells.length; count++){
-                var cell = sectionView.cells[count];
+                let cell = sectionView.cells[count];
                 cell.removeFromSuperview();
                 if (this.delegate != null) {
                     if (typeof this.delegate.didEndDisplayingCellAtIndexPath === "function"){
@@ -246,25 +246,26 @@ export class MUICollectionView extends MUIView
                     }
                 }                
             }
+            sectionView.cells = [];
         }
 
         this._sections = [];
 
-        var sections = this.dataSource.numberOfSections(this);
-        for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
+        let sections = this.dataSource.numberOfSections(this);
+        for (let sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
 
-            var section = new MUICollectionViewSection();
+            let section = new MUICollectionViewSection();
             section.init();
             this._sections.push(section);
 
             if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function")
             {
-                var hv = this.dataSource.viewForSupplementaryViewAtIndex(this, "header", sectionIndex);
+                let hv = this.dataSource.viewForSupplementaryViewAtIndex(this, "header", sectionIndex);
                 section.header = hv;
                 if (hv != null) this.addSubview(hv);
             }
 
-            var items = this.dataSource.numberOfItemsInSection(this, sectionIndex);
+            let items = this.dataSource.numberOfItemsInSection(this, sectionIndex);
             for (let index = 0; index < items; index++) {
 
                 let ip = MIOIndexPath.indexForRowInSection(index, sectionIndex);
@@ -281,7 +282,7 @@ export class MUICollectionView extends MUIView
 
             if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function")
             {
-                var fv = this.dataSource.viewForSupplementaryViewAtIndex(this, "footer", sectionIndex);
+                let fv = this.dataSource.viewForSupplementaryViewAtIndex(this, "footer", sectionIndex);
                 section.footer = fv;
                 if (fv != null) this.addSubview(fv);
             }
