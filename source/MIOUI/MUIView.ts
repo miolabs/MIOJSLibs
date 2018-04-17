@@ -121,10 +121,11 @@ export class MUIView extends MIOObject
         var objLayer = this.layer.cloneNode(true);
         
         let className = this.className;
-        var obj = MIOClassFromString(className);
-        obj.initWithLayer(objLayer);
+        let view = MIOClassFromString(className);
+        view.initWithLayer(objLayer);
+        view.awakeFromHTML();
 
-        return obj;
+        return view;
     }
 
     awakeFromHTML(){}
