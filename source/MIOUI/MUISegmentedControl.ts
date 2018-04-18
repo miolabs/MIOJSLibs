@@ -53,7 +53,7 @@ export class MUISegmentedControl extends MUIControl
         this.selectSegmentedAtIndex(index);
 
         if (this.mouseOutTarget != null)
-            this.mouseOutAction.call(this.mouseOutTarget, index);
+            this.mouseOutAction.call(this.mouseOutTarget, this, index);
     }
 
     setAction(target, action)
