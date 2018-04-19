@@ -8,13 +8,12 @@ import { MUILayerGetFirstElementWithTag } from "./MUIView";
 
 export class MUITextArea extends MUIControl
 {
-    textareaLayer = null;
+    private textareaLayer = null;
 
     textChangeTarget = null;
     textChangeAction = null;
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
         this.textareaLayer = MUILayerGetFirstElementWithTag(this.layer, "TEXTAREA");
@@ -47,33 +46,28 @@ export class MUITextArea extends MUIControl
         this.textareaLayer.value = text;
     }
 
-    setText(text)
-    {
+    setText(text){
         this.text = text;
     }
 
-    getText()
-    {
+    getText(){
         return this.text;
     }
 
-    setEditMode(value)
-    {
+    setEditMode(value){
         this.textareaLayer.disabled = !value;
     }
 
-    setOnChangeText(target, action)
-    {
+    setOnChangeText(target, action){
         this.textChangeTarget = target;
         this.textChangeAction = action;
         var instance = this;
 
-        this.layer.oninput = function()
-        {
+        this.textareaLayer.addEventListener("input", function(e){
             if (instance.enabled) {
-                var value = instance.textareaLayer.value;
+                let value = instance.textareaLayer.value;
                 instance.textChangeAction.call(target, instance, value);
             }
-        }
+        });
     }
 }
