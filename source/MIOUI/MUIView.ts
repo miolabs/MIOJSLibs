@@ -56,6 +56,19 @@ export function MUILayerGetFirstElementWithTag(layer, tag)
     return foundLayer;
 }
 
+function MIOViewSearchViewTag(view, tag){
+    if (view.tag == tag) return view;
+
+    for (let index = 0; index < view.subviews.length; index++){
+        let v:MUIView = view.subviews[index];
+        v = MIOViewSearchViewTag(v, tag);
+        if (v != null) return v;        
+    }
+
+    return null;
+}
+
+
 export class MUIView extends MIOObject
 {
     layerID = null;
@@ -64,7 +77,7 @@ export class MUIView extends MIOObject
     hidden = false;
     alpha = 1;
     parent = null;
-    tag = null;
+    tag:number = 0;
 
     protected _viewIsVisible = false;
     protected _needDisplay = true;
@@ -110,10 +123,29 @@ export class MUIView extends MIOObject
     {
         this.layer = layer;
         this.layerOptions = options;
-        var layerID = this.layer.getAttribute("id");
+        
+        let layerID = this.layer.getAttribute("id");
         if (layerID != null) this.layerID = layerID;
 
+        let tag = this.layer.getAttribute("data-tag");
+        this.tag = tag || 0;
+
         this._addLayerToDOM();
+
+        // Add subviews
+        if (this.layer.childNodes.length > 0) {
+            for (var index = 0; index < this.layer.childNodes.length; index++) {
+                var subLayer = this.layer.childNodes[index];
+
+                if (subLayer.tagName != "DIV")
+                    continue;
+
+                let sv:MUIView = new MUIView();
+                sv.initWithLayer(subLayer, this); 
+                this._linkViewToSubview(sv);            
+            }
+        }
+
     }
 
     copy() {
@@ -130,15 +162,13 @@ export class MUIView extends MIOObject
 
     awakeFromHTML(){}
 
-    setParent(view)
-    {
+    setParent(view){
         this.willChangeValue("parent");
         this.parent = view;
         this.didChangeValue("parent");
     }
 
-    addSubLayer(layer)
-    {
+    addSubLayer(layer){
         this.layer.innerHTML = layer.innerHTML;
     }
 
@@ -224,6 +254,12 @@ export class MUIView extends MIOObject
             var v = this.subviews[index];
             v.setViewIsVisible(value);
         }
+    }
+
+    viewWithTag(tag):MUIView{
+        // TODO: Use also the view tag component
+        let view = MIOViewSearchViewTag(this, tag);
+        return view;
     }
 
     layoutSubviews(){

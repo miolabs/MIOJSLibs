@@ -694,7 +694,7 @@ export class MUITableView extends MUIScrollView {
         cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
 
         var h = this.rowHeight;
-        if (typeof this.delegate.heightForRowAtIndexPath === "function") {
+        if (this.delegate != null && typeof this.delegate.heightForRowAtIndexPath === "function") {
             h = this.delegate.heightForRowAtIndexPath(this, indexPath);
             if (r.height != h) {
                 if (r.height == 0) {
