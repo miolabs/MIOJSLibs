@@ -2,6 +2,7 @@ import { MUIViewController } from "./MUIViewController";
 import { MIOObject } from "../MIOFoundation";
 import { _MUIHideViewController, _MIUShowViewController } from "./MIOUI_Core";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
+import { MUIView } from "./MUIView";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -13,20 +14,17 @@ export class MUINavigationController extends MUIViewController
     viewControllersStack = [];
     currentViewControllerIndex = -1;
 
-    init()
-    {
+    init(){
         super.init();
         this.view.layer.style.overflow = "hidden";
     }
 
-    initWithRootViewController(vc)
-    {
+    initWithRootViewController(vc){
         this.init();
         this.setRootViewController(vc);
     }
 
-    setRootViewController(vc)
-    {
+    setRootViewController(vc){
         this.rootViewController = vc;
         this.view.addSubview(vc.view);
 
@@ -42,8 +40,7 @@ export class MUINavigationController extends MUIViewController
         }
     }
 
-    viewWillAppear(animated?)
-    {
+    viewWillAppear(animated?){
         if (this.currentViewControllerIndex < 0)
             return;
 
@@ -52,8 +49,7 @@ export class MUINavigationController extends MUIViewController
         vc.viewWillAppear(animated);
     }
 
-    viewDidAppear(animated?)
-    {
+    viewDidAppear(animated?){
         if (this.currentViewControllerIndex < 0)
             return;
 

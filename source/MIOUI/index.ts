@@ -30,6 +30,7 @@ export * from "./MUIPageControl"
 export * from "./MUIToolbar"
 
 export * from "./MUIViewController"
+export * from "./MUINavigationItem"
 export * from "./MUINavigationController"
 export * from "./MUIPageController"
 export * from "./MUISplitViewController"

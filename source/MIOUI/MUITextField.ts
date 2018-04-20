@@ -40,9 +40,7 @@ export class MUITextField extends MUIControl
 
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
-
         this._inputLayer = MUILayerGetFirstElementWithTag(this.layer, "INPUT");
-
         this._setupLayer();
     }
 

@@ -1,5 +1,6 @@
 import { MIOObject, MIOSize, MIOBundle } from "../MIOFoundation";
 import { MUIView, MUILayerSearchElementByID } from "./MUIView";
+import { MUINavigationItem, MUINavItemSearchInLayer } from "./MUINavigationItem";
 import { MUINavigationController } from "./MUINavigationController";
 import { MUIPresentationController, MUIModalPresentationStyle, MUIModalTransitionStyle } from "./MUIViewController_PresentationController";
 import { MUIPopoverPresentationController } from "./MUIViewController_PopoverPresentationController";
@@ -35,6 +36,7 @@ export class MUIViewController extends MIOObject
     presentingViewController = null;
     presentedViewController = null;
     navigationController:MUINavigationController = null;
+    navigationItem:MUINavigationItem = null;
     splitViewController = null;
     tabBarController = null;
 
@@ -66,11 +68,13 @@ export class MUIViewController extends MIOObject
         this.view = new MUIView(this.layerID);
         this.view.initWithLayer(layer, owner, options);
         
+        // Search for navigation item
+        this.navigationItem = MUINavItemSearchInLayer(layer);
+        
         this.loadView();
     }
 
-    initWithResource(path)
-    {
+    initWithResource(path){
         if (path == null) throw new Error("MIOViewController:initWithResource can't be null");
 
         super.init();        
@@ -122,6 +126,9 @@ export class MUIViewController extends MIOObject
         var mainBundle = MIOBundle.mainBundle();
         mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layer) {            
             
+            // Search for navigation item
+            this.navigationItem = MUINavItemSearchInLayer(layer);
+
             this.view.initWithLayer(layer);
             this.view.awakeFromHTML();
             this._didLoadView();
