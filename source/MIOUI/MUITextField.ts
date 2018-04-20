@@ -79,18 +79,17 @@ export class MUITextField extends MUIControl
 
         this._registerInputEvent();            
     }
+    // layoutSubviews(){
+    //     super.layoutSubviews();
 
-    layoutSubviews(){
-        super.layoutSubviews();
+        // var w = this.getWidth();
+        // var h = this.getHeight();
 
-        var w = this.getWidth();
-        var h = this.getHeight();
-
-        this._inputLayer.style.marginLeft = "4px";
-        this._inputLayer.style.width = (w - 8) + "px";
-        this._inputLayer.style.marginTop = "4px";
-        this._inputLayer.style.height = (h - 8) + "px";
-    }
+        // this._inputLayer.style.marginLeft = "4px";
+        // this._inputLayer.style.width = (w - 8) + "px";
+        // this._inputLayer.style.marginTop = "4px";
+        // this._inputLayer.style.height = (h - 8) + "px";
+//    }
 
     setText(text){
         this.text = text;
