@@ -110,9 +110,18 @@ export class MUIScrollView extends MUIView {
 
     private scrollEventCallback() {
 
-        console.log("scroll callback");
+        let offsetY = this.contentOffset.y;
+        let deltaY = 0;
+        if (offsetY < this.lastOffsetY)
+            deltaY = offsetY - this.lastOffsetY;
+        else if (offsetY > this.lastOffsetY)
+            deltaY = this.lastOffsetY + offsetY;
+        else 
+            return;
 
-        this.setNeedsDisplay()
+        console.log("Content Offset y: " + offsetY + " - delta y: " + deltaY);
+
+        this.setNeedsDisplay();
 
         if (this.scrolling == false) {
             this.scrolling = true;
@@ -120,16 +129,7 @@ export class MUIScrollView extends MUIView {
         }
 
         if (this.scrollTimer != null) this.scrollTimer.invalidate();
-        this.scrollTimer = MIOTimer.scheduledTimerWithTimeInterval(150, false, this, this.scrollEventStopCallback);
-
-        var offsetY = this.contentOffset.y;
-        var deltaY = 0;
-        if (offsetY < this.lastOffsetY)
-            deltaY = offsetY - this.lastOffsetY;
-        else if (offsetY > this.lastOffsetY)
-            deltaY = this.lastOffsetY + offsetY;
-
-        //console.log("Content Offset y: " + offsetY + " - delta y: " + deltaY);
+        this.scrollTimer = MIOTimer.scheduledTimerWithTimeInterval(150, false, this, this.scrollEventStopCallback);        
 
         this.didScroll(0, deltaY);
         this.lastOffsetY = this.contentOffset.y;

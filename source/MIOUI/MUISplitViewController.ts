@@ -93,13 +93,11 @@ export class MUISplitViewController extends MUIViewController
         });
     }
 
-    get masterViewController()
-    {
+    get masterViewController():MUIViewController{
         return this._masterViewController;
     }
 
-    get detailViewController()
-    {
+    get detailViewController():MUIViewController{
         return this._detailViewController;
     }
 

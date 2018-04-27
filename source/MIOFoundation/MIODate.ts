@@ -257,3 +257,7 @@ export function MIODateGetLastDayOfTheWeek(date:Date){
 
     return last;
 }
+
+export function MIODateCopy(date:Date):Date{    
+    return new Date(date.getTime());
+}

@@ -8,6 +8,7 @@ import { MUICoreLayerIDFromObject } from "./MIOUI_CoreLayer";
 import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MIOLocalizeString } from "../MIOCore";
+import { MUISplitViewController } from "./MUISplitViewController";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -37,7 +38,7 @@ export class MUIViewController extends MIOObject
     presentedViewController = null;
     navigationController:MUINavigationController = null;
     navigationItem:MUINavigationItem = null;
-    splitViewController = null;
+    splitViewController:MUISplitViewController = null;
     tabBarController = null;
 
     private _presentationController:MUIPresentationController = null;
