@@ -76,8 +76,12 @@ export class MUIView extends MIOObject
     layerOptions = null;    
     hidden = false;
     alpha = 1;
-    parent = null;
     tag:number = 0;
+
+    private _parent:MUIView = null;
+    set parent(view){this.setParent(view);}
+    get parent():MUIView {return this._parent;}
+
 
     protected _viewIsVisible = false;
     protected _needDisplay = true;
@@ -109,14 +113,13 @@ export class MUIView extends MIOObject
         //this.layer.style.background = "rgb(255, 255, 255)";
     }
 
-    initWithFrame(frame)
-    {
+    initWithFrame(frame:MIORect){
         this.layer = MUICoreLayerCreate(this.layerID);
         this.layer.style.position = "absolute";
-        this.layer.style.left = frame.origin.x + "px";
-        this.layer.style.top = frame.origin.y + "px";
-        this.layer.style.width = frame.size.width + "px";
-        this.layer.style.height = frame.size.height + "px";
+        this.setX(frame.origin.x);
+        this.setY(frame.origin.y);
+        this.setWidth(frame.size.width);
+        this.setHeight(frame.size.height);
     }
 
     initWithLayer(layer, owner, options?)
@@ -162,9 +165,9 @@ export class MUIView extends MIOObject
 
     awakeFromHTML(){}
 
-    setParent(view){
+    setParent(view:MUIView){
         this.willChangeValue("parent");
-        this.parent = view;
+        this._parent = view;
         this.didChangeValue("parent");
     }
 
@@ -210,8 +213,7 @@ export class MUIView extends MIOObject
         this._isLayerInDOM = true;
     }
 
-    removeFromSuperview()
-    {
+    removeFromSuperview(){
         let subviews = this.parent._subviews;
         var index = subviews.indexOf(this);
         subviews.splice(index, 1);
@@ -222,8 +224,7 @@ export class MUIView extends MIOObject
         this._isLayerInDOM = false;
     }
 
-    protected _removeLayerFromDOM()
-    {
+    protected _removeLayerFromDOM(){
         if (this._isLayerInDOM == false)
             return;
 
@@ -394,18 +395,21 @@ export class MUIView extends MIOObject
         return w;
     }
 
-    setHeight(h)
-    {
+    private _height = 0;
+    setHeight(h){
         this.willChangeValue("height");
         this.layer.style.height = h + "px";
+        this._height = h;
         this.didChangeValue("height");
     }
 
-    getHeight()
-    {
-        var h1 = this.layer.clientHeight;
-        var h2 = this._getIntValueFromCSSProperty("height");
-        var h = Math.max(h1, h2);
+    getHeight(){
+        let h = this._height;
+        if (h == 0) h = this.layer.clientHeight;
+        else {
+            if (h == 0) h = this.layer.height;
+            else if (h == 0) h = this._getIntValueFromCSSProperty("height");        
+        }
         return h;
     }
 

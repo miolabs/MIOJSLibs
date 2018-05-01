@@ -367,13 +367,12 @@ export class MUICalendarView extends MUIView {
 
     init(){
         super.init();
-        this._setup();
+        this.setup();
     }
 
     initWithLayer(layer, owner, options?) {
 
         super.initWithLayer(layer, owner, options);
-        this._setup();
 
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
@@ -385,7 +384,7 @@ export class MUICalendarView extends MUIView {
 
                 if (subLayer.getAttribute("data-header") != null){
                     this.addHeaderWithLayer(subLayer);
-                    subLayer.style.display = "none";
+                    //subLayer.style.display = "none";
                 }
                 else if (subLayer.getAttribute("data-month-header") != null){
                     this.addMonthHeaderWithLayer(subLayer);
@@ -397,10 +396,12 @@ export class MUICalendarView extends MUIView {
                 }
             }
         }
+
+        this.setup();        
     }
 
     private header:MUICalendarHeader = null;
-    private _setup(){
+    private setup(){
 
         if (this.header == null) {
             this.header = new MUICalendarHeader();
@@ -410,7 +411,7 @@ export class MUICalendarView extends MUIView {
 
         this.contentView = new MUIScrollView();
         this.contentView.init();      
-        this.contentView.layer.style.top = "23px";
+        this.contentView.layer.style.top = "0px";
         this.contentView.layer.style.width = "100%";
         this.contentView.layer.style.height = "";        
         this.contentView.layer.style.bottom = "0px";
@@ -423,7 +424,7 @@ export class MUICalendarView extends MUIView {
 
     private addHeaderWithLayer(layer){
         this.header = new MUICalendarHeader();
-        this.header.initWithLayer(layer, this);
+        this.header.initWithLayer(layer, this);        
     }
 
     private addMonthHeaderWithLayer(layer){
@@ -573,9 +574,7 @@ export class MUICalendarView extends MUIView {
         this.setNeedsDisplay();*/
     }
 
-    private initialReload = false;
-
-    
+    private initialReload = false;    
     layoutSubviews() {
         //super.layout();
 
@@ -592,9 +591,9 @@ export class MUICalendarView extends MUIView {
     }        
 
     private initialLayout(){
-        
-        //let w = 100 / 7;
-        //let h = this.getHeight();
+
+        let contentY = this.header.getHeight();
+        this.contentView.setY(contentY);
 
         let x = 0;
         let y = 0;

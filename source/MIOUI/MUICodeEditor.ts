@@ -5,7 +5,15 @@ import * as ace from 'brace';
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
 
-export class MUICoreEditor extends MUIView 
+export enum MUICodeEditorLanguage {
+    None,
+    SQL,
+    Javascript,
+    PHP,
+    Swift
+}
+
+export class MUICodeEditor extends MUIView 
 {
     private editorView:MUIView = null;
     private editor = null;
@@ -13,12 +21,33 @@ export class MUICoreEditor extends MUIView
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
     
-        this.editor = new MUIView();
-        this.editor.init();
+        this.editorView = new MUIView();
+        this.editorView.init();
+        this.addSubview(this.editorView);
 
-        let id = this.editor.layer.getAttribute("id");
-        this.editor = ace.edit(id);
-        this.editor.setTheme("ace/theme/monokai");        
-        this.editor.session.setMode("ace/mode/javascript");
+        this.editor = ace.edit(this.editorView.layer);
+        this.editor.setTheme("ace/theme/xcode");                
+    }    
+
+    set text(value){
+        this.editor.setValue(value);
     }
+
+    get text(){
+        return this.editor.getValue();
+    }
+
+    set language(value:MUICodeEditorLanguage){
+
+        switch (value){
+            case MUICodeEditorLanguage.SQL:
+                this.editor.session.setMode("ace/mode/sql");
+                break;
+
+            case MUICodeEditorLanguage.Javascript:
+                this.editor.session.setMode("ace/mode/javascript");
+                break;
+        }
+    }
+
 }
