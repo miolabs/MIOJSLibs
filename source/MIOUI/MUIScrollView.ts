@@ -184,7 +184,8 @@ export class MUIScrollView extends MUIView {
     }
 
     set contentOffset(point: MIOPoint) {
-        //TODO:
+        if (point.x > 0) this.layer.scrollLeft = point.x;
+        if (point.y > 0) this.layer.scrollTop = point.y;
     }
 
     get contentOffset(): MIOPoint {

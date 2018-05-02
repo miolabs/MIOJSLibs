@@ -3,7 +3,7 @@ import { MUIScrollView } from "./MUIScrollView";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerCreateWithStyle } from "./MIOUI_CoreLayer";
 import { MIODateGetStringForDay, MIODateGetStringForMonth, MIODateGetDayFromDate, MIORect, MIOSize, MIOCoreGetBrowser, MIOCoreBrowserType, MIOClassFromString } from "../index.webapp";
-import { MIODateCopy } from "../MIOFoundation";
+import { MIODateCopy, MIOPoint } from "../MIOFoundation";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -768,6 +768,14 @@ export class MUICalendarView extends MUIView {
 
         /*if (this.selectedDate == date)
             this._selectedDayCell.setSelected(false);*/
+    }
+
+    get contentOffset():MIOPoint{
+        return this.contentView.contentOffset;
+    }
+
+    set contentOffset(value:MIOPoint){
+        this.contentView.contentOffset = value;
     }
 
 }
