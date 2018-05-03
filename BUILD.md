@@ -57,20 +57,22 @@ The library currently exposes its functions to the global scope to be available 
 npm run build:typings
 ```
 
-If the typing information is not loaded for any reason, then the project's `tsconfig.json` should include it in its types section.
+This way the projet that uses miojslibs has to include the type declaration files in compilation.
+So in **tsconfig.json** the `compilerOptions.types` property must include `"miojslibs"`.
 
 ```json
 {
     "compilerOptions": {
-        "typeRoots": [
-            "./node_modules/miojslibs/dist/typings/",
-        ],
         "types": [
             "miojslibs"
         ]
     }
 }
 ```
+
+> If the typing information is not loaded for any reason from the **package.json** `types` property of MIOJSLibs, then the **project's tsconfig.json** should include the `"typeRoots"="./node_modules/miojslibs/dist/typings/"` as well.
+
+<!-- When we'll support `es6` module imports for clients, this step will not be necessary, and the modules should be imported to the files that'll use them. -->
 
 ### Web workers
 
