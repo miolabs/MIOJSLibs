@@ -4,6 +4,7 @@ import { MUILabel } from "./MUILabel";
 import { MUICoreLayerCreateWithStyle } from "./MIOUI_CoreLayer";
 import { MIODateGetStringForDay, MIODateGetStringForMonth, MIODateGetDayFromDate, MIORect, MIOSize, MIOCoreGetBrowser, MIOCoreBrowserType, MIOClassFromString } from "../index.webapp";
 import { MIODateCopy, MIOPoint } from "../MIOFoundation";
+import { MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState } from ".";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -116,15 +117,15 @@ export class MUICalendarDayCell extends MUIView {
             this.dayLabel.layer.style.height= "";                            
         }
 
-        var instance = this;
-        this.layer.onclick = function () {
-                instance._onClick.call(instance);
-        }        
+        // var instance = this;
+        // this.layer.onclick = function () {
+        //         instance._onClick.call(instance);
+        // }        
     }
 
-    private _onClick() {
-        this.setSelected(true);
-    }
+    // private _onClick() {
+    //     this.setSelected(true);
+    // }
 
     setDate(date: Date) {
         this._date = new Date(date.getTime());
@@ -514,6 +515,9 @@ export class MUICalendarView extends MUIView {
                     dv.awakeFromHTML();
                 }
                 // Register for selection
+                let tapGesture = new MUITapGestureRecognizer();
+                tapGesture.initWithTarget(this, this.gestureDidRecognize);
+                dv.addGestureRecognizer(tapGesture);
                 dv.addObserver(this, "selected");            
             }
         }
@@ -528,11 +532,32 @@ export class MUICalendarView extends MUIView {
                 dv.init();
                 
                 // Register for selection
+                let tapGesture = new MUITapGestureRecognizer();
+                tapGesture.initWithTarget(this, this.gestureDidRecognize);    
+                dv.addGestureRecognizer(tapGesture);            
                 dv.addObserver(this, "selected");                        
             }                        
         }
 
         return dv;
+    }
+
+    public observeValueForKeyPath(keypath, type, object){
+        if (type != "did") return;
+        switch (keypath) {
+            case "selected":
+                let cell:MUICalendarDayCell = object;
+                if (cell.selected == true) this._selectedDayCell = cell;
+                break;
+        }
+    }
+
+    private gestureDidRecognize(gesture:MUIGestureRecognizer){
+        if (gesture.state == MUIGestureRecognizerState.Ended) {
+            let dayCell:MUICalendarDayCell = gesture.view as MUICalendarDayCell;
+            //dayCell.selected = true;
+            this._didChangeDayCellSelectedValue(dayCell);
+        }
     }
 
     reloadData() {        
@@ -703,15 +728,9 @@ export class MUICalendarView extends MUIView {
 
     }
 
-    observeValueForKeyPath(key, type, object) {
-        if (key == "selected" && type == "did") {
-            this._didChangeDayCellSelectedValue(object);
-        }
-    }
-
     private _didChangeDayCellSelectedValue(dayCell:MUICalendarDayCell) {
 
-        if (dayCell.selected == true) {
+        if (dayCell.selected == false) {
 
             var canSelect = true;
             if (this.delegate != null && typeof this.delegate.canSelectDate === "function"){            
@@ -720,7 +739,7 @@ export class MUICalendarView extends MUIView {
 
             if (canSelect == false) return; 
 
-            if(this._selectedDayCell != null) {                
+            if(this._selectedDayCell != null && this._selectedDayCell !== dayCell) {                
                 this._selectedDayCell.setSelected(false);
                 if (this.delegate != null && typeof this.delegate.didDeselectDayCellAtDate === "function")
                 this.delegate.didDeselectDayCellAtDate.call(this.delegate, this, this._selectedDayCell.date);
@@ -728,6 +747,7 @@ export class MUICalendarView extends MUIView {
 
             this.selectedDate = dayCell.date;
             this._selectedDayCell = dayCell;            
+            this._selectedDayCell.setSelected(true);            
 
             if (this.delegate != null && typeof this.delegate.didSelectDayCellAtDate === "function"){                                
                 this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell.date);
@@ -764,10 +784,22 @@ export class MUICalendarView extends MUIView {
         }         
     }
 
+    selectCellAtDate(date:Date){
+
+        if (this.selectedDate == date) return;
+        this.selectedDate = date;
+
+        if (this._selectedDayCell != null) this._selectedDayCell.setSelected(false);
+
+        this._selectedDayCell = this.cellDayAtDate(date);
+        this._selectedDayCell.setSelected(true);
+    }
+
     deselectCellAtDate(date:Date){
 
-        /*if (this.selectedDate == date)
-            this._selectedDayCell.setSelected(false);*/
+        if (this.selectedDate == date) this._selectedDayCell.setSelected(false);
+        this.selectedDate = null;
+        this._selectedDayCell = null;
     }
 
     get contentOffset():MIOPoint{

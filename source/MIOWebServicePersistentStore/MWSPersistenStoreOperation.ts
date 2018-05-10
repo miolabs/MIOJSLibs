@@ -36,7 +36,7 @@ export class MWSPersistenStoreOperation extends MIOOperation {
 
         this.setUploading(true);
 
-        this.request.send(this, function (code, data) {
+        this.request.fetch(this, function (code, data) {
             this.responseCode = code;
             this.responseJSON = data;            
 

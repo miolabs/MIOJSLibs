@@ -2,6 +2,7 @@ import { MIOObject, MIORect } from "../MIOFoundation";
 import { MUIWindow } from "./MUIWindow";
 import { MUICoreLayerIDFromObject, MUICoreLayerCreate } from "./MIOUI_CoreLayer";
 import { MIOClassFromString } from "../MIOCorePlatform";
+import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -460,5 +461,64 @@ export class MUIView extends MIOObject
         return parseInt(v);
     }
 
+    private _userInteraction = false;
+    set userInteraction(value){
+        if (value == this._userInteraction) return;
+
+        if (value == true){
+            this.layer.view_instance = this;
+            this.layer.addEventListener("mousedown", this.mouseDownEvent);
+            this.layer.addEventListener("mouseup", this.mouseUpEvent);
+        }
+        else {
+            this.layer.removeEventListener("mousedown", this.mouseDownEvent);
+            this.layer.removeEventListener("mouseup", this.mouseUpEvent);            
+        }
+    }
+
+    mouseDownEvent(ev){    
+        let view = ev.currentTarget.view_instance;    
+        view.touchesBeganWithEvent.call(view, null, null);
+    }
+
+    mouseUpEvent(ev){    
+        let view = ev.currentTarget.view_instance;    
+        view.touchesEndedWithEvent.call(view, null, null);
+    }
+
+    touchesBeganWithEvent(touches, ev:MUIEvent){
+        for (let index = 0; index < this.gestureRecognizers.length; index++){
+            let gr:MUIGestureRecognizer = this.gestureRecognizers[index];
+            gr._viewTouchesBeganWithEvent(touches, ev);
+        }
+    }
+
+    touchesMovedWithEvent(touches, ev:MUIEvent){
+        for (let index = 0; index < this.gestureRecognizers.length; index++){
+            let gr:MUIGestureRecognizer = this.gestureRecognizers[index];
+            gr._viewTouchesMovedWithEvent(touches, ev);
+        }
+    }
+
+    touchesEndedWithEvent(touches, ev:MUIEvent){
+        for (let index = 0; index < this.gestureRecognizers.length; index++){
+            let gr:MUIGestureRecognizer = this.gestureRecognizers[index];
+            gr._viewTouchesEndedWithEvent(touches, ev);
+        }
+    }
+
+    private gestureRecognizers = [];
+    addGestureRecognizer(gesture:MUIGestureRecognizer){
+        if (this.gestureRecognizers.containsObject(gesture)) return;
+        
+        gesture.view = this;
+        this.gestureRecognizers.addObject(gesture);
+        this.userInteraction = true;
+    }
+
+    removeGestureRecognizer(gesture:MUIGestureRecognizer){        
+        gesture.view = null;
+        this.gestureRecognizers.removeObject(gesture);
+    }
 }
 

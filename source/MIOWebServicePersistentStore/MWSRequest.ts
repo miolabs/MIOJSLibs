@@ -24,7 +24,7 @@ export class MWSRequest extends MIOObject
     }
 
     // Completion block (Int, Any?) -> Void
-    send(target, completion?){
+    fetch(target, completion?){
         
         this.willStart()
 

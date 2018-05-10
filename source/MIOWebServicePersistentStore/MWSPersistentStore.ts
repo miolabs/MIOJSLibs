@@ -174,7 +174,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
-        request.send(this, function (code, data) {
+        request.fetch(this, function (code, data) {
             var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             
             MIOLog("Downloaded REFID: " + serverID);
@@ -200,7 +200,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         var objects = null;
 
-        request.send(this, function (code, data) {
+        request.fetch(this, function (code, data) {
             var [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
                 // Transform relationships into server keys

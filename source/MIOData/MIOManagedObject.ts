@@ -162,8 +162,8 @@ export class MIOManagedObject extends MIOObject {
                     let objectIDs = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectIDs == null) continue;
                     
-                    for(let index = 0; index < objectIDs.length; index++){
-                        let objID = objectIDs[index];
+                    for(let count = 0; count < objectIDs.length; count++){
+                        let objID = objectIDs[count];
                         set._addObjectID(objID);
                     }  
                     

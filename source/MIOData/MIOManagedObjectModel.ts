@@ -1,4 +1,4 @@
-import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString } from "../MIOFoundation";
+import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog } from "../MIOFoundation";
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOAttributeType } from "./MIOAttributeDescription";
@@ -152,6 +152,11 @@ export class MIOManagedObjectModel extends MIOObject
             case "Date":
                 attrType = MIOAttributeType.Date;
                 if (defaultValueString != null) defaultValue = MIODateFromString(defaultValueString); 
+                break;
+
+            default:
+                MIOLog("MIOManagedObjectModel: Unknown class type: " + type);
+                if (defaultValueString != null) defaultValue = defaultValueString; 
                 break;
         }
         

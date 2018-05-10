@@ -31,4 +31,19 @@ export class MIOFetchRequest extends MIOPersistentStoreRequest {
         this.entityName = entityName;
         this.requestType = MIORequestType.Fetch;
     }
+
+    copy(){
+        let request = new MIOFetchRequest();
+        request.initWithEntityName(this.entityName);
+
+        request.entity = this.entity;
+        request.predicate = this.predicate;
+        request.sortDescriptors = this.sortDescriptors;
+        request.resultType = this.resultType;
+        request.fetchLimit = this.fetchLimit;
+        request.fetchOffset = this.fetchOffset;
+        request.relationshipKeyPathsForPrefetching = this.relationshipKeyPathsForPrefetching;
+            
+        return request;
+    }
 }

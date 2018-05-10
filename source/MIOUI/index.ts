@@ -17,6 +17,7 @@ export * from "./MUITableViewCell"
 export * from "./MUICollectionView"
 export * from "./MUICollectionViewLayout"
 export * from "./MUIWebView"
+export * from "./MUIOutlineView"
 
 export * from "./MUIControl"
 export * from "./MUIButton"
@@ -58,3 +59,7 @@ export * from './MUIEdgeInsets'
 export * from './MUIViewController_PopoverPresentationController'
 export * from './MUIViewController_PresentationController'
 export * from './MUICodeEditor'
+
+export * from './MUIEvent'
+export * from './MUIGestureRecognizer'
+export * from './MUITapGestureRecognizer'

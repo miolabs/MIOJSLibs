@@ -1,16 +1,12 @@
-import { MIOObject, MIONotificationCenter, MIONotification, MIOSet, MIOIndexPath } from "../MIOFoundation";
-import { MIOFetchRequest } from "./MIOFetchRequest";
-import { MIOManagedObjectContext, MIOManagedObjectContextDidSaveNotification, MIOManagedObjectContextObjectsDidChange, MIOUpdatedObjectsKey, MIOInsertedObjectsKey, MIODeletedObjectsKey, MIORefreshedObjectsKey } from "./MIOManagedObjectContext";
-import { MIOManagedObject } from "./MIOManagedObject";
-import { _MIOSortDescriptorSortObjects } from "../MIOFoundation/MIOSortDescriptor";
+import { MIOObject, MIONotificationCenter, MIOIndexPath } from "../MIOFoundation";
+import { MIOFetchRequest, MIOManagedObjectContext, MIOManagedObject, MIOFetchedResultsController } from "../MIOData";
 
 /**
- * Created by godshadow on 12/4/16.
+ * Created by godshadow on 8/5/18.
  */
 
 
-
-export class MIOFetchSection extends MIOObject
+export class MWSFetchSection extends MIOObject
 {
     objects = [];
 
@@ -19,22 +15,32 @@ export class MIOFetchSection extends MIOObject
     }
 }
 
-export class MIOFetchedResultsController extends MIOObject
+export class MWSFetchedResultsController extends MIOObject
 {
     sections = [];
-
     resultObjects = [];
 
     fetchRequest:MIOFetchRequest = null;
     managedObjectContext:MIOManagedObjectContext  = null;
     sectionNameKeyPath = null;
     
-    private registerObjects = {};
+    pageLoading = true;
+    private pageOffset = 0;
 
-    initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?){
+    private pagedRequest:MIOFetchRequest = null;
+    private fetchedResultsController:MIOFetchedResultsController = null;
+
+    initWithFetchRequest(request:MIOFetchRequest, managedObjectContext, sectionNameKeyPath?){
         this.fetchRequest = request;
         this.managedObjectContext = managedObjectContext;
         this.sectionNameKeyPath = sectionNameKeyPath;
+
+        this.pagedRequest = request.copy();
+        this.pagedRequest.fetchOffset = 0;
+
+        this.fetchedResultsController = new MIOFetchedResultsController();
+        this.fetchedResultsController.initWithFetchRequest(this.pagedRequest, managedObjectContext, null);
+        this.delegate = this;
     }
 
     private _delegate = null;
@@ -43,48 +49,8 @@ export class MIOFetchedResultsController extends MIOObject
     }
     set delegate(delegate){
         this._delegate = delegate;
-
-        // TODO: Add and remove notification observer
-
-        if (delegate != null) {
-            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification:MIONotification){
-
-                let moc:MIOManagedObjectContext = notification.object;
-                if (moc !== this.managedObjectContext) return;
-
-                var ins_objs = notification.userInfo[MIOInsertedObjectsKey];
-                var upd_objs = notification.userInfo[MIOUpdatedObjectsKey];
-                var del_objs = notification.userInfo[MIODeletedObjectsKey];
-                
-                let entityName = this.fetchRequest.entityName;                
-                
-                if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
-                    this.updateContent(ins_objs[entityName]?ins_objs[entityName]:[], 
-                                        upd_objs[entityName]?upd_objs[entityName]:[], 
-                                        del_objs[entityName]?del_objs[entityName]:[]);
-            });
-
-            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextObjectsDidChange, function(notification:MIONotification) {
-
-                let moc:MIOManagedObjectContext = notification.object;
-                if (moc !== this.managedObjectContext) return;
-
-                let refreshed = notification.userInfo[MIORefreshedObjectsKey];
-                if (refreshed == null) return;
-                let entityName = this.fetchRequest.entityName;                
-                
-                let objects = refreshed[entityName];
-                if (objects == null) return;
-
-                this.refreshObjects(objects);
-            });
-        }
-        else {
-            MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextDidSaveNotification);
-            MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextObjectsDidChange);
-        }
     }
-
+/*
     performFetch(){
         this.resultObjects = this.managedObjectContext.executeFetch(this.fetchRequest);
         this._splitInSections();
@@ -92,31 +58,6 @@ export class MIOFetchedResultsController extends MIOObject
         return this.resultObjects;
     }
 
-    private processObject(object:MIOManagedObject){
-
-        let ref = object.objectID._getReferenceObject();
-        if (this.registerObjects[ref] == null){
-            this.resultObjects.push(object);
-            //this.insertObject(object);
-        }
-        else {
-            //this.updateObject(object);
-        }
-    }
-
-    private checkObjects(objects){
-        let predicate = this.fetchRequest.predicate;
-        for (var count = 0; count < objects.length; count++){
-            let obj = objects.objectAtIndex(count);
-            if (predicate != null) {
-                var result = predicate.evaluateObject(obj);
-                if (result) this.processObject(obj);
-            }
-            else {
-                this.processObject(obj);
-            }
-        }        
-    }
 
     private refreshObjects(objects:MIOSet){
         
@@ -216,7 +157,7 @@ export class MIOFetchedResultsController extends MIOObject
                 let value = obj.valueForKey(this.sectionNameKeyPath);                
 
                 if (currentSectionKeyPathValue != value) {
-                    currentSection = new MIOFetchSection();
+                    currentSection = new MWSFetchSection();
                     this.sections.push(currentSection);
                     currentSectionKeyPathValue = value;
                 }
@@ -226,10 +167,11 @@ export class MIOFetchedResultsController extends MIOObject
         }
     }
 
-    objectAtIndexPath(indexPath:MIOIndexPath){
+    objectAtIndexPath(indexPath:MIOIndexPath)
+    {
         var section = this.sections[indexPath.section];
         var object = section.objects[indexPath.row];
         return object;
     }
-
+*/
 }
