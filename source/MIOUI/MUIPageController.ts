@@ -12,54 +12,52 @@ export class MUIPageController extends MUIViewController
     selectedViewControllerIndex = 0;
     pageControllersCount = 0;
 
-    addPageViewController(vc)
-    {
+    addPageViewController(vc){
         this.addChildViewController(vc);
         if (vc.transitioningDelegate == null)
             vc.transitioningDelegate = this;
         this.pageControllersCount++;
     }
 
-    protected _loadChildControllers()
-    {
-        var vc = this.childViewControllers[0];
-        this.view.addSubview(vc.view);
-        vc.onLoadView(this, function () {
-
+    protected _loadChildControllers(){
+        if (this.childViewControllers.length == 0){
             this._setViewLoaded(true);
-        });
+        }
+        else {
+            let vc = this.childViewControllers[0];
+            this.view.addSubview(vc.view);
+            vc.onLoadView(this, function () {
+
+                this._setViewLoaded(true);
+            });
+        }
     }
 
-    viewWillAppear(animated?)
-    {
+    viewWillAppear(animated?){
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewWillAppear(animated);
         //vc._childControllersWillAppear();
     }
 
-    viewDidAppear(animated?)
-    {
+    viewDidAppear(animated?){
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewDidAppear(animated);
         //vc._childControllersDidAppear();
     }
 
-    viewWillDisappear(animated?)
-    {
+    viewWillDisappear(animated?){
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewWillDisappear(animated);
         //vc._childControllersWillDisappear();
     }
 
-    viewDidDisappear(animated?)
-    {
+    viewDidDisappear(animated?){
         var vc = this.childViewControllers[this.selectedViewControllerIndex];
         vc.viewDidDisappear(animated);
         //vc._childControllersDidDisappear();
     }
 
-    showPageAtIndex(index)
-    {
+    showPageAtIndex(index){
         if (this.selectedViewControllerIndex == -1)
             return;
 
@@ -89,21 +87,18 @@ export class MUIPageController extends MUIViewController
         });
     }
 
-    showNextPage()
-    {
+    showNextPage(){
         this.showPageAtIndex(this.selectedViewControllerIndex + 1);
     }
 
-    showPrevPage()
-    {
+    showPrevPage(){
         this.showPageAtIndex(this.selectedViewControllerIndex - 1);
     }
 
     // Transitioning delegate
     private _pageAnimationController = null;
 
-    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
-    {
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController){
         if (this._pageAnimationController == null) {
 
             this._pageAnimationController = new MIOPageAnimationController();
@@ -113,8 +108,7 @@ export class MUIPageController extends MUIViewController
         return this._pageAnimationController;
     }
 
-    animationControllerForDismissedController(dismissedController)
-    {
+    animationControllerForDismissedController(dismissedController){
         if (this._pageAnimationController == null) {
 
             this._pageAnimationController = new MIOPageAnimationController();
@@ -131,24 +125,20 @@ export class MUIPageController extends MUIViewController
 
 export class MIOPageAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations before transitions
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations after transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         return null;
     }
 
