@@ -8,7 +8,20 @@ import { _MIOSortDescriptorSortObjects } from "../MIOFoundation/MIOSortDescripto
  * Created by godshadow on 12/4/16.
  */
 
+export enum MIOFetchedResultsChangeType {
+    Insert,
+    Delete,
+    Update,
+    Move
+}
 
+export interface MIOFetchedResultsControllerDelegate {
+    controllerWillChangeContent?(controller:MIOFetchedResultsController);
+    controllerDidChangeContent?(controller:MIOFetchedResultsController);
+
+    didChangeSection?(controller:MIOFetchedResultsController, sectionInfo, sectionIndex, changeType:MIOFetchedResultsChangeType);
+    didChangeObject?(controller:MIOFetchedResultsController, object, indexPath:MIOIndexPath, changeType:MIOFetchedResultsChangeType, newIndexPath:MIOIndexPath);
+}
 
 export class MIOFetchSection extends MIOObject
 {
@@ -37,11 +50,11 @@ export class MIOFetchedResultsController extends MIOObject
         this.sectionNameKeyPath = sectionNameKeyPath;
     }
 
-    private _delegate = null;
-    get delegate(){
+    private _delegate:MIOFetchedResultsControllerDelegate = null;
+    get delegate():MIOFetchedResultsControllerDelegate{
         return this._delegate;
     }
-    set delegate(delegate){
+    set delegate(delegate:MIOFetchedResultsControllerDelegate){
         this._delegate = delegate;
 
         // TODO: Add and remove notification observer
@@ -166,15 +179,16 @@ export class MIOFetchedResultsController extends MIOObject
 
             for (var sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++)
             {
+                let sectionInfo = this.sections[sectionIndex];
                 if (typeof this._delegate.didChangeSection === "function")
-                    this._delegate.didChangeSection(this, sectionIndex, "insert");
+                    this._delegate.didChangeSection(this, sectionInfo, sectionIndex, MIOFetchedResultsChangeType.Insert);
 
-                if (typeof this._delegate.didChangeObject === "function") {
-                    var section = this.sections[sectionIndex];
-                    var items = section.objects;
-                    for (var index = 0; index < items.length; index++) {
-                        var obj = items[index];
-                        this._delegate.didChangeObject(this, index, "insert", obj);
+                if (typeof this._delegate.didChangeObject === "function") {                    
+                    let items = sectionInfo.objects;
+                    for (let index = 0; index < items.length; index++) {
+                        let obj = items[index];
+                        let newIndexPath = MIOIndexPath.indexForRowInSection(index, sectionIndex);
+                        this._delegate.didChangeObject(this, obj, null, MIOFetchedResultsChangeType.Insert, newIndexPath);
                     }
                 }
             }

@@ -29,6 +29,7 @@ export * from "./MUIMenu"
 export * from "./MUISegmentedControl"
 export * from "./MUIPageControl"
 export * from "./MUIToolbar"
+export * from "./MUINavigationBar"
 
 export * from "./MUIViewController"
 export * from "./MUINavigationItem"

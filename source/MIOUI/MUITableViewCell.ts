@@ -1,6 +1,7 @@
 
 import { MUIView } from "./MUIView";
 import { MUILabel } from "./MUILabel";
+import { MUIButton } from ".";
 
 export enum MUITableViewCellStyle {
 
@@ -16,7 +17,7 @@ export enum MUITableViewCellAccessoryType {
     Checkmark
 }
 
-export enum MIOTableViewCellEditingStyle {
+export enum MUITableViewCellEditingStyle {
 
     None,
     Delete,
@@ -88,7 +89,45 @@ export class MUITableViewCell extends MUIView {
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
 
+        this.scanLayerNodes(layer, owner);
+        
         this._setupLayer();
+    }
+
+    private scanLayerNodes(layer, owner){
+
+        if (layer.childNodes.length == 0) return;
+
+        if (layer.childNodes.length > 0) {
+            for (var index = 0; index < layer.childNodes.length; index++) {
+                var subLayer = layer.childNodes[index];
+
+                if (subLayer.tagName != "DIV")
+                    continue;
+
+                this.scanLayerNodes(subLayer, owner);
+
+                if (subLayer.getAttribute("data-editing-accessory-view") != null) {
+                    this.addEditingAccessoryView(subLayer, owner);
+                }
+            }
+        }
+
+    }
+
+    private addEditingAccessoryView(layer, owner){
+
+        this.editingAccesoryView = new MUIView();
+        this.editingAccesoryView.initWithLayer(layer, owner);
+
+        // TODO: Change for a gesuture recongnizer or something independent of the html
+        var instance = this;
+        this.editingAccesoryView.layer.onclick = function (e) {
+            if (instance._onAccessoryClickFn != null){
+                e.stopPropagation();
+                instance._onAccessoryClickFn.call(instance._target, instance);
+            }
+        };            
     }
 
     private _setupLayer() {
@@ -232,7 +271,7 @@ export class MUITableViewCell extends MUIView {
 
         this._editing = editing;
 
-        if (this.editingAccesoryView == null) {
+/*        if (this.editingAccesoryView == null) {
             if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.left = "25px";
 
             var layer = document.createElement("div");
@@ -262,7 +301,7 @@ export class MUITableViewCell extends MUIView {
         }
         else {
             this.editingAccesoryView.removeFromSuperview();
-        }
+        }*/
 
     }
 

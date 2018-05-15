@@ -1,7 +1,7 @@
 import { MIOObject, MIOIndexPath, MIOLocationInRange, MIORange, MIOSize, MIOBundle, MIOUUID, MIOIndexPathEqual } from "../MIOFoundation";
 import { MUIScrollView } from "./MUIScrollView";
 import { MUIView } from "./MUIView";
-import { MUITableViewCell, MIOTableViewCellEditingStyle } from "./MUITableViewCell";
+import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCell";
 import { MIOClassFromString } from "../MIOCorePlatform";
 import { MUILabel } from "./MUILabel";
 
@@ -804,9 +804,12 @@ export class MUITableView extends MUIScrollView {
 
         let indexPath: MIOIndexPath = this.indexPathForCell(cell);
 
-        if (this.delegate != null) {
-            if (typeof this.delegate.commitEditingStyleForRowAtIndexPath === "function")
-                this.delegate.commitEditingStyleForRowAtIndexPath(this, MIOTableViewCellEditingStyle.Delete, indexPath);
+        if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
+            let editingStyle = this.delegate.editingStyleForRowAtIndexPath(this, indexPath);
+        
+            if (this.delegate != null && typeof this.delegate.commitEditingStyleForRowAtIndexPath === "function") {
+                this.delegate.commitEditingStyleForRowAtIndexPath(this, editingStyle, indexPath);
+            }
         }
     }
 

@@ -71,6 +71,7 @@ export class MIOManagedObject extends MIOObject {
         this.willChangeValue("hasChanges");
         this.willChangeValue("isInserted");
         this._isInserted = value;
+        this.insertToInverseRelationships();
         this.didChangeValue("isInserted");
         this.didChangeValue("hasChanges");
     }    
@@ -91,8 +92,9 @@ export class MIOManagedObject extends MIOObject {
         this.willChangeValue("hasChanges");
         this.willChangeValue("isDeleted");
         this._isDeleted = value;
+        this.deleteFromInverseRelationships();
         this.didChangeValue("isDeleted");
-        this.didChangeValue("hasChanges");
+        this.didChangeValue("hasChanges");        
     }
     
     private _isFault = false;
@@ -386,4 +388,44 @@ export class MIOManagedObject extends MIOObject {
         this._setIsFault(false);
     }
 
+    private insertToInverseRelationships(){
+
+        let relationships = this.entity.relationshipsByName;
+        for (let relName in relationships) {
+            let rel:MIORelationshipDescription = relationships[relName];
+            if (rel.inverseRelationship != null) {
+                let parentObject:MIOManagedObject = this.valueForKey(relName);
+                if (parentObject == null) continue;
+                let parentRelationship = parentObject.entity.relationshipsByName[rel.inverseRelationship.name];
+                if (parentRelationship.isToMany == false){
+                    parentObject.setValueForKey(this, rel.inverseRelationship.name);
+                }
+                else {
+                    let set:MIOManagedObjectSet = parentObject.valueForKey(rel.inverseRelationship.name);
+                    set.addObject(this);
+                }
+            }
+        }
+    }
+
+
+    private deleteFromInverseRelationships(){
+
+        let relationships = this.entity.relationshipsByName;
+        for (let relName in relationships) {
+            let rel:MIORelationshipDescription = relationships[relName];
+            if (rel.inverseRelationship != null) {
+                let parentObject:MIOManagedObject = this.valueForKey(relName);
+                if (parentObject == null) continue;
+                let parentRelationship = parentObject.entity.relationshipsByName[rel.inverseRelationship.name];
+                if (parentRelationship.isToMany == false){
+                    parentObject.setValueForKey(null, rel.inverseRelationship.name);
+                }
+                else {
+                    let set:MIOManagedObjectSet = parentObject.valueForKey(rel.inverseRelationship.name);
+                    set.removeObject(this);
+                }
+            }
+        }
+    }
 }
