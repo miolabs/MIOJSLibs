@@ -70,8 +70,7 @@ export class MIOManagedObject extends MIOObject {
     _setIsInserted(value:boolean) {
         this.willChangeValue("hasChanges");
         this.willChangeValue("isInserted");
-        this._isInserted = value;
-        this.insertToInverseRelationships();
+        this._isInserted = value;        
         this.didChangeValue("isInserted");
         this.didChangeValue("hasChanges");
     }    
