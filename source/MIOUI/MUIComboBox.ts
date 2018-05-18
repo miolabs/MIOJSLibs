@@ -118,8 +118,7 @@ export class MUIComboBox extends MUIControl
         }
     }
 
-    selectItem(item)
-    {
+    selectItem(item){
         this._selectLayer.value = item;
     }
 
