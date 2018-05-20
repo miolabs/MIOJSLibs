@@ -65,10 +65,10 @@ export class MUIReportTableViewRow extends MIOObject {
 
 export class MUIReportTableViewColumn extends MIOObject {
 
-    static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifer?: string) {
+    static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifier?: string) {
         let col = new MUIReportTableViewColumn();
         col.title = title;
-        col.identifier = identifer;
+        col.identifier = identifier;
         col.width = width;
         col.minWidth = minWidth;
         col.serverName = key;
@@ -79,7 +79,7 @@ export class MUIReportTableViewColumn extends MIOObject {
 
     identifier: string = null;
     title: string = null;
-    width = 0;
+    width:string = "0";
     minWidth = 0;
     serverName: string = null;
     pixelWidth = 0;
@@ -288,8 +288,20 @@ export class MUIReportTableView extends MUIScrollView {
             let col: MUIReportTableViewColumn = this.columns[colIndex];            
             let header: MUIView = col.columnHeaderView();
             
-            header.setX(x);
-            col.pixelWidth = (col.width * this.getWidth()) / 100;
+            header.setX(x); 
+            if ((typeof col.width) == "string") {
+                let pi = col.width.indexOf("%");
+                if (pi > 0){
+                    let width = parseInt(col.width.substr(0, pi));
+                    col.pixelWidth = (width * this.getWidth()) / 100;
+                }    
+                else {
+                    col.pixelWidth = parseInt(col.width);
+                }
+            }
+            else 
+                col.pixelWidth = parseInt(col.width);
+                
             if (col.minWidth > 0 && col.pixelWidth < col.minWidth) col.pixelWidth = col.minWidth;
             header.setWidth(col.pixelWidth);            
             x += col.pixelWidth;
