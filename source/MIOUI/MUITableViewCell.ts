@@ -39,25 +39,25 @@ export enum MUITableViewCellSelectionStyle {
 
 export class MUITableViewCell extends MUIView {
 
-    reuseIdentifier:string = null;
+    reuseIdentifier: string = null;
 
-    nodeID:string = null;
+    nodeID: string = null;
 
     contentView: MUIView = null;
     style = MUITableViewCellStyle.Custom;
 
     textLabel = null;
 
-    accessoryType = MUITableViewCellAccessoryType.None;
-    accessoryView = null;
+    accessoryType:MUITableViewCellAccessoryType = MUITableViewCellAccessoryType.None;
+    accessoryView:MUIView = null;
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
-
-    selectionStyle = MUITableViewCellSelectionStyle.Default;
-    private _selected = false;
 
     private _editing = false;
     editingAccessoryType = MUITableViewCellAccessoryType.None;
-    editingAccesoryView: MUIView = null;
+    editingAccessoryView: MUIView = null;
+
+    selectionStyle = MUITableViewCellSelectionStyle.Default;
+    private _selected = false;
 
     _target = null;
     _onClickFn = null;
@@ -90,11 +90,11 @@ export class MUITableViewCell extends MUIView {
         super.initWithLayer(layer, owner, options);
 
         this.scanLayerNodes(layer, owner);
-        
+
         this._setupLayer();
     }
 
-    private scanLayerNodes(layer, owner){
+    private scanLayerNodes(layer, owner) {
 
         if (layer.childNodes.length == 0) return;
 
@@ -107,6 +107,10 @@ export class MUITableViewCell extends MUIView {
 
                 this.scanLayerNodes(subLayer, owner);
 
+                if (subLayer.getAttribute("data-accessory-type") != null) {
+                    this.addAccessoryView(subLayer, owner);
+                }
+
                 if (subLayer.getAttribute("data-editing-accessory-view") != null) {
                     this.addEditingAccessoryView(subLayer, owner);
                 }
@@ -115,19 +119,44 @@ export class MUITableViewCell extends MUIView {
 
     }
 
-    private addEditingAccessoryView(layer, owner){
+    //data-accessory-type="checkmark"
 
-        this.editingAccesoryView = new MUIView();
-        this.editingAccesoryView.initWithLayer(layer, owner);
+    private addAccessoryView(layer, owner) {
+
+        let type = layer.getAttribute("data-accessory-type");
+
+        this.accessoryView = new MUIView();
+        this.accessoryView.initWithLayer(layer, owner);
+
+        if (type == "checkmark") this.accessoryType = MUITableViewCellAccessoryType.Checkmark;
+        else this.accessoryType = MUITableViewCellAccessoryType.None;
+
+        if (this.accessoryType != MUITableViewCellAccessoryType.None) return;
 
         // TODO: Change for a gesuture recongnizer or something independent of the html
         var instance = this;
-        this.editingAccesoryView.layer.onclick = function (e) {
-            if (instance._onAccessoryClickFn != null){
+        this.accessoryView.layer.onclick = function (e) {
+            if (instance._onAccessoryClickFn != null) {
                 e.stopPropagation();
                 instance._onAccessoryClickFn.call(instance._target, instance);
             }
-        };            
+        };
+    }
+
+
+    private addEditingAccessoryView(layer, owner) {
+
+        this.editingAccessoryView = new MUIView();
+        this.editingAccessoryView.initWithLayer(layer, owner);
+
+        // TODO: Change for a gesuture recongnizer or something independent of the html
+        var instance = this;
+        this.editingAccessoryView.layer.onclick = function (e) {
+            if (instance._onAccessoryClickFn != null) {
+                e.stopPropagation();
+                instance._onAccessoryClickFn.call(instance._target, instance);
+            }
+        };
     }
 
     private _setupLayer() {
@@ -136,15 +165,15 @@ export class MUITableViewCell extends MUIView {
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
 
-        this.layer.onclick = function (e) {            
-            if (instance._onClickFn != null){
+        this.layer.onclick = function (e) {
+            if (instance._onClickFn != null) {
                 e.stopPropagation();
                 instance._onClickFn.call(instance._target, instance);
             }
         };
 
-        this.layer.ondblclick = function (e) {            
-            if (instance._onDblClickFn != null){
+        this.layer.ondblclick = function (e) {
+            if (instance._onDblClickFn != null) {
                 e.stopPropagation();
                 instance._onDblClickFn.call(instance._target, instance);
             }
@@ -166,26 +195,29 @@ export class MUITableViewCell extends MUIView {
             layer.style.height = "15px";
 
             this.accessoryView = new MUIView("accessory_view");
-            this.accessoryView.initWithLayer(layer);
+            this.accessoryView.initWithLayer(layer, null);
 
             this.addSubview(this.accessoryView);
         }
 
-        // Remove the previous accessory
-        if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
-            this.accessoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
-        else if (this.accessoryType == MUITableViewCellAccessoryType.DisclosureIndicator)
-            this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
-        else if (this.accessoryType == MUITableViewCellAccessoryType.DetailDisclosureButton)
-            this.accessoryView.layer.classList.remove("tableviewcell_accessory_detail_disclosure_button");
+        if (type == MUITableViewCellAccessoryType.None) this.accessoryView.setHidden(true);
+        else this.accessoryView.setHidden(false);
 
-        // Add the new one
-        if (type == MUITableViewCellAccessoryType.Checkmark)
-            this.accessoryView.layer.classList.add("tableviewcell_accessory_checkmark");
-        else if (type == MUITableViewCellAccessoryType.DisclosureIndicator)
-            this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
-        else if (type == MUITableViewCellAccessoryType.DetailDisclosureButton)
-            this.accessoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");
+        // Remove the previous accessory
+        // if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
+        //     this.accessoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
+        // else if (this.accessoryType == MUITableViewCellAccessoryType.DisclosureIndicator)
+        //     this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
+        // else if (this.accessoryType == MUITableViewCellAccessoryType.DetailDisclosureButton)
+        //     this.accessoryView.layer.classList.remove("tableviewcell_accessory_detail_disclosure_button");
+
+        // // Add the new one
+        // if (type == MUITableViewCellAccessoryType.Checkmark)
+        //     this.accessoryView.layer.classList.add("tableviewcell_accessory_checkmark");
+        // else if (type == MUITableViewCellAccessoryType.DisclosureIndicator)
+        //     this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
+        // else if (type == MUITableViewCellAccessoryType.DetailDisclosureButton)
+        //     this.accessoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");
 
         this.accessoryType = type;
     }
@@ -271,37 +303,37 @@ export class MUITableViewCell extends MUIView {
 
         this._editing = editing;
 
-/*        if (this.editingAccesoryView == null) {
-            if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.left = "25px";
-
-            var layer = document.createElement("div");
-            layer.style.position = "absolute";
-
-            var btn = new MUIView();
-            btn.init();
-
-            btn.layer.style.top = "";
-            btn.layer.style.right = "";
-            btn.layer.style.width = "";
-            btn.layer.style.height = "100%";
-
-            // TODO: Call delegate
-            btn.layer.classList.add("tableviewcell_accessory_delete");
-
-            var instance = this;
-            btn.layer.onclick = function (e) {
-                if (instance._onAccessoryClickFn != null){
-                    e.stopPropagation();
-                    instance._onAccessoryClickFn.call(instance._target, instance);
+        /*        if (this.editingAccesoryView == null) {
+                    if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.left = "25px";
+        
+                    var layer = document.createElement("div");
+                    layer.style.position = "absolute";
+        
+                    var btn = new MUIView();
+                    btn.init();
+        
+                    btn.layer.style.top = "";
+                    btn.layer.style.right = "";
+                    btn.layer.style.width = "";
+                    btn.layer.style.height = "100%";
+        
+                    // TODO: Call delegate
+                    btn.layer.classList.add("tableviewcell_accessory_delete");
+        
+                    var instance = this;
+                    btn.layer.onclick = function (e) {
+                        if (instance._onAccessoryClickFn != null){
+                            e.stopPropagation();
+                            instance._onAccessoryClickFn.call(instance._target, instance);
+                        }
+                    };            
+        
+                    this.editingAccesoryView = btn;
+                    this.addSubview(this.editingAccesoryView);
                 }
-            };            
-
-            this.editingAccesoryView = btn;
-            this.addSubview(this.editingAccesoryView);
-        }
-        else {
-            this.editingAccesoryView.removeFromSuperview();
-        }*/
+                else {
+                    this.editingAccesoryView.removeFromSuperview();
+                }*/
 
     }
 
