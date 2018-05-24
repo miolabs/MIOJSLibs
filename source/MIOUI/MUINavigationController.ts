@@ -152,6 +152,10 @@ export class MUINavigationController extends MUIViewController
         });
     }
 
+    public set preferredContentSize(size) {
+        this.setPreferredContentSize(size);
+    }
+
     public get preferredContentSize()
     {
         if (this.currentViewControllerIndex < 0)

@@ -6,6 +6,8 @@ import { MUICalendarView } from "./MUICalendarView";
 export class MUIDatePickerController extends MUIViewController
 {
     delegate = null;
+    tag = 0;
+    
     private calendarView = null;    
     
     viewDidLoad(){

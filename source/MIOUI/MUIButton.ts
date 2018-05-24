@@ -1,6 +1,7 @@
 import { MUIControl } from "./MUIControl";
 import { MUILayerGetFirstElementWithTag } from "./MUIView";
 import { MIOLocalizeString } from "../MIOCore";
+import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
 
 /**
  * Created by godshadow on 12/3/16.
@@ -29,8 +30,7 @@ export class MUIButton extends MUIControl
     private _selected = false;
     type = MUIButtonType.MomentaryPushIn;
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
         var opts = options != null ? options : {}; 
@@ -74,7 +74,7 @@ export class MUIButton extends MUIControl
         }
 
         // Check for status
-        var status = this.layer.getAttribute("data-status");
+        let status = this.layer.getAttribute("data-status");
         if (status == "selected")
             this.setSelected(true);
 
@@ -135,13 +135,15 @@ export class MUIButton extends MUIControl
         return this._titleLayer.innerHTML;
     }
 
-    get selected()
-    {
+    set selected(value){
+        this.setSelected(value);
+    }
+
+    get selected(){
         return this._selected;
     }
     
-    setSelected(value)
-    {
+    setSelected(value){
         if (this._selected == value)
             return;
 
@@ -189,6 +191,16 @@ export class MUIButton extends MUIControl
 
             if (this._statusStyle == null && this._titleStatusStyle == null && this._imageStatusStyle == null)
                 this.setAlpha(1);
+        }
+
+        // New style
+        if (value == true) {
+            MUICoreLayerAddStyle(this.layer, "selected");
+            //MUICoreLayerRemoveStyle(this.layer, "deselected");
+        }
+        else {
+            //MUICoreLayerAddStyle(this.layer, "deselected");
+            MUICoreLayerRemoveStyle(this.layer, "selected");
         }
 
         this._selected = value;
