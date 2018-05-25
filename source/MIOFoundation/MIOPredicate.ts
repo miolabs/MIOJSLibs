@@ -196,7 +196,7 @@ export class MIOPredicate extends MIOObject {
     private lexer:MIOCoreLexer = null;
 
     public static predicateWithFormat(format) {
-        var p = new MIOPredicate();
+        let p = new MIOPredicate();
         p.initWithFormat(format);
 
         return p;

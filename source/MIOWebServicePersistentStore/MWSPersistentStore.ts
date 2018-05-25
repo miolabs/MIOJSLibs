@@ -189,6 +189,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     fetchObjects(fetchRequest: MIOFetchRequest, context: MIOManagedObjectContext, target?, completion?) {
 
+        if (fetchRequest.entity == null) {
+            fetchRequest.entity = MIOEntityDescription.entityForNameInManagedObjectContext(fetchRequest.entityName, context);
+        }
+
         let entityName = fetchRequest.entity.name;
 
         if (this.delegate == null) return;

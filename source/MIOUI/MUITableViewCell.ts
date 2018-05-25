@@ -303,6 +303,10 @@ export class MUITableViewCell extends MUIView {
 
         this._editing = editing;
 
+        if (this.editingAccessoryView != null) {
+            this.editingAccessoryView.setHidden(!editing);
+        }
+
         /*        if (this.editingAccesoryView == null) {
                     if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.left = "25px";
         
