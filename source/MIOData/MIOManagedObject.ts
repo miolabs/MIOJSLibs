@@ -421,8 +421,7 @@ export class MIOManagedObject extends MIOObject {
                     parentObject.setValueForKey(null, rel.inverseRelationship.name);
                 }
                 else {
-                    let set:MIOManagedObjectSet = parentObject.valueForKey(rel.inverseRelationship.name);
-                    set.removeObject(this);
+                    parentObject._removeObjectForKey(this, rel.inverseRelationship.name);
                 }
             }
         }

@@ -232,7 +232,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (context == null) return;
         if (items == null) return;
 
-        var objects = [];
+        let objects = [];
 
         context.performBlockAndWait(this, function () {
 
