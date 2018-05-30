@@ -19,7 +19,7 @@ export class MIOSet extends MIOObject {
     }
 
     removeObject(object){
-        if (this._objects.containsObject(object) == true) return;        
+        if (this._objects.containsObject(object) == false) return;        
         this._objects.removeObject(object);
     }
 

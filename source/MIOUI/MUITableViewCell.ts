@@ -47,8 +47,7 @@ export class MUITableViewCell extends MUIView {
     style = MUITableViewCellStyle.Custom;
 
     textLabel = null;
-
-    accessoryType:MUITableViewCellAccessoryType = MUITableViewCellAccessoryType.None;
+    
     accessoryView:MUIView = null;
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
 
@@ -180,8 +179,14 @@ export class MUITableViewCell extends MUIView {
         };
     }
 
+    private _accessoryType:MUITableViewCellAccessoryType = MUITableViewCellAccessoryType.None;
+    get accessoryType() {return this._accessoryType;}
+    set accessoryType(value:MUITableViewCellAccessoryType){
+        this.setAccessoryType(value);
+    }
+
     setAccessoryType(type) {
-        if (type == this.accessoryType)
+        if (type == this._accessoryType)
             return;
 
         if (this.accessoryView == null) {
@@ -219,7 +224,7 @@ export class MUITableViewCell extends MUIView {
         // else if (type == MUITableViewCellAccessoryType.DetailDisclosureButton)
         //     this.accessoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");
 
-        this.accessoryType = type;
+        this._accessoryType = type;
     }
 
     setPaddingIndex(value) {

@@ -255,7 +255,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         this.checkRelationships(values, entity, context, relationshipsObjects);
 
         let serverID = this.delegate.serverIDForItem(this, values, entity.name);
-        if (serverID == null) throw new Error("SERVER ID CAN NOT BE NULL");
+        if (serverID == null) throw new Error("MWSPersistentStore: SERVER ID CAN NOT BE NULL. (" + entity.name + ")");
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);        
 
