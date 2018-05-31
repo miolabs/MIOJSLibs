@@ -9,13 +9,11 @@ export class MUISwitchButton extends MUIControl
 {
     target = null;
     action = null;    
-    on = false; //Off
 
     private _inputLayer = null;
     private _labelLayer = null;
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
         this.layer.classList.add("switch_button");
@@ -55,21 +53,22 @@ export class MUISwitchButton extends MUIControl
         }
     }
 
-    setOnChangeValue(target, action)
-    {
+    setOnChangeValue(target, action){
         this.target = target;
         this.action = action;
     }
 
-    setOn(on)
-    {
+
+    private _on = false;
+    get on() {return this._on;}
+    set on(value){this.setOn(value);}
+    setOn(on){
         if (on == this.on) return;
         this._inputLayer.checked = on;
-        this.on = on;
+        this._on = on;
     }
 
-    private _toggleValue()
-    {
+    private _toggleValue(){
         this.on = !this.on;
 
         if (this.target != null && this.action != null)
