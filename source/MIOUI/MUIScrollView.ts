@@ -54,7 +54,8 @@ export class MUIScrollView extends MUIView {
         };
         
         this.contentView.layer.onscroll = function (e) {
-            if (e.target === instance.contentView.layer) instance.scrollEventCallback.call(instance);
+            //if (e.target === instance.contentView.layer) instance.scrollEventCallback.call(instance);
+            instance.scrollEventCallback.call(instance);
         };        
 
         // FIX: Scroll event don't get fire when you scroll with a scrollbar because the system thinks that
