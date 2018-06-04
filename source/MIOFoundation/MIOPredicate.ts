@@ -191,7 +191,7 @@ export enum MIOPredicateTokenType{
 
 export class MIOPredicate extends MIOObject {
      
-    predicateGroup = null;
+    predicateGroup = null;    
 
     private lexer:MIOCoreLexer = null;
 
@@ -203,7 +203,13 @@ export class MIOPredicate extends MIOObject {
     }
 
     initWithFormat(format) {
+        this._predicateFormat = format;
         this.parse(format);
+    }
+
+    private _predicateFormat:string = null;
+    get predicateFormat(){
+        return this._predicateFormat;
     }
 
     evaluateObject(object:MIOObject) {        

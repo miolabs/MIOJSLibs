@@ -35,9 +35,7 @@ export class MIOFetchSection extends MIOObject
 export class MIOFetchedResultsController extends MIOObject
 {
     sections = [];
-
-    resultObjects = [];
-
+    
     fetchRequest:MIOFetchRequest = null;
     managedObjectContext:MIOManagedObjectContext  = null;
     sectionNameKeyPath = null;
@@ -96,6 +94,12 @@ export class MIOFetchedResultsController extends MIOObject
             MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextDidSaveNotification);
             MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextObjectsDidChange);
         }
+    }
+
+    // TODO: Replace resultObjects to fetchedObjects
+    resultObjects = [];
+    get fetchedObjects(){
+        return this.resultObjects;
     }
 
     performFetch(){
