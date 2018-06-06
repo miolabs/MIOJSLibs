@@ -2,9 +2,7 @@
  * Created by godshadow on 13/12/2016.
  */
 
-/// <reference path="miolibs/MIOLib.ts" />
-
-class ViewController extends MIOViewController
+class ViewController extends MUIViewController
 {
     private _label = null;
 
@@ -13,6 +11,6 @@ class ViewController extends MIOViewController
         super.viewDidLoad();
 
         this._label = MUIOutlet(this, "view_label", "MUILabel");
-        this._label.text = "Cambio";        
+        this._label.text = "Change";        
     }
 }

@@ -1,0 +1,5 @@
+node_modules/
+app/libs/miojslibs
+app/style/style.css
+app/app.js
+app/app.js.map
