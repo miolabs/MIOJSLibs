@@ -20,15 +20,11 @@
    npm install miojslibs --save
    ```
 
-1. If you use typescript add **miojslibs** to *types* into `tsconfig.json` (add typeRoots as seen below if necessary)
+1. If you use typescript add **miojslibs** to *types* into `tsconfig.json`.
 
     ```json
     {
         "compilerOptions": {
-            "typeRoots": [
-                "./node_modules/@types/",
-                "./node_modules/miojslibs/dist/typings"
-            ],
             "types": [
                 "miojslibs"
             ]
