@@ -6,7 +6,7 @@
     "update-libs": "npm install && cp -r node_modules/miojslibs/dist/js/ app/libs/miojslibs",
     "start": "http-server -c-1 -p9090 app",
     "tsc": "tsc -w -p .",
-    "scss": "node-sass app -o app",
+    "scss": "node-sass app -o app --output-style compressed",
     "build": "tsc -p . -w",
     "scss:watch": "npm run scss && npm run scss -- -w app",
     "test": "echo \"Error: no test specified\" && exit 1"
