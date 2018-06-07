@@ -6,7 +6,9 @@
 
 ## Getting started from a template
 
-1. install [miojs](https://www.npmjs.com/package/miojs), it's a command-line tool to help with the projects built with MIOJSLibs.
+### Setup
+
+1. install [miojs](https://www.npmjs.com/package/miojs), a command-line tool to help with the projects built with MIOJSLibs.
 
    ```bash
    npm install miojs -g
@@ -20,7 +22,44 @@
 
    >It will create a basic frame for the project, into a new folder that is named as the given project name.
 
-1. Follow the instructions given in the generated project's [README.md](./templates/project/README.md) file to start it.
+1. Congratulations, now you have a template project that uses MIOJSLibs.
+
+### Build the project
+
+1. Navigate to the project folder.
+1. Install the dependencies (including miojslibs).
+
+   ```bash
+   npm install
+   ```
+
+1. Install && copy the miojslibs to `app/libs/miojslibs`
+
+   ```bash
+   npm run update-libs # since it uses cp currently it only works in mac||linux
+   ```
+
+1. Build the scss files of the project
+
+   ```bash
+   npm run scss:watch
+   ```
+
+1. Bundle the typescript files of the project.
+
+   ```bash
+   npm run tsc
+   ```
+
+### Start the project
+
+1. Serve the files with a basic `http-server`.
+
+   ```bash
+   npm start
+   ```
+
+1. Navigate to [http://localhost:9090](http://localhost:9090) in an ES5 compatible browser.
 
 ## Getting started from scratch
 
