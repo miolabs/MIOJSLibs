@@ -11,7 +11,7 @@ class AppDelegate {
     didFinishLaunching() {
 
         var vc = new MUIViewController("view");
-        vc.initWithResource("biews/base/View.html");
+        vc.initWithResource("views/base/View.html");
 
         this.window = new MUIWindow();
         this.window.initWithRootViewController(vc);
