@@ -9,4 +9,4 @@
 * Run `npm run tsc` in a separate terminal - Build the typescript files of the project.
 * Run `npm start` - Serve the files with a basic http-server.
 
-Open the browser in [localhost:8080](http://localhost:8080/).
+Open the browser in [localhost:9090](http://localhost:9090/).
