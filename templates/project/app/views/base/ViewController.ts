@@ -9,8 +9,12 @@ class ViewController extends MUIViewController
     viewDidLoad()
     {
         super.viewDidLoad();
-
         this._label = MUIOutlet(this, "view_label", "MUILabel");
-        this._label.text = "Change";        
+
+        const timer = setTimeout(() => {
+            this._label.text = MIOLocalizeString('CHANGED_AFTER_DELAY','Changed after delay...');        
+            clearTimeout(timer);
+        }, 1000);
+
     }
 }

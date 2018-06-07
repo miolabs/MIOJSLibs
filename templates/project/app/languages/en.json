@@ -1,3 +1,4 @@
 {
-    "HELLO_WORLD": "Hello World!"
+    "HELLO_WORLD": "Hello World!",
+    "CHANGED_AFTER_DELAY": "Changed after delay!"
 }
