@@ -4,7 +4,25 @@
 
 * Download and install [npm(node)](https://nodejs.org/en/download/)
 
-## Getting started
+## Getting started from a template
+
+1. install [miojs](https://www.npmjs.com/package/miojs), it's a command-line tool to help with the projects built with MIOJSLibs.
+
+   ```bash
+   npm install miojs -g
+   ```
+
+1. run `init`, with the desired project name.
+
+   ```bash
+   miojs init my-new-project-name
+   ```
+
+   >It will create a basic frame for the project, into a new folder that is named as the given project name.
+
+1. Follow the instructions given in the generated project's [README.md](./templates/project/README.md) file to start it.
+
+## Getting started from scratch
 
 1. Initialize your project with npm (if you haven't already).
 
