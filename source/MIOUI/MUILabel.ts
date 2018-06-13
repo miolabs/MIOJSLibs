@@ -1,4 +1,5 @@
 import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
+import { MUICoreLayerAddStyle } from ".";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -14,7 +15,7 @@ export class MUILabel extends MUIView
     init()
     {
         super.init();
-        this.layer.style.background = "";
+        MUICoreLayerAddStyle(this.layer, "lbl");
         this._setupLayer();
     }
 /*
@@ -24,8 +25,7 @@ export class MUILabel extends MUIView
         this._setupLayer();
     }*/
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
         this._textLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
@@ -34,8 +34,7 @@ export class MUILabel extends MUIView
 
     private _setupLayer()
     {
-        if (this._textLayer == null)
-        {
+        if (this._textLayer == null){
             this.layer.innerHTML = "";
             this._textLayer = document.createElement("span");
             this._textLayer.style.top = "3px";
@@ -79,13 +78,15 @@ export class MUILabel extends MUIView
         }
     }
 */
-    setText(text)
-    {
+    setText(text){
         this.text = text;
     }
+    
+    get text(){
+        return this._textLayer.innerHTML;
+    }
 
-    set text(text)
-    {
+    set text(text){
         this._textLayer.innerHTML = text != null ? text : "";
     }
 

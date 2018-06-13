@@ -132,9 +132,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     }
 
     obtainPermanentIDsForObjects(objects){
-        var array = [];
+        let array = [];
 
-        for (var index = 0; index < objects.length; index++){
+        for (let index = 0; index < objects.length; index++){
             let obj:MIOManagedObject = objects[index];
             let serverID = this.delegate.serverIDForObject(this, obj);
             let objID = this.newObjectIDForEntity(obj.entity, serverID);

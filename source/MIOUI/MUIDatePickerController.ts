@@ -10,27 +10,25 @@ export class MUIDatePickerController extends MUIViewController
     
     private calendarView = null;    
     
-    viewDidLoad(){
-        
+    public get preferredContentSize(){
+        return new MIOSize(320, 329);
+    }
+
+    viewDidLoad(){        
         this.view.setBackgroundRGBColor(255, 255, 255);
 
         this.calendarView = new MUICalendarView();
         this.calendarView.init();
         this.calendarView.dataSource = this;        
         this.calendarView.delegate = this;        
-
-        this.calendarView.horizontalCellSpacing = 1;
-        this.calendarView.verticalCellSpacing = 1;
-
         this.view.addSubview(this.calendarView);
 
         this.calendarView.reloadData();
     }
 
-    viewTitleForHeaderAtMonthForCalendar(calendar, currentMonth)
-    {
-        var title = MIODateGetStringForMonth(currentMonth);
-        var header = new MUILabel();
+    viewTitleForHeaderAtMonthForCalendar(calendar, currentMonth){
+        let title = MIODateGetStringForMonth(currentMonth);
+        let header = new MUILabel();
         header.init();
         header.setText(title);
         header.setTextAlignment("center");
@@ -44,12 +42,11 @@ export class MUIDatePickerController extends MUIViewController
         return header;
     }
 
-    dayCellAtDate(calendar, date)
-    {
-        var cell = calendar.dequeueReusableDayCellWithIdentifier(null);
+    // dayCellAtDate(calendar, date){
+    //     var cell = calendar.dequeueReusableDayCellWithIdentifier(null);
 
-        return cell;
-    }
+    //     return cell;
+    // }
 
     // Calendar Delegate methods
     didSelectDayCellAtDate(calendarView, date) {
@@ -58,10 +55,5 @@ export class MUIDatePickerController extends MUIViewController
             this.delegate.didSelectDate(this, date);
 
         this.dismissViewController(true);
-    }
-
-    public get preferredContentSize()
-    {
-        return new MIOSize(320, 320);
     }
 }

@@ -29,7 +29,7 @@ export function MUICoreLayerCreate(layerID?) {
     if (layerID != null)
         layer.setAttribute("id", layerID);
 
-    layer.style.position = "absolute";
+    //layer.style.position = "absolute";
 
     return layer;
 }

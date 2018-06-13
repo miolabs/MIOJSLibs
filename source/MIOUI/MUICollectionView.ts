@@ -100,16 +100,16 @@ export class MUICollectionView extends MUIView
     }
 
     private _addCellPrototypeWithLayer(subLayer){
-        var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
-        var cellClassname = subLayer.getAttribute("data-class");
+        let cellIdentifier = subLayer.getAttribute("data-cell-identifier");
+        let cellClassname = subLayer.getAttribute("data-class");
         if (cellClassname == null) cellClassname = "MIOCollectionViewCell";
 
-        var item = {};
+        let item = {};
         item["class"] = cellClassname;
         item["layer"] = subLayer;
-        var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        let size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null) item["size"] = size;
-        var bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
+        let bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
         if (bg != null) item["bg"] = bg;
 
         this._cellPrototypes[cellIdentifier] = item;
@@ -131,47 +131,45 @@ export class MUICollectionView extends MUIView
         this._supplementaryViews[viewIdentifier] = item;
     }
 
-    registerClassForCellWithReuseIdentifier(cellClass, resource, identifier){
-        //TODO:
+    registerClassForCellWithReuseIdentifier(cellClassname, identifier){        
+        let item = {};
+        item["class"] = cellClassname;
+        //item["layer"] = null;
+        this._cellPrototypes[identifier] = item;   
     }
 
-    registerClassForSupplementaryViewWithReuseIdentifier(viewClass, resource, identifier){
+    registerClassForSupplementaryViewWithReuseIdentifier(viewClass,identifier){
         //TODO:
     }
 
     dequeueReusableCellWithIdentifier(identifier){
-        var item = this._cellPrototypes[identifier];
+        let item = this._cellPrototypes[identifier];
 
         //instance creation here
-        var className = item["class"];
-        var cell = Object.create(window[className].prototype);
+        let className = item["class"];
+        let cell = Object.create(window[className].prototype);
         cell.constructor.apply(cell);
 
         //cell.init();
-        var layer = item["layer"];
+        let layer = item["layer"];
         if (layer != null) {
-            var newLayer = layer.cloneNode(true);
+            let newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
-            // var size = item["size"];
-            // if (size != null) {
-            //     cell.setWidth(size.width);
-            //     cell.setHeight(size.height);
-            // }
-            // var bg = item["bg"];
-            // if (bg != null) {
-            //     cell.layer.style.background = bg;
-            // }
             cell.initWithLayer(newLayer);
             cell.awakeFromHTML();
         }
         else {
-            var cells = item["cells"];
-            if (cells == null) {
-                cells = [];
-                item["cells"] = cells;
-            }
-            cells.push(cell);
+            cell.init();
         }
+
+        // else {
+        //     let cells = item["cells"];
+        //     if (cells == null) {
+        //         cells = [];
+        //         item["cells"] = cells;
+        //     }
+        //     cells.push(cell);
+        // }
 
         return cell;
     }

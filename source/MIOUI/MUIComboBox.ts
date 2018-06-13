@@ -1,5 +1,6 @@
 import { MUIControl } from "./MUIControl";
 import { MUILayerGetFirstElementWithTag } from "./MUIView";
+import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
 
 /**
  * Created by godshadow on 2/5/16.
@@ -12,17 +13,16 @@ export class MUIComboBox extends MUIControl
     target = null;
     action = null;
 
-    init()
-    {
+    init(){
         super.init();
+        MUICoreLayerRemoveStyle(this.layer, "view");
+        //MUICoreLayerAddStyle(this.layer, "combobox");
         this._setup_layers();
     }
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
         this._selectLayer = MUILayerGetFirstElementWithTag(this.layer, "SELECT");
-
         this._setup_layers();
     }
 
@@ -31,17 +31,18 @@ export class MUIComboBox extends MUIControl
         if (this._selectLayer == null) {
             this._selectLayer = document.createElement("select");
             this.layer.appendChild(this._selectLayer);
+            MUICoreLayerAddStyle(this._selectLayer, "default");
         }
     }
 
-    setAllowMultipleSelection(value)
-    {
+    setAllowMultipleSelection(value){
         if (value == true)
             this._selectLayer.setAttribute("multiple", "multiple");
         else
             this._selectLayer.removeAttribute("multiple");
     }
 
+    /*
     layoutSubviews()
     {
         super.layoutSubviews();
@@ -58,7 +59,7 @@ export class MUIComboBox extends MUIControl
         //this._selectLayer.style.backgroundColor = color;
 
         // this._selectLayer.style.backgroundColor = "rgb(255, 255, 255)"
-    }
+    }*/
 
     addItem(text, value?)
     {

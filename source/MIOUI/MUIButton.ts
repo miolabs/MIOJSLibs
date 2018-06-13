@@ -30,6 +30,13 @@ export class MUIButton extends MUIControl
     private _selected = false;
     type = MUIButtonType.MomentaryPushIn;
 
+    init(){
+        super.init();
+        MUICoreLayerRemoveStyle(this.layer, "view");
+        MUICoreLayerAddStyle(this.layer, "btn");
+        this.setup();
+    }
+
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
@@ -49,10 +56,6 @@ export class MUIButton extends MUIControl
 
         // Check for title layer
         this._titleLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
-        if (this._titleLayer == null) {
-            this._titleLayer = document.createElement("span");
-            this.layer.appendChild(this._titleLayer);
-        }
 
         if (this._titleLayer != null) {
             this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style-prefix");
@@ -78,6 +81,16 @@ export class MUIButton extends MUIControl
         if (status == "selected")
             this.setSelected(true);
 
+        this.setup();
+    }
+
+    private setup(){
+
+        if (this._titleLayer == null) {
+            this._titleLayer = document.createElement("span");
+            this.layer.appendChild(this._titleLayer);
+        }
+        
         // Prevent click
         this.layer.addEventListener("click", function(e) {
             e.stopPropagation();
@@ -107,26 +120,21 @@ export class MUIButton extends MUIControl
         });
     }
 
-    initWithAction(target, action)
-    {
-        super.init();
-
+    initWithAction(target, action){
+        this.init();
         this.setAction(target, action);
     }
 
-    setAction(target, action)
-    {
+    setAction(target, action){
         this.target = target;
         this.action = action;
     }
 
-    setTitle(title)
-    {
+    setTitle(title){
         this._titleLayer.innerHTML = title;
     }
 
-    set title(title)
-    {
+    set title(title){
         this.setTitle(title);
     }
 

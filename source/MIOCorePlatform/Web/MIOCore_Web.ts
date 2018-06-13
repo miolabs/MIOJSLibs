@@ -207,7 +207,7 @@ export function MIOClassFromString(className)
     try {
         object = Object.create(window[className].prototype);
         object.constructor.apply(object);
-        object.className = className;
+        //object.className = className;
     }
     catch (e){
         throw new Error(`Error, class (${className}) not found.`);

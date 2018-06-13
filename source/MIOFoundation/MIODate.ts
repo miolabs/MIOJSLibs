@@ -38,13 +38,23 @@ export function MIODateGetDayFromDate(date)
 
     // Transform to start on Monday instead of Sunday
     // 0 - Mon, 1 - Tue, 2 - Wed, 3 - Thu, 4 - Fri, 5 - Sat, 6 - Sun
-    var day = date.getDay();
+    let day = date.getDay();
     if (day == 0)
         day = 6;
     else
         day--;
 
     return day;
+}
+
+export function MIODateGetMonthFromDate(date:Date)
+{
+    return date.getMonth();
+}
+
+export function MIODateGetYearFromDate(date:Date)
+{
+    return date.getFullYear();
 }
 
 export function MIODateGetDayStringFromDate(date) 

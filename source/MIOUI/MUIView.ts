@@ -1,6 +1,6 @@
 import { MIOObject, MIORect } from "../MIOFoundation";
 import { MUIWindow } from "./MUIWindow";
-import { MUICoreLayerIDFromObject, MUICoreLayerCreate } from "./MIOUI_CoreLayer";
+import { MUICoreLayerIDFromObject, MUICoreLayerCreate, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MIOClassFromString } from "../MIOCorePlatform";
 import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
 
@@ -97,20 +97,19 @@ export class MUIView extends MIOObject
 
     _outlets = {};
 
-    constructor(layerID?)
-    {
+    constructor(layerID?){
         super();
         this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
-    init()
-    {
+    init(){
         this.layer = MUICoreLayerCreate(this.layerID);
-        this.layer.style.position = "absolute";
-        this.layer.style.top = "0px";
-        this.layer.style.left = "0px";
-        this.layer.style.width = "100%";
-        this.layer.style.height = "100%";
+        MUICoreLayerAddStyle(this.layer, "view");
+        // this.layer.style.position = "absolute";
+        // this.layer.style.top = "0px";
+        // this.layer.style.left = "0px";
+        // this.layer.style.width = "100%";
+        // this.layer.style.height = "100%";
         //this.layer.style.background = "rgb(255, 255, 255)";
     }
 
@@ -123,8 +122,7 @@ export class MUIView extends MIOObject
         this.setHeight(frame.size.height);
     }
 
-    initWithLayer(layer, owner, options?)
-    {
+    initWithLayer(layer, owner, options?){
         this.layer = layer;
         this.layerOptions = options;
         
@@ -153,13 +151,11 @@ export class MUIView extends MIOObject
     }
 
     copy() {
-
-        var objLayer = this.layer.cloneNode(true);
+        let objLayer = this.layer.cloneNode(true);
         
         let className = this.className;
         let view = MIOClassFromString(className);
-        view.initWithLayer(objLayer);
-        view.awakeFromHTML();
+        view.initWithLayer(objLayer);        
 
         return view;
     }
