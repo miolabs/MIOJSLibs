@@ -2,8 +2,6 @@
  * Created by godshadow on 26/08/16.
  */
 
-/// <reference path="miolibs/MIOLib.ts" />
-
 class AppDelegate {
 
     window = null;
@@ -13,14 +11,14 @@ class AppDelegate {
     didFinishLaunching() {
 
         var vc = new ViewController("view");
-        vc.initWithResource("layout/View.html");
+        vc.initWithResource("views/base/View.html");
 
-        this.window = new MIOWindow();
+        this.window = new MUIWindow();
         this.window.initWithRootViewController(vc);
     }
 
     get managedObjectContext() {
-	    
+
         if (this._managedObjectContext != null)
             return this._managedObjectContext;
 
@@ -31,5 +29,4 @@ class AppDelegate {
 
         return this._managedObjectContext;
     }
-
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>This title is not considered during application running</title>
+</head>
+<body>
+    <div id="view">
+        <div id="view_label">
+            <span data-localized-key="HELLO_WORLD">
+                Due to language settings in main.js,
+                The Hello world! text in this field comes from translation json at languages/en.json.
+                This text is completely ignored.
+
+                After loading the viewDidLoad function in ViewController, it replaces this text with another string.
+            </span>
+        </div>
+    </div>
+</body>
+</html>

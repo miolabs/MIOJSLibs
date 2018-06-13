@@ -1,12 +1,18 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "sourceMap": true,  
+        "sourceMap": true,
         "removeComments": true,
-        "outDir": "app",      
-        "outFile": "app/app.js"
+        "outDir": "app",
+        "outFile": "app/app.js",
+        "types": [
+            "miojslibs",
+        ]
     },
-    "exclude": [
-        "node_modules"
-    ]
+    "include": [
+        "app",
+        "src",
+        "model",
+    ],
+    "exclude": []
 }
