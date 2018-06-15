@@ -115,54 +115,52 @@ export function MIODateFromString(string)
     var lexer:MIOCoreLexer = new MIOCoreLexer(string);
     
     // Values    
-    lexer.addTokenType(0, /^[0-9]{4}-/i); // Year
-    lexer.addTokenType(1, /^[0-9]{2}-/i); // Month
-    lexer.addTokenType(2, /^[0-9]{2} /i); // day
+    // lexer.addTokenType(0, /^([0-9]{2,4})-/i); // Year
+    // lexer.addTokenType(1, /^[0-9]{1,2}-/i); // Month
+    // lexer.addTokenType(2, /^[0-9]{1,2} /i); // day
 
-    lexer.addTokenType(3, /^[0-9]{2}:/i); // hh // mm
-    lexer.addTokenType(4, /^[0-9]{2}/i); // ss
+    // lexer.addTokenType(3, /^[0-9]{1,2}:/i); // hh // mm
+    // lexer.addTokenType(4, /^[0-9]{1,2}/i); // ss
+    
+    lexer.addTokenType(0, /^([0-9]{2,4})-([0-9]){1,2}-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})/i); // yyyy-MM-dd hh:mm:ss
+    lexer.addTokenType(1, /^([0-9]{2,4})-([0-9]){1,2}-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2})/i); // yyyy-MM-dd hh:mm 
+    lexer.addTokenType(2, /^([0-9]{2,4})-([0-9]){1,2}-([0-9]{1,2})/i); // yyyy-MM-dd    
 
     lexer.tokenize();
 
-    var y = -1;
-    var m = -1;
-    var d = -1;
-    var h = -1;
-    var mm = -1;
-    var s = -1;
+    let y = -1;
+    let m = -1;
+    let d = -1;
+    let h = -1;
+    let mm = -1;
+    let s = -1;
 
-    var token = lexer.nextToken();
+    let token = lexer.nextToken();
     while(token != null){
 
         switch (token.type) {
 
             case 0:
-                y = parseInt(token.value.substring(0, 4));
+                y = token.matches[1];
+                m = token.matches[2] - 1; // Month start by index 0
+                d = token.matches[3];
+                h = token.matches[4];
+                mm = token.matches[5];
+                s = token.matches[6];
                 break;
 
             case 1:
-                if (y == -1) return null;
-                m = parseInt(token.value.substring(0, 2)) - 1;
+                y = token.matches[1];
+                m = token.matches[2] - 1; // Month start by index 0
+                d = token.matches[3];
+                h = token.matches[4];
+                mm = token.matches[5];
                 break;
 
             case 2:
-                if (m == -1) return null;
-                d = parseInt(token.value.substring(0, 2));
-                break;
-
-            case 3:
-                if (d == -1) return null;
-                if (h == -1) h = parseInt(token.value.substring(0, 2));
-                else if (mm == -1) mm = parseInt(token.value.substring(0, 2));
-                else return null;
-                break;
-
-            case 4:
-                if (mm == -1) {
-                    //return null;
-                    d = parseInt(token.value.substring(0, 2));
-                }
-                else s = parseInt(token.value);
+                y = token.matches[1];
+                m = token.matches[2] - 1; // Month start by index 0
+                d = token.matches[3];
                 break;
 
             default:
@@ -176,7 +174,7 @@ export function MIODateFromString(string)
     if (mm == -1) mm = 0;
     if (s == -1) s = 0;
 
-    var date = new Date(y,m,d,h,mm,s);
+    let date = new Date(y, m, d, h, mm, s);
     return date;
 }
 

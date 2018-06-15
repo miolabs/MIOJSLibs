@@ -58,12 +58,12 @@ export class MIOCoreLexer {
 
     private _tokenize(){
         
-        var tokens = [];
-        var foundToken = false;
+        let tokens = [];
+        let foundToken = false;
     
-        var match;
-        var i;
-        var numTokenTypes = this.tokenTypes.length;
+        let matches;
+        let i;
+        let numTokenTypes = this.tokenTypes.length;
     
         do {          
             foundToken = false;  
@@ -71,12 +71,12 @@ export class MIOCoreLexer {
                 let regex = this.tokenTypes[i].regex;
                 let type:MIOCoreLexerTokenType = this.tokenTypes[i].type;
     
-                match = regex.exec(this.input);
-                if (match) {
+                matches = regex.exec(this.input);
+                if (matches) {
                     if (this.ignoreTokenTypes.indexOf(type) == -1) {
-                        tokens.push({ type: type, value: match[0] });
+                        tokens.push({ type: type, value: matches[0], matches : matches});
                     }
-                    this.input = this.input.substring(match[0].length);
+                    this.input = this.input.substring(matches[0].length);
                     foundToken = true;
                     break;  
                 }              
