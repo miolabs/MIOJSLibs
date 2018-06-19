@@ -3,3 +3,5 @@ node_modules/
 /.sass-cache/
 /_site/
 dist/
+tools/dep_graph/*.dot
+tools/dep_graph/*.png

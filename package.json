@@ -44,6 +44,7 @@
     "build:typing_module": "./tools/build_project/bundle_typing/bundle_typing.sh",
     "build:typing_global": "./tools/build_project/bundle_typing/global_typing.sh",
     "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",
+    "check_dependencies": "./tools/dep_graph/dependency_graph.sh",
     "lint": "tslint -p ."
   },
   "repository": {
