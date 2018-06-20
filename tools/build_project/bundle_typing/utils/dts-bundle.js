@@ -3,14 +3,14 @@
 const dts = require('dts-bundle');
 const name = process.argv[2] || 'miojslibs';
 
-const sourceName = process.argv[3] || 'index.webapp';
+const target = process.argv[3] || 'webapp';
 
 const config = {
 	name,
-	main: `build/types/${sourceName}.d.ts`
+	main: `build/types/index.${target}.d.ts`
 };
 
-console.log(`INFO: Start type_deifinition bundling with the following data: ${JSON.stringify(config)}`);
+console.log(`INFO: Start type_definition bundling with the following data: ${JSON.stringify(config)}`);
 try {
 	dts.bundle(config);
 	console.log("INFO: Typing files bundled successfully");

@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.json",
+    "include": [
+        "source/MIOCore",
+        "source/MIOCorePlatform",
+        "source/MIOData",
+        "source/MIOFoundation",
+        "source/MIOUI",
+        "source/MIOWebServicePersistentStore",
+        "source/index.webapp.ts"
+    ],
+    "exclude": [
+        "source/MIOCorePlatform/WebWorkerClasses"
+    ]
+}

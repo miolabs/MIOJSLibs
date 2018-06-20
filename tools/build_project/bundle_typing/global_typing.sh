@@ -12,8 +12,9 @@
 #   - python3, node, mkdir, cp
 
 NAME=miojslibs
+TARGET=$1
 
-node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME
+node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME $TARGET
 
 mkdir -p ./dist/typings/${NAME}
 python ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --legacy --target dist/typings/${NAME}/index.d.ts

@@ -2,10 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 const pjson = require('./package.json');
 
-const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
+const TARGET = process.env.TARGET ? process.env.TARGET.toLowerCase() : 'webapp';
 const PROD = process.env.NODE_ENV === 'prod';
 
-console.log(`BUILD MIOJSLibs for '${process.env.NODE_ENV==="prod"?"prod":"dev"}' `)
+console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${process.env.NODE_ENV}' environment.`);
 
 const buildPath = path.resolve(__dirname, 'build')
 const targetPath = path.resolve(__dirname, 'dist', 'js')
@@ -21,7 +21,9 @@ module.exports = {
       use: [{
         loader: 'ts-loader', 
         // the main reason for ts-loader over awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
-        options: {}
+        options: {
+          configFile: `tsconfig.${TARGET}.json`
+        }
       },
       {
         loader: "ifdef-loader",
@@ -32,8 +34,8 @@ module.exports = {
           "ifdef-triple-slash": true // false: use double slash comment instead of default triple slash
         }
       }
-      ],
-      exclude: /node_modules/
+    ],
+    exclude: /node_modules/
     }
   ]
   },
@@ -64,7 +66,7 @@ module.exports = {
   },
   plugins: [
     new webpack.BannerPlugin({
-      banner: `hash: [hash] date: ${new Date()}, version: ${pjson.version}`
+      banner: `hash: [hash] date: ${new Date()}, version: ${pjson.version}, target: ${TARGET}`
     })
   ],
   /*
