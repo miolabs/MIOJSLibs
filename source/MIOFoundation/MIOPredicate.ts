@@ -242,12 +242,12 @@ export class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.MajorComparator, /^>/);
         this.lexer.addTokenType(MIOPredicateTokenType.EqualComparator, /^==?/);
         this.lexer.addTokenType(MIOPredicateTokenType.DistinctComparator, /^!=/);
-        this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains/i);
-        this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains/i);
-        this.lexer.addTokenType(MIOPredicateTokenType.InComparator, /^in/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.InComparator, /^in /i);
         // Join operators
-        this.lexer.addTokenType(MIOPredicateTokenType.AND, /^and|&&/i);
-        this.lexer.addTokenType(MIOPredicateTokenType.OR, /^or|\|\|/i);        
+        this.lexer.addTokenType(MIOPredicateTokenType.AND, /^(and|&&) /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.OR, /^(or|\|\|) /i);        
         // Extra
         this.lexer.addTokenType(MIOPredicateTokenType.Whitespace, /^\s+/);        
         this.lexer.ignoreTokenType(MIOPredicateTokenType.Whitespace);

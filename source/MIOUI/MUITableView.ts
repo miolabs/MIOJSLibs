@@ -289,9 +289,10 @@ export class MUITableView extends MUIScrollView {
 
         if (this.dataSource == null) return;
 
-        var sections = this.dataSource.numberOfSections(this);
+        let sections = 1;
+        if (typeof this.dataSource.numberOfSections === "function") sections = this.dataSource.numberOfSections(this);
         for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
-            var section = new MUITableViewSection();
+            let section = new MUITableViewSection();
             section.init();
             this.sections.push(section);
 

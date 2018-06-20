@@ -202,16 +202,16 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
-        var objects = null;
+        let objects = null;
 
         request.fetch(this, function (code, data) {
-            var [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
+            let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
                 // Transform relationships into server keys
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
-                var array = [];
-                for (var index = 0; index < relationships.length; index++) {
-                    var relname = relationships[index];                    
+                let array = [];
+                for (let index = 0; index < relationships.length; index++) {
+                    let relname = relationships[index];                    
                     let rel = fetchRequest.entity.relationshipsByName[relname];
                     if (rel != null)
                         array.push(rel);
