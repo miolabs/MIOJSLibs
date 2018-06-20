@@ -1,8 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const pjson = require('./package.json');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const TARGET = process.env.TARGET ? process.env.TARGET.tolowerCase() : 'webapp';
 const PROD = process.env.NODE_ENV === 'prod';
