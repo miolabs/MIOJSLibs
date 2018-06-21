@@ -153,7 +153,9 @@ export class MUIView extends MIOObject
     copy() {
         let objLayer = this.layer.cloneNode(true);
         
-        let className = this.className;
+        let className = this.getClassName();
+        if (className == null) throw Error("MUIView:copy: Error classname is null");
+        
         let view = MIOClassFromString(className);
         view.initWithLayer(objLayer);        
 
