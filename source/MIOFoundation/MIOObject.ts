@@ -9,9 +9,11 @@ export class MIOObject
     get className (){
         if (this._className != null) return this._className;
 
-        let funcNameRegex = /function (.{1,})\(/;
-        let results = (funcNameRegex).exec((this).constructor.toString());        
-        this._className = (results && results.length > 1) ? results[1] : null;
+        this._className = this.constructor["name"];
+
+        // let funcNameRegex = /function (.{1,})\(/;
+        // let results = (funcNameRegex).exec((this).constructor.toString());        
+        // this._className = (results && results.length > 1) ? results[1] : null;
         return this._className;
     }
 
