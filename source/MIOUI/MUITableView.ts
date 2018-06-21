@@ -93,8 +93,8 @@ export class MUITableView extends MUIScrollView {
     private _needReloadData = false;
     private _cellPrototypes = {};
 
-    private reusableCellsByID = {};
-    private visibleCells = [];
+    visibleCells = [];
+    private reusableCellsByID = {};    
     private cellNodesByID = {};
 
     private visibleRange: MIORange = new MIORange(-1, -1);
