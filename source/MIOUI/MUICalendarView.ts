@@ -135,6 +135,7 @@ export class MUICalendarHeader extends MUIView
 }
 
 export class MUICalendarDaysView extends MUIView {
+    
     private _month = null;
     get month() {
         return this._month;
@@ -520,7 +521,10 @@ export class MUICalendarView extends MUIView{
             let item:MUICalendarDayCell = this.cellPrototypes[id];
             if (item == null) throw new Error("Calendar day identifier doesn't exist.");
             
-            dv = item.copy();
+            let layer = item.layer.cloneNode(true);            
+            dv = new MUICalendarDayCell();            
+            //dv = item.copy();
+            dv.initWithLayer(layer, this);
             dv.setHidden(false);
             dv.awakeFromHTML();
 

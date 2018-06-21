@@ -19,10 +19,15 @@ export class MUIReportTableViewCell extends MUIView {
     private _onClickFn = null;
     private parentRow = null;
 
+    init(){
+        super.init();
+        this.setupLayer();
+    }
+
     initWithLayer(layer, owner, options) {
         super.initWithLayer(layer, owner, options);
 
-        this.layer.style.background = "";
+        //this.layer.style.background = "";
         this.layer.classList.add("tableviewcell_deselected_color");
 
         if (this.type == MUIReportTableViewCellType.Label) {
@@ -45,7 +50,14 @@ export class MUIReportTableViewCell extends MUIView {
         //     if (instance._onDblClickFn != null)
         //         instance._onDblClickFn.call(instance._target, instance);
         // };
+
+        this.setupLayer();
     }
+
+    private setupLayer(){
+        this.layer.style.position = "absolute";
+    }
+
 }
 
 export class MUIReportTableViewRow extends MIOObject {

@@ -159,7 +159,7 @@ export class MUITableViewCell extends MUIView {
     }
 
     private _setupLayer() {
-        this.layer.style.background = "";
+        this.layer.style.position = "absolute";
 
         var instance = this;
         this.layer.classList.add("tableviewcell_deselected_color");
