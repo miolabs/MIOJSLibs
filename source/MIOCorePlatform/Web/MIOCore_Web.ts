@@ -203,17 +203,19 @@ export function MIOCoreLoadStyle(url, media, target?, completion?)
 export function MIOClassFromString(className)
 {
     //instance creation here
-    var object = null;
-    try {
-        object = Object.create(window[className].prototype);
-        object.constructor.apply(object);
-        //object.className = className;
-    }
-    catch (e){
-        throw new Error(`Error, class (${className}) not found.`);
-    }
+    let object = null;
+    let newClass: any = new (window)[className]();
+    return newClass;
+    // try {
+    //     object = Object.create(window[className].prototype);
+    //     object.constructor.apply(object);
+    //     //object.className = className;
+    // }
+    // catch (e){
+    //     throw new Error(`Error, class (${className}) not found.`);
+    // }
 
-    return object;
+    // return object;
 }
 
 // Declare main funciton so we can call after intizalization
