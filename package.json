@@ -38,7 +38,7 @@
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
     "postprod": "npm run copy:dist && npm run build:typing webapp",
     "preprod-core": "npm run clean",
-    "prod-core": "cross-env NODE_ENV=prod npm run build:libs-core && cross-env NODE_ENV=prod npm run build:webworkers",
+    "prod-core": "cross-env NODE_ENV=prod npm run build:libs-core",
     "postprod-core": "npm run copy:dist && npm run build:typing core",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "build:libs": "webpack",
