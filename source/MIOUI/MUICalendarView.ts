@@ -213,13 +213,14 @@ export class MUICalendarDaysView extends MUIView {
             let dayView = this._dayCellAtDate(currentDate);
             this._dayViews.push(dayView);
             this.addSubview(dayView);
+            dayView.setSelected(false);
             dayView.setDate(currentDate);
 
             // Calculate rows
             if (MIODateGetDayFromDate(dayView.date) == 0)
                 rowIndex++;
 
-            dayView.weekRow = rowIndex;
+            dayView.weekRow = rowIndex;            
 
             currentDate.setDate(currentDate.getDate() + 1);
         }

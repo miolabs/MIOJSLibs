@@ -122,9 +122,9 @@ export function MIODateFromString(string)
     // lexer.addTokenType(3, /^[0-9]{1,2}:/i); // hh // mm
     // lexer.addTokenType(4, /^[0-9]{1,2}/i); // ss
     
-    lexer.addTokenType(0, /^([0-9]{2,4})-([0-9]){1,2}-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})/i); // yyyy-MM-dd hh:mm:ss
-    lexer.addTokenType(1, /^([0-9]{2,4})-([0-9]){1,2}-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2})/i); // yyyy-MM-dd hh:mm 
-    lexer.addTokenType(2, /^([0-9]{2,4})-([0-9]){1,2}-([0-9]{1,2})/i); // yyyy-MM-dd    
+    lexer.addTokenType(0, /^([0-9]{2,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})/i); // yyyy-MM-dd hh:mm:ss
+    lexer.addTokenType(1, /^([0-9]{2,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2})/i); // yyyy-MM-dd hh:mm 
+    lexer.addTokenType(2, /^([0-9]{2,4})-([0-9]{1,2})-([0-9]{1,2})/i); // yyyy-MM-dd    
 
     lexer.tokenize();
 
@@ -264,6 +264,11 @@ export function MIODateGetLastDayOfTheWeek(date:Date){
     let last = MIODateFromString(lastDayString);
 
     return last;
+}
+
+export function MIODateGetLastDayOfTheMonth(month, year){
+    let d = new Date(year, month + 1, 0);
+    return d.getDate();
 }
 
 export function MIODateCopy(date:Date):Date{    
