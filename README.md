@@ -6,7 +6,7 @@
 * [Contribute](#contribute)
 * [License](#license)
 
-These libraries are designed to develop a web or web application in the same way like if you develop a native iOS/macOS application.
+These libraries are designed to let you develop a web application the same way you would develop a native iOS/macOS application.
 
 ## **Brief history:**
 
