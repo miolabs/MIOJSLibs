@@ -45,7 +45,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js']
   },
-  mode: 'development',
+  mode: PROD ? 'production' : 'development',
   target: 'web',
   output: {
     filename: '[name].js',
