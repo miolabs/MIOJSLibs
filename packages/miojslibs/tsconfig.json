@@ -1,25 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "sourceMap": true,
-    "declaration": true,
-    "outDir": "types",
-    "strict": false,
-    "noImplicitThis": false,
-    "removeComments": true,
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "typeRoots": [
-      "../../node_modules/@types/",
-      "../../types/"
-    ],
-    "types": [
-      "miojs",
-      "miojs_internal"
-    ]
+    "outDir": "types"
   },
+  "extends": "../../tsconfig.json",
   "include": [
       "../../source/MIOCore",
       "../../source/MIOCorePlatform",
