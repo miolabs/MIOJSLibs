@@ -1,14 +1,20 @@
-const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const path = require('path');
+const pjson = require('../../../package.json');
+const webpack = require('webpack');
 
-// the paths are relative to this file
-const buildTargetLocation = path.resolve(__dirname, '..', '..', '..', 'build', 'webworkers')
-const deployLocation = path.resolve(__dirname, '..', '..', '..', 'dist', 'js', 'webworkers')
+const packageName = `miojslibs${process.env.TARGET === 'core' ? '-core' : ''}`;
+
+const buildTargetLocation = path.resolve(__dirname, '..', '..', '..', 'packages', packageName, 'build', 'webworkers')
+const deployLocation = path.resolve(__dirname, '..', '..', '..', 'packages', packageName, 'dist', 'js', 'webworkers')
+
+const TARGET = process.env.TARGET || 'webapp';
+const PROD = process.env.NODE_ENV === 'prod';
 
 module.exports = {
     //devtool: 'inline-source-map',
     target: 'webworker', // The libraries webpack uses for target, in this case it must be webworker
-    mode: (!!process.env.PROD)?'production': 'development', // development is the default if PROD environmetal variable is not defined ,
+    mode: (PROD) ? 'production' : 'development', // development is the default if PROD environmetal variable is not defined ,
     output: {
         libraryTarget: "umd",
         path: buildTargetLocation
@@ -44,6 +50,9 @@ module.exports = {
             exclude: /node_modules/
         }]
     },
+    optimization: {
+        minimize: PROD
+    },
     plugins: [
         new CopyWebpackPlugin(
             [
@@ -53,6 +62,9 @@ module.exports = {
             {
                 debug: 'info'
             }
-        )
+        ),
+        new webpack.BannerPlugin({
+            banner: `hash: [hash] date: ${new Date()}, version: ${pjson.version}, target: ${TARGET}`
+        })
     ]
 }

@@ -1,6 +1,6 @@
 // Barrel exports to bundle all the necessary files into one file
 
-// You need to add these folders into tsconfig.${TARGET}.json as well.
+// You need to add these folders into the proper tsconfig.json as well.
 
 export * from "./MIOCore";
 export * from "./MIOCorePlatform";

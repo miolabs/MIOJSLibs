@@ -11,8 +11,9 @@
 
 NAME=miojslibs
 TARGET=$1
+PACKAGENAME=miojslibs`[ "${TARGET}" == "core" ] && echo "-core" || echo ""`
 
 node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME $TARGET
 
-mkdir -p ./dist/typings/${NAME}
-python3 ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --target dist/typings/${NAME}/index.d.ts
+mkdir -p ./packages/${PACKAGENAME}/dist/typings/${NAME}
+python3 ./tools/build_project/bundle_typing/utils/proccess_bundle.py ./packages/${PACKAGENAME}/build/types/${NAME}.d.ts --target ./packages/${PACKAGENAME}/dist/typings/${NAME}/index.d.ts

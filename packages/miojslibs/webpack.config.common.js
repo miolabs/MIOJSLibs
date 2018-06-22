@@ -4,16 +4,19 @@ const pjson = require('./package.json');
 
 const TARGET = process.env.TARGET ? process.env.TARGET.toLowerCase() : 'webapp';
 const PROD = process.env.NODE_ENV === 'prod';
+const ENV = process.env.NODE_ENV || 'dev';
 
-console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${process.env.NODE_ENV}' environment.`);
 
 const buildPath = path.resolve(__dirname, 'build')
-const targetPath = path.resolve(__dirname, 'dist', 'js')
+// const configFile = `./packages/miojslibs${TARGET === 'core' ? '-core' : ''}/tsconfig.json`;
+const configFile = path.join(__dirname, `tsconfig.json`);
+
+console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${ ENV }' environment. from '${configFile}'`);
 
 module.exports = {
   devtool: PROD ? '':'eval-source-map',
   entry: {
-    'miojslibs': `./source/index.${TARGET}.ts`
+    'miojslibs': path.join(__dirname, '..', '..', 'source', `index.${TARGET}.ts`)
   },
   module: {
     rules: [{
@@ -22,7 +25,7 @@ module.exports = {
         loader: 'ts-loader', 
         // the main reason for ts-loader over awesome-typescript loader misses some declaration files, can not generate typing info with dts-bundle with that loader.
         options: {
-          configFile: `tsconfig.${TARGET}.json`
+          configFile: configFile
         }
       },
       {

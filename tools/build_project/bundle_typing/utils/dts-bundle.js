@@ -1,13 +1,15 @@
 /* jshint esversion: 6 */
 
 const dts = require('dts-bundle');
+const path = require('path');
 const name = process.argv[2] || 'miojslibs';
+const TARGET = process.argv[3] || 'webapp';
 
-const target = process.argv[3] || 'webapp';
+const packageName = `miojslibs${TARGET === 'core' ? '-core' : '' }`
 
 const config = {
 	name,
-	main: `build/types/index.${target}.d.ts`
+	main: path.join('packages', packageName, 'build', 'types', `index.${TARGET}.d.ts`)
 };
 
 console.log(`INFO: Start type_definition bundling with the following data: ${JSON.stringify(config)}`);
