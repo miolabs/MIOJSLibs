@@ -4,6 +4,9 @@
   "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
   "main": "dist/js/miojslibs.js",
   "types": "dist/typings/miojslibs/index.d.ts",
+  "config": {
+    "target": "webapp"
+  },
   "scripts": {
     "clean": "npm install && npm run clean:build && npm run clean:dist",
     "clean:build": "rimraf build/*",
@@ -11,12 +14,12 @@
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "preprod": "npm run clean",
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
-    "postprod": "npm run copy:dist && npm run build:typing webapp",
+    "postprod": "npm run copy:dist && npm run build:typing $npm_package_config_target",
     "build:libs": "webpack --config ./webpack.config.js",
     "build:typing": "npm run build:typing_global",
-    "build:typing_module": "cd ../..; ./tools/build_project/bundle_typing/bundle_typing.sh webapp",
-    "build:typing_global": "cd ../..; ./tools/build_project/bundle_typing/global_typing.sh webapp",
-    "build:webworkers": "cd ../..; ./tools/build_project/build_webworkers.sh webapp"
+    "build:typing_module": "cd ../..; ./tools/build_project/bundle_typing/bundle_typing.sh $npm_package_config_target",
+    "build:typing_global": "cd ../..; ./tools/build_project/bundle_typing/global_typing.sh $npm_package_config_target",
+    "build:webworkers": "cd ../..; ./tools/build_project/build_webworkers.sh $npm_package_config_target"
   },
   "devDependencies": {
     "@types/chart.js": "^2.7.22",

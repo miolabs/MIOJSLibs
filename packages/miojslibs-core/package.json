@@ -4,6 +4,9 @@
   "description": "These libraries are the building blocks of MIOJSLibs.",
   "main": "dist/js/miojslibs-core.js",
   "types": "dist/typings/miojslibs-core/index.d.ts",
+  "config": {
+    "target": "core"
+  },
   "scripts": {
     "clean": "npm install && npm run clean:build && npm run clean:dist",
     "clean:build": "rimraf build/*",
@@ -11,11 +14,11 @@
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "preprod": "npm run clean",
     "prod": "cross-env NODE_ENV=prod npm run build:libs",
-    "postprod": "npm run copy:dist && npm run build:typing core",
-    "build:libs": "cross-env TARGET=core webpack --config ../../webpack.config.js",
+    "postprod": "npm run copy:dist && npm run build:typing $npm_package_config_target",
+    "build:libs": "cross-env TARGET=$npm_package_config_target webpack --config ./webpack.config.js",
     "build:typing": "npm run build:typing_global",
-    "build:typing_module": "./tools/build_project/bundle_typing/bundle_typing.sh",
-    "build:typing_global": "./tools/build_project/bundle_typing/global_typing.sh"
+    "build:typing_module": "cd ../..; ./tools/build_project/bundle_typing/bundle_typing.sh $npm_package_config_target",
+    "build:typing_global": "cd ../..; ./tools/build_project/bundle_typing/global_typing.sh $npm_package_config_target"
   },
   "devDependencies": {
     "@types/chart.js": "^2.7.22",

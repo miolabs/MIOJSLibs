@@ -1,8 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "types"
   },
-  "extends": "../../tsconfig.json",
   "include": [
       "../../source/MIOCore",
       "../../source/MIOCorePlatform",
