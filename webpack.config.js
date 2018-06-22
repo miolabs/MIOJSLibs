@@ -7,16 +7,16 @@ const PROD = process.env.NODE_ENV === 'prod';
 const ENV = process.env.NODE_ENV || 'dev';
 
 
-const buildPath = path.resolve(__dirname, 'build')
-// const configFile = `./packages/miojslibs${TARGET === 'core' ? '-core' : ''}/tsconfig.json`;
-const configFile = path.join(__dirname, `tsconfig.json`);
+const packageName = `miojslibs${TARGET === 'core' ? '-core' : ''}`;
+const buildPath = path.resolve(__dirname, 'packages', packageName, 'build')
+const configFile = path.resolve(__dirname, 'packages', packageName, `tsconfig.json`);
 
 console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${ ENV }' environment. from '${configFile}'`);
 
 module.exports = {
   devtool: PROD ? '':'eval-source-map',
   entry: {
-    'miojslibs': path.join(__dirname, '..', '..', 'source', `index.${TARGET}.ts`)
+    'miojslibs': path.join(__dirname, 'source', `index.${TARGET}.ts`)
   },
   module: {
     rules: [{
