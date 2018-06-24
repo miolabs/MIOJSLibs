@@ -266,8 +266,21 @@ export function MIODateGetLastDayOfTheWeek(date:Date){
     return last;
 }
 
+export function MIODateGetFirstDateOfTheMonth(month, year):Date{
+    return new Date(year, month, 1);    
+}
+
+export function MIODateGetFirstDayOfTheMonth(month, year){
+    let d = MIODateGetFirstDateOfTheMonth(month, year);
+    return d.getDate();
+}
+
+export function MIODateGetLastDateOfTheMonth(month, year):Date{
+    return new Date(year, month + 1, 0);
+}
+
 export function MIODateGetLastDayOfTheMonth(month, year){
-    let d = new Date(year, month + 1, 0);
+    let d = MIODateGetLastDateOfTheMonth(month, year);
     return d.getDate();
 }
 

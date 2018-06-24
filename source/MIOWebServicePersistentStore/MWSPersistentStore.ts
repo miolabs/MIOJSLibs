@@ -166,7 +166,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         this.fetchingObjects[serverID] = true;
         MIOLog("Downloading REFID: " + serverID);
 
-        var fetchRequest = MIOFetchRequest.fetchRequestWithEntityName(entityName);
+        let fetchRequest = MIOFetchRequest.fetchRequestWithEntityName(entityName);
         fetchRequest.entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
 
         let request = this.delegate.fetchRequestForWebStore(this, fetchRequest, serverID);
@@ -175,7 +175,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
         request.fetch(this, function (code, data) {
-            var [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
+            let [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             
             MIOLog("Downloaded REFID: " + serverID);
             delete this.fetchingObjects[serverID];
@@ -259,7 +259,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         
         let version = this.delegate.serverVersionNumberForItem(this, values, entity.name);        
 
-        var node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, entity);
+        let node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, entity);
         if (node == null) {
             MIOLog("New version: " + entity.name + " (" + version + ")");                        
             node = this.newNodeWithValuesAtServerID(serverID, values, version, entity, objectID);            
@@ -320,7 +320,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     private partialRelationshipObjects = {};
     private checkRelationships(values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipEntities){                
         
-        for (var index = 0; index < relationshipEntities.length; index++){
+        for (let index = 0; index < relationshipEntities.length; index++){
             let relEntity = relationshipEntities[index];
             let serverRelName = this.delegate.serverRelationshipName(this, relEntity.name, entity);
             let value = values[serverRelName];
@@ -338,8 +338,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 // this.partialRelationshipObjects[referenceID] = true;                
             }
             else {                
-                var array = [];
-                for (var count = 0; count < value.length; count++){
+                let array = [];
+                for (let count = 0; count < value.length; count++){
                     let serverValues = value[count];
                     let obj = this.updateObjectInContext(serverValues, relEntity.destinationEntity, context);                    
                     let serverID = this.delegate.serverIDForItem(this, serverValues, relEntity.destinationEntityName);                
