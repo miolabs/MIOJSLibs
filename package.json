@@ -1,9 +1,7 @@
 {
   "name": "miojslibs-wrapper",
   "version": "0.9.40",
-  "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
-  "main": "dist/js/miojslibs.js",
-  "types": "dist/typings/miojslibs/index.d.ts",
+  "description": "This project contains the different platforms for MIOJSLibs",
   "directories": {
     "doc": "docs",
     "test": "tests"
@@ -46,16 +44,5 @@
     "prod": "lerna run prod",
     "publish": "lerna publish",
     "lint": "tslint -p ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MIOLabs/MIOJSLibs.git"
-  },
-  "keywords": [],
-  "author": "miogds",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
-  },
-  "homepage": "https://github.com/MIOLabs/MIOJSLibs#readme"
+  }
 }

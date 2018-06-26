@@ -16,7 +16,7 @@ console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${ ENV }' environment. f
 module.exports = {
   devtool: PROD ? '':'eval-source-map',
   entry: {
-    'miojslibs': path.join(__dirname, 'source', `index.${TARGET}.ts`)
+    miojslibs: path.join(__dirname, 'source', `index.${TARGET}.ts`)
   },
   module: {
     rules: [{

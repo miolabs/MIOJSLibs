@@ -1,7 +1,7 @@
 {
-  "name": "miojslibs-multi2",
-  "version": "0.9.42",
-  "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
+  "name": "miojslibs",
+  "version": "0.9.40",
+  "description": "These libraries are designed to develop a web application in the same way you'd develop a native iOS/macOS application.",
   "main": "dist/js/miojslibs.js",
   "types": "dist/typings/miojslibs/index.d.ts",
   "config": {
@@ -43,5 +43,14 @@
     "webpack-cli": "^2.1.5"
   },
   "author": "miogds",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MIOLabs/MIOJSLibs.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
+  },
+  "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs/README.md"
 }
