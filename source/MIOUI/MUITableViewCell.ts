@@ -1,7 +1,7 @@
 
 import { MUIView } from "./MUIView";
 import { MUILabel } from "./MUILabel";
-import { MUIButton } from ".";
+import { MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
 
 export enum MUITableViewCellStyle {
 
@@ -159,11 +159,10 @@ export class MUITableViewCell extends MUIView {
     }
 
     private _setupLayer() {
-        this.layer.style.background = "";
+        this.layer.style.position = "absolute";
+        MUICoreLayerAddStyle(this.layer, "cell");
 
-        var instance = this;
-        this.layer.classList.add("tableviewcell_deselected_color");
-
+        let instance = this;
         this.layer.onclick = function (e) {
             if (instance._onClickFn != null) {
                 e.stopPropagation();
@@ -248,19 +247,12 @@ export class MUITableViewCell extends MUIView {
 
         this.willChangeValue("selected");
         this._selected = value;
-
         if (this.selectionStyle == MUITableViewCellSelectionStyle.Default) {
-            if (value == true) {
-                this.layer.classList.remove("tableviewcell_deselected_color");
-                this.layer.classList.add("tableviewcell_selected_color");
-            }
-            else {
-                this.layer.classList.remove("tableviewcell_selected_color");
-                this.layer.classList.add("tableviewcell_deselected_color");
-            }
-            this._setHightlightedSubviews(value);
+            if (value == true)
+                MUICoreLayerAddStyle(this.layer, "cell-selected");
+            else 
+                MUICoreLayerRemoveStyle(this.layer, "cell-selected");
         }
-
         this.didChangeValue("selected");
     }
 

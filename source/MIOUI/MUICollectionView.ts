@@ -21,6 +21,7 @@ export class MUICollectionViewCell extends MUIView
     }
 
     private _setupLayer() {
+        this.layer.style = "absolute";
         var instance = this;
 
         this.layer.addEventListener("click", function(e) {

@@ -113,8 +113,8 @@ export class MUITableView extends MUIScrollView {
 
         // Check if we have prototypes
         if (this.layer.childNodes.length > 0) {
-            for (var index = 0; index < this.layer.childNodes.length; index++) {
-                var subLayer = this.layer.childNodes[index];
+            for (let index = 0; index < this.layer.childNodes.length; index++) {
+                let subLayer = this.layer.childNodes[index];
 
                 if (subLayer.tagName != "DIV")
                     continue;
@@ -149,14 +149,14 @@ export class MUITableView extends MUIScrollView {
     }
 
     private _addCellPrototypeWithLayer(subLayer, owner) {
-        var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
-        var cellClassname = subLayer.getAttribute("data-class");
+        let cellIdentifier = subLayer.getAttribute("data-cell-identifier");
+        let cellClassname = subLayer.getAttribute("data-class");
         if (cellClassname == null) cellClassname = "MUITableViewCell";
 
-        var item = {};
+        let item = {};
         item["class"] = cellClassname;
         item["layer"] = subLayer;
-        var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        let size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null) item["size"] = size;
         // var bg = window.getComputedStyle( subLayer ,null).getPropertyValue('background-color');
         // if (bg != null) item["bg"] = bg;
@@ -166,7 +166,7 @@ export class MUITableView extends MUIScrollView {
 
     addCellPrototypeWithIdentifier(identifier, elementID, url, classname?) {
 
-        var item = {};
+        let item = {};
 
         this._isDownloadingCells = true;
         this._cellPrototypesCount++;
@@ -177,7 +177,7 @@ export class MUITableView extends MUIScrollView {
             item["class"] = classname;
 
         this._cellPrototypes[identifier] = item;
-        var mainBundle = MIOBundle.mainBundle();
+        let mainBundle = MIOBundle.mainBundle();
         mainBundle.loadHTMLNamed(url, elementID, this, function (layer) {
 
             item["layer"] = layer;
@@ -192,11 +192,11 @@ export class MUITableView extends MUIScrollView {
         });
     }
 
-    dequeueReusableCellWithIdentifier(identifier): MUITableViewCell {
+    dequeueReusableCellWithIdentifier(identifier:string): MUITableViewCell {
 
-        var cell: MUITableViewCell = null;
+        let cell: MUITableViewCell = null;
 
-        var array = this.reusableCellsByID[identifier];
+        let array = this.reusableCellsByID[identifier];
         if (array != null) {
             if (array.length > 0) {
                 cell = array[0];
@@ -205,21 +205,21 @@ export class MUITableView extends MUIScrollView {
             }
         }
 
-        var item = this._cellPrototypes[identifier];
+        let item = this._cellPrototypes[identifier];
 
         //instance creation here
-        var className = item["class"];
+        let className = item["class"];
         cell = MIOClassFromString(className);
         cell.nodeID = MIOUUID.uuid();
         cell.reuseIdentifier = identifier;
 
         //cell.init();
-        var layer = item["layer"];
+        let layer = item["layer"];
         if (layer != null) {
-            var newLayer = layer.cloneNode(true);
+            let newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
             //newLayer.setAttribute("id", MUICoreLayerIDFromClassname(className));
-            var size = item["size"];
+            let size = item["size"];
             // if (size != null) {
             //     cell.setWidth(size.width);
             //     cell.setHeight(size.height);
@@ -233,7 +233,7 @@ export class MUITableView extends MUIScrollView {
             cell.awakeFromHTML();
         }
         else {
-            var cells = item["cells"];
+            let cells = item["cells"];
             if (cells == null) {
                 cells = [];
                 item["cells"] = cells;

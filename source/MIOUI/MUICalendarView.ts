@@ -135,6 +135,7 @@ export class MUICalendarHeader extends MUIView
 }
 
 export class MUICalendarDaysView extends MUIView {
+    
     private _month = null;
     get month() {
         return this._month;
@@ -484,9 +485,21 @@ export class MUICalendarView extends MUIView{
         return dayCell;
     }
 
-    cellDayAtDate(date:Date){
+    cellDayAtDate(date:Date):MUICalendarDayCell{
         let d:string = MIODateGetDateString(date);
         return this.visibleDayCells[d];
+    }
+
+    selectDayCellAtDate(date:Date){
+        let cell = this.cellDayAtDate(date);
+        if (cell.selected == true) return;
+        if (cell != null) this._didChangeDayCellSelectedValue(cell);
+    }
+
+    deselectDayCellAtDate(date:Date){
+        let cell = this.cellDayAtDate(date);
+        if (cell.selected == false) return;
+        if (cell != null) this._didChangeDayCellSelectedValue(cell);
     }
 
     private reusableDayCells = {};
@@ -520,7 +533,10 @@ export class MUICalendarView extends MUIView{
             let item:MUICalendarDayCell = this.cellPrototypes[id];
             if (item == null) throw new Error("Calendar day identifier doesn't exist.");
             
-            dv = item.copy();
+            let layer = item.layer.cloneNode(true);            
+            dv = new MUICalendarDayCell();            
+            //dv = item.copy();
+            dv.initWithLayer(layer, this);
             dv.setHidden(false);
             dv.awakeFromHTML();
 

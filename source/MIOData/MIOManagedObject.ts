@@ -135,7 +135,7 @@ export class MIOManagedObject extends MIOObject {
     }
 
     private storeValuesFromIncrementalStore(store:MIOIncrementalStore){        
-        var storedValues = {};        
+        let storedValues = {};        
         let properties = this.entity.properties;
         
         for(let index = 0; index < properties.length; index++){
@@ -150,7 +150,7 @@ export class MIOManagedObject extends MIOObject {
                 let relationship = property as MIORelationshipDescription;                
                 
                 if (relationship.isToMany == false) {                    
-                    var objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
+                    let objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectID != null){
                         storedValues[relationship.name] = objectID;
                     }                        
@@ -211,7 +211,7 @@ export class MIOManagedObject extends MIOObject {
         
         this.willAccessValueForKey(key);
 
-        var value = null;
+        let value = null;
 
         if (property instanceof MIOAttributeDescription){
             if (key in this._changedValues) {
