@@ -1,4 +1,5 @@
 build/
-webpack.config
+webpack.config.js
 tsconfig.json
 node_modules/
+source/
