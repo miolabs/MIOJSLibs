@@ -1,5 +1,5 @@
 {
-  "name": "miojslibs",
+  "name": "miojslibs-all",
   "version": "0.9.40",
   "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
   "main": "dist/js/miojslibs.js",
@@ -37,8 +37,8 @@
     "webpack-cli": "^2.1.5"
   },
   "scripts": {
-    "dev": "webpack --config ./webpack.config.js",
-    "postdev": "npm run copy:dist && npm run build:typing webapp",
+    "dev": "lerna run --scope miojslibs dev",
+    "dev-core": "lerna run --scope miojslibs-core dev",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "check:missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",

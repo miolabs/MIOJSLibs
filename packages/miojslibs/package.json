@@ -12,6 +12,8 @@
     "clean:build": "rimraf build/*",
     "clean:dist": "rimraf dist/*",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
+    "dev": "cross-env TARGET=$npm_package_config_target webpack --config ./webpack.config.js",
+    "postdev": "npm run copy:dist && npm run build:typing $npm_package_config_target",
     "preprod": "npm run clean",
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
     "postprod": "npm run copy:dist && npm run build:typing $npm_package_config_target",
