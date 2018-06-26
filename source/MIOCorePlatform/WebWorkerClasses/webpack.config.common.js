@@ -11,9 +11,6 @@ const deployLocation = path.resolve(__dirname, '..', '..', '..', 'packages', pac
 const TARGET = process.env.TARGET || 'webapp';
 const PROD = process.env.NODE_ENV === 'prod';
 
-const TARGET = process.env.TARGET || 'webapp';
-const PROD = process.env.NODE_ENV === 'prod';
-
 module.exports = {
     //devtool: 'inline-source-map',
     target: 'webworker', // The libraries webpack uses for target, in this case it must be webworker
