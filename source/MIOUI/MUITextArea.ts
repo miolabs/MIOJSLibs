@@ -39,19 +39,20 @@ export class MUITextArea extends MUIControl
     }
 
     get text(){
-        return this.textareaLayer.value;
+        return this.getText();
     }
 
     set text(text){
-        this.textareaLayer.value = text;
+        this.setText(text);
     }
 
     setText(text){
-        this.text = text;
+        if (text == null) this.textareaLayer.value = "";
+        else this.textareaLayer.value = text;        
     }
 
     getText(){
-        return this.text;
+        return this.textareaLayer.value;        
     }
 
     setEditMode(value){

@@ -102,15 +102,19 @@ export class MUIView extends MIOObject
         this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
-    init(){
-        this.layer = MUICoreLayerCreate(this.layerID);
+    protected ui_core_init_layers(){
         MUICoreLayerAddStyle(this.layer, "view");
+    }
+
+    init(){
+        this.layer = MUICoreLayerCreate(this.layerID);        
         // this.layer.style.position = "absolute";
         // this.layer.style.top = "0px";
         // this.layer.style.left = "0px";
         // this.layer.style.width = "100%";
         // this.layer.style.height = "100%";
-        //this.layer.style.background = "rgb(255, 255, 255)";
+        //this.layer.style.background = "rgb(255, 255, 255)";        
+        this.ui_core_init_layers();
     }
 
     initWithFrame(frame:MIORect){
@@ -120,6 +124,8 @@ export class MUIView extends MIOObject
         this.setY(frame.origin.y);
         this.setWidth(frame.size.width);
         this.setHeight(frame.size.height);
+
+        this.ui_core_init_layers();
     }
 
     initWithLayer(layer, owner, options?){
@@ -148,6 +154,7 @@ export class MUIView extends MIOObject
             }
         }
 
+        this.ui_core_init_layers();
     }
 
     copy() {
@@ -273,7 +280,6 @@ export class MUIView extends MIOObject
     }
 
     setNeedsDisplay(){
-
         this._needDisplay = true;
 
         if (this._viewIsVisible == false) return;
@@ -282,9 +288,8 @@ export class MUIView extends MIOObject
         this._needDisplay = false;
         this.layoutSubviews();
 
-        for(var index = 0; index < this.subviews.length; index++)
-        {
-            var v = this.subviews[index];
+        for(var index = 0; index < this.subviews.length; index++){
+            let v = this.subviews[index];
             if (!(v instanceof MUIView))
             {
                 console.log("ERROR: trying to call setNeedsDisplay: in object that it's not a view");
@@ -294,13 +299,11 @@ export class MUIView extends MIOObject
         }        
     }
 
-    layerWithItemID(itemID)
-    {
+    layerWithItemID(itemID){
         return MUILayerSearchElementByID(this.layer, itemID);
     }
 
-    setHidden(hidden)
-    {
+    setHidden(hidden){
         this.hidden = hidden;
 
         if (this.layer == null)
@@ -313,13 +316,11 @@ export class MUIView extends MIOObject
 
     }
 
-    setBackgroundColor(color)
-    {
+    setBackgroundColor(color){
         this.layer.style.backgroundColor = "#" + color;
     }
 
-    setBackgroundRGBColor(r, g, b, a?)
-    {
+    setBackgroundRGBColor(r, g, b, a?){
         if (a == null)
         {
             let value = "rgb(" + r + ", " + g + ", " + b + ")";

@@ -13,41 +13,35 @@ export class MUIWindow extends MUIView
 
     private _resizeWindow = false;
 
-    initWithRootViewController(vc)
-    {
+    initWithRootViewController(vc){
         this.init();
 
         this.rootViewController = vc;
         this.addSubview(vc.view);
     }
 
-    makeKey()
-    {
+    makeKey(){
         MUIWebApplication.sharedInstance().makeKeyWindow(this);
     }
 
-    makeKeyAndVisible()
-    {
+    makeKeyAndVisible(){
         this.makeKey();
         this.setHidden(false);
     }
 
-    layoutSubviews()
-    {
+    layoutSubviews(){
         if (this.rootViewController != null)
             this.rootViewController.view.layoutSubviews();
         else
             super.layoutSubviews();                
     }
 
-    addSubview(view:MUIView)
-    {
+    addSubview(view:MUIView){
         view._window = this;
         super.addSubview(view);
     }
 
-    protected _addLayerToDOM()
-    {
+    protected _addLayerToDOM(){
         if (this._isLayerInDOM == true)
             return;
 
@@ -59,13 +53,11 @@ export class MUIWindow extends MUIView
         this._isLayerInDOM = true;
     }
 
-    removeFromSuperview()
-    {                
+    removeFromSuperview(){                
         this._removeLayerFromDOM();
     }
 
-    protected _removeLayerFromDOM()
-    {
+    protected _removeLayerFromDOM(){
         if (this._isLayerInDOM == false)
             return;
 
@@ -73,38 +65,30 @@ export class MUIWindow extends MUIView
         this._isLayerInDOM = false;
     }
 
-    setHidden(hidden)
-    {
-        if (hidden == false)
-        {
+    setHidden(hidden){
+        if (hidden == false){
             this._addLayerToDOM();
         }
-        else
-        {
+        else{
             this._removeLayerFromDOM();
         }
     }
 
-    _eventHappendOutsideWindow()
-    {
+    _eventHappendOutsideWindow(){
         this._dismissRootViewController();        
     }
 
-    _becameKeyWindow()
-    {
+    _becameKeyWindow(){
         
     }
 
-    _resignKeyWindow()
-    {
+    _resignKeyWindow(){
         this._dismissRootViewController();
     }
 
-    private _dismissRootViewController()
-    {
-        if (this.rootViewController.isPresented == true)
-        {
-            var pc = this.rootViewController.presentationController;
+    private _dismissRootViewController(){
+        if (this.rootViewController.isPresented == true){
+            let pc = this.rootViewController.presentationController;
             if (pc instanceof MUIPopoverPresentationController)
                 this.rootViewController.dismissViewController(true);
         }

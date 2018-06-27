@@ -253,7 +253,7 @@ export class MUITableViewCell extends MUIView {
             else 
                 MUICoreLayerRemoveStyle(this.layer, "cell-selected");
         }
-        this.didChangeValue("selected");
+        this.didChangeValue("selected"); 
     }
 
     set selected(value) {

@@ -15,17 +15,11 @@ export class MUICollectionViewCell extends MUIView
 
     selected = false;
 
-    initWithLayer(layer, owner, options){
-        super.initWithLayer(layer, owner, options);
-        this._setupLayer();
-    }
-
-    private _setupLayer() {
-        this.layer.style = "absolute";
-        var instance = this;
+    protected ui_core_init_layers(){
+        this.layer.style.position = "absolute";
+        let instance = this;
 
         this.layer.addEventListener("click", function(e) {
-
             e.stopPropagation();
             if (instance._onClickFn != null)
                 instance._onClickFn.call(instance._target, instance);
@@ -366,12 +360,12 @@ export class MUICollectionView extends MUIView
         // var y = this.collectionViewLayout.sectionInset.top;
 
         // TODO: Check margins
-        var x = 0;
-        var y = 0;
+        let x = 0;
+        let y = 0;
 
-        for (var count = 0; count < this._sections.length; count++)
+        for (let count = 0; count < this._sections.length; count++)
         {
-            var section = this._sections[count];
+            let section = this._sections[count];
             x = this.collectionViewLayout.sectionInset.left;
 
             // Add header view
@@ -385,9 +379,9 @@ export class MUICollectionView extends MUIView
 
             // Add cells
             let maxX = this.getWidth() - this.collectionViewLayout.sectionInset.right;
-            for (var index = 0; index < section.cells.length; index++) {
+            for (let index = 0; index < section.cells.length; index++) {
 
-                let cell = section.cells[index];
+                let cell = section.cells[index] as MUICollectionViewCell;
                 if (this.delegate != null) {
                     if (typeof this.delegate.willDisplayCellAtIndexPath === "function")
                         this.delegate.willDisplayCellAtIndexPath(this, cell, index, count);
@@ -398,6 +392,8 @@ export class MUICollectionView extends MUIView
 
                 cell.setX(x);
                 cell.setY(y);
+
+                cell.setNeedsDisplay();
 
                 x += this.collectionViewLayout.itemSize.width + this.collectionViewLayout.minimumInteritemSpacing;                
                 if (x >= maxX) {

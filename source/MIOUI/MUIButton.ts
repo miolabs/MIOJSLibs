@@ -30,13 +30,6 @@ export class MUIButton extends MUIControl
     private _selected = false;
     type = MUIButtonType.MomentaryPushIn;
 
-    init(){
-        super.init();
-        MUICoreLayerRemoveStyle(this.layer, "view");
-        MUICoreLayerAddStyle(this.layer, "btn");
-        this.setup();
-    }
-
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
@@ -81,10 +74,11 @@ export class MUIButton extends MUIControl
         if (status == "selected")
             this.setSelected(true);
 
-        this.setup();
     }
 
-    private setup(){
+    protected ui_core_init_layers(){
+        //MUICoreLayerRemoveStyle(this.layer, "view");
+        MUICoreLayerAddStyle(this.layer, "btn");
 
         if (this._titleLayer == null) {
             this._titleLayer = document.createElement("span");

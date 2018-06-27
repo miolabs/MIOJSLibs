@@ -2,8 +2,9 @@ import { MIOObject, MIOIndexPath, MIOLocationInRange, MIORange, MIOSize, MIOBund
 import { MUIScrollView } from "./MUIScrollView";
 import { MUIView } from "./MUIView";
 import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCell";
-import { MIOClassFromString } from "../MIOCorePlatform";
+import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCorePlatform";
 import { MUILabel } from "./MUILabel";
+import { MUICoreLayerAddStyle } from ".";
 
 /**
  * Created by godshadow on 22/3/16.
@@ -24,16 +25,16 @@ export class MUITableViewSection extends MIOObject {
 
     static headerWithTitle(title, height) {
 
-        var header = new MUIView();
+        let header = new MUIView();
         header.init();
         header.setHeight(height);
-        header.layer.style.background = "";
-        header.layer.classList.add("tableview_header");
+        //header.layer.style.background = "";
+        MUICoreLayerAddStyle(header.layer, "header");
 
-        var titleLabel = new MUILabel();
+        let titleLabel = new MUILabel();
         titleLabel.init();
-        titleLabel.layer.style.background = "";
-        titleLabel.layer.classList.add("tableview_header_title");
+        // titleLabel.layer.style.background = "";
+        MUICoreLayerAddStyle(header.layer, "title");
         titleLabel.text = title;
         header.addSubview(titleLabel);
 
@@ -647,7 +648,7 @@ export class MUITableView extends MUIScrollView {
     private addCell(indexPath: MIOIndexPath, posY, row: MUITableViewRow, previusCell?: MUIView) {
 
         if (row != null && row.view != null) return row.height;
-        var r = row;
+        let r = row;
         if (r == null) {
             r = this.addRowWithType(MUITableViewRowType.Cell, cell);
         }
@@ -655,7 +656,7 @@ export class MUITableView extends MUIScrollView {
         var cell: MUITableViewCell = this.dataSource.cellAtIndexPath(this, indexPath);
 
         let nodeID = cell.nodeID;
-        var node: MUITableViewCellNode = this.cellNodesByID[nodeID];
+        let node: MUITableViewCellNode = this.cellNodesByID[nodeID];
         if (node == null) {
             node = new MUITableViewCellNode();
             node.identifier = nodeID;
@@ -733,11 +734,21 @@ export class MUITableView extends MUIScrollView {
         return 0;
     }
 
+    observeValueForKeyPath(keyPath:string, type:string, object, ctx) {
+        if (type != "did") return;
+        if (keyPath == "selected") {
+            let cell = object as MUITableViewCell;
+            if (cell.selected == false) return;
+            let indexPath = this.indexPathForCell(object);
+            if (this.selectedIndexPath !== indexPath) this.selectedIndexPath = indexPath;            
+        }
+    }
+
     cellOnClickFn(cell: MUITableViewCell) {
 
         let indexPath: MIOIndexPath = this.indexPathForCell(cell);
 
-        var canSelectCell = true;
+        let canSelectCell = true;
 
         if (this.delegate != null) {
             if (typeof this.delegate.canSelectCellAtIndexPath === "function")
