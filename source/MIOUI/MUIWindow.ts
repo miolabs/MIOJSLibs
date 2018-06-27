@@ -2,6 +2,7 @@ import { MUIWebApplication } from "./MUIWebApplication";
 import { MUIViewController } from "./MUIViewController";
 import { MUIView } from "./MUIView";
 import { MUIPopoverPresentationController } from "./MUIViewController_PopoverPresentationController";
+import { MUICoreLayerAddStyle } from ".";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -18,6 +19,10 @@ export class MUIWindow extends MUIView
 
         this.rootViewController = vc;
         this.addSubview(vc.view);
+    }
+
+    protected ui_core_init_layers(){
+        MUICoreLayerAddStyle(this.layer, "view");
     }
 
     makeKey(){

@@ -102,12 +102,12 @@ export class MUIView extends MIOObject
         this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
-    protected ui_core_init_layers(){
-        MUICoreLayerAddStyle(this.layer, "view");
+    protected ui_core_init_layers(){        
     }
 
     init(){
         this.layer = MUICoreLayerCreate(this.layerID);        
+        //MUICoreLayerAddStyle(this.layer, "view");
         // this.layer.style.position = "absolute";
         // this.layer.style.top = "0px";
         // this.layer.style.left = "0px";
@@ -124,7 +124,6 @@ export class MUIView extends MIOObject
         this.setY(frame.origin.y);
         this.setWidth(frame.size.width);
         this.setHeight(frame.size.height);
-
         this.ui_core_init_layers();
     }
 

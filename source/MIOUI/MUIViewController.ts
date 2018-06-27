@@ -4,7 +4,7 @@ import { MUINavigationItem, MUINavItemSearchInLayer } from "./MUINavigationItem"
 import { MUINavigationController } from "./MUINavigationController";
 import { MUIPresentationController, MUIModalPresentationStyle, MUIModalTransitionStyle } from "./MUIViewController_PresentationController";
 import { MUIPopoverPresentationController } from "./MUIViewController_PopoverPresentationController";
-import { MUICoreLayerIDFromObject } from "./MIOUI_CoreLayer";
+import { MUICoreLayerIDFromObject, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MIOLocalizeString } from "../MIOCore";
@@ -60,7 +60,7 @@ export class MUIViewController extends MIOObject
 
     init(){
         super.init();        
-        this.loadView();
+        this.loadView();        
     }
 
     initWithLayer(layer, owner, options?){
@@ -72,7 +72,7 @@ export class MUIViewController extends MIOObject
         // Search for navigation item
         this.navigationItem = MUINavItemSearchInLayer(layer);
         
-        this.loadView();
+        this.loadView();        
     }
 
     initWithResource(path){
@@ -84,14 +84,12 @@ export class MUIViewController extends MIOObject
         this.loadView();
     }
 
-    localizeSubLayers(layers)
-    {
+    localizeSubLayers(layers){
         if (layers.length == 0)
             return;
 
-        for (var index = 0; index < layers.length; index++)
-        {
-            var layer = layers[index];
+        for (let index = 0; index < layers.length; index++){
+            let layer = layers[index];
 
             if (layer.tagName != "DIV") continue;
 
@@ -103,14 +101,12 @@ export class MUIViewController extends MIOObject
         }
     }
 
-    localizeLayerIDWithKey(layerID, key)
-    {
-        var layer = MUILayerSearchElementByID(this.view.layer, layerID);
+    localizeLayerIDWithKey(layerID, key){
+        let layer = MUILayerSearchElementByID(this.view.layer, layerID);
         layer.innerHTML = MIOLocalizeString(key, key);
     }
 
-    loadView()
-    {
+    loadView(){
         if (this.view != null) {
             this._didLoadView();
             return;
@@ -119,12 +115,12 @@ export class MUIViewController extends MIOObject
         this.view = new MUIView(this.layerID);
         
         if (this._htmlResourcePath == null) {
-            this.view.init();
+            this.view.init();            
             this._didLoadView();
             return;
         }
         
-        var mainBundle = MIOBundle.mainBundle();
+        let mainBundle = MIOBundle.mainBundle();
         mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layer) {            
             
             // Search for navigation item
@@ -136,9 +132,9 @@ export class MUIViewController extends MIOObject
         });        
     }
 
-    _didLoadView()
-    {
+    _didLoadView(){
         this._layerIsReady = true;
+        MUICoreLayerAddStyle(this.view.layer, "page");
 
         if (this._onLoadLayerTarget != null && this._onViewLoadedAction != null)
         {
@@ -154,9 +150,8 @@ export class MUIViewController extends MIOObject
         }
     }
 
-    protected _loadChildControllers()
-    {
-        var count = this._childViewControllers.length;
+    protected _loadChildControllers(){
+        let count = this._childViewControllers.length;
 
         if (count > 0)
             this._loadChildViewController(0, count);
@@ -164,13 +159,12 @@ export class MUIViewController extends MIOObject
             this._setViewLoaded(true);
     }
 
-    protected _loadChildViewController(index, max)
-    {
+    protected _loadChildViewController(index, max){
         if (index < max) {
-            var vc = this._childViewControllers[index];
+            let vc = this._childViewControllers[index];
             vc.onLoadView(this, function () {
 
-                var newIndex = index + 1;
+                let newIndex = index + 1;
                 this._loadChildViewController(newIndex, max);
             });
         }
@@ -180,8 +174,7 @@ export class MUIViewController extends MIOObject
         }
     }
 
-    protected _setViewLoaded(value)
-    {
+    protected _setViewLoaded(value){
         this.willChangeValue("viewLoaded");
         this._viewIsLoaded = value;
         this.didChangeValue("viewLoaded");
@@ -195,8 +188,7 @@ export class MUIViewController extends MIOObject
         this.view.setNeedsDisplay();
     }
 
-    onLoadView(target, action)
-    {
+    onLoadView(target, action){
         this._onViewLoadedTarget = target;
         this._onViewLoadedAction = action;
 
@@ -212,8 +204,7 @@ export class MUIViewController extends MIOObject
         }
     }
 
-    onLoadLayer(target, action)
-    {
+    onLoadLayer(target, action){
         if (this._layerIsReady == true)
         {
             action.call(target);

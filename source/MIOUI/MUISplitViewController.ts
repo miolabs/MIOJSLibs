@@ -1,6 +1,7 @@
 import { _MIUShowViewController } from "./MIOUI_Core";
 import { MUIView } from "./MUIView";
 import { MUIViewController } from "./MUIViewController";
+import { MUICoreLayerAddStyle } from ".";
 
 /**
  * Created by godshadow on 05/08/16.
@@ -9,79 +10,76 @@ import { MUIViewController } from "./MUIViewController";
 
 export class MUISplitViewController extends MUIViewController
 {
-    private _masterViewController = null;
-    private _detailViewController = null;
+    private masterView = null;
+    private detailView = null;
 
-    private _masterView = null;
-    private _detailView = null;
-
-    init()
-    {
+    init(){
         super.init();
 
-        this._masterView = new MUIView();
-        this._masterView.init();
-        this._masterView.layer.style.width = "320px";
-        this.view.addSubview(this._masterView);
+        this.masterView = new MUIView();
+        this.masterView.init();
+        MUICoreLayerAddStyle(this.masterView.layer, "master-view");
+        // this.masterView.layer.style.position = "absolute";
+        // this.masterView.layer.style.left = "0px";
+        // this.masterView.layer.style.width = "320px";
+        // this.masterView.layer.style.height = "100%";
+        this.view.addSubview(this.masterView);
 
-        this._detailView = new MUIView();
-        this._detailView.init();
-        this._detailView.layer.style.left = "320px";
-        this._detailView.layer.style.width = "auto";
-        this._detailView.layer.style.right = "0px";
-        this.view.addSubview(this._detailView);
+        this.detailView = new MUIView();
+        this.detailView.init();
+        MUICoreLayerAddStyle(this.detailView.layer, "detail-view");
+        // this.detailView.layer.style.position = "absolute";
+        // this.detailView.layer.style.left = "320px";
+        // this.detailView.layer.style.right = "0px";
+        // this.detailView.layer.style.height = "100%";
+        this.view.addSubview(this.detailView);
     }
 
-    setMasterViewController(vc)
-    {
-        if (this._masterViewController != null)
-        {
+    private _masterViewController = null;    
+    setMasterViewController(vc){
+        if (this._masterViewController != null){
             this._masterViewController.view.removeFromSuperview();
             this.removeChildViewController(this._masterViewController);
             this._masterViewController = null;
         }
 
-        if (vc != null)
-        {
+        if (vc != null){
             vc.parent = this;
             vc.splitViewController = this;
 
-            this._masterView.addSubview(vc.view);
+            this.masterView.addSubview(vc.view);
             this.addChildViewController(vc);
             this._masterViewController = vc;
         }
     }
 
-    setDetailViewController(vc)
-    {
-        if (this._detailViewController != null)
-        {
+    private _detailViewController = null;
+    setDetailViewController(vc){
+        if (this._detailViewController != null){
             this._detailViewController.view.removeFromSuperview();
             this.removeChildViewController(this._detailViewController);
             this._detailViewController = null;
         }
 
-        if (vc != null)
-        {
+        if (vc != null){
             vc.parent = this;
             vc.splitViewController = this;
 
-            this._detailView.addSubview(vc.view);
+            this.detailView.addSubview(vc.view);
             this.addChildViewController(vc);
             this._detailViewController = vc;
         }
     }
 
-    showDetailViewController(vc)
-    {
-        var oldVC = this._detailViewController;
-        var newVC = vc;
+    showDetailViewController(vc){
+        let oldVC = this._detailViewController;
+        let newVC = vc;
 
         if (oldVC == newVC) return;
 
         newVC.onLoadView(this, function () {
 
-            this._detailView.addSubview(newVC.view);
+            this.detailView.addSubview(newVC.view);
             this.addChildViewController(newVC);
             this._detailViewController = vc;
 
@@ -100,7 +98,5 @@ export class MUISplitViewController extends MUIViewController
     get detailViewController():MUIViewController{
         return this._detailViewController;
     }
-
-
 }
 
