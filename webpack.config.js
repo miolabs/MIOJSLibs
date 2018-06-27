@@ -10,6 +10,7 @@ const ENV = process.env.NODE_ENV || 'dev';
 const packageName = `miojslibs${TARGET === 'core' ? '-core' : ''}`;
 const buildPath = path.resolve(__dirname, 'packages', packageName, 'build')
 const configFile = path.resolve(__dirname, 'packages', packageName, `tsconfig.json`);
+const buildTarget = (TARGET === 'webapp') ? 'web' : 'node';
 
 console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${ ENV }' environment. from '${configFile}'`);
 
@@ -46,7 +47,7 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   mode: PROD ? 'production' : 'development',
-  target: 'web',
+  target: buildTarget,
   output: {
     filename: '[name].js',
     libraryTarget: "umd",

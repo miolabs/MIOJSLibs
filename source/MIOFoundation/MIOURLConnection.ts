@@ -64,7 +64,7 @@ export class MIOURLConnection
                         var data = new Uint8Array(this.response);
 
                         if (instance.request.download == true) {
-                            /// #if TARGET !== 'webworker'
+                            /// #if TARGET !== 'webworker' && TARGET !== 'core'
 
                             var blob = new Blob([data] , { type: type});
                             if (typeof window.navigator.msSaveBlob !== 'undefined') {
