@@ -12,13 +12,15 @@ const buildPath = path.resolve(__dirname, 'packages', packageName, 'build')
 const configFile = path.resolve(__dirname, 'packages', packageName, `tsconfig.json`);
 const buildTarget = (TARGET === 'webapp') ? 'web' : 'node';
 
+const entry = {};
+// In order to name the resulting file as the package name, and to have the correct module name for the typeingbundle
+entry[packageName] = path.join(__dirname, 'source', `index.${TARGET}.ts`);
+
 console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${ ENV }' environment. from '${configFile}'`);
 
 module.exports = {
   devtool: PROD ? '':'eval-source-map',
-  entry: {
-    miojslibs: path.join(__dirname, 'source', `index.${TARGET}.ts`)
-  },
+  entry,
   module: {
     rules: [{
       test: /\.ts$/,

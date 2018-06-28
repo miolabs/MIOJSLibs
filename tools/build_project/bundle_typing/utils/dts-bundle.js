@@ -5,11 +5,9 @@ const path = require('path');
 const name = process.argv[2] || 'miojslibs';
 const TARGET = process.argv[3] || 'webapp';
 
-const packageName = `miojslibs${TARGET === 'core' ? '-core' : '' }`
-
 const config = {
 	name,
-	main: path.join('packages', packageName, 'build', 'types', `index.${TARGET}.d.ts`)
+	main: path.join('packages', name, 'build', 'types', `index.${TARGET}.d.ts`)
 };
 
 console.log(`INFO: Start type_definition bundling with the following data: ${JSON.stringify(config)}`);

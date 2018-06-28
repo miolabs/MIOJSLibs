@@ -5,7 +5,8 @@
   "main": "dist/js/miojslibs.js",
   "types": "dist/typings/miojslibs/index.d.ts",
   "config": {
-    "target": "webapp"
+    "target": "webapp",
+    "name": "miojslibs"
   },
   "scripts": {
     "clean": "npm install && npm run clean:build && npm run clean:dist",
@@ -13,14 +14,14 @@
     "clean:dist": "rimraf dist/*",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "dev": "cross-env TARGET=$npm_package_config_target webpack --config ./webpack.config.js",
-    "postdev": "npm run copy:dist && npm run build:typing $npm_package_config_target",
+    "postdev": "npm run copy:dist && npm run build:typing",
     "preprod": "npm run clean",
     "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
-    "postprod": "npm run copy:dist && npm run build:typing $npm_package_config_target",
+    "postprod": "npm run copy:dist && npm run build:typing",
     "build:libs": "webpack --config ./webpack.config.js",
-    "build:typing": "npm run build:typing_global",
-    "build:typing_module": "cd ../..; ./tools/build_project/bundle_typing/bundle_typing.sh $npm_package_config_target",
-    "build:typing_global": "cd ../..; ./tools/build_project/bundle_typing/global_typing.sh $npm_package_config_target",
+    "build:typing": "npm run build:typing_global $npm_package_config_name $npm_package_config_target",
+    "build:typing_module": "cd ../..; ./tools/build_project/bundle_typing/bundle_typing.sh",
+    "build:typing_global": "cd ../..; ./tools/build_project/bundle_typing/global_typing.sh",
     "build:webworkers": "cd ../..; ./tools/build_project/build_webworkers.sh $npm_package_config_target"
   },
   "devDependencies": {
