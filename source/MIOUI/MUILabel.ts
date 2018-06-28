@@ -12,14 +12,18 @@ export class MUILabel extends MUIView
     autoAdjustFontSize = "none";
     autoAdjustFontSizeValue = 4;
 
+    init(){
+        super.init();
+        MUICoreLayerAddStyle(this.layer, "lbl");
+    }
+
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
-
         this._textLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
     }
 
     protected ui_core_init_layers(){
-        MUICoreLayerAddStyle(this.layer, "lbl");
+        //MUICoreLayerAddStyle(this.layer, "lbl");
     
         if (this._textLayer == null){
             this.layer.innerHTML = "";

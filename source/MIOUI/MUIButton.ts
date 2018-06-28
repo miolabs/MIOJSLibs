@@ -30,6 +30,11 @@ export class MUIButton extends MUIControl
     private _selected = false;
     type = MUIButtonType.MomentaryPushIn;
 
+    init(){
+        super.init();
+        MUICoreLayerAddStyle(this.layer, "btn");
+    }
+
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
@@ -78,7 +83,7 @@ export class MUIButton extends MUIControl
 
     protected ui_core_init_layers(){
         //MUICoreLayerRemoveStyle(this.layer, "view");
-        MUICoreLayerAddStyle(this.layer, "btn");
+        //MUICoreLayerAddStyle(this.layer, "btn");
 
         if (this._titleLayer == null) {
             this._titleLayer = document.createElement("span");
