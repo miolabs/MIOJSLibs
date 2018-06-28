@@ -23,7 +23,13 @@ export class MUIImageView extends MUIView
     }
 
     setImage(imageURL){
-        this._imageLayer.setAttribute("src", imageURL);
+        if (imageURL != null){
+            this._imageLayer.setAttribute("src", imageURL);
+        }
+        else {
+            this._imageLayer.setAttribute("src", "");
+        }
+
     }
 
     setHeight(h){
