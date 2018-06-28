@@ -21,5 +21,6 @@ export function MIOCoreGetBrowser() {
 }
 
 export function MIOClassFromString(name){
-    return null
+    let newClass: any = new global[name]();
+    return newClass;
 }

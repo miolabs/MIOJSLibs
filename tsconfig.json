@@ -17,7 +17,8 @@
     ],
     "types": [
       "miojs",
-      "miojs_internal"
+      "miojs_internal",
+      "node"
     ]
   },
   "include": [

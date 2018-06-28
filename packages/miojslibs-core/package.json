@@ -51,5 +51,8 @@
   "bugs": {
     "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
   },
-  "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs-core/README.md"
+  "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs-core/README.md",
+  "dependencies": {
+    "@types/node": "^10.5.0"
+  }
 }
