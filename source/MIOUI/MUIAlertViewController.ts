@@ -9,6 +9,7 @@ import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatform";
 import { MUITableViewCell, MUITableViewCellSeparatorStyle, MUITableViewCellStyle } from "./MUITableViewCell";
 import { MUILabel } from "./MUILabel";
 import { MUIAnimationType, MUIClassListForAnimationType } from "./MIOUI_CoreAnimation";
+import { MUICoreLayerRemoveStyle } from ".";
 
 export enum MUIAlertViewStyle
 {
@@ -137,9 +138,10 @@ export class MUIAlertViewController extends MUIViewController
         this.transitioningDelegate = this;
     }
 
-    viewDidLoad()
-    {
+    viewDidLoad(){
         super.viewDidLoad();
+
+        MUICoreLayerRemoveStyle(this.view.layer, "page");
 
         this._backgroundView = new MUIView();
         this._backgroundView.init();
@@ -155,6 +157,9 @@ export class MUIAlertViewController extends MUIViewController
         this._tableView.dataSource = this;
         this._tableView.delegate = this;
         this._tableView.layer.style.background = "";
+        this._tableView.layer.style.position = "absolute";
+        this._tableView.layer.style.width = "100%";
+        this._tableView.layer.style.height = "100%";
 
         this.view.addSubview(this._tableView);
 

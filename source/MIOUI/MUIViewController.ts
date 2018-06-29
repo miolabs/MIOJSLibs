@@ -116,6 +116,7 @@ export class MUIViewController extends MIOObject
         
         if (this._htmlResourcePath == null) {
             this.view.init();            
+            MUICoreLayerAddStyle(this.view.layer, "page");
             this._didLoadView();
             return;
         }
@@ -133,8 +134,7 @@ export class MUIViewController extends MIOObject
     }
 
     _didLoadView(){
-        this._layerIsReady = true;
-        MUICoreLayerAddStyle(this.view.layer, "page");
+        this._layerIsReady = true;        
 
         if (this._onLoadLayerTarget != null && this._onViewLoadedAction != null)
         {
