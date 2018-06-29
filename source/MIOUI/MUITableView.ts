@@ -561,7 +561,7 @@ export class MUITableView extends MUIScrollView {
 
     private addRowWithType(type: MUITableViewRowType, view: MUIView): MUITableViewRow {
 
-        var row = new MUITableViewRow();
+        let row = new MUITableViewRow();
         row.initWithType(type);
         this.rows.push(row);
         row.view = view;
@@ -647,13 +647,13 @@ export class MUITableView extends MUIScrollView {
 
     private addCell(indexPath: MIOIndexPath, posY, row: MUITableViewRow, previusCell?: MUIView) {
 
+        let cell: MUITableViewCell = this.dataSource.cellAtIndexPath(this, indexPath);
+
         if (row != null && row.view != null) return row.height;
         let r = row;
         if (r == null) {
             r = this.addRowWithType(MUITableViewRowType.Cell, cell);
         }
-
-        var cell: MUITableViewCell = this.dataSource.cellAtIndexPath(this, indexPath);
 
         let nodeID = cell.nodeID;
         let node: MUITableViewCellNode = this.cellNodesByID[nodeID];
@@ -695,7 +695,7 @@ export class MUITableView extends MUIScrollView {
         cell._onDblClickFn = this.cellOnDblClickFn;
         cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
 
-        var h = this.rowHeight;
+        let h = this.rowHeight;
         if (this.delegate != null && typeof this.delegate.heightForRowAtIndexPath === "function") {
             h = this.delegate.heightForRowAtIndexPath(this, indexPath);
             if (r.height != h) {
@@ -779,7 +779,7 @@ export class MUITableView extends MUIScrollView {
 
         let indexPath: MIOIndexPath = this.indexPathForCell(cell);
 
-        var canSelectCell = true;
+        let canSelectCell = true;
 
         if (this.delegate != null) {
             if (typeof this.delegate.canSelectCellAtIndexPath === "function")
@@ -827,8 +827,8 @@ export class MUITableView extends MUIScrollView {
 
     cellAtIndexPath(indexPath: MIOIndexPath) {
 
-        var s = this.sections[indexPath.section];
-        var c = s.cells[indexPath.row];
+        let s = this.sections[indexPath.section];
+        let c = s.cells[indexPath.row];
 
         return c;
     }
