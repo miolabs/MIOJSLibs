@@ -5,6 +5,7 @@ import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCe
 import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCorePlatform";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerAddStyle } from ".";
+import { MUICoreLayerRemoveStyle } from "../../../../Libs/MIOJSLibs/source/MIOUI";
 
 /**
  * Created by godshadow on 22/3/16.
@@ -29,12 +30,15 @@ export class MUITableViewSection extends MIOObject {
         header.init();
         header.setHeight(height);
         //header.layer.style.background = "";
+        header.layer.style.margin = "4px 8px";
+        MUICoreLayerRemoveStyle(header.layer, "view");
         MUICoreLayerAddStyle(header.layer, "header");
 
         let titleLabel = new MUILabel();
         titleLabel.init();
         // titleLabel.layer.style.background = "";
-        MUICoreLayerAddStyle(header.layer, "title");
+        MUICoreLayerRemoveStyle(titleLabel.layer, "lbl");
+        MUICoreLayerAddStyle(titleLabel.layer, "title");
         titleLabel.text = title;
         header.addSubview(titleLabel);
 

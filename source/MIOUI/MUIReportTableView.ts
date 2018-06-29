@@ -112,13 +112,16 @@ export class MUIReportTableViewColumn extends MIOObject {
         header.init();
         header.setHeight(30);
         header.layer.style.background = "";        
-        header.layer.style.position = "absolute";                
+        header.layer.style.position = "absolute";    
+        header.layer.style.margin = "8px 8px";
+        header.layer.classList.remove("view");
         header.layer.classList.add("header");
 
         let titleLabel = new MUILabel();
         titleLabel.init();
         titleLabel.layer.style.background = "";
-        //titleLabel.layer.style.position = "absolute";        
+        //titleLabel.layer.style.position = "absolute";  
+        titleLabel.layer.classList.remove("title");
         titleLabel.layer.classList.add("title");
         titleLabel.text = this.title;
         titleLabel.setTextAlignment(this.alignment);
