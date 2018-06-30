@@ -27,7 +27,7 @@ export class MUIImageView extends MUIView
             this._imageLayer.setAttribute("src", imageURL);
         }
         else {
-            this._imageLayer.setAttribute("src", "");
+            this._imageLayer.removeAttribute("src");
         }
 
     }

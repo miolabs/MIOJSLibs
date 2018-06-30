@@ -38,9 +38,9 @@ export class MUIButton extends MUIControl
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
-        var opts = options != null ? options : {}; 
+        let opts = options != null ? options : {}; 
 
-        var type = this.layer.getAttribute("data-type");
+        let type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")
             this.type = MUIButtonType.MomentaryPushIn;
         else if (type == "PushOnPushOff")
@@ -61,7 +61,7 @@ export class MUIButton extends MUIControl
                 this._titleStatusStyle = opts["status-style-prefix"] + "_title_status";
         }
 
-        var key = this.layer.getAttribute("data-title");
+        let key = this.layer.getAttribute("data-title");
         if (key != null)
              this.setTitle(MIOLocalizeString(key, key));
 
@@ -78,7 +78,6 @@ export class MUIButton extends MUIControl
         let status = this.layer.getAttribute("data-status");
         if (status == "selected")
             this.setSelected(true);
-
     }
 
     protected ui_core_init_layers(){

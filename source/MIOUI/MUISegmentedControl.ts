@@ -16,16 +16,16 @@ export class MUISegmentedControl extends MUIControl
         super.initWithLayer(layer, owner, options);
 
         // Check for segmented items
-        var opts = {};
-        var sp = layer.getAttribute("data-status-style-prefix");
+        let opts = {};
+        let sp = layer.getAttribute("data-status-style-prefix");
         if (sp != null) opts["status-style-prefix"] = sp;
 
-        for (var index = 0; index < this.layer.childNodes.length; index++)
+        for (let index = 0; index < this.layer.childNodes.length; index++)
         {
-            var itemLayer = this.layer.childNodes[index];
+            let itemLayer = this.layer.childNodes[index];
             if (itemLayer.tagName == "DIV")
             {
-                var si = new MUIButton();
+                let si = new MUIButton();
                 si.initWithLayer(itemLayer, owner, opts);
                 si.type = MUIButtonType.PushIn;
                 this._addSegmentedItem(si);
@@ -35,7 +35,7 @@ export class MUISegmentedControl extends MUIControl
 
         if (this.segmentedItems.length > 0)
         {
-            var item = this.segmentedItems[0];
+            let item = this.segmentedItems[0];
             item.setSelected(true);
             this.selectedSegmentedIndex = 0;
         }
