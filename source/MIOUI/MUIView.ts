@@ -1,4 +1,4 @@
-import { MIOObject, MIORect } from "../MIOFoundation";
+import { MIOObject, MIORect, MIOLocale, MIOLog } from "../MIOFoundation";
 import { MUIWindow } from "./MUIWindow";
 import { MUICoreLayerIDFromObject, MUICoreLayerCreate, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MIOClassFromString } from "../MIOCorePlatform";
@@ -160,6 +160,7 @@ export class MUIView extends MIOObject
         let objLayer = this.layer.cloneNode(true);
         
         let className = this.getClassName();
+        MIOLog("MUIView:copy:Copying class name " + className);
         if (className == null) throw Error("MUIView:copy: Error classname is null");
         
         let view = MIOClassFromString(className);
