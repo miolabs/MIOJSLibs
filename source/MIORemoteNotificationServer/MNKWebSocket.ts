@@ -3,6 +3,7 @@ import { MIOObject, MIOURL } from "../MIOFoundation";
 export interface MNKWebSocketDelegate {
     webSocketDidOpenConnection?(webSocket:MNKWebSocket);
     webSocketDidCloseConnection?(webSocket:MNKWebSocket);
+    webSocketDidFailConnection?(webSocket:MNKWebSocket);
 }
 
 export class MNKWebSocket extends MIOObject
@@ -33,17 +34,32 @@ export class MNKWebSocket extends MIOObject
             instance.closeCallback(ev);
         };
 
+        this.webSocket.onerror = function(ev:Event){
+            instance.errorCallback(ev);
+        }
+
+    }
+
+    send(data){
+        this.webSocket.send(data);
     }
 
     private openCallback(ev:Event){
-        if (this.delegate != null && typeof this.delegate.webSocketDidOpen === "function") {
+        if (this.delegate != null && typeof this.delegate.webSocketDidOpenConnection === "function") {
             this.delegate.webSocketDidOpenConnection(this);
         }
     }
 
     private closeCallback(ev:Event){
-        if (this.delegate != null && typeof this.delegate.webSocketDidClose === "function") {
+        if (this.delegate != null && typeof this.delegate.webSocketDidCloseConnection === "function") {
             this.delegate.webSocketDidCloseConnection(this);
         }
     }
+
+    private errorCallback(ev:Event){
+        if (this.delegate != null && typeof this.delegate.webSocketDidFailConnection === "function") {
+            this.delegate.webSocketDidFailConnection(this);
+        }
+    }
+
 }

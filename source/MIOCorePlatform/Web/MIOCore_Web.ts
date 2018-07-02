@@ -204,7 +204,7 @@ export function MIOClassFromString(className)
 {
     //instance creation here
     let object = null;
-    let newClass: any = new (window)[className]();
+    let newClass: any = new window[className]();
     return newClass;
     // try {
     //     object = Object.create(window[className].prototype);

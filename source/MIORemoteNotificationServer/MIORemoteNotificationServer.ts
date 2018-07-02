@@ -3,17 +3,25 @@ import { MNKWebSocket } from "./MNKWebSocket";
 
 export class MIORemoteNotificationServer extends MIOObject
 {
-    private static _sharedInstance:MIORemoteNotificationServer = new MIORemoteNotificationServer();    
+    private static _sharedInstance:MIORemoteNotificationServer = null;    
     
-    init(){
-        if (MIORemoteNotificationServer._sharedInstance == null){
-            throw new Error("MIORemoteMessageCenter: Instantiation failed. Use defaultCenter() instead of new.");
+    init(){        
+        if (MIORemoteNotificationServer._sharedInstance != null){
+            throw new Error("MIORemoteMessageCenter: Instantiation failed. Use sharedInstance() instead of new.");
         }
-        
-        MIORemoteNotificationServer._sharedInstance = this;        
+        super.init();
+        this.login();
     }
 
     public static sharedInstance():MIORemoteNotificationServer {
+        if (MIORemoteNotificationServer._sharedInstance != null) {
+            return MIORemoteNotificationServer._sharedInstance;
+        }
+
+        let instance = new MIORemoteNotificationServer();
+        instance.init();
+        
+        MIORemoteNotificationServer._sharedInstance = instance;
         return MIORemoteNotificationServer._sharedInstance;
     }
 
@@ -27,7 +35,25 @@ export class MIORemoteNotificationServer extends MIOObject
 
     webSocketDidOpenConnection(webSocket:MNKWebSocket){
         MIOLog("Conenction OK");
+        let params = {
+            "deviceID": "1529058013587268",
+            "messageType": "openConnection",
+            "userData": {
+                "username": "admin@dual-link.com",
+                "password": "123123"
+            }
+        }
+        
     }
+
+    webSocketDidCloseConnection(webSocket:MNKWebSocket){
+        MIOLog("Conenction Close");
+    }
+
+    webSocketDidFailConnection(webSocket:MNKWebSocket){
+        MIOLog("Conenction FAIL");
+    }
+
 
     private observers = [];
     addObserver(observer, name:string, userInfo?){
