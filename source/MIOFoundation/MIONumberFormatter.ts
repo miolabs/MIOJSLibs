@@ -33,7 +33,7 @@ export class MIONumberFormatter extends MIOFormatter {
 
         if(str === null) return null;
         
-        var result, parseString, numberString, type;
+        let result, parseString, numberString, type;
         [result, parseString, numberString, type] = this._parse(str);
         
         if (result == true) {
@@ -58,11 +58,11 @@ export class MIONumberFormatter extends MIOFormatter {
     stringForObjectValue(value):string {
         
         let number = value as number;
-        if(!number) return '0';
-        var str = number.toString();
-        var intValue = null;
-        var floatValue = null;
-        var array = str.split(".");
+        if(!number) number = 0;
+        let str = number.toString();
+        let intValue = null;
+        let floatValue = null;
+        let array = str.split(".");
         if (array.length == 1) {
             // Only int
             intValue = array[0];
@@ -72,22 +72,22 @@ export class MIONumberFormatter extends MIOFormatter {
             floatValue = array[1];
         }
         
-        var res = "";
-        var minusOffset = intValue.charAt(0) == "-" ? 1 : 0;
+        let res = "";
+        let minusOffset = intValue.charAt(0) == "-" ? 1 : 0;
     
         if (intValue.length > (3 + minusOffset)) {
 
-            var offset = Math.floor((intValue.length - minusOffset) / 3);
+            let offset = Math.floor((intValue.length - minusOffset) / 3);
             if (((intValue.length - minusOffset) % 3) == 0)
                 offset--;
-            var posArray = [];
-            var intLen = intValue.length;
+            let posArray = [];
+            let intLen = intValue.length;
             for (let index = offset; index > 0; index--){
                 posArray.push(intLen - (index * 3));
             }
 
-            var posArrayIndex = 0;
-            var groupPos = posArray[0];
+            let posArrayIndex = 0;
+            let groupPos = posArray[0];
             for (let index = 0; index < intLen; index++)
             {
                 if (index == groupPos) {
@@ -95,7 +95,7 @@ export class MIONumberFormatter extends MIOFormatter {
                     posArrayIndex++;                    
                     groupPos = posArrayIndex < posArray.length ? posArray[posArrayIndex] : -1;
                 }
-                var ch = intValue[index];
+                let ch = intValue[index];
                 res += ch;
             }                        
         }
@@ -112,7 +112,7 @@ export class MIONumberFormatter extends MIOFormatter {
             if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits)
                 floatValue = floatValue.substring(0, this.maximumFractionDigits);
 
-            for (var index = 0; index < this.minimumFractionDigits; index++){
+            for (let index = 0; index < this.minimumFractionDigits; index++){
 
                 if (index < floatValue.length)
                     res += floatValue[index];

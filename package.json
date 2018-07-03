@@ -1,6 +1,6 @@
 {
   "name": "miojslibs-wrapper",
-  "version": "0.9.45",
+  "version": "0.9.56",
   "description": "This project contains the different platforms for MIOJSLibs",
   "directories": {
     "doc": "docs",

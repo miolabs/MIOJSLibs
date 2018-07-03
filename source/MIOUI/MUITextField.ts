@@ -192,10 +192,9 @@ export class MUITextField extends MUIControl
     setOnDidEditing(target, action) {
         this.didEditingTarget = target;
         this.didEditingAction = action;
-        var instance = this;
+        let instance = this;
 
-        this._inputLayer.onblur = function(e)
-        {
+        this._inputLayer.onblur = function(e){
             if (instance.enabled) {
                 instance.didEditingAction.call(target, instance, instance.text);
             }
@@ -203,25 +202,26 @@ export class MUITextField extends MUIControl
         
     }
 
-    setTextRGBColor(r, g, b)
-    {
-        var value = "rgb(" + r + ", " + g + ", " + b + ")";
+    setTextRGBColor(r, g, b){
+        let value = "rgb(" + r + ", " + g + ", " + b + ")";
         this._inputLayer.style.color = value;
     }
 
-    set textColor(color)
-    {
+    set textColor(color){
         this._inputLayer.style.color = color;
     }
 
-    get textColor()
-    {
-        var color = this._getValueFromCSSProperty("color");
-        return color;
+    get textColor(){
+        let color = this._getValueFromCSSProperty("color");
+        return color;        
     }
 
-    becomeFirstResponder()
-    {
+    setEnabled(value){
+        super.setEnabled(value);
+        this._inputLayer.readOnly = !value;
+    }
+
+    becomeFirstResponder(){
         this._inputLayer.focus();
     }
 

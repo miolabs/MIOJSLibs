@@ -138,7 +138,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
     objectWithID(objectID: MIOManagedObjectID) {
 
-        var obj:MIOManagedObject = this.objectsByID[objectID.URIRepresentation.absoluteString];
+        let obj:MIOManagedObject = this.objectsByID[objectID.URIRepresentation.absoluteString];
         if (obj == null) {
             obj = MIOClassFromString(objectID.entity.name);
             obj._initWithObjectID(objectID, this);  
@@ -149,7 +149,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
     existingObjectWithID(objectID: MIOManagedObjectID): MIOManagedObject {
 
-        var obj: MIOManagedObject = this.objectsByID[objectID.URIRepresentation.absoluteString];
+        let obj: MIOManagedObject = this.objectsByID[objectID.URIRepresentation.absoluteString];
 
         let store:MIOIncrementalStore = objectID.persistentStore as MIOIncrementalStore;
         let node:MIOIncrementalStoreNode = store._nodeForObjectID(objectID, this);
@@ -172,7 +172,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
         if (object.isFault == false) return;
 
-        var changes = null;
+        let changes = null;
         if (this.blockChanges != null) {
             changes = this.blockChanges;
         }
@@ -184,7 +184,7 @@ export class MIOManagedObjectContext extends MIOObject {
         let entityName = object.entity.name;
         let objs = changes[MIORefreshedObjectsKey];
 
-        var set = objs[entityName];
+        let set = objs[entityName];
         if (set == null) {
             set = MIOSet.set();
             objs[entityName] = set;

@@ -230,8 +230,8 @@ export class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.StringValue, /^"([^"]*)"|^'([^']*)'/);
 
         this.lexer.addTokenType(MIOPredicateTokenType.NumberValue, /^-?\d+(?:\.\d+)?(?:e[+\-]?\d+)?/i);
-        this.lexer.addTokenType(MIOPredicateTokenType.BooleanValue, /^true|false/i);
-        this.lexer.addTokenType(MIOPredicateTokenType.NullValue, /^null|nil/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.BooleanValue, /^(true|false)/i);
+        this.lexer.addTokenType(MIOPredicateTokenType.NullValue, /^(null|nil)/i);
         // Symbols
         this.lexer.addTokenType(MIOPredicateTokenType.OpenParenthesisSymbol, /^\(/);
         this.lexer.addTokenType(MIOPredicateTokenType.CloseParenthesisSymbol, /^\)/);

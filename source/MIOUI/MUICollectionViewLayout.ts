@@ -24,8 +24,15 @@ export class MUICollectionViewLayout extends MIOObject
     invalidateLayout(){}
 }
 
+export enum MIOCollectionViewScrollDirection {
+    Vertical,
+    Horizontal
+}
+
 export class MUICollectionViewFlowLayout extends MUICollectionViewLayout
 {
+    scrollDirection = MIOCollectionViewScrollDirection.Vertical;
+
     init(){
         super.init();
 

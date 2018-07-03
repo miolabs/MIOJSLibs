@@ -32,17 +32,15 @@ export class MUIButton extends MUIControl
 
     init(){
         super.init();
-        MUICoreLayerRemoveStyle(this.layer, "view");
         MUICoreLayerAddStyle(this.layer, "btn");
-        this.setup();
     }
 
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
-        var opts = options != null ? options : {}; 
+        let opts = options != null ? options : {}; 
 
-        var type = this.layer.getAttribute("data-type");
+        let type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")
             this.type = MUIButtonType.MomentaryPushIn;
         else if (type == "PushOnPushOff")
@@ -63,7 +61,7 @@ export class MUIButton extends MUIControl
                 this._titleStatusStyle = opts["status-style-prefix"] + "_title_status";
         }
 
-        var key = this.layer.getAttribute("data-title");
+        let key = this.layer.getAttribute("data-title");
         if (key != null)
              this.setTitle(MIOLocalizeString(key, key));
 
@@ -80,11 +78,11 @@ export class MUIButton extends MUIControl
         let status = this.layer.getAttribute("data-status");
         if (status == "selected")
             this.setSelected(true);
-
-        this.setup();
     }
 
-    private setup(){
+    protected ui_core_init_layers(){
+        //MUICoreLayerRemoveStyle(this.layer, "view");
+        //MUICoreLayerAddStyle(this.layer, "btn");
 
         if (this._titleLayer == null) {
             this._titleLayer = document.createElement("span");

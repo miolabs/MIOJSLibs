@@ -108,16 +108,21 @@ export class MUIReportTableViewColumn extends MIOObject {
         if (this._colHeader != null)
             return this._colHeader;
 
-        var header = new MUIView();
+        let header = new MUIView();
         header.init();
         header.setHeight(30);
         header.layer.style.background = "";        
-        header.layer.classList.add("tableview_header");
+        header.layer.style.position = "absolute";    
+        header.layer.style.margin = "8px 8px";
+        header.layer.classList.remove("view");
+        header.layer.classList.add("header");
 
-        var titleLabel = new MUILabel();
+        let titleLabel = new MUILabel();
         titleLabel.init();
         titleLabel.layer.style.background = "";
-        titleLabel.layer.classList.add("tableview_header_title");
+        //titleLabel.layer.style.position = "absolute";  
+        titleLabel.layer.classList.remove("title");
+        titleLabel.layer.classList.add("title");
         titleLabel.text = this.title;
         titleLabel.setTextAlignment(this.alignment);
         header.addSubview(titleLabel);
