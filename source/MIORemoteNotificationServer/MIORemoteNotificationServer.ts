@@ -54,7 +54,6 @@ export class MIORemoteNotificationServer extends MIOObject
         MIOLog("Conenction FAIL");
     }
 
-
     private observers = [];
     addObserver(observer, name:string, userInfo?){
 

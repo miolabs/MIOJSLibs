@@ -164,7 +164,7 @@ export class MUIView extends MIOObject
         if (className == null) throw Error("MUIView:copy: Error classname is null");
         
         let view = MIOClassFromString(className);
-        view.initWithLayer(objLayer);        
+        view.initWithLayer(objLayer, null);        
 
         return view;
     }
