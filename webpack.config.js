@@ -53,7 +53,16 @@ module.exports = {
   output: {
     filename: '[name].js',
     libraryTarget: "umd",
-    path: buildPath
+    path: buildPath,
+    devtoolModuleFilenameTemplate (info) {
+      // The project is built from packages/${target}/webpack.config.js file.
+      // It uses '../../sources' folder in tsconfig.json file -> it makes the module names use absolute paths, instead of relative as normally.
+      //   That is a problem during debugging, since the project can not use general sourcemapPath overrides, it would need the current user's path.
+      // In order to be able to use general sourcemapPathOverrides, so everyone in the team can use the same configs,
+      //   I create relative paths from the sources.
+      const rel = path.relative(__dirname, info.absoluteResourcePath)
+      return `webpack:///./${rel}`
+    }
   },
   optimization: {
     // // It is possible to split the code for the 
