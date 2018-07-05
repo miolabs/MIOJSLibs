@@ -13,6 +13,9 @@ TODO: find a way to unify it.
     export * from './Web/MIOCoreBundle'
     export * from './Web/MIOCoreEvents'
 /// #endif
+/// #if TARGET === 'core'
+    export * from './Core/MIOCore'
+/// #endif
 /// #if TARGET === 'webworker'
     export * from './WebWorker/MIOCore_WebWorker'
 /// #endif

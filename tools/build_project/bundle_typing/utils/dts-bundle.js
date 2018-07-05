@@ -1,16 +1,16 @@
 /* jshint esversion: 6 */
 
 const dts = require('dts-bundle');
+const path = require('path');
 const name = process.argv[2] || 'miojslibs';
-
-const sourceName = process.argv[3] || 'index.webapp';
+const TARGET = process.argv[3] || 'webapp';
 
 const config = {
 	name,
-	main: `build/types/${sourceName}.d.ts`
+	main: path.join('packages', name, 'build', 'types', `index.${TARGET}.d.ts`)
 };
 
-console.log(`INFO: Start type_deifinition bundling with the following data: ${JSON.stringify(config)}`);
+console.log(`INFO: Start type_definition bundling with the following data: ${JSON.stringify(config)}`);
 try {
 	dts.bundle(config);
 	console.log("INFO: Typing files bundled successfully");

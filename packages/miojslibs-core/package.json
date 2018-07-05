@@ -1,0 +1,58 @@
+{
+  "name": "miojslibs-core",
+  "version": "0.9.56",
+  "description": "These libraries are the building blocks of MIOJSLibs.",
+  "main": "dist/js/miojslibs-core.js",
+  "types": "dist/typings/miojslibs-core/index.d.ts",
+  "config": {
+    "target": "core",
+    "name": "miojslibs-core"
+  },
+  "scripts": {
+    "clean": "npm install && npm run clean:build && npm run clean:dist",
+    "clean:build": "rimraf build/*",
+    "clean:dist": "rimraf dist/*",
+    "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
+    "dev": "cross-env TARGET=$npm_package_config_target webpack --config ./webpack.config.js",
+    "postdev": "npm run copy:dist && npm run build:typing",
+    "preprod": "npm run clean",
+    "prod": "cross-env NODE_ENV=prod npm run build:libs",
+    "postprod": "npm run copy:dist && npm run build:typing $npm_package_config_target",
+    "build:libs": "cross-env TARGET=$npm_package_config_target webpack --config ./webpack.config.js",
+    "build:typing": "npm run build:typing_module $npm_package_config_name $npm_package_config_target",
+    "build:typing_module": "cd ../..; ./tools/build_project/bundle_typing/bundle_typing.sh ",
+    "build:typing_global": "cd ../..; ./tools/build_project/bundle_typing/global_typing.sh"
+  },
+  "devDependencies": {
+    "@types/chart.js": "^2.7.22",
+    "awesome-typescript-loader": "^4.0.1",
+    "brace": "^0.11.1",
+    "chart.js": "^2.7.2",
+    "copy-webpack-plugin": "^4.5.1",
+    "copyfiles": "^2.0.0",
+    "cross-env": "^5.2.0",
+    "decimal.js": "^10.0.1",
+    "dts-bundle": "^0.7.3",
+    "ifdef-loader": "^2.0.3",
+    "npx": "^10.2.0",
+    "rimraf": "^2.6.2",
+    "ts-loader": "^4.4.1",
+    "typescript": "^2.9.2",
+    "webpack": "^4.12.0",
+    "webpack-cli": "^2.1.5"
+  },
+  "author": "miogds",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MIOLabs/MIOJSLibs.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
+  },
+  "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs-core/README.md",
+  "dependencies": {
+    "@types/node": "^10.5.0"
+  }
+}

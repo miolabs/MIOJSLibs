@@ -1,16 +1,14 @@
 {
-  "name": "miojslibs",
-  "version": "0.9.57",
-  "description": "These libraries are designing to develop a web or web application in the same way like if you develop a native iOS/macOS application.",
-  "main": "dist/js/miojslibs.js",
-  "types": "dist/typings/miojslibs/index.d.ts",
+  "name": "miojslibs-wrapper",
+  "version": "0.9.56",
+  "description": "This project contains the different platforms for MIOJSLibs",
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/chart.js": "^2.7.22",
+    "@types/jasmine": "^2.8.8",
     "awesome-typescript-loader": "^4.0.1",
     "brace": "^0.11.1",
     "chart.js": "^2.7.2",
@@ -20,6 +18,15 @@
     "decimal.js": "^10.0.1",
     "dts-bundle": "^0.7.3",
     "ifdef-loader": "^2.0.3",
+    "jasmine": "^2.99.0",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.1",
+    "karma-html-reporter": "^0.2.7",
+    "karma-jasmine": "^1.1.1",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "^0.0.32",
+    "lerna": "^2.11.0",
     "npx": "^10.2.0",
     "rimraf": "^2.6.2",
     "ts-loader": "^4.4.1",
@@ -28,33 +35,14 @@
     "webpack-cli": "^2.1.5"
   },
   "scripts": {
-    "clean:build": "rimraf build/*",
-    "clean:dist": "rimraf dist/*",
-    "dev": "webpack",
-    "postdev": "npm run copy:dist && npm run build:typing",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preprod": "npm install && npm run clean:build && npm run clean:dist",
-    "prod": "cross-env NODE_ENV=prod npm run build:libs && cross-env NODE_ENV=prod npm run build:webworkers",
+    "dev": "lerna run --scope miojslibs dev",
+    "dev-core": "lerna run --scope miojslibs-core dev",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
-    "postprod": "npm run copy:dist && npm run build:typing",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
-    "build:libs": "webpack",
-    "build:typing": "npm run build:typing_global",
-    "build:typing_module": "./tools/build_project/bundle_typing/bundle_typing.sh",
-    "build:typing_global": "./tools/build_project/bundle_typing/global_typing.sh",
-    "check_missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",
-    "check_dependencies": "./tools/dep_graph/dependency_graph.sh",
+    "check:missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",
+    "check:dependencies": "./tools/dep_graph/connections_graph.sh",
+    "prod": "lerna run prod",
+    "publish": "lerna publish",
     "lint": "tslint -p ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MIOLabs/MIOJSLibs.git"
-  },
-  "keywords": [],
-  "author": "miogds",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
-  },
-  "homepage": "https://github.com/MIOLabs/MIOJSLibs#readme"
+  }
 }

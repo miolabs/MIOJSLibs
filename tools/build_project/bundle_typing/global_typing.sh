@@ -11,9 +11,12 @@
 #   - it requires all of the built definitions in order to bundle them
 #   - python3, node, mkdir, cp
 
-NAME=miojslibs
+NAME=$1
+TARGET=$2
 
-node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME
+node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME $TARGET
 
-mkdir -p ./dist/typings/${NAME}
-python ./tools/build_project/bundle_typing/utils/proccess_bundle.py build/types/${NAME}.d.ts --legacy --target dist/typings/${NAME}/index.d.ts
+DIST_PATH=./packages/${NAME}/dist/typings/${NAME}
+
+mkdir -p $DIST_PATH
+python ./tools/build_project/bundle_typing/utils/proccess_bundle.py ./packages/${NAME}/build/types/${NAME}.d.ts --legacy --target $DIST_PATH/index.d.ts

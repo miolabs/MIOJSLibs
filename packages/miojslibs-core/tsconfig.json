@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "types"
+  },
+  "include": [
+      "../../source/MIOCore",
+      "../../source/MIOCorePlatform",
+      "../../source/MIOData",
+      "../../source/MIOFoundation",
+      "../../source/MIOWebServicePersistentStore",
+      "../../source/index.core.ts"
+  ],
+  "exclude": [
+      "../../source/MIOCorePlatform/WebWorkerClasses"
+  ]
+}

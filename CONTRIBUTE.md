@@ -8,7 +8,7 @@
    ([more info](https://docs.npmjs.com/cli/link)).
 
    ```bash
-   cd path-to-miojslibs/MIOJSLibs
+   cd path-to-miojslibs/packages/miojslibs #depending on which platform do you want to develop
    npm link
    ```
 
@@ -31,7 +31,11 @@ npm install miojslibs
 
 ## Publish to npm
 
-[Docs](https://docs.npmjs.com/getting-started/publishing-npm-packages)
+[Docs](https://docs.npmjs.com/getting-started/publishing-npm-packages).
+
+In order to keep track of versions for multiple platforms, we use [lerna](https://lernajs.io/).
+It is installed as a dev dependency
+It lets you run commands simultaneously in all packages, and can keep the versions in sync.
 
 ```bash
 # Log in with the authenticated user: npm adduser
@@ -39,5 +43,5 @@ npm install miojslibs
 npm version <update_type: patch, minor, major>
 npm run prod
 # Check the files that you are about to publish: npm pack
-npm publish
+npm run publish # this calls lerna publish in all packages.
 ```

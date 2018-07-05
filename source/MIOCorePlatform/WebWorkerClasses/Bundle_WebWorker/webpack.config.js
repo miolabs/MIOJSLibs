@@ -8,5 +8,6 @@ config.output = config.output || {}
 config.entry.index = './Bundle_WebWorker.ts'
 config.output.filename = 'Bundle_WebWorker.js'
 
-// console.log(config)
+// console.log(config, process.env.TARGET);
+
 module.exports = config;

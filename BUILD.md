@@ -96,8 +96,15 @@ npm run build:webworkers
 
 ### Multiple platform
 
-The project `will be` available to be built for **different platforms**, to only include the files that are necessary for that platform.
+The project is available to be built for **multiple platforms**.
 
-Currently the preprocessing is achieved with [ifdef-loader](https://github.com/nippur72/ifdef-loader).
+`MIOCorePlatform` contains the platform dependent code. Currently a preprocessing step is achieved with [ifdef-loader](https://github.com/nippur72/ifdef-loader), to exclude the unnecessary parts per platform.
 
-And only build the webapp. Different versions are on our roadmap.
+For each platform there exists a `tsconfig.${TARGET}.json` file which contains what files are processed by `ts-loader` in webpack. It does not care about the entrypoint barrel exports, it will process every file that is *explicitly added* or *not excluded*, so if you add an extra module, your build might fail, due to missing platform dependent code.
+
+>VSCode is **not** aware of these **tsconfig files** nor the **ts-loader comments**, so it might add extra error messages, that are not relevant, because they don't happen during build time.
+
+Currently there are two versions of the libs:
+
+* `Core`: does not have any UI related code. Works on node.js.
+* `Webapp`: Contains the whole library.

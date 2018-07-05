@@ -11,11 +11,11 @@ def process(data):
     """ Clean file with es6 modules:
             - remove imports that cause side effects
     """
-    side_effect_imports = re.compile(r'import [^{]')
+    rule_remove_side_effect_imports = re.compile(r'import [^{]')
     count_removed_lines = 0
     for index, line in enumerate(data):
         if any([
-            re.match(side_effect_imports, line)
+            rule_remove_side_effect_imports.search(line)
         ]):
             data[index] = ''
             count_removed_lines += 1
