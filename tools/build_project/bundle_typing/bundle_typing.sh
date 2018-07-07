@@ -19,4 +19,4 @@ node ./tools/build_project/bundle_typing/utils/dts-bundle.js $NAME $TARGET
 DIST_PATH=./packages/${NAME}/dist/typings/${NAME}
 
 mkdir -p $DIST_PATH
-python3 ./tools/build_project/bundle_typing/utils/proccess_bundle.py ./packages/${NAME}/build/types/${NAME}.d.ts --target $DIST_PATH/index.d.ts
+python ./tools/build_project/bundle_typing/utils/proccess_bundle.py ./packages/${NAME}/build/types/${NAME}.d.ts --target $DIST_PATH/index.d.ts

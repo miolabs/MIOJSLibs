@@ -63,9 +63,9 @@ export class MIOFetchedResultsController extends MIOObject
                 let moc:MIOManagedObjectContext = notification.object;
                 if (moc !== this.managedObjectContext) return;
 
-                var ins_objs = notification.userInfo[MIOInsertedObjectsKey];
-                var upd_objs = notification.userInfo[MIOUpdatedObjectsKey];
-                var del_objs = notification.userInfo[MIODeletedObjectsKey];
+                let ins_objs = notification.userInfo[MIOInsertedObjectsKey];
+                let upd_objs = notification.userInfo[MIOUpdatedObjectsKey];
+                let del_objs = notification.userInfo[MIODeletedObjectsKey];
                 
                 let entityName = this.fetchRequest.entityName;                
                 
@@ -123,10 +123,10 @@ export class MIOFetchedResultsController extends MIOObject
 
     private checkObjects(objects){
         let predicate = this.fetchRequest.predicate;
-        for (var count = 0; count < objects.length; count++){
+        for (let count = 0; count < objects.length; count++){
             let obj = objects.objectAtIndex(count);
             if (predicate != null) {
-                var result = predicate.evaluateObject(obj);
+                let result = predicate.evaluateObject(obj);
                 if (result) this.processObject(obj);
             }
             else {
@@ -143,8 +143,8 @@ export class MIOFetchedResultsController extends MIOObject
         this._notify();
     }
 
-    private updateContent(inserted, updated, deleted)
-    {
+    private updateContent(inserted, updated, deleted){
+        
         this.checkObjects(inserted);
         this.checkObjects(updated);        
                 
@@ -159,7 +159,7 @@ export class MIOFetchedResultsController extends MIOObject
         //       in the fetched objects array
 
         // Process delete objects
-        for(var i = 0; i < deleted.length; i++) {
+        for(let i = 0; i < deleted.length; i++) {
             let o = deleted[i];
             let index = this.resultObjects.indexOf(o);
             if (index != -1){
@@ -174,40 +174,35 @@ export class MIOFetchedResultsController extends MIOObject
         this._notify();
     }
 
-    private _notify()
-    {
-        if (this._delegate != null)
-        {
-            if (typeof this._delegate.controllerWillChangeContent === "function")
-                this._delegate.controllerWillChangeContent(this);
+    private _notify(){
+        if (this._delegate == null) return;
+        
+        if (typeof this._delegate.controllerWillChangeContent === "function")
+            this._delegate.controllerWillChangeContent(this);
 
-            for (var sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++)
-            {
-                let sectionInfo = this.sections[sectionIndex];
-                if (typeof this._delegate.didChangeSection === "function")
-                    this._delegate.didChangeSection(this, sectionInfo, sectionIndex, MIOFetchedResultsChangeType.Insert);
+        for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++){
+            let sectionInfo = this.sections[sectionIndex];
+            if (typeof this._delegate.didChangeSection === "function")
+                this._delegate.didChangeSection(this, sectionInfo, sectionIndex, MIOFetchedResultsChangeType.Insert);
 
-                if (typeof this._delegate.didChangeObject === "function") {                    
-                    let items = sectionInfo.objects;
-                    for (let index = 0; index < items.length; index++) {
-                        let obj = items[index];
-                        let newIndexPath = MIOIndexPath.indexForRowInSection(index, sectionIndex);
-                        this._delegate.didChangeObject(this, obj, null, MIOFetchedResultsChangeType.Insert, newIndexPath);
-                    }
+            if (typeof this._delegate.didChangeObject === "function") {                    
+                let items = sectionInfo.objects;
+                for (let index = 0; index < items.length; index++) {
+                    let obj = items[index];
+                    let newIndexPath = MIOIndexPath.indexForRowInSection(index, sectionIndex);
+                    this._delegate.didChangeObject(this, obj, null, MIOFetchedResultsChangeType.Insert, newIndexPath);
                 }
             }
-
-            if (typeof this._delegate.controllerDidChangeContent === "function")
-                this._delegate.controllerDidChangeContent(this);
         }
+
+        if (typeof this._delegate.controllerDidChangeContent === "function")
+            this._delegate.controllerDidChangeContent(this);
     }
 
-    private _splitInSections()
-    {
+    private _splitInSections(){
         this.sections = [];
 
-        if (this.sectionNameKeyPath == null)
-        {
+        if (this.sectionNameKeyPath == null){
             let section = new MIOFetchSection();
             //section.objects = this.resultObjects;
             for (let index = 0; index < this.resultObjects.length; index++){
@@ -220,12 +215,10 @@ export class MIOFetchedResultsController extends MIOObject
 
             this.sections.push(section);
         }
-        else
-        {
-            var currentSection = null;
-            var currentSectionKeyPathValue = "";
-            for (let index = 0; index < this.resultObjects.length; index++)
-            {
+        else{
+            let currentSection = null;
+            let currentSectionKeyPathValue = "";
+            for (let index = 0; index < this.resultObjects.length; index++){
                 let obj:MIOManagedObject = this.resultObjects[index];                
                 // Cache to for checking updates
                 let ref = obj.objectID._getReferenceObject();
@@ -245,8 +238,8 @@ export class MIOFetchedResultsController extends MIOObject
     }
 
     objectAtIndexPath(indexPath:MIOIndexPath){
-        var section = this.sections[indexPath.section];
-        var object = section.objects[indexPath.row];
+        let section = this.sections[indexPath.section];
+        let object = section.objects[indexPath.row];
         return object;
     }
 
