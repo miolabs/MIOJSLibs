@@ -3,6 +3,8 @@ node_modules/
 /.sass-cache/
 /_site/
 dist/
+dev-*/
+prod-*/
 tools/dep_graph/*.dot
 tools/dep_graph/*.png
 *-debug.log
