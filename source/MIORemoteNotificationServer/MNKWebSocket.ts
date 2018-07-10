@@ -4,6 +4,8 @@ export interface MNKWebSocketDelegate {
     webSocketDidOpenConnection?(webSocket:MNKWebSocket);
     webSocketDidCloseConnection?(webSocket:MNKWebSocket);
     webSocketDidFailConnection?(webSocket:MNKWebSocket);
+
+    webSocketDidReceiveMessage?(webSocket:MNKWebSocket, message:string);
 }
 
 export class MNKWebSocket extends MIOObject
@@ -26,16 +28,20 @@ export class MNKWebSocket extends MIOObject
         let instance = this;
         this.webSocket = new WebSocket(url.absoluteString);        
         
-        this.webSocket.onopen = function(ev:Event){
+        this.webSocket.onopen = function(ev){
             instance.openCallback(ev);
         };
 
-        this.webSocket.onclose = function(ev:Event){
+        this.webSocket.onclose = function(ev){
             instance.closeCallback(ev);
         };
 
-        this.webSocket.onerror = function(ev:Event){
+        this.webSocket.onerror = function(ev){
             instance.errorCallback(ev);
+        }
+
+        this.webSocket.onmessage = function(ev){
+            instance.readCallback(ev);
         }
 
     }
@@ -59,6 +65,13 @@ export class MNKWebSocket extends MIOObject
     private errorCallback(ev:Event){
         if (this.delegate != null && typeof this.delegate.webSocketDidFailConnection === "function") {
             this.delegate.webSocketDidFailConnection(this);
+        }
+    }
+
+    private readCallback(ev){
+        let msg = JSON.parse(ev.data.replace(/(\r\n|\n|\r)/gm, ""));
+        if (this.delegate != null && typeof this.delegate.webSocketDidReceiveMessage === "function") {
+            this.delegate.webSocketDidReceiveMessage(this, msg);
         }
     }
 

@@ -1,5 +1,6 @@
 
 import { MUIView } from "./MUIView";
+import { MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 
 import * as ace from 'brace';
 import 'brace/mode/javascript';
@@ -23,6 +24,8 @@ export class MUICodeEditor extends MUIView
     
         this.editorView = new MUIView();
         this.editorView.init();
+        MUICoreLayerAddStyle(this.editorView.layer, "view");
+        this.editorView.layer.style.position = "absolute";
         this.addSubview(this.editorView);
 
         this.editor = ace.edit(this.editorView.layer);

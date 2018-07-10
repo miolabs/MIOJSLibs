@@ -12,7 +12,7 @@ import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
 
 export function MUILayerSearchElementByID(layer, elementID)
 {
-    if (layer.tagName != "DIV" && layer.tagName != "INPUT")
+    if (layer.tagName != "DIV" && layer.tagName != "INPUT" && layer.tagName != "SECTION")
             return null;
 
     if (layer.getAttribute("data-outlet") == elementID)
@@ -108,11 +108,12 @@ export class MUIView extends MIOObject
     init(){
         this.layer = MUICoreLayerCreate(this.layerID);        
         //MUICoreLayerAddStyle(this.layer, "view");
-        // this.layer.style.position = "absolute";
+        //MUICoreLayerAddStyle(this.layer, "view");
+        //this.layer.style.position = "absolute";
         // this.layer.style.top = "0px";
         // this.layer.style.left = "0px";
-        // this.layer.style.width = "100%";
-        // this.layer.style.height = "100%";
+        //this.layer.style.width = "100%";
+        //this.layer.style.height = "100%";
         //this.layer.style.background = "rgb(255, 255, 255)";        
         this.ui_core_init_layers();
     }

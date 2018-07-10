@@ -1,3 +1,4 @@
+import { MIOCoreUUIDcreate } from "./MIOCoreUUID";
 
 
 export enum MIOCoreDebugOption {
@@ -55,4 +56,9 @@ export function MIOCoreAddLanguage(lang, url){
 
 export function MIOCoreGetLanguages(){
     return _miocore_languages;
+}
+
+let _miocore_device_uuid = MIOCoreUUIDcreate();
+export function MIOCoreGetDeviceUUID(){
+    return _miocore_device_uuid;
 }
