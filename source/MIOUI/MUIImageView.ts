@@ -8,12 +8,18 @@ export class MUIImageView extends MUIView
 {
     private _imageLayer = null;
 
+    init(){
+        super.init();
+        this.setupLayers();
+    }
+
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
         this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "IMG");
+        this.setupLayers();
     }
 
-    protected ui_core_init_layers(){
+    private setupLayers(){
         if (this._imageLayer == null) {
             this._imageLayer = document.createElement("img");
             this._imageLayer.style.width = "100%";

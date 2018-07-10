@@ -22,11 +22,11 @@ export function MUILayerSearchElementByID(layer, elementID)
     if (layer.getAttribute("id") == elementID)
         return layer;
 
-    var elementFound = null;
+    let elementFound = null;
 
-    for (var count = 0; count < layer.childNodes.length; count++)
+    for (let count = 0; count < layer.childNodes.length; count++)
     {
-        var l = layer.childNodes[count];
+        let l = layer.childNodes[count];
         elementFound = MUILayerSearchElementByID(l, elementID);
         if (elementFound != null)
             return elementFound;
@@ -41,7 +41,7 @@ export function MUILayerGetFirstElementWithTag(layer, tag)
     let foundLayer = null;
 
     if (layer.childNodes.length > 0) {
-        var index = 0;
+        let index = 0;
         foundLayer = layer.childNodes[index];
         while (foundLayer.tagName != tag) {
             index++;
@@ -102,9 +102,6 @@ export class MUIView extends MIOObject
         this.layerID = layerID ? layerID : MUICoreLayerIDFromObject(this);
     }
 
-    protected ui_core_init_layers(){        
-    }
-
     init(){
         this.layer = MUICoreLayerCreate(this.layerID);        
         //MUICoreLayerAddStyle(this.layer, "view");
@@ -114,8 +111,7 @@ export class MUIView extends MIOObject
         // this.layer.style.left = "0px";
         //this.layer.style.width = "100%";
         //this.layer.style.height = "100%";
-        //this.layer.style.background = "rgb(255, 255, 255)";        
-        this.ui_core_init_layers();
+        //this.layer.style.background = "rgb(255, 255, 255)";                
     }
 
     initWithFrame(frame:MIORect){
@@ -125,7 +121,6 @@ export class MUIView extends MIOObject
         this.setY(frame.origin.y);
         this.setWidth(frame.size.width);
         this.setHeight(frame.size.height);
-        this.ui_core_init_layers();
     }
 
     initWithLayer(layer, owner, options?){
@@ -142,11 +137,10 @@ export class MUIView extends MIOObject
 
         // Add subviews
         if (this.layer.childNodes.length > 0) {
-            for (var index = 0; index < this.layer.childNodes.length; index++) {
-                var subLayer = this.layer.childNodes[index];
+            for (let index = 0; index < this.layer.childNodes.length; index++) {
+                let subLayer = this.layer.childNodes[index];
 
-                if (subLayer.tagName != "DIV")
-                    continue;
+                if (subLayer.tagName != "DIV" && subLayer.tagName != "SECTION") continue;
 
                 let sv:MUIView = new MUIView();
                 sv.initWithLayer(subLayer, this); 
@@ -154,7 +148,6 @@ export class MUIView extends MIOObject
             }
         }
 
-        this.ui_core_init_layers();
     }
 
     copy() {
@@ -165,7 +158,7 @@ export class MUIView extends MIOObject
         if (className == null) throw Error("MUIView:copy: Error classname is null");
         
         let view = MIOClassFromString(className);
-        view.initWithLayer(objLayer, null);        
+        view.initWithLayer(objLayer, null);   
 
         return view;
     }

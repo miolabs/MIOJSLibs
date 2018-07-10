@@ -85,6 +85,7 @@ export class MUIWebApplication {
     private _run() {        
 
         this.delegate.didFinishLaunching();
+        
         this.delegate.window.makeKeyAndVisible();
         this._mainWindow = this.delegate.window;        
         
@@ -129,7 +130,7 @@ export class MUIWebApplication {
     }
 
     showModalViewContoller(vc) {
-        var w = new MUIWindow();
+        let w = new MUIWindow();
         w.initWithRootViewController(vc);
 
         // Add new window

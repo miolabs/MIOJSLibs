@@ -14,15 +14,16 @@ export class MUIWindow extends MUIView
 
     private _resizeWindow = false;
 
-    initWithRootViewController(vc){
-        this.init();
-
-        this.rootViewController = vc;
-        this.addSubview(vc.view);
+    init(){
+        super.init();
+        MUICoreLayerAddStyle(this.layer, "view");
     }
 
-    protected ui_core_init_layers(){
-        MUICoreLayerAddStyle(this.layer, "view");
+    initWithRootViewController(vc){
+        this.init();        
+
+        this.rootViewController = vc;
+        this.addSubview(vc.view);        
     }
 
     makeKey(){

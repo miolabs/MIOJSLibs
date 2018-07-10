@@ -50,8 +50,9 @@ export function MUIOutlet(owner, elementID, className?, options?)
         owner._linkViewToSubview(classInstance);
     else if (owner instanceof MUIViewController){
 
-        if (classInstance instanceof MUIView)
+        if (classInstance instanceof MUIView){
             owner.view._linkViewToSubview(classInstance);
+        }
         else if (classInstance instanceof MUIViewController)
             owner.addChildViewController(classInstance);
         else throw new Error("MUIOutlet: Wrong type");        

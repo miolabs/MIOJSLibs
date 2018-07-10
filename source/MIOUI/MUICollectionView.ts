@@ -15,7 +15,17 @@ export class MUICollectionViewCell extends MUIView
 
     selected = false;
 
-    protected ui_core_init_layers(){
+    init(){
+        super.init();
+        this.setupLayers();
+    }
+
+    initWithLayer(layer, owner, options?){
+        super.initWithLayer(layer, owner, options);
+        this.setupLayers();
+    }
+
+    private setupLayers(){
         this.layer.style.position = "absolute";
         let instance = this;
 

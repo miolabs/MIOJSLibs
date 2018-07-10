@@ -15,14 +15,16 @@ export class MUILabel extends MUIView
     init(){
         super.init();
         MUICoreLayerAddStyle(this.layer, "lbl");
+        this.setupLayers();
     }
 
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
         this._textLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
+        this.setupLayers();
     }
 
-    protected ui_core_init_layers(){
+    private setupLayers(){
         //MUICoreLayerAddStyle(this.layer, "lbl");
     
         if (this._textLayer == null){

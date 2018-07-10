@@ -33,6 +33,7 @@ export class MUIButton extends MUIControl
     init(){
         super.init();
         MUICoreLayerAddStyle(this.layer, "btn");
+        this.setupLayers();
     }
 
     initWithLayer(layer, owner, options?){
@@ -78,9 +79,11 @@ export class MUIButton extends MUIControl
         let status = this.layer.getAttribute("data-status");
         if (status == "selected")
             this.setSelected(true);
+
+        this.setupLayers();
     }
 
-    protected ui_core_init_layers(){
+    private setupLayers(){
         //MUICoreLayerRemoveStyle(this.layer, "view");
         //MUICoreLayerAddStyle(this.layer, "btn");
 
