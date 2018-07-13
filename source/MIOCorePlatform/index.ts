@@ -12,9 +12,11 @@ TODO: find a way to unify it.
     export * from './Web/MIOCore_Web'
     export * from './Web/MIOCoreBundle'
     export * from './Web/MIOCoreEvents'
+    export * from './Web/MIOHTTPRequest'
 /// #endif
 /// #if TARGET === 'core'
     export * from './Core/MIOCore'
+    export * from './Core/MIOHTTPRequest'
 /// #endif
 /// #if TARGET === 'webworker'
     export * from './WebWorker/MIOCore_WebWorker'
