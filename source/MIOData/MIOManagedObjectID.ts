@@ -42,7 +42,7 @@ export class MIOManagedObjectID extends MIOObject {
         this._entity = entity;
         if (referenceObject == null) {
             this._isTemporaryID = true;
-            this._referenceObject = MIOUUID.uuid();
+            this._referenceObject = MIOUUID.UUID().UUIDString;
         }
         else {
             this._setReferenceObject(referenceObject);

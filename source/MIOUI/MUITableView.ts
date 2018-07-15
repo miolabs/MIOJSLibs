@@ -215,7 +215,7 @@ export class MUITableView extends MUIScrollView {
         //instance creation here
         let className = item["class"];
         cell = MIOClassFromString(className);
-        cell.nodeID = MIOUUID.uuid();
+        cell.nodeID = MIOUUID.UUID().UUIDString;
         cell.reuseIdentifier = identifier;
 
         //cell.init();

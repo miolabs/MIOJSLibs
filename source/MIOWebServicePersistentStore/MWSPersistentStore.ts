@@ -50,7 +50,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (this.url == null) throw new Error("MWSPersistentStoreError.NoStoreURL");
         this.storeURL = this.url;
 
-        let uuid = MIOUUID.uuid();
+        let uuid = MIOUUID.UUID().UUIDString;
         let metadata = { MIOStoreUUIDKey: uuid, MIOStoreTypeKey: "MWSPersistentStore" };
         this.metadata = metadata;
 

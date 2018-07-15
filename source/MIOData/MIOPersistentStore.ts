@@ -56,7 +56,7 @@ export class MIOPersistentStore extends MIOObject
     willRemoveFromPersistentStoreCoordinator(psc:MIOPersistentStoreCoordinator){}
 
     loadMetadata(){
-        let uuid = MIOUUID.uuid();
+        let uuid = MIOUUID.UUID().UUIDString;
         let metadata = { MIOStoreUUIDKey: uuid, MIOStoreTypeKey: "MIOPersistentStore" };
         this.metadata = metadata;        
     }
