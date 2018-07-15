@@ -55,7 +55,7 @@ export * from "./MUIReportTableView"
 export * from './MIOUI_Core'
 export * from './MIOUI_CoreAnimation'
 export * from './MIOUI_CoreLayer'
-export * from './MUIActivityIndicator'
+export * from './MUIActivityIndicatorView'
 export * from './MUIEdgeInsets'
 export * from './MUIViewController_PopoverPresentationController'
 export * from './MUIViewController_PresentationController'

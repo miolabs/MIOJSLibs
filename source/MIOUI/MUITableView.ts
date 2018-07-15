@@ -5,7 +5,7 @@ import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCe
 import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCorePlatform";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerAddStyle } from ".";
-import { MUICoreLayerRemoveStyle } from "../../../../Libs/MIOJSLibs/source/MIOUI";
+import { MUICoreLayerRemoveStyle } from ".";
 
 /**
  * Created by godshadow on 22/3/16.

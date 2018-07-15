@@ -1,17 +1,23 @@
-import { MIOObject, MIOURL, MIOURLRequest, MIOURLConnection } from "../MIOFoundation";
+import { MIOObject, MIOURL, MIOURLRequest, MIOURLConnection, MIONotificationCenter } from "../MIOFoundation";
+
+export enum MWSRequestType {
+    Fetch,
+    Save
+}
+
 export class MWSRequest extends MIOObject
 {
     url:MIOURL = null;
     httpMethod = "GET"
     body = null;
-    bodyData = null;
-    private headers = {};
+    bodyData = null;    
 
     resultCode = 0
     resultData = null;
+
+    type = MWSRequestType.Fetch;
     
     private urlRequest:MIOURLRequest = null;
-
     initWithURL(url:MIOURL, body?, httpMethod?:string){
         
         this.url = url;
@@ -19,13 +25,15 @@ export class MWSRequest extends MIOObject
         if (httpMethod != null) this.httpMethod = httpMethod;
     }
 
+    private headers = {};
     setHeaderValue(value:string, key:string) {
         this.headers[key] = value;
     }
 
     // Completion block (Int, Any?) -> Void
-    fetch(target, completion?){
+    execute(target, completion?){
         
+        MIONotificationCenter.defaultCenter().postNotification("MWSRequestSentFetch", this);
         this.willStart()
 
         this.urlRequest = MIOURLRequest.requestWithURL(this.url);      
@@ -41,6 +49,7 @@ export class MWSRequest extends MIOObject
         let con = new MIOURLConnection();
         con.initWithRequestBlock(this.urlRequest, this, function(code, data, blob){
 
+            if (code < 200 || code >= 300) MIONotificationCenter.defaultCenter().postNotification("MWSRequestFetchError", this, {"Type" : this.type});
             this.resultCode = code;
             this.resultData = data;
 
@@ -49,6 +58,8 @@ export class MWSRequest extends MIOObject
             if (completion != null){
                 completion.call(target, code, this.resultData);
             }
+
+            MIONotificationCenter.defaultCenter().postNotification("MWSRequestReceivedFetch", this);
         });
     }
 

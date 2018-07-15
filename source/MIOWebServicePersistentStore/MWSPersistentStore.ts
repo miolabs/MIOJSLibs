@@ -11,7 +11,7 @@ import { MIOManagedObject } from "../MIOData/MIOManagedObject";
 import { MIOEntityDescription } from "../MIOData/MIOEntityDescription";
 import { MIOManagedObjectContext } from "../MIOData/MIOManagedObjectContext";
 import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
-
+import { MWSRequestType } from "./MWSRequest";
 
 export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
 
@@ -204,7 +204,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let objects = null;
 
-        request.fetch(this, function (code, data) {
+        request.execute(this, function (code, data) {
             let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {
                 // Transform relationships into server keys
@@ -353,10 +353,16 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             if (value == null) continue;
 
             if (relEntity.isToMany == false) {
-                let relKeyPathNode = relationshipNodes[key]; 
-                this.updateObjectInContext(value, relEntity.destinationEntity, context, null, relKeyPathNode);
-                let serverID = this.delegate.serverIDForItem(this, value, relEntity.destinationEntity.name);                                
-                parsedValues[serverRelName] = serverID;
+                if (typeof value === "string") {
+                    // Means you get and UUID of a deleted entity
+                    parsedValues[serverRelName] = null;
+                }
+                else {
+                    let relKeyPathNode = relationshipNodes[key]; 
+                    this.updateObjectInContext(value, relEntity.destinationEntity, context, null, relKeyPathNode);
+                    let serverID = this.delegate.serverIDForItem(this, value, relEntity.destinationEntity.name);                                
+                    parsedValues[serverRelName] = serverID;
+                }
             }
             else {                
                 let array = [];
@@ -424,12 +430,13 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let values = this.delegate.serverValuesForObject(this, object, true);
         this.updateNodeWithValuesAtServerID(serverID, values, 0, object.entity);
         
-        var dependencyIDs = [];
+        let dependencyIDs = [];
 
         let request = this.delegate.insertRequestForWebStore(this, object, dependencyIDs);
         if (request == null) return;
+        request.type = MWSRequestType.Save;
 
-        var op = new MWSPersistenStoreOperation();
+        let op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = dependencyIDs;
@@ -467,6 +474,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let request = this.delegate.updateRequestForWebStore(this, object, dependencyIDs);
         if (request == null) return;
+        request.type = MWSRequestType.Save;
 
         var op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
@@ -502,6 +510,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         
         let request = this.delegate.deleteRequestForWebStore(this, object);
         if (request == null) return;
+        request.type = MWSRequestType.Save;
 
         var op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
