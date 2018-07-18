@@ -67,7 +67,8 @@ export class MUIButton extends MUIControl
              this.setTitle(MIOLocalizeString(key, key));
 
         // Check for img layer
-        this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "DIV");
+        this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "IMG");
+        if (this._imageLayer == null) this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "DIV");
 
         if (this._imageLayer != null) {
             this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style-prefix");
@@ -139,8 +140,7 @@ export class MUIButton extends MUIControl
         this.setTitle(title);
     }
 
-    get title()
-    {
+    get title(){
         return this._titleLayer.innerHTML;
     }
 
@@ -214,6 +214,16 @@ export class MUIButton extends MUIControl
 
         this._selected = value;
     }
+
+    setImageURL(urlString:string){
+        if (urlString != null){
+            this._imageLayer.setAttribute("src", urlString);
+        }
+        else {
+            this._imageLayer.removeAttribute("src");
+        }
+    }
+
 }
 
 

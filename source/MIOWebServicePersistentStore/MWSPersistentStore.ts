@@ -174,7 +174,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
-        request.fetch(this, function (code, data) {
+        request.execute(this, function (code, data) {
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             
             MIOLog("Downloaded REFID: " + serverID);

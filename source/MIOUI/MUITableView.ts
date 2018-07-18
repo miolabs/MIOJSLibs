@@ -454,7 +454,7 @@ export class MUITableView extends MUIScrollView {
             this.visibleRange = new MIORange(start, nextRow - start);
         }
 
-        let size = new MIOSize(this.getWidth(), this.contentHeight);
+        let size = new MIOSize(0, this.contentHeight);
         this.contentSize = size;
     }
 
@@ -674,7 +674,7 @@ export class MUITableView extends MUIScrollView {
         cell.setX(0);
         cell.setY(posY);
         // TODO: Here we don't have to use the css. Encapsulate that in a Core Layer funciton
-        cell.layer.style.width="100%";
+        cell.layer.style.width = "100%";
 
         if (this.delegate != null && typeof this.delegate.willDisplayCellAtIndexPath === "function") {
             this.delegate.willDisplayCellAtIndexPath(this, cell, indexPath);
