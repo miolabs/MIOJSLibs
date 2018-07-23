@@ -50,9 +50,6 @@ export class MUIButton extends MUIControl
         // Check for title layer
         this._titleLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
 
-        let key = this.layer.getAttribute("data-title");
-        if (key != null)
-             this.setTitle(MIOLocalizeString(key, key));
 
         // Check for img layer
         this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "IMG");
@@ -74,6 +71,9 @@ export class MUIButton extends MUIControl
             this._titleLayer = document.createElement("span");
             this.layer.appendChild(this._titleLayer);
         }
+
+        let key = this.layer.getAttribute("data-title");
+        if (key != null) this.setTitle(MIOLocalizeString(key, key));
         
         // Prevent click
         this.layer.addEventListener("click", function(e) {

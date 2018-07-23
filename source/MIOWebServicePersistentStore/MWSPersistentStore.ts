@@ -291,17 +291,6 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");            
             this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, entity);              
         } 
-        else {
-            //PATCH: The server respond with object inside relationship entities with null objects even with is not null.
-            //       It's a limitation of laravel so I need to check if it's the same version, that the relationship are diferents
-            //TODO: Change as soon as possible the behaviour at the server
-
-            // let referenceID = entity.name + "://" + serverID;
-            // if (this.partialRelationshipObjects[referenceID] == true){
-            //     delete this.partialRelationshipObjects[referenceID];
-            //    this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
-            //}            
-        }
 
         let obj = context.existingObjectWithID(node.objectID);
         if (obj != null) context.refreshObject(obj, true);                            
@@ -366,9 +355,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             }
             else {                
                 let array = [];
+                let relKeyPathNode = relationshipNodes[key]; 
                 for (let count = 0; count < value.length; count++){
                     let serverValues = value[count];
-                    let obj = this.updateObjectInContext(serverValues, relEntity.destinationEntity, context);                    
+                    this.updateObjectInContext(serverValues, relEntity.destinationEntity, context, null, relKeyPathNode);
                     let serverID = this.delegate.serverIDForItem(this, serverValues, relEntity.destinationEntityName);                
                     array.addObject(serverID);
                 }
