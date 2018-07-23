@@ -249,9 +249,9 @@ export class MUITableViewCell extends MUIView {
         this._selected = value;
         if (this.selectionStyle == MUITableViewCellSelectionStyle.Default) {
             if (value == true)
-                MUICoreLayerAddStyle(this.layer, "cell-selected");
+                MUICoreLayerAddStyle(this.layer, "selected");
             else 
-                MUICoreLayerRemoveStyle(this.layer, "cell-selected");
+                MUICoreLayerRemoveStyle(this.layer, "selected");
         }
         this.didChangeValue("selected"); 
     }
@@ -277,8 +277,8 @@ export class MUITableViewCell extends MUIView {
             switch (this.accessoryType) {
 
                 case MUITableViewCellAccessoryType.DisclosureIndicator:
-                    this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
-                    this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator_highlighted");
+                    //this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
+                    //this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator_highlighted");
                     break;
             }
         }
@@ -287,8 +287,8 @@ export class MUITableViewCell extends MUIView {
             switch (this.accessoryType) {
 
                 case MUITableViewCellAccessoryType.DisclosureIndicator:
-                    this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator_highlighted");
-                    this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
+                    //this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator_highlighted");
+                    //this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
                     break;
             }
         }
@@ -303,39 +303,6 @@ export class MUITableViewCell extends MUIView {
         if (this.editingAccessoryView != null) {
             this.editingAccessoryView.setHidden(!editing);
         }
-
-        /*        if (this.editingAccesoryView == null) {
-                    if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.left = "25px";
-        
-                    var layer = document.createElement("div");
-                    layer.style.position = "absolute";
-        
-                    var btn = new MUIView();
-                    btn.init();
-        
-                    btn.layer.style.top = "";
-                    btn.layer.style.right = "";
-                    btn.layer.style.width = "";
-                    btn.layer.style.height = "100%";
-        
-                    // TODO: Call delegate
-                    btn.layer.classList.add("tableviewcell_accessory_delete");
-        
-                    var instance = this;
-                    btn.layer.onclick = function (e) {
-                        if (instance._onAccessoryClickFn != null){
-                            e.stopPropagation();
-                            instance._onAccessoryClickFn.call(instance._target, instance);
-                        }
-                    };            
-        
-                    this.editingAccesoryView = btn;
-                    this.addSubview(this.editingAccesoryView);
-                }
-                else {
-                    this.editingAccesoryView.removeFromSuperview();
-                }*/
-
     }
 
     set editing(value: boolean) {

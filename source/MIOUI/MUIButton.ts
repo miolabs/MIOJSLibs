@@ -39,8 +39,6 @@ export class MUIButton extends MUIControl
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
-        let opts = options != null ? options : {}; 
-
         let type = this.layer.getAttribute("data-type");
         if (type == "MomentaryPushIn")
             this.type = MUIButtonType.MomentaryPushIn;
@@ -49,18 +47,8 @@ export class MUIButton extends MUIControl
         else if (type == "PushIn")
             this.type = MUIButtonType.PushIn;
 
-        this._statusStyle = this.layer.getAttribute("data-status-style-prefix");
-        if (this._statusStyle == null && opts["status-style-prefix"] != null)
-            this._statusStyle = opts["status-style-prefix"] + "_status";
-
         // Check for title layer
         this._titleLayer = MUILayerGetFirstElementWithTag(this.layer, "SPAN");
-
-        if (this._titleLayer != null) {
-            this._titleStatusStyle = this._titleLayer.getAttribute("data-status-style-prefix");
-            if (this._titleStatusStyle == null && opts["status-style-prefix"] != null)
-                this._titleStatusStyle = opts["status-style-prefix"] + "_title_status";
-        }
 
         let key = this.layer.getAttribute("data-title");
         if (key != null)
@@ -69,12 +57,6 @@ export class MUIButton extends MUIControl
         // Check for img layer
         this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "IMG");
         if (this._imageLayer == null) this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "DIV");
-
-        if (this._imageLayer != null) {
-            this._imageStatusStyle = this._imageLayer.getAttribute("data-status-style-prefix");
-            if (this._imageStatusStyle == null && opts["status-style-prefix"] != null)
-                this._imageStatusStyle = opts["status-style-prefix"] + "_image_status";
-        }
 
         // Check for status
         let status = this.layer.getAttribute("data-status");
@@ -156,53 +138,6 @@ export class MUIButton extends MUIControl
         if (this._selected == value)
             return;
 
-        if (value == true) {
-            if (this._statusStyle != null)
-            {
-                this.layer.classList.remove(this._statusStyle + "_off");
-                this.layer.classList.add(this._statusStyle + "_on");
-            }
-
-            if (this._imageLayer != null && this._imageStatusStyle != null)
-            {
-                this._imageLayer.classList.remove(this._imageStatusStyle + "_off");
-                this._imageLayer.classList.add(this._imageStatusStyle + "_on");
-            }
-
-            if (this._titleLayer != null && this._titleStatusStyle != null)
-            {
-                this._titleLayer.classList.remove(this._titleStatusStyle + "_off");
-                this._titleLayer.classList.add(this._titleStatusStyle + "_on");
-            }
-
-            if (this._statusStyle == null && this._titleStatusStyle == null && this._imageStatusStyle == null)
-                this.setAlpha(0.35);
-        }
-        else
-        {
-            if (this._statusStyle != null)
-            {
-                this.layer.classList.remove(this._statusStyle + "_on");
-                this.layer.classList.add(this._statusStyle + "_off");
-            }
-
-            if (this._imageLayer != null && this._imageStatusStyle != null)
-            {
-                this._imageLayer.classList.remove(this._imageStatusStyle + "_on");
-                this._imageLayer.classList.add(this._imageStatusStyle + "_off");
-            }
-
-            if (this._titleLayer != null && this._titleStatusStyle != null)
-            {
-                this._titleLayer.classList.remove(this._titleStatusStyle + "_on");
-                this._titleLayer.classList.add(this._titleStatusStyle + "_off");
-            }
-
-            if (this._statusStyle == null && this._titleStatusStyle == null && this._imageStatusStyle == null)
-                this.setAlpha(1);
-        }
-
-        // New style
         if (value == true) {
             MUICoreLayerAddStyle(this.layer, "selected");
             //MUICoreLayerRemoveStyle(this.layer, "deselected");

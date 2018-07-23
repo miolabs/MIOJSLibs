@@ -257,7 +257,7 @@ export class MUITableView extends MUIScrollView {
     reloadData() {
 
         // Remove all subviews
-        for (var index = 0; index < this.rows.length; index++) {
+        for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
             if (row.view != null) {
                 switch (row.type) {
@@ -296,7 +296,7 @@ export class MUITableView extends MUIScrollView {
 
         let sections = 1;
         if (typeof this.dataSource.numberOfSections === "function") sections = this.dataSource.numberOfSections(this);
-        for (var sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
+        for (let sectionIndex = 0; sectionIndex < sections; sectionIndex++) {
             let section = new MUITableViewSection();
             section.init();
             this.sections.push(section);
@@ -332,20 +332,18 @@ export class MUITableView extends MUIScrollView {
     private lastIndexPath: MIOIndexPath = null;
 
     private initialLayoutSubviews() {
-
-        if (this.rowsCount == 0) return;
-
+        
         // Add Header
         let posY = this.addHeader();
+        
         let maxY = this.getHeight() + (this.defaultRowHeight * 4);
+        let exit = false;
 
-        var exit = false;
-
-        for (var sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
+        for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
 
             if (exit == true) break;
 
-            var section: MUITableViewSection = this.sections[sectionIndex];
+            let section: MUITableViewSection = this.sections[sectionIndex];
             posY += this.addSectionHeader(section, posY, null);
 
             for (var cellIndex = 0; cellIndex < section.rows; cellIndex++) {
@@ -575,7 +573,7 @@ export class MUITableView extends MUIScrollView {
 
     private addHeader() {
 
-        let header = null;
+        let header:MUIView = null;
         if (this.headerView != null) header = this.headerView;
         if (header == null) return 0;
 
@@ -587,7 +585,7 @@ export class MUITableView extends MUIScrollView {
         let row = this.addRowWithType(MUITableViewRowType.Header, header);
 
         if (row.height == 0) {
-            row.height = header.getHeight();
+            row.height = header.getHeight() + 1;
             this.contentHeight += row.height;
         }
 
