@@ -112,7 +112,13 @@ export class MIOURLConnection
                 if (instance.delegate != null)
                     instance.delegate.connectionDidFail(instance);
                 else if (instance.blockFN != null)
-                    instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
+                    if ((this.status < 200 || this.status >= 300) && this.responseType == "arraybuffer"){
+                        instance.blockFN.call(instance.blockTarget, this.status, null);
+                    }
+                    else {
+                        instance.blockFN.call(instance.blockTarget, this.status, this.responseText);
+                    }
+                    
             }
         };
 

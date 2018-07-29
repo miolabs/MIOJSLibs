@@ -225,5 +225,9 @@ export class MUITextField extends MUIControl
         this._inputLayer.focus();
     }
 
+    resignFirstResponder(){
+        this._inputLayer.blur();
+    }
+
 }
 

@@ -236,9 +236,9 @@ export class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.OpenParenthesisSymbol, /^\(/);
         this.lexer.addTokenType(MIOPredicateTokenType.CloseParenthesisSymbol, /^\)/);
         // Comparators
-        this.lexer.addTokenType(MIOPredicateTokenType.MinorOrEqualComparator, /^<=?/);
+        this.lexer.addTokenType(MIOPredicateTokenType.MinorOrEqualComparator, /^<=/);
         this.lexer.addTokenType(MIOPredicateTokenType.MinorComparator, /^</);
-        this.lexer.addTokenType(MIOPredicateTokenType.MajorOrEqualComparator, /^>=?/);
+        this.lexer.addTokenType(MIOPredicateTokenType.MajorOrEqualComparator, /^>=/);
         this.lexer.addTokenType(MIOPredicateTokenType.MajorComparator, /^>/);
         this.lexer.addTokenType(MIOPredicateTokenType.EqualComparator, /^==?/);
         this.lexer.addTokenType(MIOPredicateTokenType.DistinctComparator, /^!=/);

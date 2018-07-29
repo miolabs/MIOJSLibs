@@ -457,16 +457,20 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let serverID = this.delegate.serverIDForObject(this, object);
         let values = this.delegate.serverValuesForObject(this, object, true);
         
-        let node = this.nodeWithServerID(serverID, object.entity);        
+        let node = this.nodeWithServerID(serverID, object.entity);
+        if (node == null) {
+            MIONotificationCenter.defaultCenter().postNotification("MWSPersistentStoreError", this, {"error":"Updating object but was never cached"});
+            throw Error("MWSPersistentError:Updating object but was never cached!");
+        }
         this.updateNodeWithValuesAtServerID(serverID, values, node.version + 1, object.entity);
         
-        var dependencyIDs = [];
+        let dependencyIDs = [];
 
         let request = this.delegate.updateRequestForWebStore(this, object, dependencyIDs);
         if (request == null) return;
         request.type = MWSRequestType.Save;
 
-        var op = new MWSPersistenStoreOperation();
+        let op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = dependencyIDs;
@@ -495,14 +499,14 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let entityName = object.entity.name;
         
         let serverID = this.delegate.serverIDForObject(this, object);
-        let node = this.nodeWithServerID(serverID, object.entity);        
+        //let node = this.nodeWithServerID(serverID, object.entity);
         this.deleteNodeAtServerID(serverID, object.entity);
         
         let request = this.delegate.deleteRequestForWebStore(this, object);
         if (request == null) return;
         request.type = MWSRequestType.Save;
 
-        var op = new MWSPersistenStoreOperation();
+        let op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
         op.request = request;
         op.dependencyIDs = [];
