@@ -67,16 +67,22 @@ export class MIOPredicateItem {
 
     evaluateObject(object:MIOObject) {
 
-        var lValue = object.valueForKeyPath(this.key);
+        let lValue = object.valueForKeyPath(this.key);
         if (lValue instanceof Date) {
             let sdf = new MIOISO8601DateFormatter();
             sdf.init();
             lValue = sdf.stringFromDate(lValue);
         }
+        else if (typeof lValue === "string") {
+            lValue = lValue.toLocaleLowerCase();
+        }
 
-        var rValue = this.value;
+        let rValue = this.value;
         if (this.valueType == MIOPredicateItemValueType.Property){
             rValue = object.valueForKeyPath(rValue);
+        }
+        if (typeof rValue === "string") {
+            rValue = rValue.toLocaleLowerCase();
         }
         
         if (this.comparator == MIOPredicateComparatorType.Equal)
@@ -95,8 +101,7 @@ export class MIOPredicateItem {
             if (lValue == null)
                 return false;
 
-            lValue = lValue.toLowerCase();
-            if (lValue.indexOf(rValue.toLowerCase()) > -1)
+            if (lValue.indexOf(rValue) > -1)
                 return true;
 
             return false;
@@ -105,8 +110,7 @@ export class MIOPredicateItem {
             if (lValue == null)
                 return true;
 
-            lValue = lValue.toLowerCase();
-            if (lValue.indexOf(rValue.toLowerCase()) > -1)
+            if (lValue.indexOf(rValue) > -1)
                 return false;
 
             return true;

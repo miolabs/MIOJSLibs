@@ -30,7 +30,7 @@ export class MIOSortDescriptor extends MIOObject
 
 export function _MIOSortDescriptorSortObjects(objs, sortDescriptors)
 {
-    var resultObjects = null;
+    let resultObjects = null;
     
     if (objs.length == 0 || sortDescriptors == null) {
         resultObjects = objs.slice(0);        
@@ -55,22 +55,31 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
     if (index >= sortDescriptors.length)
         return 0;
 
-    var sd = sortDescriptors[index];
-    var key = sd.key;
+    let sd = sortDescriptors[index];
+    let key = sd.key;
 
-    if (a[key] == b[key]) {
+    let lv = a[key];
+    let rv = b[key];
 
-        if (a[key]== b[key])
-        {
-            return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);
-            //return this._sortObjects2(a, b, sortDescriptors, ++index);
+    if (typeof lv === "string"){
+        lv = lv.toLocaleLowerCase();
+    }
+
+    if (typeof rv === "string"){
+        rv = rv.toLocaleLowerCase();
+    }
+
+    if (lv == rv) {
+
+        if (lv == rv){
+            return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);            
         }
-        else if (a[key] < b[key])
+        else if (lv < rv)
             return sd.ascending ? -1 : 1;
         else
             return sd.ascending ? 1 : -1;
     }
-    else if (a[key] < b[key])
+    else if (lv < rv)
         return sd.ascending ? -1 : 1;
     else
         return sd.ascending ? 1 : -1;
