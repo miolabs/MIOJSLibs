@@ -341,12 +341,12 @@ export class MUITableView extends MUIScrollView {
 
         for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
 
-            if (exit == true) break;
+            if (exit == true) break;            
 
-            let section: MUITableViewSection = this.sections[sectionIndex];
-            posY += this.addSectionHeader(section, posY, null);
+            let section = this.sections[sectionIndex] as MUITableViewSection;
+            if (section.rows > 0) posY += this.addSectionHeader(section, posY, null);           
 
-            for (var cellIndex = 0; cellIndex < section.rows; cellIndex++) {
+            for (let cellIndex = 0; cellIndex < section.rows; cellIndex++) {
                 let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
                 posY += this.addCell(ip, posY, null);
 
@@ -405,13 +405,13 @@ export class MUITableView extends MUIScrollView {
             var h = 0;
             var exit = false;
 
-            for (var sectionIndex = startSectionIndex; sectionIndex < this.sections.length; sectionIndex++) {
+            for (let sectionIndex = startSectionIndex; sectionIndex < this.sections.length; sectionIndex++) {
 
                 if (exit == true) break;
 
-                var section: MUITableViewSection = this.sections[sectionIndex];
+                let section: MUITableViewSection = this.sections[sectionIndex];
                 
-                for (var cellIndex = startRowIndex; cellIndex < section.rows; cellIndex++) {
+                for (let cellIndex = startRowIndex; cellIndex < section.rows; cellIndex++) {
 
                     if (cellIndex == 0) {
                         h = this.addSectionHeader(section, posY, this.rows[nextRow]);
