@@ -12,7 +12,7 @@
     "clean": "npm run clean:build && npm run clean:dist",
     "clean:build": "rimraf build/*",
     "clean:dist": "rimraf dist/*",
-    "stash": "mv build dev-build && mv dist dev-dist",
+    "stash": "mkdir -p build dist && mv build dev-build && mv dist dev-dist",
     "stashpop": "rm -rf prod-dist && rm -rf prod-build && mv dist prod-dist && mv build prod-build && mv dev-build/ build && mv dev-dist/ dist",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "dev": "cross-env TARGET=$npm_package_config_target webpack --config ./webpack.config.js",
