@@ -5,7 +5,6 @@ export function MIOHTTPRequest(instance, urlString: string, headers, method, bod
 
     xhr.onload = function () {
         const body = this.responseText;
-        console.log('onload', body, this.status)
         if(this.status < 300 && body != null){
             // Success!
             if (delegate != null) {
