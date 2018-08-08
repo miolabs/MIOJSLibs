@@ -17,12 +17,25 @@ export interface MUITableViewDataSource {
     titleForHeaderInSection?(tableView:MUITableView, section):string;
 }
 
+export enum UITableViewRowAnimation
+{
+    None,
+    Automatic,
+    Fade,
+    Right,
+    Left,
+    Top,
+    Bottom,
+    Middle
+}
+
 export class MUITableViewSection extends MIOObject {
     header: MUIView = null;
     title: string = null;
 
-    rows = 0;
+    rowCount = 0;
     cells = [];
+    rows = [];
 
     static headerWithTitle(title, height) {
 
@@ -58,6 +71,9 @@ export class MUITableViewRow extends MIOObject {
     type: MUITableViewRowType;
     view: MUIView = null;
     height = 0;
+
+    prevRow:MUITableViewRow = null;
+    nextRow:MUITableViewRow = null;
 
     initWithType(type: MUITableViewRowType) {
         this.type = type;
@@ -106,6 +122,7 @@ export class MUITableView extends MUIScrollView {
 
     private sections = [];
     private rows = [];
+    private cellRows = [];
     private rowsCount = 0;
 
     private contentHeight = 0;
@@ -302,7 +319,7 @@ export class MUITableView extends MUIScrollView {
             this.sections.push(section);
 
             let rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);
-            section.rows = rows;
+            section.rowCount = rows;
             this.rowsCount += rows;
             this.contentHeight += rows * this.defaultRowHeight;
         }
@@ -339,17 +356,19 @@ export class MUITableView extends MUIScrollView {
         let maxY = this.getHeight() + (this.defaultRowHeight * 4);
         let exit = false;
 
+        let lastRow = null;
         for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
 
             if (exit == true) break;            
 
             let section = this.sections[sectionIndex] as MUITableViewSection;
-            if (section.rows > 0) posY += this.addSectionHeader(section, posY, null);           
+            if (section.rowCount > 0) posY += this.addSectionHeader(section, posY, null);           
 
-            for (let cellIndex = 0; cellIndex < section.rows; cellIndex++) {
+            for (let cellIndex = 0; cellIndex < section.rowCount; cellIndex++) {
                 let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
-                posY += this.addCell(ip, posY, null);
+                posY += this.addCell(ip, posY, null, lastRow);
 
+                lastRow = this.rows[this.rows.length - 1];
                 this.lastIndexPath = ip;
                 if (posY >= maxY) {
                     exit = true;
@@ -393,17 +412,18 @@ export class MUITableView extends MUIScrollView {
 
         if (scrollDown == true) {
 
-            var start = this.visibleRange.location;
-            var end = this.visibleRange.location + this.visibleRange.length - 1;
-            var row = this.rows[end];
-            var posY = row.view.getY() + row.height;
+            let start = this.visibleRange.location;
+            let end = this.visibleRange.location + this.visibleRange.length - 1;
+            let row = this.rows[end];
+            let posY = row.view.getY() + row.height;
             let maxY = this.contentOffset.y + this.getHeight() + (this.defaultRowHeight * 4);
             let startSectionIndex = this.lastIndexPath.section;
-            var startRowIndex = this.lastIndexPath.row + 1;
+            let startRowIndex = this.lastIndexPath.row + 1;
 
-            var nextRow = end + 1;
-            var h = 0;
-            var exit = false;
+            let lastRow = row;
+            let nextRow = end + 1;
+            let h = 0;
+            let exit = false;
 
             for (let sectionIndex = startSectionIndex; sectionIndex < this.sections.length; sectionIndex++) {
 
@@ -411,7 +431,7 @@ export class MUITableView extends MUIScrollView {
 
                 let section: MUITableViewSection = this.sections[sectionIndex];
                 
-                for (let cellIndex = startRowIndex; cellIndex < section.rows; cellIndex++) {
+                for (let cellIndex = startRowIndex; cellIndex < section.rowCount; cellIndex++) {
 
                     if (cellIndex == 0) {
                         h = this.addSectionHeader(section, posY, this.rows[nextRow]);
@@ -423,9 +443,10 @@ export class MUITableView extends MUIScrollView {
                     }
 
                     let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
-                    posY += this.addCell(ip, posY, this.rows[nextRow]);
+                    posY += this.addCell(ip, posY, this.rows[nextRow], lastRow);
+                    lastRow = this.rows[nextRow];
                     nextRow++;
-                    start++;
+                    start++;                    
 
                     // let recycleRow:MUITableViewRow = this.rows[start];
                     // if (recycleRow.type == MUITableViewRowType.Cell) {
@@ -537,7 +558,7 @@ export class MUITableView extends MUIScrollView {
                     // }
 
                     let ip = this.indexPathForRowIndex(index, 0);
-                    posY += this.addCell(ip, posY, index);
+                    posY += this.addCell(ip, posY, index, null);
                 }
             }
         }
@@ -555,7 +576,7 @@ export class MUITableView extends MUIScrollView {
                     row = this.rows[index + 1];
                     posY = row.view.getY() - h;
                     let ip = this.indexPathForRowIndex(index, 0);
-                    this.addCell(ip, posY, index, row.view);
+                    this.addCell(ip, posY, index, null, row);
                 }
             }
         }
@@ -566,6 +587,7 @@ export class MUITableView extends MUIScrollView {
         let row = new MUITableViewRow();
         row.initWithType(type);
         this.rows.push(row);
+        this.cellRows.addObject(row);
         row.view = view;
 
         return row;
@@ -647,7 +669,7 @@ export class MUITableView extends MUIScrollView {
         return 0;
     }
 
-    private addCell(indexPath: MIOIndexPath, posY, row: MUITableViewRow, previusCell?: MUIView) {
+    private addCell(indexPath: MIOIndexPath, posY, row: MUITableViewRow, prevRow:MUITableViewRow, currentRow?:MUITableViewRow) {
 
         let cell: MUITableViewCell = this.dataSource.cellAtIndexPath(this, indexPath);
 
@@ -655,6 +677,22 @@ export class MUITableView extends MUIScrollView {
         let r = row;
         if (r == null) {
             r = this.addRowWithType(MUITableViewRowType.Cell, cell);
+        }
+
+        if (currentRow != null && prevRow != null){
+            prevRow.nextRow = r;
+            currentRow.prevRow = r;
+            r.prevRow = prevRow;
+            r.nextRow = currentRow;
+        }
+        else if (currentRow != null){
+            r.nextRow = currentRow;
+            r.prevRow = currentRow.prevRow;
+            currentRow.prevRow = r;
+        }
+        else if (prevRow != null) {
+            r.prevRow = prevRow;
+            prevRow.nextRow = r;
         }
 
         let nodeID = cell.nodeID;
@@ -668,6 +706,7 @@ export class MUITableView extends MUIScrollView {
         let section = this.sections[indexPath.section];
         node.section = section;
         section.cells[indexPath.row] = cell;
+        section.rows[indexPath.row] = r;
 
         cell.setX(0);
         cell.setY(posY);
@@ -679,11 +718,11 @@ export class MUITableView extends MUIScrollView {
         }
 
         cell.addObserver(this, "selected");
-        if (previusCell == null) {
+        if (prevRow == null) {
             this.addSubview(cell);
         }
         else {
-            let index = this.contentView.subviews.indexOf(previusCell);
+            let index = this.contentView.subviews.indexOf(prevRow.view);
             this.addSubview(cell, index)
         }
 
@@ -876,6 +915,94 @@ export class MUITableView extends MUIScrollView {
         this.selectedIndexPath = null;
         var cell = this.sections[indexPath.section].cells[indexPath.row];
         this._deselectCell(cell);
+    }
+
+    insertRowsAtIndexPaths(indexPaths, animation:UITableViewRowAnimation){
+               
+        let rows = indexPaths.count;
+        this.rowsCount += rows;
+        this.contentHeight += rows * this.defaultRowHeight;
+
+        let maxY = this.contentOffset.y + this.getHeight() + (this.defaultRowHeight * 4);
+
+        for (let index = 0; index < rows; index++){
+            let ip = indexPaths[index];
+
+            this.insertCellWithIndexPath(ip);
+
+            // if (posY >= maxY) {
+            //     break;
+            // }            
+        }
+
+        //this.visibleRange = new MIORange(start, nextRow - start);
+                
+        let size = new MIOSize(0, this.contentHeight);
+        this.contentSize = size;
+    }
+
+    private insertCellWithIndexPath(indexPath:MIOIndexPath){
+        let section = this.sections[indexPath.section];        
+        let prevRow = this.prevCellRowAtIndexPath(indexPath);
+
+        let posY = 0;
+        if (prevRow == null) {
+            this.addCell(indexPath, posY, null, null);
+        }
+        else {            
+            posY = prevRow.view.getY() + prevRow.view.getHeight();
+            posY += this.addCell(indexPath, posY, null, prevRow, prevRow.nextRow);
+        }
+
+        // recalculate top of the cells
+        if (prevRow == null) return;
+
+        let nextRow = prevRow.nextRow.nextRow;
+        while(nextRow != null) {
+            nextRow.view.setY(posY);
+            posY += nextRow.view.getHeight();
+            nextRow = nextRow.nextRow;
+        }
+    }
+
+    private prevIndexPath(indexPath:MIOIndexPath){
+        let sectionIndex = indexPath.section;
+        let rowIndex = indexPath.row - 1;
+
+        if (rowIndex > -1) {
+            return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);            
+        }
+        else {
+            sectionIndex--;
+            if (sectionIndex > -1) {
+                let section = this.sections[sectionIndex];
+                rowIndex = section.cells.length - 1;
+
+                return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
+            }
+        }
+
+        return null;
+    }
+
+    private prevCellRowAtIndexPath(indexPath:MIOIndexPath){
+        if (indexPath == null) return null;
+
+        let ip = this.prevIndexPath(indexPath);
+        if (ip == null) return null;
+
+        let section = this.sections[ip.section];
+        let row = section.rows[ip.row];
+
+        return row;
+    }
+
+    deleteRowsAtIndexPaths(indexPaths, animation:UITableViewRowAnimation){
+
+    }
+
+    moveRowAtIndexPathToIndexPath(indexPath:MIOIndexPath, newIndexPat:MIOIndexPath){
+
     }
 
     selectNextIndexPath() {
