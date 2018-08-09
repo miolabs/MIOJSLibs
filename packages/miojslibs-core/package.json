@@ -1,6 +1,6 @@
 {
   "name": "miojslibs-core",
-  "version": "0.9.72",
+  "version": "0.9.73",
   "description": "These libraries are the building blocks of MIOJSLibs.",
   "main": "dist/js/miojslibs-core.js",
   "types": "dist/typings/miojslibs-core/index.d.ts",
@@ -53,6 +53,5 @@
   "bugs": {
     "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
   },
-  "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs-core/README.md",
-  "dependencies": {}
+  "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs-core/README.md"
 }
