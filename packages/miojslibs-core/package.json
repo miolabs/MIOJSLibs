@@ -56,6 +56,5 @@
     "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
   },
   "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs-core/README.md",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
