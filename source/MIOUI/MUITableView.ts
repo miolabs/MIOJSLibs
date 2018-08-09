@@ -932,7 +932,9 @@ export class MUITableView extends MUIScrollView {
 
             // if (posY >= maxY) {
             //     break;
-            // }            
+            // }      
+            
+            this.lastIndexPath = ip;
         }
 
         //this.visibleRange = new MIORange(start, nextRow - start);
