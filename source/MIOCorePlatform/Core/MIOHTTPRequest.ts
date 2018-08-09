@@ -1,8 +1,11 @@
-import * as request from "request";
+import { XMLHttpRequest } from "xmlhttprequest";
 
-function wrapOnload(instance, delegate, completion, target) {
-    return function onload(err, httpResponse, body) {
-        if(!err && httpResponse.statusCode == 200 && body != null){
+export function MIOHTTPRequest(instance, urlString: string, headers, method, body, binary, delegate, target, completion, download: boolean) {
+    let xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        const body = this.responseText;
+        if(this.status < 300 && body != null){
             // Success!
             if (delegate != null) {
                 delegate.connectionDidReceiveText(instance, body);
@@ -17,30 +20,20 @@ function wrapOnload(instance, delegate, completion, target) {
                 completion.call(target, this.status, body);
             }
         }
-    }
-}
+    };
+    xhr.open(method, urlString, false);
 
-export function MIOHTTPRequest(instance, urlString: string, headers, method, body, binary, delegate, target, completion, download: boolean) {
     // Add headers
-    const requestHeaders = {};
-    for (let item of headers) {
-        requestHeaders[item["Field"]] = item["Value"];
+    for (let count = 0; count < headers.length; count++) {
+        let item = headers[count];
+        xhr.setRequestHeader(item["Field"], item["Value"]);
     }
-
-    const callback = wrapOnload(instance, delegate, completion, target);
-
-    if (method === "GET" || !body) {
-        request.get({
-                headers: requestHeaders,
-                url: urlString
-        }, 
-        callback);
+    if (binary == true) {
+        xhr.responseType = "arraybuffer";
+    } 
+    if (method == "GET" || body == null) {
+        xhr.send();
     } else {
-        request.post({
-            headers: requestHeaders,
-            json: body,
-            url: urlString
-        }, 
-        callback);
+        xhr.send(body);
     }
 }
