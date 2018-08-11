@@ -1,6 +1,7 @@
 import { MUIView } from "./MUIView";
 import { MIOTimer, MIOPoint, MIORect, MIOSize, MIOLog } from "../MIOFoundation";
 import { MUICoreLayerCreate, MUICoreLayerRemoveSublayer, MUICoreLayerAddSublayer } from "./MIOUI_CoreLayer";
+import { MIOCoreDeviceOSString } from "../MIOCorePlatform";
 
 /**
  * Created by godshadow on 01/09/16.
@@ -37,6 +38,7 @@ export class MUIScrollView extends MUIView {
 
     private setupLayer() {
         this.layer.style.overflow = "scroll";
+        //if (MIOCoreDeviceOSString() == "ios") this.layer.style["-webkit-overflow-scrolling"] = "touch"; 
 
         var contentLayer = MUICoreLayerCreate();
         contentLayer.style.position = "absolute";

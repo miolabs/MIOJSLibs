@@ -62,7 +62,18 @@ export function MIOCoreGetMainBundleURLString():string{
     return window.location.href;
 }
 
-export function MIOCoreIsPhone(){
+export function MIOCoreDeviceTypeString(){
+    return navigator.userAgent.toLowerCase();
+}
+
+export function MIOCoreDeviceOSString(){
+    let type = MIOCoreDeviceTypeString();
+    if (type == 'iphone' || type == 'ipad') return "ios";
+    
+    return type;
+}
+
+export function MIOCoreIsPhone(){    
 
     // Debug
     var value = _MIOCoreDebugOptions[MIOCoreDebugOption.Phone];

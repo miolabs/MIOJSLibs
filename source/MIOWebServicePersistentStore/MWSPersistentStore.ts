@@ -563,9 +563,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     private checkOperationDependecies(operation: MWSPersistenStoreOperation, dependencies) {
 
-        for (var index = 0; index < dependencies.length; index++) {
+        for (let index = 0; index < dependencies.length; index++) {
             let referenceID = dependencies[index];
-            var op = this.operationAtServerID(referenceID, this.saveCount);
+            let op = this.operationAtServerID(referenceID, this.saveCount);
             if (op == null) {
                 op = this.lastUploadingOperationByServerID(referenceID);
             }
@@ -583,7 +583,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             this.saveOperationQueue.addObserver(this, "operationCount", null);
         }
 
-        for (var refID in this.saveOperationsByReferenceID) {
+        for (let refID in this.saveOperationsByReferenceID) {
             let op = this.saveOperationsByReferenceID[refID];
             this.checkOperationDependecies(op, op.dependencyIDs);
             this.addUploadingOperation(op, refID);            
@@ -595,7 +595,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     private addUploadingOperation(op:MWSPersistenStoreOperation, serverID){
         
-        var array = this.uploadingOperations[serverID];
+        let array = this.uploadingOperations[serverID];
         if (array == null){
             array = [];
             this.uploadingOperations[serverID] = array;
@@ -609,14 +609,14 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     }
 
     private lastUploadingOperationByServerID(serverID:string){
-        var array = this.uploadingOperations[serverID];
+        let array = this.uploadingOperations[serverID];
         if (array == null) return null;
         if (array.count == 0) return null;
         return array.lastObject();
     }
 
     private removeUploadingOperationForServerID(serverID:string){
-        var array = this.uploadingOperations[serverID];
+        let array = this.uploadingOperations[serverID];
         if (array == null) return;
         if (array.count == 0) return;
         array.removeObjectAtIndex(0);
