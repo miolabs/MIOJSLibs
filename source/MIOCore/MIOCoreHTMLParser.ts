@@ -187,7 +187,7 @@ export class MIOCoreHTMLParser
             if (ch2 == "-") {
                 return "<!--";
             }
-            else this.unexpectedToken();
+            else this.unexpectedToken(ch + ch2);
         }
         
         this.prevChar();
@@ -284,7 +284,7 @@ export class MIOCoreHTMLParser
                     break;
 
                 default:
-                    this.unexpectedToken();
+                    this.unexpectedToken(value);
                     break;
             }
 
@@ -296,8 +296,8 @@ export class MIOCoreHTMLParser
 
     }
 
-    private unexpectedToken() {
-        throw new Error("Unexpected token");
+    private unexpectedToken(value) {
+        throw new Error("Unexpected token: " + value);
     }
 
     private openTag(){
@@ -379,6 +379,18 @@ export class MIOCoreHTMLParser
                 if ((this.exceptionsTags.indexOf(element) > -1) && (typeof this.delegate.parserDidEndElement === "function")) {
                     this.delegate.parserDidEndElement(this, element);
                 }
+
+                // Special cases like <style></style> or <script></script>
+                // We need to read everything 'til the next close tag
+                if (element == "style" || element == "script"){
+                    let chars = this.readToNextString("</" + element + ">");
+                    this.foundChars(chars);
+                    
+                    if (typeof this.delegate.parserDidEndElement === "function") {
+                        this.delegate.parserDidEndElement(this, element);
+                    }                                        
+                }                
+                
                 break;
 
             case MIOCoreHTMLParserTokenType.InlineCloseTag:
@@ -388,7 +400,7 @@ export class MIOCoreHTMLParser
                 break;
 
             default:
-                this.unexpectedToken();
+                this.unexpectedToken(value);
                 break;
         }
 
@@ -397,11 +409,11 @@ export class MIOCoreHTMLParser
     private closeElement(){
         
         let [type, value] = this.nextToken();
-        if (type != MIOCoreHTMLParserTokenType.Identifier) this.unexpectedToken();
+        if (type != MIOCoreHTMLParserTokenType.Identifier) this.unexpectedToken(value);
         let element = value;
 
         [type, value] = this.nextToken();
-        if (type != MIOCoreHTMLParserTokenType.CloseTag) this.unexpectedToken();
+        if (type != MIOCoreHTMLParserTokenType.CloseTag) this.unexpectedToken(value);
         
         if (typeof this.delegate.parserDidEndElement === "function") {
             this.delegate.parserDidEndElement(this, element);
@@ -416,9 +428,35 @@ export class MIOCoreHTMLParser
     }
 
     private foundChars(chars){
+        if (chars == null) return;
         if (typeof this.delegate.parserFoundCharacters === "function") {
             this.delegate.parserFoundCharacters(this, chars);
         }        
+    }
+
+    private readToNextString(element:string){
+        
+        let str = "";
+        for (let index = 0; index < element.length; index++){
+            let ch = this.nextChar();
+            if (ch == null) throw Error("Unexpected end of string: " + str);
+            str += ch;
+        }
+
+        if (str == element) return null;
+        
+        let exit = false;
+        while (exit == false){
+            let ch = this.nextChar();            
+            if (ch == null) throw Error("Unexpected end of string: " + str);
+            str += ch;
+            let cmp = str.substr(-element.length);
+            if (cmp == element) exit = true;
+        }
+
+        let chars = str.substr(0, str.length - element.length);
+        console.log("*****\n" + chars + "\n*****\n");
+        return chars;
     }
 
 }
