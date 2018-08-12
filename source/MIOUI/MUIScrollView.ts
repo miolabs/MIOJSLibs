@@ -38,9 +38,9 @@ export class MUIScrollView extends MUIView {
 
     private setupLayer() {
         this.layer.style.overflow = "scroll";
-        //if (MIOCoreDeviceOSString() == "ios") this.layer.style["-webkit-overflow-scrolling"] = "touch"; 
+        if (MIOCoreDeviceOSString() == "ios") this.layer.style["-webkit-overflow-scrolling"] = "touch"; 
 
-        var contentLayer = MUICoreLayerCreate();
+        let contentLayer = MUICoreLayerCreate();
         contentLayer.style.position = "absolute";
         contentLayer.style.width = "100%";
         contentLayer.style.height = "100%";
@@ -49,22 +49,15 @@ export class MUIScrollView extends MUIView {
         this.contentView = new MUIView();
         this.contentView.initWithLayer(contentLayer, this);
         super.addSubview(this.contentView);
-
-        var instance = this;
-        this.contentView.layer.onwheel = function (e) {
-             instance.scrollEventCallback.call(instance);
-        };        
         
-        this.contentView.layer.onscroll = function (e) {
-            //if (e.target === instance.contentView.layer) instance.scrollEventCallback.call(instance);
-            instance.scrollEventCallback.call(instance);
-        };        
+        this.contentView.layer.addEventListener("wheel", this.scrollEventCallback.bind(this), true);
+        this.layer.addEventListener("scroll", this.scrollEventCallback.bind(this), true);
 
-        if (MIOCoreDeviceOSString() == 'ios'){
-            this.contentView.layer.addEventListener("touchstart", function(e){
+        // if (MIOCoreDeviceOSString() == 'ios'){
+        //     this.contentView.layer.addEventListener("touchstart", function(e){
 
-            }, false);
-        }
+        //     }, false);
+        // }
 
         // FIX: Scroll event don't get fire when you scroll with a scrollbar because the system thinks that
         //      has to take care by himself to scroll a "prerender" page so if you have a dynamic page that 
@@ -156,7 +149,7 @@ export class MUIScrollView extends MUIView {
     }
 
     get contentOffset(): MIOPoint {
-        var p = new MIOPoint(this.layer.scrollLeft, this.layer.scrollTop);
+        let p = new MIOPoint(this.layer.scrollLeft, this.layer.scrollTop);
         return p;
     }
 

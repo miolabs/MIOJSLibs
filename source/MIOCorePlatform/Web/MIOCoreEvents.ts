@@ -94,8 +94,8 @@ export class MIOCoreEventMouse extends MIOCoreEventInput
 export class MIOCoreEventTouch extends MIOCoreEventInput
 {
     initWithType(eventType:MIOCoreEventType, coreEvent:TouchEvent) {   
-
-        var touch = coreEvent.changedTouches[0] // reference first touch point for this event
+        super.initWithType(eventType, event);
+        let touch = coreEvent.changedTouches[0] // reference first touch point for this event
         this.target = coreEvent.target;
         this.x = touch.clientX;
         this.y = touch.clientY;
