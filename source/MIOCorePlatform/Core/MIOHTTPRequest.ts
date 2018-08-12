@@ -21,7 +21,7 @@ export function MIOHTTPRequest(instance, urlString: string, headers, method, bod
             }
         }
     };
-    xhr.open(method, urlString, false);
+    xhr.open(method, urlString);
 
     // Add headers
     for (let count = 0; count < headers.length; count++) {

@@ -53,7 +53,7 @@ export class MUIScrollView extends MUIView {
         var instance = this;
         this.contentView.layer.onwheel = function (e) {
              instance.scrollEventCallback.call(instance);
-        };
+        };        
         
         this.contentView.layer.onscroll = function (e) {
             //if (e.target === instance.contentView.layer) instance.scrollEventCallback.call(instance);
