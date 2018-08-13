@@ -326,11 +326,12 @@ export class MUIAlertViewController extends MUIViewController
 
     private _createActionCellWithTitle(title:string, style:MUIAlertActionStyle):MUITableViewCell
     {
-        var cell = new MUITableViewCell();
+        let cell = new MUITableViewCell();
         cell.initWithStyle(MUITableViewCellStyle.Custom);
 
-        var buttonLabel = new MUILabel();
+        let buttonLabel = new MUILabel();
         buttonLabel.init();
+        MUICoreLayerRemoveStyle(buttonLabel.layer, "lbl");
         buttonLabel.text = title;
         buttonLabel.layer.style.left = "";
         buttonLabel.layer.style.top = "";
