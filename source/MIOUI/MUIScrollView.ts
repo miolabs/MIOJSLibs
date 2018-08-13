@@ -1,6 +1,6 @@
 import { MUIView } from "./MUIView";
 import { MIOTimer, MIOPoint, MIORect, MIOSize, MIOLog } from "../MIOFoundation";
-import { MUICoreLayerCreate, MUICoreLayerRemoveSublayer, MUICoreLayerAddSublayer } from "./MIOUI_CoreLayer";
+import { MUICoreLayerCreate, MUICoreLayerRemoveSublayer, MUICoreLayerAddSublayer, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MIOCoreDeviceOSString } from "../MIOCorePlatform";
 
 /**
@@ -36,15 +36,15 @@ export class MUIScrollView extends MUIView {
         this.setupLayer();
     }
 
-    private setupLayer() {
-        this.layer.style.overflow = "scroll";
+    private setupLayer() {        
         if (MIOCoreDeviceOSString() == "ios") this.layer.style["-webkit-overflow-scrolling"] = "touch"; 
 
         let contentLayer = MUICoreLayerCreate();
-        contentLayer.style.position = "absolute";
-        contentLayer.style.width = "100%";
-        contentLayer.style.height = "100%";
-        contentLayer.style.overflow = "hidden";
+        MUICoreLayerAddStyle(contentLayer, "content-view");
+        // contentLayer.style.position = "absolute";
+        // contentLayer.style.width = "100%";
+        // contentLayer.style.height = "100%";
+        // contentLayer.style.overflow = "hidden";
 
         this.contentView = new MUIView();
         this.contentView.initWithLayer(contentLayer, this);
