@@ -114,7 +114,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let relRefIDs = node.valueForPropertyDescription(relationship);
             if (relRefIDs == null) return null;        
 
-            var array = [];
+            let array = [];
             for (let count = 0; count < relRefIDs.length; count++) {
 
                 let relRefID = relRefIDs[count];
@@ -308,7 +308,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let objID = objectID != null ? objectID : this.newObjectIDForEntity(entity, serverID);
 
-        var node = new MIOIncrementalStoreNode();
+        let node = new MIOIncrementalStoreNode();
         node.initWithObjectID(objID, values, version);
         this.nodesByReferenceID[referenceID] = node;
         MIOLog("Inserting REFID: " + referenceID);
