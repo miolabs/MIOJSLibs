@@ -14,9 +14,9 @@ TODO: find a way to unify it.
     export * from './Web/MIOCoreEvents'
     export * from './Web/MIOHTTPRequest'
 /// #endif
-/// #if TARGET === 'core'
-    export * from './Core/MIOCore'
-    export * from './Core/MIOHTTPRequest'
+/// #if TARGET === 'node'
+    export * from './Node/MIOCore'
+    export * from './Node/MIOHTTPRequest'
 /// #endif
 /// #if TARGET === 'webworker'
     export * from './WebWorker/MIOCore_WebWorker'

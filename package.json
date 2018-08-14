@@ -41,7 +41,7 @@
   },
   "scripts": {
     "dev": "lerna run --scope miojslibs dev",
-    "dev-core": "lerna run --scope miojslibs-core dev",
+    "dev-node": "lerna run --scope miojslibs-core dev",
     "copy:dist": "copyfiles \"build/**/*.js*\" \"build/*.js*\" dist/js --up 1",
     "build:webworkers": "./tools/build_project/build_webworkers.sh",
     "check:missing_barrels": "python3 ./tools/build_project/check_exports/check_exports.py",

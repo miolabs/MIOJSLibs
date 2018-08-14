@@ -7,7 +7,7 @@ const PROD = process.env.NODE_ENV === 'prod';
 const ENV = process.env.NODE_ENV || 'dev';
 
 
-const packageName = `miojslibs${TARGET === 'core' ? '-core' : ''}`;
+const packageName = `miojslibs${TARGET === 'node' ? '-core' : ''}`;
 const buildPath = path.resolve(__dirname, 'packages', packageName, 'build')
 const configFile = path.resolve(__dirname, 'packages', packageName, `tsconfig.json`);
 const buildTarget = (TARGET === 'webapp') ? 'web' : 'node';

@@ -9,7 +9,7 @@
       "../../source/MIOData",
       "../../source/MIOFoundation",
       "../../source/MIOWebServicePersistentStore",
-      "../../source/index.core.ts"
+      "../../source/index.node.ts"
   ],
   "exclude": [
       "../../source/MIOCorePlatform/WebWorkerClasses"
