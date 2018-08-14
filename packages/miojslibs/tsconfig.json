@@ -5,7 +5,7 @@
   },
   "include": [
       "../../source/MIOCore",
-      "../../source/MIOCorePlatform",
+      "../../source/MIOCore/platform",
       "../../source/MIOData",
       "../../source/MIOFoundation",
       "../../source/MIOUI",

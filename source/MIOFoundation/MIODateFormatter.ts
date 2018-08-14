@@ -1,5 +1,5 @@
 import {MIOFormatter} from './MIOFormatter'
-import {MIOCoreGetBrowser, MIOCoreBrowserType} from '../MIOCorePlatform'
+import {MIOCoreGetBrowser, MIOCoreBrowserType} from '../MIOCore/platform'
 
 export enum MIODateFormatterStyle {
     NoStyle,

@@ -23,7 +23,6 @@
   },
   "include": [
       "source/MIOCore",
-      "source/MIOCorePlatform",
       "source/MIOData",
       "source/MIOFoundation",
       "source/MIOUI",

@@ -1,4 +1,4 @@
-import { MIOCoreLoadFileFromURL } from "../../MIOCorePlatform/WebWorker/MIOCore_WebWorker";
+import { MIOCoreLoadFileFromURL } from "../../MIOCore/platform/WebWorker/MIOCore_WebWorker";
 import { setMIOLocalizedStrings, MIOLocalizeString } from "../../MIOCore/MIOCoreString";
 import { MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../../MIOCore";
 

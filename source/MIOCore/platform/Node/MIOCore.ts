@@ -1,6 +1,6 @@
 // In the browser the 'window' holds all defined global variables, that is necessary for 'MIOClassFromString'
 // Here we can access them by importing all the exported functions here to use.
-import * as mioclasses from "../../index.node";
+import * as mioclasses from "../../../index.node";
 
 export function MIOCoreGetMainBundleURLString(): string {
     return "";

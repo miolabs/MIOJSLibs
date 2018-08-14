@@ -1,7 +1,7 @@
 import { MIOObject } from "../MIOFoundation";
 import { MUIView } from ".";
 import { MUIEvent } from ".";
-//import { MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEventUnregisterObserverForType } from "../MIOCorePlatform";
+//import { MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEventUnregisterObserverForType } from "../MIOCore/platform";
 
 export enum MUIGestureRecognizerState {
     Possible,

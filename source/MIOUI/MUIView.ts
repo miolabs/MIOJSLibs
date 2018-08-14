@@ -1,7 +1,7 @@
 import { MIOObject, MIORect, MIOLocale, MIOLog } from "../MIOFoundation";
 import { MUIWindow } from "./MUIWindow";
 import { MUICoreLayerIDFromObject, MUICoreLayerCreate, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
-import { MIOClassFromString } from "../MIOCorePlatform";
+import { MIOClassFromString } from "../MIOCore/platform";
 import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
 
 /**

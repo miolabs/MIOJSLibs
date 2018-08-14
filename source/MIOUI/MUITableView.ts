@@ -2,7 +2,7 @@ import { MIOObject, MIOIndexPath, MIOLocationInRange, MIORange, MIOSize, MIOBund
 import { MUIScrollView } from "./MUIScrollView";
 import { MUIView } from "./MUIView";
 import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCell";
-import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCorePlatform";
+import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCore/platform";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerAddStyle } from ".";
 import { MUICoreLayerRemoveStyle } from ".";

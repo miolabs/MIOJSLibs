@@ -1,12 +1,13 @@
 # Build the project
 
-* [Getting started](#getting-started)
-* [For development](#for-development)
-* [Under the hood](#under-the-hood)
-  * [Libs](#libs)
-  * [Typing](#typing)
-  * [Web workers](#web-workers)
-  * [Multiple platform](#multiple-platform)
+- [Build the project](#build-the-project)
+    - [Getting started](#getting-started)
+    - [For development](#for-development)
+    - [Under the hood](#under-the-hood)
+        - [Libs](#libs)
+        - [Typing](#typing)
+        - [Web workers](#web-workers)
+        - [Multiple platform](#multiple-platform)
 
 ## Getting started
 
@@ -98,7 +99,7 @@ npm run build:webworkers
 
 The project is available to be built for **multiple platforms**.
 
-`MIOCorePlatform` contains the platform dependent code. Currently a preprocessing step is achieved with [ifdef-loader](https://github.com/nippur72/ifdef-loader), to exclude the unnecessary parts per platform.
+Each module contains its platform dependent code in the `platform` folder. Currently a preprocessing step is achieved with [ifdef-loader](https://github.com/nippur72/ifdef-loader), to exclude the unnecessary parts per platform.
 
 For each platform there exists a `tsconfig.${TARGET}.json` file which contains what files are processed by `ts-loader` in webpack. It does not care about the entrypoint barrel exports, it will process every file that is *explicitly added* or *not excluded*, so if you add an extra module, your build might fail, due to missing platform dependent code.
 
