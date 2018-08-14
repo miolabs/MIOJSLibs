@@ -1,5 +1,5 @@
 {
-  "extends": "../../../tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions":{
     "lib": [
       "es6",
@@ -7,7 +7,7 @@
       "webworker"
     ],
     "declaration": false,
-    "typeRoots": ["../../../types"],
+    "typeRoots": ["../../types"],
     "types": [
       "miojs"
     ]
