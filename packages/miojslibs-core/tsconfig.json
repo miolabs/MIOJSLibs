@@ -12,6 +12,6 @@
       "../../source/index.node.ts"
   ],
   "exclude": [
-      "../../source/MIOCorePlatform/WebWorkerClasses"
+      "../../source/MIOWebWorker"
   ]
 }

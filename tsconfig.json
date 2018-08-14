@@ -32,6 +32,6 @@
       "source/index.webapp.ts"
   ],
   "exclude": [
-      "source/MIOCorePlatform/WebWorkerClasses"
+      "source/MIOWebWorker"
   ]
 }
