@@ -5,6 +5,9 @@
 export * from "./MIOCore";
 export * from "./MIOCore/platform";
 export * from "./MIOData";
+export * from "./MIOData/platform";
 export * from "./MIOFoundation";
+export * from "./MIOFoundation/platform";
 export * from "./MIOWebServicePersistentStore";
+export * from "./MIOWebServicePersistentStore/platform";
 
