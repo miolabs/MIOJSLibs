@@ -32,6 +32,7 @@ export class MIOEntityDescription extends MIOObject {
 
     public static insertNewObjectForEntityForName(entityName:string, context:MIOManagedObjectContext) {        
         let entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, context);
+        if (entityName == null) throw new Error("MIOEntityDescription:insertNewObjectForEntityForName: EntityName == null");
         let obj:MIOManagedObject = MIOClassFromString(entityName);
         obj.initWithEntityAndInsertIntoManagedObjectContext(entity, context);
 

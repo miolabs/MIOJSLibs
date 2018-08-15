@@ -163,7 +163,7 @@ export class MIOObject
         
 
     copy() {
-        var obj = MIOClassFromString(this.className);
+        let obj = MIOClassFromString(this.className);
         obj.init();
         
         return obj;

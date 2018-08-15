@@ -69,16 +69,29 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
         rv = rv.toLocaleLowerCase();
     }
 
-    if (lv == rv) {
-
-        if (lv == rv){
-            return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);            
+    if (typeof lv === "string" && typeof rv === "string" && lv.length != rv.length){
+        // Check the length
+        let lv2 = lv;
+        let rv2 = rv;
+        let sortValue = 0;
+        if (lv.length > rv.length){
+            lv2 == lv.substr(0, rv.length);
+            sortValue = sd.ascending ? 1 : -1;
         }
-        else if (lv < rv)
+        else if (lv.length < rv.length){
+            rv2 == rv.substr(0, lv.length);
+            sortValue = sd.ascending ? -1 : 1;
+        }
+
+        if (lv2 == rv2)
+            return sortValue;
+        else if (lv2 < rv2)
             return sd.ascending ? -1 : 1;
         else
-            return sd.ascending ? 1 : -1;
+            return sd.ascending ? 1 : -1;            
     }
+    else if (lv == rv)
+        return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);
     else if (lv < rv)
         return sd.ascending ? -1 : 1;
     else

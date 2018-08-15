@@ -10,6 +10,7 @@ import {
     MIOCoreEventMouse,
     MIOCoreEventTouch
 } from './MIOCoreEvents'
+import { MIOLog } from '../../MIOFoundation';
 interface Navigator {
     userLanguage;
 }
@@ -156,28 +157,28 @@ interface StyleSheet {
     cssRules;
 }
 
-function _MIOCoreLoadStyle_test2(url, target?, completion?)
-{
-     // Prevent loading the same css files
-    if (_stylesCache[url] != null) return;
-    _stylesCache[url] = true;
+// function _MIOCoreLoadStyle_test2(url, target?, completion?)
+// {
+//      // Prevent loading the same css files
+//     if (_stylesCache[url] != null) return;
+//     _stylesCache[url] = true;
 
-    var style = document.createElement('style');
-    style.textContent = '@import "' + url + '"';
+//     var style = document.createElement('style');
+//     style.textContent = '@import "' + url + '"';
  
-    var fi = setInterval(function() {
-    try {
-        style.sheet['cssRules']; // <--- MAGIC: only populated when file is loaded
-        clearInterval(fi);
-        if (target != null && completion != null)
-            completion.call(target);
+//     var fi = setInterval(function() {
+//     try {
+//         style.sheet['cssRules']; // <--- MAGIC: only populated when file is loaded
+//         clearInterval(fi);
+//         if (target != null && completion != null)
+//             completion.call(target);
         
-    } catch (e){}
-    }, 10);  
+//     } catch (e){}
+//     }, 10);  
     
-    var head = document.getElementsByTagName("head")[0];
-    head.appendChild(style);
-}
+//     var head = document.getElementsByTagName("head")[0];
+//     head.appendChild(style);
+// }
 
 export function MIOCoreLoadStyle(url, media, target?, completion?)
 {
@@ -214,8 +215,15 @@ export function MIOCoreLoadStyle(url, media, target?, completion?)
 export function MIOClassFromString(className)
 {
     //instance creation here
-    let object = null;
-    let newClass: any = new window[className]();
+    //let object = null;
+    //let newClass: any = new window[className]();
+    let newClass = null;
+    try {
+        newClass = new (window as any)[className]();
+    } catch (error) {
+        MIOLog("MIOClassFromString: Trying to create a class (" + className + ") that doesn't exist!");
+    }    
+
     return newClass;
     // try {
     //     object = Object.create(window[className].prototype);
