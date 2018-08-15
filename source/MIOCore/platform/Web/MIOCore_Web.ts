@@ -10,7 +10,6 @@ import {
     MIOCoreEventMouse,
     MIOCoreEventTouch
 } from './MIOCoreEvents'
-import { MIOLog } from '../../MIOFoundation';
 interface Navigator {
     userLanguage;
 }
@@ -221,7 +220,7 @@ export function MIOClassFromString(className)
     try {
         newClass = new (window as any)[className]();
     } catch (error) {
-        MIOLog("MIOClassFromString: Trying to create a class (" + className + ") that doesn't exist!");
+        console.log("MIOClassFromString: Trying to create a class (" + className + ") that doesn't exist!");
     }    
 
     return newClass;
