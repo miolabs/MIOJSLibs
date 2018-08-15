@@ -23,7 +23,6 @@
   },
   "include": [
       "source/MIOCore",
-      "source/MIOCorePlatform",
       "source/MIOData",
       "source/MIOFoundation",
       "source/MIOUI",
@@ -32,6 +31,6 @@
       "source/index.webapp.ts"
   ],
   "exclude": [
-      "source/MIOCorePlatform/WebWorkerClasses"
+      "source/MIOWebWorker"
   ]
 }

@@ -1,5 +1,5 @@
 
-import { MIOCoreGetMainBundleURLString, MIOCoreBundle } from "../MIOCorePlatform";
+import { MIOCoreGetMainBundleURLString, MIOCoreBundle } from "../MIOCore/platform";
 import { MIOCoreAppType, MIOCoreGetAppType, MIOCoreHTMLParser, MIOCoreHTMLParserDelegate, MIOLocalizeString } from "../MIOCore";
 import { MIOObject } from "./MIOObject";
 import { MIOURL } from "./MIOURL";

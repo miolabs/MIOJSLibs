@@ -1,6 +1,6 @@
 import { MUIView, MUICollectionView, MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle, MUILabel, MUITapGestureRecognizer, MUIGestureRecognizer, MUIGestureRecognizerState, MUIComboBox } from ".";
 import { MIODateCopy, MIODateGetDayFromDate, MIORect, MIODateGetMonthFromDate, MIODateToday, MIODateGetYearFromDate, MIODateGetDateString, MIODateGetStringForMonth, MIODateGetDayStringFromDate } from "../MIOFoundation";
-import { MIOClassFromString } from "../MIOCorePlatform/WebWorker/MIOCore_WebWorker";
+import { MIOClassFromString } from "../MIOCore/platform/WebWorker/MIOCore_WebWorker";
 
 export class MUICalendarHeader extends MUIView
 {

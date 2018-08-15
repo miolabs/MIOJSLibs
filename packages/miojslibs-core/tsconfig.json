@@ -5,13 +5,13 @@
   },
   "include": [
       "../../source/MIOCore",
-      "../../source/MIOCorePlatform",
+      "../../source/MIOCore/platform",
       "../../source/MIOData",
       "../../source/MIOFoundation",
       "../../source/MIOWebServicePersistentStore",
-      "../../source/index.core.ts"
+      "../../source/index.node.ts"
   ],
   "exclude": [
-      "../../source/MIOCorePlatform/WebWorkerClasses"
+      "../../source/MIOWebWorker"
   ]
 }

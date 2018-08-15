@@ -2,7 +2,7 @@
  * Created by godshadow on 26/3/16.
  */
 
-import { MIOClassFromString } from '../MIOCorePlatform'
+import { MIOClassFromString } from "../MIOCore/platform";
 export class MIOObject
 {
     private _className:string = null;

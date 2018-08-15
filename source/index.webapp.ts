@@ -3,9 +3,14 @@
 // You need to add these folders into the proper tsconfig.json as well.
 
 export * from "./MIOCore";
-export * from "./MIOCorePlatform";
+export * from "./MIOCore/platform";
 export * from "./MIOData";
+export * from "./MIOData/platform";
 export * from "./MIOFoundation";
+export * from "./MIOFoundation/platform";
 export * from "./MIOUI";
+export * from "./MIOUI/platform";
 export * from "./MIOWebServicePersistentStore";
+export * from "./MIOWebServicePersistentStore/platform";
 export * from "./MIORemoteNotificationServer";
+export * from "./MIORemoteNotificationServer/platform";

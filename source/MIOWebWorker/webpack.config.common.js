@@ -1,12 +1,12 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const path = require('path');
-const pjson = require('../../../package.json');
+const pjson = require('../../package.json');
 const webpack = require('webpack');
 
-const packageName = `miojslibs${process.env.TARGET === 'core' ? '-core' : ''}`;
+const packageName = `miojslibs${process.env.TARGET === 'node' ? '-core' : ''}`;
 
-const buildTargetLocation = path.resolve(__dirname, '..', '..', '..', 'packages', packageName, 'build', 'webworkers')
-const deployLocation = path.resolve(__dirname, '..', '..', '..', 'packages', packageName, 'dist', 'js', 'webworkers')
+const buildTargetLocation = path.resolve(__dirname, '..', '..', 'packages', packageName, 'build', 'webworkers')
+const deployLocation = path.resolve(__dirname, '..', '..', 'packages', packageName, 'dist', 'js', 'webworkers')
 
 const TARGET = process.env.TARGET || 'webapp';
 const PROD = process.env.NODE_ENV === 'prod';

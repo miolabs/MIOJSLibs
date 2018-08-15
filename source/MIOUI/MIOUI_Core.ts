@@ -1,6 +1,6 @@
 import { MUIView, MUILayerSearchElementByID } from "./MUIView";
 import { MUIViewController } from "./MUIViewController";
-import { MIOClassFromString, MIOCoreIsPhone } from "../MIOCorePlatform";
+import { MIOClassFromString, MIOCoreIsPhone } from "../MIOCore/platform";
 import { MUIModalPresentationStyle, MUIPresentationController } from "./MUIViewController_PresentationController";
 import { _MUIAnimationStart } from "./MIOUI_CoreAnimation";
 import { MIOSize } from "../MIOFoundation";

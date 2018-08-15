@@ -1,6 +1,6 @@
 import { MIOObject, MIOSet, MIONotificationCenter, _MIOPredicateFilterObjects, MIONotification } from "../MIOFoundation";
 import { MIOManagedObjectID } from "./MIOManagedObjectID";
-import { MIOClassFromString } from "../MIOCorePlatform";
+import { MIOClassFromString } from "../MIOCore/platform";
 import { _MIOSortDescriptorSortObjects } from "../MIOFoundation/MIOSortDescriptor";
 import { MIOManagedObject } from "./MIOManagedObject";
 import { MIOIncrementalStore } from "./MIOIncrementalStore";

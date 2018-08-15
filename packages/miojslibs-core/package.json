@@ -5,7 +5,7 @@
   "main": "dist/js/miojslibs-core.js",
   "types": "dist/typings/miojslibs-core/index.d.ts",
   "config": {
-    "target": "core",
+    "target": "node",
     "name": "miojslibs-core"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCorePlatform";
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCore/platform";
 import { MIODateFormatter, MIODateFormatterStyle } from "./MIODateFormatter";
 
 export class MIOISO8601DateFormatter extends MIODateFormatter {

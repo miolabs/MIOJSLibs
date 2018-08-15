@@ -1,10 +1,6 @@
-import { MIOURL} from "../../../MIOFoundation/MIOURL";
-import { MIOURLConnection } from "../../../MIOFoundation/MIOURLConnection"
-import { MIOURLRequest } from "../../../MIOFoundation/MIOURLRequest"
-import { MIOXMLParser } from "../../../MIOFoundation/MIOXMLParser"
-import { MIOCoreLoadFileFromURL } from "../../WebWorker/MIOCore_WebWorker";
-import { setMIOLocalizedStrings, MIOLocalizeString } from "../../../MIOCore/MIOCoreString";
-import { MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../../../MIOCore";
+import { MIOCoreLoadFileFromURL } from "../../MIOCore/platform/WebWorker/MIOCore_WebWorker";
+import { setMIOLocalizedStrings, MIOLocalizeString } from "../../MIOCore/MIOCoreString";
+import { MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../../MIOCore";
 
 var ww = (self as DedicatedWorkerGlobalScope)
 var _languageStrings = null;

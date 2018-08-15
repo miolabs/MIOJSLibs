@@ -1,7 +1,7 @@
 import {
     _MIOCoreDebugOptions,
     MIOCoreDebugOption
-} from '../../MIOCore'
+} from '../../../MIOCore'
 import {
     MIOCoreEvent,
     MIOCoreEventInput,

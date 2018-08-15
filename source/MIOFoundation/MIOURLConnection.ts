@@ -1,5 +1,5 @@
 import { MIOURLRequest } from "./MIOURLRequest";
-import { MIOHTTPRequest } from "../MIOCorePlatform";
+import { MIOHTTPRequest } from "../MIOCore/platform";
 
 /**
  * Created by godshadow on 14/3/16.

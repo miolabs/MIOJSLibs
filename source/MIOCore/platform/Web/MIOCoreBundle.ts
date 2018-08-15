@@ -2,7 +2,7 @@ import {
     MIOCoreStringAppendPathComponent,
     MIOCoreStringDeletingLastPathComponent,
     getMIOLocalizedStrings
-} from '../../MIOCore'
+} from '../../../MIOCore'
 
 export class MIOCoreBundle
 {
