@@ -1,8 +1,12 @@
-import {
+import 
+{
     _MIOCoreDebugOptions,
-    MIOCoreDebugOption
+    MIOCoreDebugOption,    
+    MIOCoreClassByName
 } from '../../../MIOCore'
-import {
+
+import 
+{
     MIOCoreEvent,
     MIOCoreEventInput,
     MIOCoreEventType,
@@ -10,7 +14,9 @@ import {
     MIOCoreEventMouse,
     MIOCoreEventTouch
 } from './MIOCoreEvents'
-interface Navigator {
+
+interface Navigator 
+{
     userLanguage;
 }
 
@@ -210,30 +216,15 @@ export function MIOCoreLoadStyle(url, media, target?, completion?)
     img.src = url;
 }
 
-
 export function MIOClassFromString(className)
 {
-    //instance creation here
-    //let object = null;
-    //let newClass: any = new window[className]();
-    let newClass = null;
-    try {
-        newClass = new (window as any)[className]();
-    } catch (error) {
-        console.log("MIOClassFromString: Trying to create a class (" + className + ") that doesn't exist!");
-    }    
+    let classObject = window[className];
+    if (classObject == null) classObject = MIOCoreClassByName(className);
 
+    if (classObject == null) throw new Error("MIOClassFromString: class '" + className + "' didn't register.");
+
+    let newClass = new classObject();
     return newClass;
-    // try {
-    //     object = Object.create(window[className].prototype);
-    //     object.constructor.apply(object);
-    //     //object.className = className;
-    // }
-    // catch (e){
-    //     throw new Error(`Error, class (${className}) not found.`);
-    // }
-
-    // return object;
 }
 
 // Declare main funciton so we can call after intizalization

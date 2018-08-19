@@ -62,3 +62,12 @@ let _miocore_device_uuid = MIOCoreUUIDcreate();
 export function MIOCoreGetDeviceUUID(){
     return _miocore_device_uuid;
 }
+
+let _micore_classes_by_name = {};
+export function MIOCoreRegisterClassByName(name, object){
+    _micore_classes_by_name[name] = object;
+}
+
+export function MIOCoreClassByName(name){
+    return _micore_classes_by_name[name];
+}

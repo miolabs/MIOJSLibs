@@ -30,6 +30,8 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     var modelPath:String?;
     var modelFilename:String;
     
+    var modelContent:String = "\nfunction DMRegisterModelClasses()\n{";
+    
     init(withFilename filename:String) {
         
         self.modelFilename = filename;
@@ -90,6 +92,10 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     
     func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
     
+    }
+    
+    func parserDidEndDocument(_ parser: XMLParser) {
+        writeModelFile()
     }
     
     private func openModelEntity(filename:String, classname:String, parentName:String?) {
@@ -272,7 +278,16 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
 
             WriteTextFile(content: content, path: fp)
         }
+        
+        modelContent += "\n\t MIOCoreRegisterClassByName('" + self.currentClassName + "_ManagedObject', " + self.currentClassName + "_ManagedObject);";
+        modelContent += "\n\t MIOCoreRegisterClassByName('" + self.currentClassName + "', " + self.currentClassName + ");";
     }
 
+    private func writeModelFile(){
+        modelContent += "\n}\n"
+        let path = modelPath! + "/datamodel.ts";
+        WriteTextFile(content:modelContent, path:path)
+    }
+    
 }
 
