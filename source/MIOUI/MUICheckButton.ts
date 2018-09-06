@@ -1,4 +1,5 @@
 import { MUIControl } from "./MUIControl";
+import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from "./MIOUI_CoreLayer";
 
 /**
  * Created by godshadow on 12/3/16.
@@ -7,52 +8,52 @@ import { MUIControl } from "./MUIControl";
 export class MUICheckButton extends MUIControl
 {
     target = null;
-    action = null;
-    on = false; //Off
+    action = null;    
 
-    initWithLayer(layer, owner, options?)
-    {
-        super.initWithLayer(layer, owner, options);
+    init(){
+        super.init();
+        MUICoreLayerAddStyle(this.layer, "checkbox"); 
+    }
 
-        this.layer.classList.add("checkbox");
-        this.layer.classList.add("off");
-        // this.layer.classList.add("check_button_state_off");
+    initWithLayer(layer, owner, options?){
+        super.initWithLayer(layer, owner, options);        
+        this.layer.addEventListener("click", this._on_click.bind(this), false);
+    }
 
-        var instance = this;
-        this.layer.onclick = function() {
-
-            if (instance.enabled) {
-                instance.toggleValue.call(instance);
-            }
+    private _on_click(ev:Event){
+        if (this.enabled) {
+            this.toggleValue();
         }
     }
 
-    setOnChangeValue(target, action)
-    {
+    setOnChangeValue(target, action){
         this.target = target;
         this.action = action;
     }
 
-    setOn(on)
-    {
-        this.on = on;
-        if (on == true)
-        {
-             this.layer.classList.remove("off");
-             this.layer.classList.add("on");
+    private _on = false;
+    get on():boolean{
+        return this._on;
+    }
+
+    set on(value:boolean){
+        this.setOn(value);
+    }    
+
+    setOn(on){
+        this._on = on;
+        if (on == true){
+            MUICoreLayerAddStyle(this.layer, "selected");
         }
-        else
-        {
-            this.layer.classList.remove("on");
-            this.layer.classList.add("off");
+        else {
+            MUICoreLayerRemoveStyle(this.layer, "selected");            
         }
     }
 
-    toggleValue()
-    {
-        this.setOn(!this.on);
+    toggleValue(){
+        this.setOn(!this._on);
 
         if (this.target != null && this.action != null)
-            this.action.call(this.target, this, this.on);
+            this.action.call(this.target, this, this._on);
     }
 }

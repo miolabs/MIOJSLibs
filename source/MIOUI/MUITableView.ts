@@ -4,8 +4,7 @@ import { MUIView } from "./MUIView";
 import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCell";
 import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCore/platform";
 import { MUILabel } from "./MUILabel";
-import { MUICoreLayerAddStyle } from ".";
-import { MUICoreLayerRemoveStyle } from ".";
+import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
 
 /**
  * Created by godshadow on 22/3/16.
@@ -43,7 +42,7 @@ export class MUITableViewSection extends MIOObject {
         header.init();
         header.setHeight(height);
         //header.layer.style.background = "";
-        header.layer.style.margin = "4px 8px";
+        //header.layer.style.margin = "4px 8px";
         MUICoreLayerRemoveStyle(header.layer, "view");
         MUICoreLayerAddStyle(header.layer, "header");
 
@@ -519,10 +518,10 @@ export class MUITableView extends MUIScrollView {
 
     private addRowsForNewVisibleRange(range: MIORange, scrollDown: boolean) {
 
-        var row: MUITableViewRow;
-        var start;
-        var end;
-        var posY = 0;
+        let row: MUITableViewRow;
+        let start;
+        let end;
+        let posY = 0;
 
         if (this.visibleRange.location == -1) {
             start = range.location;
@@ -762,6 +761,11 @@ export class MUITableView extends MUIScrollView {
                 this.contentHeight -= this.defaultRowHeight;
                 this.contentHeight += h;
             }
+        }
+
+        if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
+            let editingStyle = this.delegate.editingStyleForRowAtIndexPath(this, indexPath);
+            cell.setEditingAccessoryType(editingStyle);
         }
 
         return r.height;

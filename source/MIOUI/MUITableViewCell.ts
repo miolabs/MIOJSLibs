@@ -52,7 +52,6 @@ export class MUITableViewCell extends MUIView {
     separatorStyle = MUITableViewCellSeparatorStyle.SingleLine;
 
     private _editing = false;
-    editingAccessoryType = MUITableViewCellAccessoryType.None;
     editingAccessoryView: MUIView = null;
 
     selectionStyle = MUITableViewCellSelectionStyle.Default;
@@ -140,20 +139,69 @@ export class MUITableViewCell extends MUIView {
         };
     }
 
-
+    private editingAccessoryInsertView:MUIView = null;
+    private editingAccessoryDeleteView:MUIView = null;
     private addEditingAccessoryView(layer, owner) {
 
-        this.editingAccessoryView = new MUIView();
-        this.editingAccessoryView.initWithLayer(layer, owner);
+        let type = layer.getAttribute("data-editing-accessory-view");
+        if (type == "insert") {
+            this.editingAccessoryInsertView = new MUIView();
+            this.editingAccessoryInsertView.initWithLayer(layer, owner);
 
-        // TODO: Change for a gesuture recongnizer or something independent of the html
-        var instance = this;
-        this.editingAccessoryView.layer.onclick = function (e) {
-            if (instance._onAccessoryClickFn != null) {
-                e.stopPropagation();
-                instance._onAccessoryClickFn.call(instance._target, instance);
-            }
-        };
+            this.editingAccessoryInsertView.layer.addEventListener("click", this.editingAccessoryViewDidClick.bind(this));
+        }
+        else if (type == "delete") {
+            this.editingAccessoryDeleteView = new MUIView();
+            this.editingAccessoryDeleteView.initWithLayer(layer, owner);
+
+            this.editingAccessoryDeleteView.layer.addEventListener("click", this.editingAccessoryViewDidClick.bind(this));
+        }
+        else {
+            this.editingAccessoryView = new MUIView();
+            this.editingAccessoryView.initWithLayer(layer, owner);    
+
+            this.editingAccessoryView.layer.addEventListener("click", this.editingAccessoryViewDidClick.bind(this));
+        }
+
+        // // TODO: Change for a gesuture recongnizer or something independent of the html
+        // let instance = this;
+        // this.editingAccessoryView.layer.onclick = function (e) {
+        //     if (instance._onAccessoryClickFn != null) {
+        //         e.stopPropagation();
+        //         instance._onAccessoryClickFn.call(instance._target, instance);
+        //     }
+        // };
+    }
+
+    private _editingAccessoryType = MUITableViewCellEditingStyle.None;
+
+    get editingAccessoryType(){ return this._editingAccessoryType;}
+    set editingAccessoryType(value:MUITableViewCellEditingStyle){
+        this.setEditingAccessoryType(value);
+    }
+
+    setEditingAccessoryType(value:MUITableViewCellEditingStyle){
+        this._editingAccessoryType = value;
+
+        // Reset
+        if (this.editingAccessoryDeleteView != null) this.editingAccessoryDeleteView.setHidden(true);
+        if (this.editingAccessoryInsertView != null) this.editingAccessoryInsertView.setHidden(true);
+        if (this.editingAccessoryView != null) this.editingAccessoryView.setHidden(true);
+
+        // Set the view type
+        if (value == MUITableViewCellEditingStyle.Insert && this.editingAccessoryInsertView != null) {
+            this.editingAccessoryView = this.editingAccessoryInsertView;
+            this.editingAccessoryInsertView.setHidden(false);            
+        } 
+        else if (value == MUITableViewCellEditingStyle.Delete && this.editingAccessoryDeleteView != null) {
+            this.editingAccessoryView = this.editingAccessoryDeleteView;
+            this.editingAccessoryDeleteView.setHidden(false);            
+        } 
+    }
+
+    private editingAccessoryViewDidClick(e:Event){
+        e.stopPropagation();
+        this._onAccessoryClickFn.call(this._target, this);
     }
 
     private _setupLayer() {
@@ -204,22 +252,6 @@ export class MUITableViewCell extends MUIView {
 
         if (type == MUITableViewCellAccessoryType.None) this.accessoryView.setHidden(true);
         else this.accessoryView.setHidden(false);
-
-        // Remove the previous accessory
-        // if (this.accessoryType == MUITableViewCellAccessoryType.Checkmark)
-        //     this.accessoryView.layer.classList.remove("tableviewcell_accessory_checkmark");
-        // else if (this.accessoryType == MUITableViewCellAccessoryType.DisclosureIndicator)
-        //     this.accessoryView.layer.classList.remove("tableviewcell_accessory_disclosure_indicator");
-        // else if (this.accessoryType == MUITableViewCellAccessoryType.DetailDisclosureButton)
-        //     this.accessoryView.layer.classList.remove("tableviewcell_accessory_detail_disclosure_button");
-
-        // // Add the new one
-        // if (type == MUITableViewCellAccessoryType.Checkmark)
-        //     this.accessoryView.layer.classList.add("tableviewcell_accessory_checkmark");
-        // else if (type == MUITableViewCellAccessoryType.DisclosureIndicator)
-        //     this.accessoryView.layer.classList.add("tableviewcell_accessory_disclosure_indicator");
-        // else if (type == MUITableViewCellAccessoryType.DetailDisclosureButton)
-        //     this.accessoryView.layer.classList.add("tableviewcell_accessory_detail_disclosure_button");
 
         this._accessoryType = type;
     }

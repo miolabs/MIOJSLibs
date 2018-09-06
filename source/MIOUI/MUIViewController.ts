@@ -289,8 +289,8 @@ export class MUIViewController extends MIOObject
         });
     }
 
-    presentViewController(vc:MUIViewController, animate:boolean)
-    {           
+    presentViewController(vc:MUIViewController, animate:boolean){           
+        
         let pc:MUIPresentationController = vc.presentationController;
         if (pc == null) {
             pc = new MUIPresentationController();
@@ -306,7 +306,8 @@ export class MUIViewController extends MIOObject
 
         if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
             && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
-            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet)            
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.Popover)            
             vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
 
         vc.onLoadView(this, function () {
@@ -319,7 +320,7 @@ export class MUIViewController extends MIOObject
             else
             {
                 // It's a window instead of a view
-                var w:MUIWindow = pc.window;
+                let w:MUIWindow = pc.window;
                 if (w == null)
                 {
                     w = new MUIWindow();
@@ -330,12 +331,11 @@ export class MUIViewController extends MIOObject
                     pc.window = w;
                 }
                 w.setHidden(false);
+
+                _MIUShowViewController(this, vc, null, this, function () {
+                    w.makeKey();
+                });    
             }
-
-            _MIUShowViewController(this, vc, null, this, function () {
-
-                w.makeKey();
-            });
         });
     }
 
@@ -351,15 +351,15 @@ export class MUIViewController extends MIOObject
             if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext)
             {
                 toVC.removeChildViewController(fromVC);
-                let pc = fromVC.presentationController;
-                var view = pc.presentedView;
+                let pc1 = fromVC.presentationController;
+                var view = pc1.presentedView;
                 view.removeFromSuperview();
             }
             else
             {
                 // It's a window instead of a view
-                let pc = fromVC.presentationController;
-                var w:MUIWindow = pc.window;
+                let pc1 = fromVC.presentationController;
+                var w:MUIWindow = pc1.window;
                 w.setHidden(true);
             }
 

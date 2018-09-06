@@ -46,7 +46,7 @@ export class MIOManagedObject extends MIOObject {
 
     private setDefaultValues(){
         let attributes = this.entity.attributesByName;
-        for(var key in attributes) {
+        for(let key in attributes) {
             let attr = attributes[key];
             let value = attr.defaultValue;
 
@@ -183,8 +183,8 @@ export class MIOManagedObject extends MIOObject {
         let values = this.committedValues();
         if (keys == null) return values;
 
-        var result = {};
-        for (var key in keys){
+        let result = {};
+        for (let key in keys){
             let obj = values[key];
             result[key] = obj;
         }

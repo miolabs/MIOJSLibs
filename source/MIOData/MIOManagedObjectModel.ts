@@ -13,8 +13,8 @@ export class MIOManagedObjectModel extends MIOObject
     
     static entityForNameInManagedObjectContext(entityName, context:MIOManagedObjectContext):MIOEntityDescription{
         
-        var mom = context.persistentStoreCoordinator.managedObjectModel;
-        var entity = mom.entitiesByName[entityName];
+        let mom = context.persistentStoreCoordinator.managedObjectModel;
+        let entity = mom.entitiesByName[entityName];
         
         if (entity == null) {
             throw new Error(`MIOManagedObjectModel: Unkown entity (${entityName})`);
@@ -50,9 +50,11 @@ export class MIOManagedObjectModel extends MIOObject
         if (element == "entity"){
 
             let name = attributes["name"];
-            
+            let parentName = attributes["parentEntity"];
+            let parentEntity = parentName != null ? this._entitiesByName[parentName] : null;
+
             this.currentEntity = new MIOEntityDescription();
-            this.currentEntity.initWithEntityName(name);
+            this.currentEntity.initWithEntityName(name, parentEntity);
         }
         else if (element == "attribute") {
 
