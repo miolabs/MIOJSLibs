@@ -108,6 +108,10 @@ export class MUITextField extends MUIControl
         this._inputLayer.setAttribute("placeholder", text);
     }
 
+    set placeholderText(text:string){
+        this.setPlaceholderText(text);
+    }
+
     setOnChangeText(target, action)
     {
         this.textChangeTarget = target;

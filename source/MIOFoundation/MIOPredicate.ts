@@ -65,9 +65,16 @@ export class MIOPredicateItem {
     value = null;
     valueType = MIOPredicateItemValueType.Undefined;
 
-    evaluateObject(object:MIOObject) {
+    evaluateObject(object) {
 
-        let lValue = object.valueForKeyPath(this.key);
+        let lValue = null;
+        if (object instanceof MIOObject) {
+            lValue = object.valueForKeyPath(this.key);
+        }
+        else {
+            lValue = object[this.key];
+        }
+        
         if (lValue instanceof Date) {
             let sdf = new MIOISO8601DateFormatter();
             sdf.init();

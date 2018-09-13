@@ -1,4 +1,4 @@
-import { MIOObject, MIOPredicate, _MIOPredicateFilterObjects } from "../MIOFoundation";
+import { MIOObject, MIOPredicate, _MIOPredicateFilterObjects, _MIOSortDescriptorSortObjects} from "../MIOFoundation";
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectID } from "./MIOManagedObjectID";
 import { MIOManagedObject } from "./MIOManagedObject";
@@ -90,7 +90,12 @@ export class MIOManagedObjectSet extends MIOObject {
     }    
 
     filterWithPredicate(predicate:MIOPredicate) {
-        var objs = _MIOPredicateFilterObjects(this.allObjects, predicate);
+        let objs = _MIOPredicateFilterObjects(this.allObjects, predicate);
+        return objs;
+    }
+
+    sortedArrayUsingDescriptors(sortDescriptors){
+        let objs = _MIOSortDescriptorSortObjects(this.allObjects, sortDescriptors);
         return objs;
     }
     

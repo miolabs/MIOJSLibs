@@ -104,6 +104,10 @@ export class MUIReportTableViewColumn extends MIOObject {
     _target = null;
     _onHeaderClickFn = null;
 
+    setColumnHeaderView(header){
+        this._colHeader = header;
+    }
+
     columnHeaderView() {
         if (this._colHeader != null)
             return this._colHeader;
@@ -175,9 +179,9 @@ export class MUIReportTableView extends MUIScrollView {
                     this._addCellPrototypeWithLayer(subLayer);
                     subLayer.style.display = "none";
                 }
-                // else if (subLayer.getAttribute("data-tableview-header") != null) {
-                //     this._addHeaderWithLayer(subLayer);
-                // }
+                else if (subLayer.getAttribute("data-tableview-header") != null) {
+                    this._addHeaderWithLayer(subLayer);
+                }
                 // else if (subLayer.getAttribute("data-tableview-footer") != null) {
                 //     this._addFooterWithLayer(subLayer);
                 // }
@@ -186,26 +190,65 @@ export class MUIReportTableView extends MUIScrollView {
     }
 
     private _addCellPrototypeWithLayer(subLayer) {
-        var cellIdentifier = subLayer.getAttribute("data-cell-identifier");
-        var cellClassname = subLayer.getAttribute("data-class");
-        var type = subLayer.getAttribute("data-report-cell-type");
+        let cellIdentifier = subLayer.getAttribute("data-cell-identifier");
+        let cellClassname = subLayer.getAttribute("data-class");
+        let type = subLayer.getAttribute("data-report-cell-type");
         if (cellClassname == null) cellClassname = "MUIReportTableViewCell";
         if (type == null) type = MUIReportTableViewCellType.Custom;
         else if (type.toLocaleLowerCase() == "label") type = MUIReportTableViewCellType.Label;
         else if (type.toLocaleLowerCase() == "combobox") type = MUIReportTableViewCellType.Combox;
 
-        var item = {};
+        let item = {};
         item["class"] = cellClassname;
         item["layer"] = subLayer;
         item["type"] = type;
-        var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        let size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
         if (size != null) item["size"] = size;
 
         this.cellPrototypes[cellIdentifier] = item;
     }
 
+    private columnHeaderPrototype = null;
+    private _addHeaderWithLayer(layer){        
+        let cellClassname = layer.getAttribute("data-class");        
+        if (cellClassname == null) cellClassname = "MUIView";        
+
+        let item = {};
+        item["class"] = cellClassname;
+        item["layer"] = layer;
+        
+        // var size = new MIOSize(layer.clientWidth, layer.clientHeight);
+        // if (size != null) item["size"] = size;
+
+        this.columnHeaderPrototype = item;
+        layer.style.display = "none";
+    }
+
     addColumn(column: MUIReportTableViewColumn) {
+
+        if (this.columnHeaderPrototype != null) {
+            let className = this.columnHeaderPrototype["class"];
+            let header = Object.create(window[className].prototype);
+            header.constructor.apply(header);
+    
+            //cell.init();
+            let layer = this.columnHeaderPrototype["layer"];
+            if (layer != null) {
+                let newLayer = layer.cloneNode(true);
+                newLayer.style.display = "";
+                header.initWithLayer(newLayer);
+                header.awakeFromHTML();
+            }
+            else {
+                header.init();
+            }    
+            header.title = column.title;
+            column.setColumnHeaderView(header);
+        }
+        
         this.columns.push(column);
+
+        return column;
     }
 
     removeAllColumns() {
@@ -221,15 +264,15 @@ export class MUIReportTableView extends MUIScrollView {
 
     dequeueReusableCellWithIdentifier(identifier: string) {
 
-        var item = this.cellPrototypes[identifier];
+        let item = this.cellPrototypes[identifier];
 
         //instance creation here
-        var className = item["class"];
-        var cell = Object.create(window[className].prototype);
+        let className = item["class"];
+        let cell = Object.create(window[className].prototype);
         cell.constructor.apply(cell);
 
         //cell.init();
-        var layer = item["layer"];
+        let layer = item["layer"];
         if (layer != null) {
             var newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
@@ -239,7 +282,7 @@ export class MUIReportTableView extends MUIScrollView {
             cell.awakeFromHTML();
         }
         else {
-            var cells = item["cells"];
+            let cells = item["cells"];
             if (cells == null) {
                 cells = [];
                 item["cells"] = cells;

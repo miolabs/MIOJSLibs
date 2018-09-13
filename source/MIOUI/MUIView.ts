@@ -214,6 +214,8 @@ export class MUIView extends MIOObject
     }
 
     removeFromSuperview(){
+        if (this.parent == null) return;
+
         let subviews = this.parent._subviews;
         var index = subviews.indexOf(this);
         subviews.splice(index, 1);
