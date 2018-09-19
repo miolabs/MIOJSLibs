@@ -1,33 +1,4 @@
 
-export enum MIOCoreLexerTokenType {
-    Identifier,
-    
-    UUIDValue,
-    StringValue,
-    NumberValue,
-    BooleanValue,    
-    NullValue,
-    PropertyValue,
-
-    MinorOrEqualComparator,
-    MinorComparator,
-    MajorOrEqualComparator,
-    MajorComparator,
-    EqualComparator,
-    DistinctComparator,
-    ContainsComparator,
-    NotContainsComparator,
-    InComparator,
-    NotIntComparator,
-    
-    OpenParenthesisSymbol,
-    CloseParenthesisSymbol,
-    Whitespace,
-
-    AND,
-    OR
-}
-
 export class MIOCoreLexer {
 
     private input:string = null;
@@ -46,12 +17,10 @@ export class MIOCoreLexer {
     }
 
     ignoreTokenType(type) {
-
         this.ignoreTokenTypes.push(type);
     }
 
     tokenize() {
-
         this.tokens = this._tokenize();
         this.tokenIndex = 0;
     }
@@ -69,7 +38,7 @@ export class MIOCoreLexer {
             foundToken = false;  
             for (i = 0; i < numTokenTypes; i++) {
                 let regex = this.tokenTypes[i].regex;
-                let type:MIOCoreLexerTokenType = this.tokenTypes[i].type;
+                let type = this.tokenTypes[i].type;
     
                 matches = regex.exec(this.input);
                 if (matches) {

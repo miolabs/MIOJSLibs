@@ -283,9 +283,9 @@ export class MIOPredicate extends MIOObject {
 
     private parsePredicates(){
 
-        var token = this.lexer.nextToken();
-        var predicates = [];
-        var exit = false;
+        let token = this.lexer.nextToken();
+        let predicates = [];
+        let exit = false;
 
         while (token != null && exit == false) {
             
