@@ -2,6 +2,7 @@ import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
 import { MIOObject, MIOFormatter, MIOIndexPath, MIOSize, MIORange } from "../MIOFoundation";
 import { MUILabel } from "./MUILabel";
 import { MUIScrollView } from "./MUIScrollView";
+import { MUITableView } from "./MUITableView";
 
 export enum MUIReportTableViewCellType {
     Custom,
@@ -305,6 +306,7 @@ export class MUIReportTableView extends MUIScrollView {
             let row = this.rows[index];
             row.removeFromSuperview();
         }
+        this.rows = [];
 
         this.contentHeight = 30;
         let rows = this.dataSource.numberOfRows(this);
@@ -339,10 +341,10 @@ export class MUIReportTableView extends MUIScrollView {
         //let posY = this.addHeader();
         let maxY = this.getHeight() + (this.defaultRowHeight * 2);
 
-        var x = 0;
-        var y = 0;
-        var w = this.getWidth();
-        var offsetX = 0;
+        let x = 0;
+        let y = 0;
+        let w = this.getWidth();
+        let offsetX = 0;
 
         for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
             let col: MUIReportTableViewColumn = this.columns[colIndex];            
@@ -395,9 +397,9 @@ export class MUIReportTableView extends MUIScrollView {
 
         if (this.rowsCount == 0) return;
 
-        var exit = false;
+        let exit = false;
 
-        var currentRow = 0;
+        let currentRow = 0;
         while (exit == false){
             
             if (currentRow == this.rowsCount) break;
@@ -406,7 +408,7 @@ export class MUIReportTableView extends MUIScrollView {
             let row = new MUIReportTableViewRow();
             row.init();
 
-            var offsetY = 0;
+            let offsetY = 0;
             for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
                 let col = this.columns[colIndex];
                 let indexPath = MIOIndexPath.indexForColumnInRowAndSection(colIndex, currentRow, 0);
@@ -559,15 +561,12 @@ export class MUIReportTableView extends MUIScrollView {
             
     }
 
-
-
     onHeaderClickFn(col:MUIReportTableViewColumn){
 
         if (this.delegate != null) {
             if (typeof this.delegate.sortDescriptorsDidChange === "function")
                 this.delegate.sortDescriptorsDidChange(this, col);
         }
-
     }
 
     cellOnClickFn(cell) {

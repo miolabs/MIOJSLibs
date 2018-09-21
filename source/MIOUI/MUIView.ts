@@ -75,7 +75,6 @@ export class MUIView extends MIOObject
     layerID = null;
     layer = null;
     layerOptions = null;    
-    hidden = false;
     alpha = 1;
     tag:number = 0;
 
@@ -299,8 +298,9 @@ export class MUIView extends MIOObject
         return MUILayerSearchElementByID(this.layer, itemID);
     }
 
-    setHidden(hidden){
-        this.hidden = hidden;
+    private _hidden:boolean = false;
+    setHidden(hidden:boolean){
+        this._hidden = hidden;
 
         if (this.layer == null)
             return;
@@ -309,7 +309,14 @@ export class MUIView extends MIOObject
             this.layer.style.display = "none";
         else
             this.layer.style.display = "";
+    }
 
+    get hidden():boolean{
+        return this._hidden;
+    }
+
+    set hidden(value:boolean){
+        this.setHidden(value);
     }
 
     setBackgroundColor(color){
