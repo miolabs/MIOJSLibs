@@ -77,6 +77,8 @@ export class MUITableViewCell extends MUIView {
             this.textLabel.layer.classList.add("tableviewcell_default_textlabel");
             this.addSubview(this.textLabel);
             this.layer.style.height = "44px";
+
+            MUICoreLayerAddStyle(this.layer, "cell");
         }
 
         this._setupLayer();
@@ -205,8 +207,7 @@ export class MUITableViewCell extends MUIView {
     }
 
     private _setupLayer() {
-        this.layer.style.position = "absolute";
-        MUICoreLayerAddStyle(this.layer, "cell");
+        //this.layer.style.position = "absolute";        
 
         let instance = this;
         this.layer.onclick = function (e) {
