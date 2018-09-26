@@ -93,9 +93,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         if (referenceID == null) throw new Error("MWSPersistentStore: Asking objectID without referenceID");
 
-        let node:MIOIncrementalStoreNode = this.nodesByReferenceID[referenceID];
-
-        let relationName = relationship.name;
+        let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;        
         
         if (relationship.isToMany == false) {
 
@@ -195,10 +193,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let entityName = fetchRequest.entity.name;
 
-        if (this.delegate == null) return;
+        if (this.delegate == null) return [];
 
         let request = this.delegate.fetchRequestForWebStore(this, fetchRequest, null);
-        if (request == null) return;
+        if (request == null) return [];
 
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
@@ -206,18 +204,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         request.execute(this, function (code, data) {
             let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
-            if (result == true) {
-                // Transform relationships into server keys
+            if (result == true) {                
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
-                // let array = [];
-                // for (let index = 0; index < relationships.length; index++) {
-                //     let relname = relationships[index];                    
-                //     let rel = fetchRequest.entity.relationshipsByName[relname];
-                //     if (rel != null)
-                //         array.push(rel);
-                // }
-
-                objects = this.updateObjectsInContext(items, fetchRequest.entity, context, fetchRequest.relationshipKeyPathsForPrefetching);
+                objects = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships);
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
 
@@ -225,6 +214,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 completion.call(target, objects);
             }
         });
+
+        return [];
     }
 
     private relationShipsNodes(relationships, nodes){
@@ -330,9 +321,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     }    
 
     private partialRelationshipObjects = {};
-    private checkRelationships(values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipNodes){                
-        
+    private checkRelationships(values, entity:MIOEntityDescription, context:MIOManagedObjectContext, relationshipNodes?){                                
+
         let parsedValues = values;
+        if (relationshipNodes == null) return parsedValues;
 
         for (let key in relationshipNodes){                                    
             let relEntity = entity.relationshipsByName[key];

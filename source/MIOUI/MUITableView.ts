@@ -31,6 +31,7 @@ export enum UITableViewRowAnimation
 export class MUITableViewSection extends MIOObject {
     header: MUIView = null;
     title: string = null;
+    footer: MUIView = null;
 
     rowCount = 0;
     cells = [];
@@ -369,19 +370,18 @@ export class MUITableView extends MUIScrollView {
 
                 lastRow = this.rows[this.rows.length - 1];
                 this.lastIndexPath = ip;
+
+                if (cellIndex == section.rowCount - 1) posY += this.addSectionFooter(section, posY, null);
+
                 if (posY >= maxY) {
                     exit = true;
                     break;
                 }
-            }
-
-            //posY += this.addSectionFooter(section, posY, this.rows.length - 1);
+            }            
         }
 
         // Add Footer
-        if (posY < maxY) {
-            posY += this.addFooter();
-        }
+        if (posY < maxY) posY += this.addFooter();        
 
         this.visibleRange = new MIORange(0, this.rows.length);
         
@@ -394,8 +394,8 @@ export class MUITableView extends MUIScrollView {
 
         if (this.rowsCount == 0) return;
 
-        var scrollDown = false;
-        var offsetY = 0;
+        let scrollDown = false;
+        let offsetY = 0;
         if (this.contentOffset.y == this.lastContentOffsetY) return;
         if (this.contentOffset.y > this.lastContentOffsetY) {
             offsetY = this.contentOffset.y - this.lastContentOffsetY;
@@ -454,14 +454,23 @@ export class MUITableView extends MUIScrollView {
 
                     this.lastIndexPath = ip;
 
+                    if (section.rowCount - 1 == cellIndex) {
+                        h = this.addSectionFooter(section, posY, this.rows[nextRow]);
+                        posY += h;
+                        if (h > 0) {
+                            nextRow++;
+                            start++;
+                        } 
+                    }
+
                     if (posY >= maxY) {
                         exit = true;
                         break;
                     }
+                    
                 }
                 startRowIndex = 0;
-
-                //posY += this.addSectionFooter(section, posY, this.rows.length - 1);
+                
             }
 
             // Add Footer
@@ -771,7 +780,35 @@ export class MUITableView extends MUIScrollView {
         return r.height;
     }
 
-    private addSectionFooter(section: MUITableViewSection, posY, rowIndex) {
+    private addSectionFooter(section: MUITableViewSection, posY, row:MUITableViewRow) {
+        
+        if (row != null && row.type != MUITableViewRowType.SectionFooter) return 0;
+        if (row != null && row.view != null) return row.height;
+
+        let sectionIndex = this.sections.indexOf(section);
+
+        if (typeof this.dataSource.viewForFooterInSection === "function") {
+            let view: MUIView = this.dataSource.viewForFooterInSection(this, sectionIndex);
+            if (view == null) return 0;
+
+            view.setX(0);
+            view.setY(posY);
+
+            section.footer = view;
+            this.addSubview(view);
+            if (row == null) {
+                row = this.addRowWithType(MUITableViewRowType.SectionFooter, section.footer);
+            }
+            row.view = view;
+
+            if (row.height == 0) {
+                row.height = view.getHeight();
+                this.contentHeight += row.height;
+            }
+
+            return row.height;
+        }
+
         return 0;
     }
 
