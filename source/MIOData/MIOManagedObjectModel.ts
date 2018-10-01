@@ -167,8 +167,8 @@ export class MIOManagedObjectModel extends MIOObject
 
     private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string){
 
-        var isToMany = false;
-        if (toMany.toLocaleLowerCase() == "yes" || toMany.toLocaleLowerCase() == "true"){
+        let isToMany = false;
+        if (toMany != null && (toMany.toLocaleLowerCase() == "yes" || toMany.toLocaleLowerCase() == "true")){
             isToMany = true;
         }
         this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity);

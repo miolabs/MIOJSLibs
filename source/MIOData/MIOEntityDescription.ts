@@ -90,10 +90,10 @@ export class MIOEntityDescription extends MIOObject {
         this.serverAttributes[name] = serverName ? serverName : name;
     }
 
-    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string, inverseName?:string, inverseEntity?:string) {
+    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string, inverseName?:string, inverseEntityName?:string) {
 
         let rel = new MIORelationshipDescription();
-        rel.initWithName(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
+        rel.initWithName(name, destinationEntityName, toMany, serverName, inverseName, inverseEntityName);
         this.relationships.push(rel);
         this.relationshipsByName[name] = rel;
         this._propertiesByName[name] = rel;

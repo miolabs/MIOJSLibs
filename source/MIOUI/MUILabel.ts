@@ -14,7 +14,7 @@ export class MUILabel extends MUIView
 
     init(){
         super.init();
-        MUICoreLayerAddStyle(this.layer, "lbl");
+        MUICoreLayerAddStyle(this.layer, "label");
         this.setupLayers();
     }
 

@@ -76,6 +76,12 @@ export class MUIReportTableViewRow extends MIOObject {
     }
 }
 
+export enum MUIReportTableViewColumnType {
+    String,
+    Number,
+    Date
+}
+
 export class MUIReportTableViewColumn extends MIOObject {
 
     static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifier?: string) {
@@ -99,6 +105,7 @@ export class MUIReportTableViewColumn extends MIOObject {
     alignment = "center";
     formatter:MIOFormatter = null;
     ascending = true;
+    type = MUIReportTableViewColumnType.String;
 
     private _colHeader: MUIView = null;
 

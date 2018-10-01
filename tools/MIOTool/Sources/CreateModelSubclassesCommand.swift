@@ -127,7 +127,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         switch type {
         case "Integer",
              "Float",
-             "Number":
+             "Number",
+             "Integer 16",
+             "Integer 8",
+             "Integer 32",
+             "Decimal":
             t += "number"
             
         case "String":

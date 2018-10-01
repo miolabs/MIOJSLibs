@@ -10,6 +10,7 @@ import { MUITableViewCell, MUITableViewCellSeparatorStyle, MUITableViewCellStyle
 import { MUILabel } from "./MUILabel";
 import { MUIAnimationType, MUIClassListForAnimationType } from "./MIOUI_CoreAnimation";
 import { MUICoreLayerRemoveStyle } from ".";
+import { MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 
 export enum MUIAlertViewStyle
 {
@@ -119,14 +120,13 @@ export class MUIAlertViewController extends MUIViewController
     private _style = MUIAlertViewStyle.Default;
 
     private _backgroundView:MUIView = null;
-    private _tableView:MUITableView = null;
+    private tableView:MUITableView = null;
 
     private _headerCell = null;
 
     private _alertViewSize = new MIOSize(320, 50);
 
-    initWithTitle(title:string, message:string, style:MUIAlertViewStyle)
-    {
+    initWithTitle(title:string, message:string, style:MUIAlertViewStyle){
         super.init();
 
         this.modalPresentationStyle = MUIModalPresentationStyle.FormSheet;
@@ -140,36 +140,32 @@ export class MUIAlertViewController extends MUIViewController
 
     viewDidLoad(){
         super.viewDidLoad();
-
-        MUICoreLayerRemoveStyle(this.view.layer, "page");
+        //MUICoreLayerRemoveStyle(this.view.layer, "page");
+        this.view.layer.style.background = "";
+        this.view.layer.style.backgroundColor = "";
+        //this.view.layer.classList.add("alert-container");
 
         this._backgroundView = new MUIView();
         this._backgroundView.init();
-        this._backgroundView.layer.style.background = "";
-        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari)
-            this._backgroundView.layer.classList.add("alertview_background_safari");
-        else 
-            this._backgroundView.layer.classList.add("alertview_background");            
+        MUICoreLayerAddStyle(this._backgroundView.layer, "alert-container");
         this.view.addSubview(this._backgroundView);
 
-        this._tableView = new MUITableView();
-        this._tableView.init();
-        this._tableView.dataSource = this;
-        this._tableView.delegate = this;
-        this._tableView.layer.style.background = "";
-        this._tableView.layer.style.position = "absolute";
-        this._tableView.layer.style.width = "100%";
-        this._tableView.layer.style.height = "100%";
+        this.tableView = new MUITableView();
+        this.tableView.init();
+        this.tableView.dataSource = this;
+        this.tableView.delegate = this;
+        this.tableView.layer.style.background = "";
+        this.tableView.layer.style.position = "";
+        this.tableView.layer.style.width = "";
+        this.tableView.layer.style.height = "";
+        MUICoreLayerAddStyle(this.tableView.layer, "alert-table");
 
-        this.view.addSubview(this._tableView);
-
-        this.view.layer.style.background = "";
-        this.view.layer.classList.add("alertview_window");
+        this._backgroundView.addSubview(this.tableView);
     }
 
     viewDidAppear(animated?) {
         super.viewDidAppear(animated);        
-        this._tableView.reloadData();
+        this.tableView.reloadData();
     }
 
     viewWillDisappear(animated?){
@@ -180,19 +176,16 @@ export class MUIAlertViewController extends MUIViewController
         }
     }
 
-    get preferredContentSize()
-    {
+    get preferredContentSize(){
         return this._alertViewSize;
     }
 
-    private _addItem(item:MUIAlertItem)
-    {
+    private _addItem(item:MUIAlertItem){
         this._items.push(item);
         this._calculateContentSize();
     }
 
-    addAction(action:MUIAlertAction)
-    {
+    addAction(action:MUIAlertAction){
         this._addItem(action);
     }
 
@@ -218,14 +211,12 @@ export class MUIAlertViewController extends MUIViewController
         this.completion = handler;
     }
 
-    private _calculateContentSize()
-    {
-        var h = 80 + (this._items.length * 50) + 1;
+    private _calculateContentSize(){
+        let h = 80 + (this._items.length * 50) + 1;
         this._alertViewSize = new MIOSize(320, h);
     }
 
-    numberOfSections(tableview)
-    {
+    numberOfSections(tableview){
         return 1;
     }
 
@@ -234,16 +225,13 @@ export class MUIAlertViewController extends MUIViewController
         return this._items.length + 1;
     }
 
-    cellAtIndexPath(tableview, indexPath:MIOIndexPath)
-    {
-        var cell:MUITableViewCell = null;
-        if (indexPath.row == 0)
-        {
+    cellAtIndexPath(tableview, indexPath:MIOIndexPath){
+        let cell:MUITableViewCell = null;
+        if (indexPath.row == 0){
             cell = this._createHeaderCell();
         }
-        else
-        {
-            var item = this._items[indexPath.row - 1];
+        else{
+            let item = this._items[indexPath.row - 1];
             if (item.type == MUIAlertItemType.Action) {
                 cell = this._createActionCellWithTitle(item.title, item.style);
             }
@@ -290,12 +278,12 @@ export class MUIAlertViewController extends MUIViewController
 
     // Private methods
 
-    private _createHeaderCell():MUITableViewCell
-    {
-        var cell = new MUITableViewCell();
+    private _createHeaderCell():MUITableViewCell{
+        let cell = new MUITableViewCell();
         cell.initWithStyle(MUITableViewCellStyle.Custom);
+        MUICoreLayerAddStyle(cell.layer, "alert-header");
 
-        var titleLabel = new MUILabel();
+        let titleLabel = new MUILabel();
         titleLabel.init();
         titleLabel.text = this._title;
         titleLabel.layer.style.left = "";
@@ -304,10 +292,11 @@ export class MUIAlertViewController extends MUIViewController
         titleLabel.layer.style.height = "";
         titleLabel.layer.style.width = ""; 
         titleLabel.layer.style.background = "";
-        titleLabel.layer.classList.add("alertview_title");
+        MUICoreLayerAddStyle(titleLabel.layer, "large");
+        MUICoreLayerAddStyle(titleLabel.layer, "strong");        
         cell.addSubview(titleLabel);
 
-        var messageLabel = new MUILabel();
+        let messageLabel = new MUILabel();
         messageLabel.init();
         messageLabel.text = this._message;
         messageLabel.layer.style.left = "";
@@ -316,22 +305,22 @@ export class MUIAlertViewController extends MUIViewController
         messageLabel.layer.style.height = "";
         messageLabel.layer.style.width = "";
         messageLabel.layer.style.background = "";
-        messageLabel.layer.classList.add("alertview_subtitle");
+        MUICoreLayerAddStyle(messageLabel.layer, "light");        
         cell.addSubview(messageLabel);          
         
-        cell.layer.style.background = "transparent";
+        //cell.layer.style.background = "transparent";
 
         return cell;
     }
 
-    private _createActionCellWithTitle(title:string, style:MUIAlertActionStyle):MUITableViewCell
-    {
+    private _createActionCellWithTitle(title:string, style:MUIAlertActionStyle):MUITableViewCell{
         let cell = new MUITableViewCell();
         cell.initWithStyle(MUITableViewCellStyle.Custom);
+        MUICoreLayerAddStyle(cell.layer, "alert-cell");
 
         let buttonLabel = new MUILabel();
         buttonLabel.init();
-        MUICoreLayerRemoveStyle(buttonLabel.layer, "lbl");
+        //MUICoreLayerRemoveStyle(buttonLabel.layer, "label");
         buttonLabel.text = title;
         buttonLabel.layer.style.left = "";
         buttonLabel.layer.style.top = "";
@@ -341,33 +330,31 @@ export class MUIAlertViewController extends MUIViewController
         buttonLabel.layer.style.background = "";        
         cell.addSubview(buttonLabel);  
 
-        cell.layer.style.background = "transparent";        
+        //cell.layer.style.background = "transparent";
+        MUICoreLayerAddStyle(buttonLabel.layer, "btn");                
+        //MUICoreLayerAddStyle(buttonLabel.layer, "label");                
 
         switch(style){
 
-            case MUIAlertActionStyle.Default:
-                cell.layer.classList.add("alertview_default_action");
-                buttonLabel.layer.classList.add("alertview_default_action_title");                
+            case MUIAlertActionStyle.Default:                                
                 break;
 
-            case MUIAlertActionStyle.Cancel:
-                cell.layer.classList.add("alertview_cancel_action");            
-                buttonLabel.layer.classList.add("alertview_cancel_action_title");                
+            case MUIAlertActionStyle.Cancel:                
+                buttonLabel.layer.classList.add("alert");                
                 break;
 
-            case MUIAlertActionStyle.Destructive:
-                cell.layer.classList.add("alertview_destructive_action");            
-                buttonLabel.layer.classList.add("alertview_destructive_action_title");                
+            case MUIAlertActionStyle.Destructive:                
+                buttonLabel.layer.classList.add("alert");                
                 break;
         }
 
         return cell;        
     }
 
-    private _createTextFieldCell(textField:MUITextField):MUITableViewCell
-    {
+    private _createTextFieldCell(textField:MUITextField):MUITableViewCell{
         var cell = new MUITableViewCell();
-        cell.initWithStyle(MUITableViewCellStyle.Custom);        
+        cell.initWithStyle(MUITableViewCellStyle.Custom);    
+        MUICoreLayerAddStyle(cell.layer, "alert-cell");    
 
         textField.layer.style.left = "";
         textField.layer.style.top = "";
@@ -375,26 +362,25 @@ export class MUIAlertViewController extends MUIViewController
         textField.layer.style.height = "";
         textField.layer.style.width = "";
         textField.layer.style.background = "";
-        textField.layer.classList.add("alertview_cell_textfield");
+        MUICoreLayerAddStyle(textField.layer, "input-text");
 
         cell.addSubview(textField);
 
         return cell;
     }
 
-    private _createComboBoxCell(comboBox:MUIComboBox):MUITableViewCell
-    {
-        var cell = new MUITableViewCell();
-        cell.initWithStyle(MUITableViewCellStyle.Custom);        
+    private _createComboBoxCell(comboBox:MUIComboBox):MUITableViewCell{
+        let cell = new MUITableViewCell();
+        cell.initWithStyle(MUITableViewCellStyle.Custom);   
+        MUICoreLayerAddStyle(cell.layer, "alert-cell");         
 
         // comboBox.layer.style.left = "";
         // comboBox.layer.style.top = "";
         // comboBox.layer.style.right = "";
         // comboBox.layer.style.height = "";
         // comboBox.layer.style.width = "";
-        comboBox.layer.style.background = "";
-        comboBox.layer.classList.add("alertview_cell_combobox");
-
+        //comboBox.layer.style.background = "";
+        MUICoreLayerAddStyle(comboBox.layer, "input-combobox");
         cell.addSubview(comboBox);
 
         return cell;
@@ -404,10 +390,8 @@ export class MUIAlertViewController extends MUIViewController
     private _fadeInAnimationController = null;
     private _fadeOutAnimationController = null;
 
-    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
-    {
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController){
         if (this._fadeInAnimationController == null) {
-
             this._fadeInAnimationController = new MUIAlertFadeInAnimationController();
             this._fadeInAnimationController.init();
         }
@@ -415,8 +399,7 @@ export class MUIAlertViewController extends MUIViewController
         return this._fadeInAnimationController;
     }
 
-    animationControllerForDismissedController(dismissedController)
-    {
+    animationControllerForDismissedController(dismissedController){
         if (this._fadeOutAnimationController == null) {
 
             this._fadeOutAnimationController = new MUIAlertFadeOutAnimationController();
@@ -427,26 +410,22 @@ export class MUIAlertViewController extends MUIViewController
     }
 }
 
-export class MUIAlertFadeInAnimationController extends MIOObject
-{
-    transitionDuration(transitionContext)
-    {
+export class MUIAlertFadeInAnimationController extends MIOObject{
+    
+    transitionDuration(transitionContext){
         return 0.25;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations before transitions       
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations after transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         var animations = MUIClassListForAnimationType(MUIAnimationType.FadeIn);
         return animations;
     }
@@ -455,24 +434,20 @@ export class MUIAlertFadeInAnimationController extends MIOObject
 
 export class MUIAlertFadeOutAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0.25;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations before transitions       
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations after transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         var animations = MUIClassListForAnimationType(MUIAnimationType.FadeOut);
         return animations;
     }
