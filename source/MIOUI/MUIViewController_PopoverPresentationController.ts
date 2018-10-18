@@ -2,6 +2,7 @@ import { MUIPresentationController } from "./MUIViewController_PresentationContr
 import { MIOObject, MIORect } from "../MIOFoundation";
 import { MUIView } from "./MUIView";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
+import { MUICoreLayerAddStyle } from ".";
 
 /**
  * Created by godshadow on 11/11/2016.
@@ -14,6 +15,11 @@ export enum MUIPopoverArrowDirection
     Down,
     Left,
     Right
+}
+
+export interface MUIPopoverPresentationControllerDelegate 
+{
+    popoverPresentationControllerDidDismissPopover?(popoverPresentationController:MUIPopoverPresentationController);
 }
 
 export class MUIPopoverPresentationController extends MUIPresentationController
@@ -29,10 +35,8 @@ export class MUIPopoverPresentationController extends MUIPresentationController
     private _canvasLayer = null;
     private _contentView = null;
 
-    get transitioningDelegate()
-    {
-        if (this._transitioningDelegate == null)
-        {
+    get transitioningDelegate(){
+        if (this._transitioningDelegate == null){
             this._transitioningDelegate = new MIOModalPopOverTransitioningDelegate();
             this._transitioningDelegate.init();
         }
@@ -40,18 +44,23 @@ export class MUIPopoverPresentationController extends MUIPresentationController
         return this._transitioningDelegate;
     }
 
-    presentationTransitionWillBegin()
-    {
-        var vc = this.presentedViewController;
-        var view:MUIView = this.presentedView;
+    presentationTransitionWillBegin(){
+        let vc = this.presentedViewController;
+        let view:MUIView = this.presentedView;
         
         this._calculateFrame();
 
-        this.presentedView.layer.classList.add("popover_window");
+        MUICoreLayerAddStyle(this.presentedView.layer, "popover_window");        
     }
 
-    _calculateFrame()
-    {
+    dismissalTransitionDidEnd(completed){     
+        if (completed == false) return;   
+        if (this.delegate != null && (typeof this.delegate.popoverPresentationControllerDidDismissPopover === "function")){
+            this.delegate.popoverPresentationControllerDidDismissPopover(this);
+        } 
+    }
+
+    _calculateFrame(){
         var vc = this.presentedViewController;
         var view:MUIView = this.presentedView;
 
@@ -122,8 +131,7 @@ export class MIOModalPopOverTransitioningDelegate extends MIOObject
     private _showAnimationController = null;
     private _dissmissAnimationController = null;
 
-    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
-    {
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController){
         if (this._showAnimationController == null) {
 
             this._showAnimationController = new MIOPopOverPresentAnimationController();
@@ -133,8 +141,7 @@ export class MIOModalPopOverTransitioningDelegate extends MIOObject
         return this._showAnimationController;
     }
 
-    animationControllerForDismissedController(dismissedController)
-    {
+    animationControllerForDismissedController(dismissedController){
         if (this._dissmissAnimationController == null) {
 
             this._dissmissAnimationController = new MIOPopOverDismissAnimationController();
@@ -163,8 +170,7 @@ export class MIOPopOverPresentAnimationController extends MIOObject
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         var animations = MUIClassListForAnimationType(MUIAnimationType.FadeIn);
         return animations;
     }
@@ -173,24 +179,20 @@ export class MIOPopOverPresentAnimationController extends MIOObject
 
 export class MIOPopOverDismissAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0.25;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations after transitions
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations before transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         var animations = MUIClassListForAnimationType(MUIAnimationType.FadeOut);
         return animations;
     }

@@ -250,22 +250,19 @@ export class MUIViewController extends MIOObject
     //     //this.didMoveToParentViewController(null);
     // }
 
-    get isPresented()
-    {
+    get isPresented(){
         if (this._presentationController != null)
-            return this._presentationController.isPresented;
+            return this._presentationController._isPresented;
     }
 
-    get presentationController()
-    {
+    get presentationController(){
         if (this._presentationController == null && this.parentViewController != null)
             return this.parentViewController.presentationController;
 
         return this._presentationController;
     }   
 
-    get popoverPresentationController()
-    {
+    get popoverPresentationController(){
         if (this._popoverPresentationController == null)
         {
             this._popoverPresentationController = new MUIPopoverPresentationController();
@@ -278,8 +275,7 @@ export class MUIViewController extends MIOObject
         return this._popoverPresentationController;
     }
 
-    showViewController(vc, animate)
-    {
+    showViewController(vc, animate){
         vc.onLoadView(this, function () {
 
             this.view.addSubview(vc.view);
@@ -299,7 +295,7 @@ export class MUIViewController extends MIOObject
             pc.presentingViewController = this;
             vc._presentationController = pc;
         }
-        else if (pc.isPresented == true)
+        else if (pc._isPresented == true)
         {
             throw new Error("You try to present a view controller that is already presented"); 
         }

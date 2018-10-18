@@ -42,7 +42,15 @@ export class MIOIndexPath extends MIOObject
         return this.indexes[1];
     }
 
+    get item(){
+        return this.indexes[1];
+    }
+
     get column(){
         return this.indexes[2];
+    }
+
+    isEqualToIndexPath(indexPath:MIOIndexPath){
+        return MIOIndexPathEqual(this, indexPath);
     }
 }

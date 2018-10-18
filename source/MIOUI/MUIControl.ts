@@ -6,17 +6,18 @@ import { MUIView } from "./MUIView";
 
 export class MUIControl extends MUIView
 {
-    enabled = true;
-
     // TODO: Make delegation of the methods above
     mouseOverTarget = null;
     mouseOverAction = null;
     mouseOutTarget = null;
     mouseOutAction = null;
 
-    setEnabled(enabled)
-    {
-        this.enabled = enabled;
+    private _enabled = true;
+    get enabled(){return this._enabled;}
+    set enabled(value:boolean){this.setEnabled(value);}
+
+    setEnabled(enabled:boolean){
+        this._enabled = enabled;
 
         if (enabled == true)
             this.layer.style.opacity = "1.0";

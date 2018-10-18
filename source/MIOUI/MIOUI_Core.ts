@@ -137,8 +137,10 @@ export function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completi
             fromVC.viewDidDisappear();
             //fromVC._childControllersDidDisappear();
         }
-        if (pc != null)
+        if (pc != null) {
             pc.presentationTransitionDidEnd(true);
+            pc._isPresented = true;
+        }
 
         if (target != null && completion != null)
             completion.call(target);
@@ -211,8 +213,10 @@ export function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completi
         fromVC.viewDidDisappear();
         //fromVC._childControllersDidDisappear();
 
-        if (pc != null)
+        if (pc != null){
             pc.dismissalTransitionDidEnd(true);
+            pc._isPresented = false;
+        }
 
         if (target != null && completion != null)
             completion.call(target);
@@ -229,7 +233,7 @@ export function _MUITransitionFromViewControllerToViewController(fromVC, toVC, s
     
     //toVC.view.layout();
 
-    var ac = null;
+    let ac = null;
     if (toVC.transitioningDelegate != null)
     {
         ac = toVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
@@ -239,12 +243,12 @@ export function _MUITransitionFromViewControllerToViewController(fromVC, toVC, s
         ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
 
-    var animationContext = {};
+    let animationContext = {};
     animationContext["presentingViewController"] = fromVC;
     animationContext["presentedViewController"] = toVC;
     animationContext["presentedView"] = toVC;
 
-    var layer = toVC.view.layer;
+    let layer = toVC.view.layer;
 
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
 

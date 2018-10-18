@@ -4,6 +4,7 @@ import { MIOCoreIsPhone, MIOCoreIsMobile } from "../MIOCore/platform";
 import { MUIWindowSize } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
+import { MUICoreLayerAddStyle } from ".";
 
 /**
  * Created by godshadow on 06/12/2016.
@@ -41,36 +42,30 @@ export class MUIPresentationController extends MIOObject
     protected _transitioningDelegate = null;
     private _window = null;
 
-    isPresented:boolean = false;
+    _isPresented:boolean = false;
 
-    initWithPresentedViewControllerAndPresentingViewController(presentedViewController, presentingViewController)
-    {
+    initWithPresentedViewControllerAndPresentingViewController(presentedViewController, presentingViewController){
         super.init();
 
         this.presentedViewController = presentedViewController;
         this.presentingViewController = presentingViewController;        
     }
 
-    setPresentedViewController(vc:MUIViewController)
-    {
+    setPresentedViewController(vc:MUIViewController){
         this._presentedViewController = vc;
         this.presentedView = vc.view;
     }
 
-    set presentedViewController(vc:MUIViewController)
-    {
+    set presentedViewController(vc:MUIViewController){
         this.setPresentedViewController(vc);
     }
 
-    get presentedViewController():MUIViewController
-    {
+    get presentedViewController():MUIViewController{
         return this._presentedViewController;
     }
 
-    get transitioningDelegate()
-    {
-        if (this._transitioningDelegate == null)
-        {
+    get transitioningDelegate(){
+        if (this._transitioningDelegate == null){
             this._transitioningDelegate = new MIOModalTransitioningDelegate();
             this._transitioningDelegate.init();
         }
@@ -78,27 +73,32 @@ export class MUIPresentationController extends MIOObject
         return this._transitioningDelegate;
     }
 
-    presentationTransitionWillBegin()
-    {
-        var toVC = this.presentedViewController;
-        var view = this.presentedView;
+    presentationTransitionWillBegin(){
+        let toVC = this.presentedViewController;
+        let view = this.presentedView;
 
         this._calculateFrame();
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet || MIOCoreIsPhone() == true)
-        {
-            view.layer.classList.add("modal_window");
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet || MIOCoreIsPhone() == true){
+            MUICoreLayerAddStyle(view.layer, "modal_window");
         }       
     }
 
-    _calculateFrame()
-    {
-        var fromVC = this.presentingViewController;
-        var toVC = this.presentedViewController;
-        var view = this.presentedView;
+    presentationTransitionDidEnd(completed){        
+    }
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsPhone() == true)
-        {
+    dismissalTransitionWillBegin(){
+    }
+
+    dismissalTransitionDidEnd(completed){        
+    }
+
+    _calculateFrame(){
+        let fromVC = this.presentingViewController;
+        let toVC = this.presentedViewController;
+        let view = this.presentedView;
+
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsPhone() == true){
             //let ws = MUIWindowSize();
             //view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
             view.layer.style.left = "0px";
@@ -128,7 +128,7 @@ export class MUIPresentationController extends MIOObject
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
             this.window.setFrame(MIORect.rectWithValues(x, 0, w, h))
 
-            view.layer.classList.add("modal_background");
+            view.layer.classList.add("modal");
         }
         else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
         {
@@ -146,7 +146,7 @@ export class MUIPresentationController extends MIOObject
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
             this.window.setFrame(MIORect.rectWithValues(x, y, w, h))
 
-            view.layer.classList.add("modal_background");
+            view.layer.classList.add("modal");
         }
         else
         {
@@ -157,34 +157,16 @@ export class MUIPresentationController extends MIOObject
         }        
     }
 
-    presentationTransitionDidEnd(completed)
-    {
-        this.isPresented = true;
-    }
-
-    dismissalTransitionWillBegin()
-    {
-
-    }
-
-    dismissalTransitionDidEnd(completed)
-    {
-        this.isPresented = false;
-    }
-
-    get window()
-    {
+    get window(){
         return this._window;
     }
     
-    set window(window:MUIWindow)
-    {
-        var vc = this.presentedViewController;
+    set window(window:MUIWindow){
+        let vc = this.presentedViewController;
         this._window = window;
         
         // Track view frame changes
-        if (MIOCoreIsMobile() == false && vc.modalPresentationStyle != MUIModalPresentationStyle.CurrentContext)
-        {
+        if (MIOCoreIsMobile() == false && vc.modalPresentationStyle != MUIModalPresentationStyle.CurrentContext){
             vc.addObserver(this, "preferredContentSize");
         }
     }
@@ -193,7 +175,7 @@ export class MUIPresentationController extends MIOObject
 
         if (key == "preferredContentSize" && type == "did")
         {
-            var vc = this.presentedView;
+            let vc = this.presentedView;
             //this.window.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
             vc.layer.style.transition = "left 0.25s, width 0.25s, height 0.25s";
             this._calculateFrame();            
@@ -209,10 +191,8 @@ export class MIOModalTransitioningDelegate extends MIOObject
     private _presentAnimationController = null;
     private _dissmissAnimationController = null;
 
-    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
-    {
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController){
         if (this._presentAnimationController == null) {
-
             this._presentAnimationController = new MIOModalPresentAnimationController();
             this._presentAnimationController.init();
         }
@@ -220,8 +200,7 @@ export class MIOModalTransitioningDelegate extends MIOObject
         return this._presentAnimationController
     }
 
-    animationControllerForDismissedController(dismissedController)
-    {
+    animationControllerForDismissedController(dismissedController){
         if (this._dissmissAnimationController == null) {
 
             this._dissmissAnimationController = new MIOModalDismissAnimationController();
@@ -234,24 +213,20 @@ export class MIOModalTransitioningDelegate extends MIOObject
 
 export class MIOAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations before transitions        
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations after transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         return null;
     }
 
@@ -259,27 +234,23 @@ export class MIOAnimationController extends MIOObject
 
 export class MIOModalPresentAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0.15;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations before transitions
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations after transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
-        var animations = null;
+    animations(transitionContext){
+        let animations = null;
 
-        var toVC = transitionContext.presentedViewController;
+        let toVC = transitionContext.presentedViewController;
 
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
             || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
@@ -296,31 +267,27 @@ export class MIOModalPresentAnimationController extends MIOObject
 
 export class MIOModalDismissAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0.15;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations after transitions
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations before transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
     animations(transitionContext)
     {
-        var animations = null;
+        let animations = null;
 
-        var fromVC = transitionContext.presentingViewController;
+        let fromVC = transitionContext.presentingViewController;
 
         if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
-            || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
-        {
+            || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet){
             if (MIOCoreIsPhone() == true)                        
                 animations = MUIClassListForAnimationType(MUIAnimationType.SlideOutDown);
             else 

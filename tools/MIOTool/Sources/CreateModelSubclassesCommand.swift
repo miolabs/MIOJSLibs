@@ -131,6 +131,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
              "Integer 16",
              "Integer 8",
              "Integer 32",
+             "Integer 64",
              "Decimal":
             t += "number"
             

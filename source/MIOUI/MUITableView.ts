@@ -5,6 +5,7 @@ import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCe
 import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCore/platform";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
+import { MUIReportTableViewCell } from "./MUIReportTableView";
 
 /**
  * Created by godshadow on 22/3/16.
@@ -103,7 +104,7 @@ export class MUITableView extends MUIScrollView {
     private defaultRowHeight = 44;
 
     allowsMultipleSelection = false;
-
+    
     private selectedIndexPath: MIOIndexPath = null;
 
     private _indexPathsForSelectedRows = [];
@@ -129,6 +130,8 @@ export class MUITableView extends MUIScrollView {
     private lastContentOffsetY = -this.defaultRowHeight;
 
     private firstVisibleHeader:MUIView = null;
+    private reloadingData = false;
+    private selectedCellWhileReloadingData:MUITableViewCell = null;
 
     initWithLayer(layer, owner, options?) {
         super.initWithLayer(layer, owner, options);
@@ -223,6 +226,7 @@ export class MUITableView extends MUIScrollView {
             if (array.length > 0) {
                 cell = array[0];
                 array.splice(0, 1);
+                cell.addObserver(this, "selected");
                 return cell;
             }
         }
@@ -235,34 +239,23 @@ export class MUITableView extends MUIScrollView {
         cell.nodeID = MIOUUID.UUID().UUIDString;
         cell.reuseIdentifier = identifier;
 
-        //cell.init();
         let layer = item["layer"];
         if (layer != null) {
             let newLayer = layer.cloneNode(true);
-            newLayer.style.display = "";
-            //newLayer.setAttribute("id", MUICoreLayerIDFromClassname(className));
-            let size = item["size"];
-            // if (size != null) {
-            //     cell.setWidth(size.width);
-            //     cell.setHeight(size.height);
-            // }
-            // var bg = item["bg"];
-            // if (bg != null) {
-            //     cell.layer.style.background = bg;
-            // }
+            newLayer.style.display = "";            
             cell.initWithLayer(newLayer, this);
-            //cell._addLayerToDOM();
             cell.awakeFromHTML();
         }
-        else {
-            let cells = item["cells"];
-            if (cells == null) {
-                cells = [];
-                item["cells"] = cells;
-            }
-            cells.push(cell);
-        }
+        // else {
+        //     let cells = item["cells"];
+        //     if (cells == null) {
+        //         cells = [];
+        //         item["cells"] = cells;
+        //     }
+        //     cells.push(cell);
+        // }        
 
+        cell.addObserver(this, "selected");
         return cell;
     }
 
@@ -273,6 +266,7 @@ export class MUITableView extends MUIScrollView {
 
     reloadData() {
 
+        this.reloadingData = true;
         // Remove all subviews
         for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
@@ -331,6 +325,13 @@ export class MUITableView extends MUIScrollView {
         this.reloadLayoutSubviews = true;
 
         if (this.rowsCount > 0) this.setNeedsDisplay();
+
+        this.reloadingData = false;
+        if (this.selectedCellWhileReloadingData != null) {
+            let ip = this.indexPathForCell(this.selectedCellWhileReloadingData);
+            this.selectedIndexPath = ip;
+            this.selectedCellWhileReloadingData = null;
+        }
     }
 
     private reloadLayoutSubviews = false;
@@ -493,13 +494,13 @@ export class MUITableView extends MUIScrollView {
 
         if (ip.row == -1) return;
 
-        var section = this.sections[ip.section];
+        let section = this.sections[ip.section];
         section.cells[ip.row] = null;
 
-        cell.selected = false;
+        //cell.selected = false;
         cell.removeObserver(this, "selected");        
 
-        var array = this.reusableCellsByID[cell.reuseIdentifier];
+        let array = this.reusableCellsByID[cell.reuseIdentifier];
         if (array == null) {
             array = [];
             this.reusableCellsByID[cell.reuseIdentifier] = array;
@@ -719,13 +720,12 @@ export class MUITableView extends MUIScrollView {
         cell.setX(0);
         cell.setY(posY);
         // TODO: Here we don't have to use the css. Encapsulate that in a Core Layer funciton
-        cell.layer.style.width = "100%";
+        //cell.layer.style.width = "100%";
 
         if (this.delegate != null && typeof this.delegate.willDisplayCellAtIndexPath === "function") {
             this.delegate.willDisplayCellAtIndexPath(this, cell, indexPath);
         }
-
-        cell.addObserver(this, "selected");
+        
         if (prevRow == null) {
             this.addSubview(cell);
         }
@@ -816,16 +816,6 @@ export class MUITableView extends MUIScrollView {
         return 0;
     }
 
-    observeValueForKeyPath(keyPath:string, type:string, object, ctx) {
-        if (type != "did") return;
-        if (keyPath == "selected") {
-            let cell = object as MUITableViewCell;
-            if (cell.selected == false) return;
-            let indexPath = this.indexPathForCell(object);
-            if (this.selectedIndexPath !== indexPath) this.selectedIndexPath = indexPath;            
-        }
-    }
-
     cellOnClickFn(cell: MUITableViewCell) {
 
         let indexPath: MIOIndexPath = this.indexPathForCell(cell);
@@ -840,26 +830,21 @@ export class MUITableView extends MUIScrollView {
         if (canSelectCell == false)
             return;
 
-        if (MIOIndexPathEqual(this.selectedIndexPath, indexPath) == false) {
-
-            if (this.allowsMultipleSelection == false) {
-                if (this.selectedIndexPath != null)
-                    this.deselectCellAtIndexPath(this.selectedIndexPath);
-            }
-
-            this.selectedIndexPath = indexPath;
-            this._selectCell(cell);
-
+        if (this.allowsMultipleSelection == false) {
+            cell.selected = true;
             if (this.delegate != null && typeof this.delegate.didSelectCellAtIndexPath === "function") {
                 this.delegate.didSelectCellAtIndexPath(this, indexPath);
             }                
+        }
+        else {
+            //TODO:
         }
 
     }
 
     cellOnDblClickFn(cell) {
 
-        let indexPath: MIOIndexPath = this.indexPathForCell(cell);
+/*        let indexPath: MIOIndexPath = this.indexPathForCell(cell);
 
         let canSelectCell = true;
 
@@ -876,7 +861,7 @@ export class MUITableView extends MUIScrollView {
                 this.delegate.didMakeDoubleClick(this, indexPath);
         }
 
-        if (MIOIndexPathEqual(this.selectedIndexPath, indexPath) == false) {
+        if (this.selectedIndexPath.isEqualToIndexPath(indexPath) == false) {
 
             if (this.allowsMultipleSelection == false) {
                 if (this.selectedIndexPath != null)
@@ -884,14 +869,13 @@ export class MUITableView extends MUIScrollView {
             }
 
             this.selectedIndexPath = indexPath;
-
-            this._selectCell(cell);
+            cell.selected = true;            
         }
 
         if (this.delegate != null) {
             if (typeof this.delegate.didSelectCellAtIndexPath === "function")
                 this.delegate.didSelectCellAtIndexPath(this, indexPath);
-        }
+        }*/
     }
 
     cellOnAccessoryClickFn(cell) {
@@ -928,35 +912,46 @@ export class MUITableView extends MUIScrollView {
         return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
     }
 
-    _selectCell(cell) {
-        cell.setSelected(true);
-    }
-
     selectCellAtIndexPath(indexPath: MIOIndexPath) {
 
-        if (MIOIndexPathEqual(this.selectedIndexPath, indexPath) == true) return;
+        if (this.selectedIndexPath.isEqualToIndexPath(indexPath) == true) return;
 
         //if (this.selectedIndexPath != null) this.deselectCellAtIndexPath(this.selectedIndexPath);
+        //this.selectedIndexPath = indexPath;
 
-        this.selectedIndexPath = indexPath;
-        var cell = this.sections[indexPath.section].cells[indexPath.row];
-        if (cell != null) {
-            this._selectCell(cell);
-        }
-    }
-
-    _deselectCell(cell) {
-        cell.setSelected(false);
+        let cell = this.sections[indexPath.section].cells[indexPath.row];
+        if (cell != null) cell.selected = true;
     }
 
     deselectCellAtIndexPath(indexPath: MIOIndexPath) {
 
-        if (MIOIndexPathEqual(this.selectedIndexPath, indexPath) == false) return;
+        if (this.selectedIndexPath.isEqualToIndexPath(indexPath) == false) return;
 
-        this.selectedIndexPath = null;
-        var cell = this.sections[indexPath.section].cells[indexPath.row];
-        this._deselectCell(cell);
+        //this.selectedIndexPath = null;
+        let cell = this.sections[indexPath.section].cells[indexPath.row];
+        if (cell != null) cell.selected = false;
     }
+
+    observeValueForKeyPath(keyPath:string, type:string, object, ctx) {
+        if (type != "did") return;
+        if (keyPath == "selected") {
+            let cell = object as MUITableViewCell;
+            let indexPath = this.indexPathForCell(object);
+            if (cell.selected == false && this.selectedIndexPath != null && this.selectedIndexPath.isEqualToIndexPath(indexPath) == true) {                
+                this.selectedIndexPath = null;
+            }
+            else if (cell.selected == true){
+                //TODO: Support multiple selection
+                if (this.selectedIndexPath != null && this.selectedIndexPath.isEqualToIndexPath(indexPath) == false){
+                    let oldCell = this.cellAtIndexPath(this.selectedIndexPath);
+                    if (oldCell != null) oldCell.selected = false;
+                }
+                if (this.reloadingData == true) this.selectedCellWhileReloadingData = cell;
+                this.selectedIndexPath = indexPath;
+            }                                            
+        }
+    }
+
 
     insertRowsAtIndexPaths(indexPaths, animation:UITableViewRowAnimation){
                
