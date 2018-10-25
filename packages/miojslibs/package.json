@@ -1,6 +1,6 @@
 {
   "name": "miojslibs",
-  "version": "0.9.88",
+  "version": "0.9.89",
   "description": "These libraries are designed to develop a web application in the same way you'd develop a native iOS/macOS application.",
   "main": "dist/js/miojslibs.js",
   "types": "dist/typings/miojslibs/index.d.ts",
