@@ -14,6 +14,7 @@ import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
 import { MWSRequestType } from "./MWSRequest";
 
 export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
+export let MWSPersistentStoreDidUpdateEntity = "MWSPersistentStoreDidUpdateEntity";
 
 export enum MWSPersistentStoreFetchStatus{
     None,
@@ -477,10 +478,13 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);
 
-            let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
-            let version = this.delegate.serverVersionNumberForItem(this, values);            
+            let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
+            let version = this.delegate.serverVersionNumberForItem(this, serverValues);            
             MIOLog("Object " + serverID + " -> Update " + (result ? "OK" : "FAIL") + " (" + version + ")");
-            if (version > node.version) this.updateObjectInContext(values, object.entity, object.managedObjectContext, object.objectID);
+            if (version > node.version) {
+                this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
+                MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidUpdateEntity, serverID);
+            }
         }        
     }
 
@@ -572,7 +576,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             this.saveOperationQueue = new MIOOperationQueue();
             this.saveOperationQueue.init();
 
-            this.saveOperationQueue.addObserver(this, "operationCount", null);
+            //this.saveOperationQueue.addObserver(this, "operationCount", null);
         }
 
         for (let refID in this.saveOperationsByReferenceID) {

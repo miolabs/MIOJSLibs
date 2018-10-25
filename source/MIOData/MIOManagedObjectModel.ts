@@ -132,6 +132,10 @@ export class MIOManagedObjectModel extends MIOObject
                 break;
 
             case "Integer":
+            case "Integer 8":
+            case "Integer 16":
+            case "Integer 32":
+            case "Integer 64":
                 attrType = MIOAttributeType.Integer;
                 if (defaultValueString != null) defaultValue = parseInt(defaultValueString);
                 break;
