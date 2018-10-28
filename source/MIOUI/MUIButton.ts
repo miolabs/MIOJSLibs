@@ -82,26 +82,31 @@ export class MUIButton extends MUIControl
 
         var instance = this;
         this.layer.addEventListener("mousedown", function(e) {
-
             e.stopPropagation();
-            if (instance.enabled) {
-                if (instance.type == MUIButtonType.PushOnPushOff)
-                    instance.setSelected(!instance._selected);
-                else
-                    instance.setSelected(true);
+            if (this.enabled == false) return;
+
+            switch (this.type){
+                case MUIButtonType.MomentaryPushIn:
+                case MUIButtonType.PushIn:
+                this.setSelected(true);
+                break;
+
+                case MUIButtonType.PushOnPushOff:
+                this.setSelected(!this.selected);
+                break;
             }
-        });
+            
+        }.bind(this));
 
         this.layer.addEventListener("mouseup", function(e) {
             e.stopPropagation();
-            if (instance.enabled) {
-                if (instance.type == MUIButtonType.MomentaryPushIn)
-                    instance.setSelected(false);
+            if (this.enabled == false) return;
+            if (this.type != MUIButtonType.PushOnPushOff) this.setSelected(false);
 
-                if (instance.action != null && instance.target != null)
-                    instance.action.call(instance.target, instance);
-            }
-        });
+            if (instance.action != null && instance.target != null)
+                instance.action.call(instance.target, instance);
+            
+        }.bind(this));
     }
 
     initWithAction(target, action){
