@@ -276,6 +276,10 @@ export class MUITableViewCell extends MUIView {
     setSelected(value) {
         if (this._selected == value) return;
 
+        // WORKAORUND
+        //let fix = this.layer.getClientRects();
+        // WORKAORUND
+
         this.willChangeValue("selected");
         this._selected = value;
         if (this.selectionStyle == MUITableViewCellSelectionStyle.Default) {
@@ -284,6 +288,7 @@ export class MUITableViewCell extends MUIView {
             else 
                 MUICoreLayerRemoveStyle(this.layer, "selected");
         }
+        
         this.didChangeValue("selected"); 
     }
 

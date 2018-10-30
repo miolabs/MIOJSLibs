@@ -291,7 +291,7 @@ export class MUITableView extends MUIScrollView {
         this.rows = [];
         this.sections = [];
         this.rowsCount = 0;
-        this.selectedIndexPath = null;
+        //this.selectedIndexPath = null;
         this.visibleRange = new MIORange(-1, -1);
         //this.lastContentOffsetY = -this.defaultRowHeight;
         this.lastContentOffsetY = 0;
@@ -332,6 +332,7 @@ export class MUITableView extends MUIScrollView {
             this.selectedIndexPath = ip;
             this.selectedCellWhileReloadingData = null;
         }
+        
     }
 
     private reloadLayoutSubviews = false;
@@ -830,7 +831,7 @@ export class MUITableView extends MUIScrollView {
         if (canSelectCell == false)
             return;
 
-        if (this.allowsMultipleSelection == false) {
+        if (this.allowsMultipleSelection == false) {                        
             cell.selected = true;
             if (this.delegate != null && typeof this.delegate.didSelectCellAtIndexPath === "function") {
                 this.delegate.didSelectCellAtIndexPath(this, indexPath);
@@ -925,6 +926,7 @@ export class MUITableView extends MUIScrollView {
 
     deselectCellAtIndexPath(indexPath: MIOIndexPath) {
 
+        if (this.selectedIndexPath == null) return;
         if (this.selectedIndexPath.isEqualToIndexPath(indexPath) == false) return;
 
         //this.selectedIndexPath = null;

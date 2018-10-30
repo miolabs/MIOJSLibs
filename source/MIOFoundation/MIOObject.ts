@@ -31,7 +31,7 @@ export class MIOObject
         if (observers == null) return;
 
         // copy the array so we can iterating safetly
-        var obs = [];
+        let obs = [];
         for(let count = 0; count < observers.length; count++) {
             let item = observers[count];
             obs.push(item);
@@ -67,7 +67,7 @@ export class MIOObject
 
     private _addObserver(obs, key:string, context, keyPath?:string) {
 
-        var observers = this.keyPaths[key];
+        let observers = this.keyPaths[key];
         if (observers == null)
         {
             observers = [];
@@ -120,11 +120,11 @@ export class MIOObject
 
     removeObserver(obs, keypath:string)
     {
-        var observers = this.keyPaths[keypath];
+        let observers = this.keyPaths[keypath];
         if (observers == null)
             return;
 
-        var index = observers.indexOf(obs);
+        let index = observers.indexOf(obs);
         observers.splice(index, 1);
     }
 
@@ -143,9 +143,9 @@ export class MIOObject
 
         let [key, offset] = this._keyFromKeypath(keyPath);
         
-        var value = null;
-        var obj = this;
-        var exit = false;
+        let value = null;
+        let obj = this;
+        let exit = false;
         while (exit == false) {                
             if (offset == null) {
                 value = obj.valueForKey(key);
