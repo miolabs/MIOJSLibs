@@ -242,7 +242,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
         if (request instanceof MIOFetchRequest) {
             let fetchRequest = request as MIOFetchRequest;
-            var objects = _MIOPredicateFilterObjects(this.objectsByEntity[entityName], fetchRequest.predicate);
+            let objects = _MIOPredicateFilterObjects(this.objectsByEntity[entityName], fetchRequest.predicate);
             objects = _MIOSortDescriptorSortObjects(objects, fetchRequest.sortDescriptors);
             return objects;
         }
@@ -338,6 +338,11 @@ export class MIOManagedObjectContext extends MIOObject {
             for (let index = 0; index < this.deletedObjects.length; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
                 this._unregisterObject(obj);
+
+                // TODO: Move that code to persistent store
+                // Delete from cache
+                let array = this.objectsByEntity[obj.entity.name];
+                array.removeObject(obj);
             }
 
             // Clear
@@ -346,7 +351,7 @@ export class MIOManagedObjectContext extends MIOObject {
             this.deletedObjects = MIOSet.set();
         }
 
-        var objsChanges = {};
+        let objsChanges = {};
         objsChanges[MIOInsertedObjectsKey] = insertedObjectsByEntityName;
         objsChanges[MIOUpdatedObjectsKey] = updatedObjectsByEntityName;
         objsChanges[MIODeletedObjectsKey] = deletedObjectsByEntityName;
@@ -367,7 +372,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
         // Inserted objects        
         for (let entityName in insertedObjects) {
-            var ins_objs = insertedObjects[entityName];
+            let ins_objs = insertedObjects[entityName];
 
             // save changes and add to context
             let array = this.insertedObjects[entityName];
@@ -404,7 +409,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
         // Delete objects
         for (let entityName in deletedObjects) {
-            var del_objs = deletedObjects[entityName];
+            let del_objs = deletedObjects[entityName];
 
             let array = this.deletedObjects[entityName];
             if (array == null) {

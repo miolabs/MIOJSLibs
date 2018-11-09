@@ -291,7 +291,7 @@ export class MUITableView extends MUIScrollView {
         this.rows = [];
         this.sections = [];
         this.rowsCount = 0;
-        //this.selectedIndexPath = null;
+        this.selectedIndexPath = null;
         this.visibleRange = new MIORange(-1, -1);
         //this.lastContentOffsetY = -this.defaultRowHeight;
         this.lastContentOffsetY = 0;
