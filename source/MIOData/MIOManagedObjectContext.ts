@@ -270,7 +270,7 @@ export class MIOManagedObjectContext extends MIOObject {
         MIONotificationCenter.defaultCenter().postNotification(MIOManagedObjectContextWillSaveNotification, this);
 
         // Deleted objects
-        var deletedObjectsByEntityName = {};
+        let deletedObjectsByEntityName = {};
         for (let index = 0; index < this.deletedObjects.count; index++) {
             let delObj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
 
@@ -285,7 +285,7 @@ export class MIOManagedObjectContext extends MIOObject {
         }
 
         // Inserted objects
-        var insertedObjectsByEntityName = {};
+        let insertedObjectsByEntityName = {};
         for (let index = 0; index < this.insertedObjects.count; index++) {
             let insObj: MIOManagedObject = this.insertedObjects.objectAtIndex(index);
 
@@ -302,7 +302,7 @@ export class MIOManagedObjectContext extends MIOObject {
         }
 
         // Updated objects
-        var updatedObjectsByEntityName = {};
+        let updatedObjectsByEntityName = {};
         for (let index = 0; index < this.updatedObjects.count; index++) {
             let updObj: MIOManagedObject = this.updatedObjects.objectAtIndex(index);
 
@@ -338,11 +338,6 @@ export class MIOManagedObjectContext extends MIOObject {
             for (let index = 0; index < this.deletedObjects.length; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
                 this._unregisterObject(obj);
-
-                // TODO: Move that code to persistent store
-                // Delete from cache
-                let array = this.objectsByEntity[obj.entity.name];
-                array.removeObject(obj);
             }
 
             // Clear
