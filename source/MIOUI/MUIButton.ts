@@ -79,8 +79,7 @@ export class MUIButton extends MUIControl
         this.layer.addEventListener("click", function(e) {
             e.stopPropagation();
         });
-
-        var instance = this;
+        
         this.layer.addEventListener("mousedown", function(e) {
             e.stopPropagation();
             if (this.enabled == false) return;
@@ -100,11 +99,11 @@ export class MUIButton extends MUIControl
 
         this.layer.addEventListener("mouseup", function(e) {
             e.stopPropagation();
-            if (this.enabled == false) return;
-            if (this.type != MUIButtonType.PushOnPushOff) this.setSelected(false);
+            if (this.enabled == false) return;            
+            if (this.type == MUIButtonType.MomentaryPushIn) this.setSelected(false);
 
-            if (instance.action != null && instance.target != null)
-                instance.action.call(instance.target, instance);
+            if (this.action != null && this.target != null)
+                this.action.call(this.target, this);
             
         }.bind(this));
     }

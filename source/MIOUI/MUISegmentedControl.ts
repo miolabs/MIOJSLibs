@@ -17,8 +17,7 @@ export class MUISegmentedControl extends MUIControl
 
         for (let index = 0; index < this.layer.childNodes.length; index++){
             let itemLayer = this.layer.childNodes[index];
-            if (itemLayer.tagName == "DIV")
-            {
+            if (itemLayer.tagName == "DIV"){
                 let si = new MUIButton();
                 si.initWithLayer(itemLayer, owner);
                 si.type = MUIButtonType.PushIn;
@@ -27,49 +26,43 @@ export class MUISegmentedControl extends MUIControl
             }
         }
 
-        if (this.segmentedItems.length > 0)
-        {
+        if (this.segmentedItems.length > 0){
             let item = this.segmentedItems[0];
             item.setSelected(true);
             this.selectedSegmentedIndex = 0;
         }
     }
 
-    private _addSegmentedItem(item)
-    {
+    private _addSegmentedItem(item){
         this.segmentedItems.push(item);
         item.setAction(this, this._didClickSegmentedButton);
     }
 
-    private _didClickSegmentedButton(button)
-    {
-        var index = this.segmentedItems.indexOf(button);
+    private _didClickSegmentedButton(button){
+        let index = this.segmentedItems.indexOf(button);
         this.selectSegmentedAtIndex(index);
 
         if (this.mouseOutTarget != null)
             this.mouseOutAction.call(this.mouseOutTarget, this, index);
     }
 
-    setAction(target, action)
-    {
+    setAction(target, action){
         this.mouseOutTarget = target;
         this.mouseOutAction = action;
     }
 
-    selectSegmentedAtIndex(index)
-    {
+    selectSegmentedAtIndex(index){
         if (this.selectedSegmentedIndex == index)
             return;
 
-        if (this.selectedSegmentedIndex > -1)
-        {
-            var lastItem = this.segmentedItems[this.selectedSegmentedIndex];
+        if (this.selectedSegmentedIndex > -1){
+            let lastItem = this.segmentedItems[this.selectedSegmentedIndex];
             lastItem.setSelected(false);
         }
 
         this.selectedSegmentedIndex = index;
         
-        var item = this.segmentedItems[this.selectedSegmentedIndex];
+        let item = this.segmentedItems[this.selectedSegmentedIndex];
         item.setSelected(true);
     }
 }
