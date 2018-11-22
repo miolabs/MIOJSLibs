@@ -1,5 +1,6 @@
 //For code completion the interface is defined in types/mio/index.d.ts
 
+
 Array.prototype.addObject = function(object){
     this.push(object);
 }

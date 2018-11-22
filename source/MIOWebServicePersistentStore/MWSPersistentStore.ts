@@ -80,6 +80,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (serverID == null) throw new Error("MWSPersistentStore: Asking objectID without reference object");
 
         let node = this.nodeWithServerID(serverID, objectID.entity);
+        if (node == null) return null;
+
         if (node.version == 0){
             this.fetchObjectWithServerID(serverID, objectID.entity.name, context);            
         }
@@ -94,7 +96,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         if (referenceID == null) throw new Error("MWSPersistentStore: Asking objectID without referenceID");
 
-        let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;        
+        let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;    
+        if (node == null) return;    
         
         if (relationship.isToMany == false) {
 
@@ -274,18 +277,23 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         
         let version = this.delegate.serverVersionNumberForItem(this, parsedValues, entity.name);        
 
+        let refresh = false;
         let node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, entity);
         if (node == null) {
             MIOLog("New version: " + entity.name + " (" + version + ")");                        
             node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, entity, objectID);            
+            refresh = true;
         }
         else if (version > node.version){
             MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");            
             this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, entity);              
+            refresh = true;
         } 
 
         let obj = context.existingObjectWithID(node.objectID);
-        if (obj != null) context.refreshObject(obj, true);                            
+        if (refresh == true) {            
+            if (obj != null) context.refreshObject(obj, true);                            
+        }
 
         return obj;
     }

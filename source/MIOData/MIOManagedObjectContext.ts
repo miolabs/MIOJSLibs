@@ -130,6 +130,7 @@ export class MIOManagedObjectContext extends MIOObject {
         object._setIsUpdated(false);
         this.deletedObjects.addObject(object);
         object._setIsDeleted(true);
+        this._unregisterObject(object);
     }
 
     _objectWithURIRepresentationString(urlString:string){
@@ -154,7 +155,7 @@ export class MIOManagedObjectContext extends MIOObject {
         let store:MIOIncrementalStore = objectID.persistentStore as MIOIncrementalStore;
         let node:MIOIncrementalStoreNode = store._nodeForObjectID(objectID, this);
 
-        if (obj != null && node != null && obj._version < node.version){
+        if (obj != null && node != null){
             obj._setIsFault(true);
         }
         else if (obj == null && node != null){
@@ -216,10 +217,10 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     removeAllObjectsForEntityName(entityName) {
-        var objs = this.objectsByEntity[entityName];
+        let objs = this.objectsByEntity[entityName];
         if (objs != null) {
             for (let index = objs.length - 1; index >= 0; index--) {
-                var o = objs[index];
+                let o = objs[index];
                 this.deleteObject(o);
             }
         }
@@ -233,7 +234,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
         //TODO: Get the store from configuration name
         let store: MIOPersistentStore = this.persistentStoreCoordinator.persistentStores[0];
-        var objs = store._executeRequest(request, this);
+        let objs = store._executeRequest(request, this);
 
         for (let index = 0; index < objs.length; index++) {
             let o = objs[index];
@@ -337,7 +338,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
             for (let index = 0; index < this.deletedObjects.length; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
-                this._unregisterObject(obj);
+                obj._didCommit();
             }
 
             // Clear

@@ -111,8 +111,6 @@ export class MIOManagedObject extends MIOObject {
     awakeFromInsert() {}
     awakeFromFetch() {}
 
-    _version = 0;
-
     private _changedValues = {}; 
     get changedValues() {return this._changedValues;} 
 
@@ -143,6 +141,7 @@ export class MIOManagedObject extends MIOObject {
             if (property instanceof MIOAttributeDescription) {
                 let attribute = property as MIOAttributeDescription;
                 let node = store.newValuesForObjectWithID(this.objectID, this.managedObjectContext);
+                if (node == null) continue;
                 let value = node.valueForPropertyDescription(attribute);                
                 storedValues[attribute.name] = value;
             }
@@ -171,10 +170,7 @@ export class MIOManagedObject extends MIOObject {
                     this["_" + relationship.name] = set;                    
                 }
             }
-        } 
-
-        let node = store._nodeForObjectID(this.objectID, this.managedObjectContext);
-        this._version = node.version;
+        }         
         
         return storedValues;
     }
