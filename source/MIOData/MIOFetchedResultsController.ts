@@ -109,34 +109,39 @@ export class MIOFetchedResultsController extends MIOObject
         return this.resultObjects;
     }
 
-    private processObject(object:MIOManagedObject){
+    private processObject(object:MIOManagedObject, result:boolean){
 
-        let ref = object.objectID._getReferenceObject();
-        if (this.registerObjects[ref] == null){
-            this.resultObjects.push(object);
-            //this.insertObject(object);
+        if (result == true) {
+            let ref = object.objectID._getReferenceObject();
+            if (this.registerObjects[ref] == null){
+                this.resultObjects.push(object);
+                this.registerObjects[ref] = object;
+            }    
         }
         else {
-            //this.updateObject(object);
+            let ref = object.objectID._getReferenceObject();
+            if (this.registerObjects[ref] != null){
+                this.resultObjects.removeObject(object);
+                delete this.registerObjects[ref];
+            }
         }
     }
 
     private checkObjects(objects){
-        let predicate = this.fetchRequest.predicate;
+        let predicate = this.fetchRequest.predicate;        
         for (let count = 0; count < objects.length; count++){
             let obj = objects.objectAtIndex(count);
             if (predicate != null) {
                 let result = predicate.evaluateObject(obj);
-                if (result) this.processObject(obj);
+                this.processObject(obj, result);
             }
             else {
-                this.processObject(obj);
+                this.processObject(obj, true);
             }
         }        
     }
 
-    private refreshObjects(objects:MIOSet){
-        
+    private refreshObjects(objects:MIOSet){        
         this.checkObjects(objects);
         this.resultObjects = _MIOSortDescriptorSortObjects(this.resultObjects, this.fetchRequest.sortDescriptors);
         this._splitInSections();
