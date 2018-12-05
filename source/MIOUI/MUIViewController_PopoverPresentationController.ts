@@ -1,8 +1,9 @@
-import { MUIPresentationController } from "./MUIViewController_PresentationController";
+import { MUIPresentationController, MIOModalPresentAnimationController, MIOModalDismissAnimationController } from "./MUIViewController_PresentationController";
 import { MIOObject, MIORect } from "../MIOFoundation";
 import { MUIView } from "./MUIView";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
 import { MUICoreLayerAddStyle } from ".";
+import { MIOCoreIsPhone } from "../MIOCore/platform";
 
 /**
  * Created by godshadow on 11/11/2016.
@@ -45,12 +46,10 @@ export class MUIPopoverPresentationController extends MUIPresentationController
     }
 
     presentationTransitionWillBegin(){
-        let vc = this.presentedViewController;
-        let view:MUIView = this.presentedView;
+        //if (MIOCoreIsPhone() == true) return;
         
         this._calculateFrame();
-
-        MUICoreLayerAddStyle(this.presentedView.layer, "popover_window");        
+        MUICoreLayerAddStyle(this.presentedView.layer, "popover_window");                
     }
 
     dismissalTransitionDidEnd(completed){     
@@ -61,18 +60,18 @@ export class MUIPopoverPresentationController extends MUIPresentationController
     }
 
     _calculateFrame(){
-        var vc = this.presentedViewController;
-        var view:MUIView = this.presentedView;
+        let vc = this.presentedViewController;
+        let view:MUIView = this.presentedView;
 
-        var w = vc.preferredContentSize.width;
-        var h = vc.preferredContentSize.height;
-        var v = vc.popoverPresentationController.sourceView;
-        var f = vc.popoverPresentationController.sourceRect;
+        let w = vc.preferredContentSize.width;
+        let h = vc.preferredContentSize.height;
+        let v = vc.popoverPresentationController.sourceView;
+        let f = vc.popoverPresentationController.sourceRect;
 
-        var xShift = false;
+        let xShift = false;
 
         // Below
-        var y = v.layer.getBoundingClientRect().top + f.size.height + 10;
+        let y = v.layer.getBoundingClientRect().top + f.size.height + 10;
         if ((y + h) > window.innerHeight) // Below no, Up?
             y = v.layer.getBoundingClientRect().top - h - 10;
         if (y < 0) // Up no, horizonal shift
@@ -81,7 +80,7 @@ export class MUIPopoverPresentationController extends MUIPresentationController
             y = (window.innerHeight - h) / 2;
         }
 
-        var x = 0;
+        let x = 0;
 
         if (xShift == false)
         {
@@ -102,7 +101,7 @@ export class MUIPopoverPresentationController extends MUIPresentationController
 
     private _drawRoundRect(x, y, width, height, radius) {
 
-        var ctx = this._canvasLayer.getContext('2d');
+        let ctx = this._canvasLayer.getContext('2d');
 
         ctx.beginPath();
         ctx.moveTo(x + radius, y);
@@ -116,7 +115,7 @@ export class MUIPopoverPresentationController extends MUIPresentationController
         ctx.quadraticCurveTo(x, y, x + radius, y);
         ctx.closePath();
 
-        var color = 'rgba(208, 208, 219, 1)';
+        let color = 'rgba(208, 208, 219, 1)';
         ctx.strokeStyle = color;
         ctx.lineWidth = 1;
         ctx.stroke();
@@ -134,8 +133,14 @@ export class MIOModalPopOverTransitioningDelegate extends MIOObject
     animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController){
         if (this._showAnimationController == null) {
 
-            this._showAnimationController = new MIOPopOverPresentAnimationController();
-            this._showAnimationController.init();
+            // if (MIOCoreIsPhone() == false) {
+                this._showAnimationController = new MIOPopOverPresentAnimationController();
+                this._showAnimationController.init();
+            // }
+            // else {
+            //     this._showAnimationController = new MIOModalPresentAnimationController();
+            //     this._showAnimationController.init();
+            // }
         }
 
         return this._showAnimationController;
@@ -144,8 +149,14 @@ export class MIOModalPopOverTransitioningDelegate extends MIOObject
     animationControllerForDismissedController(dismissedController){
         if (this._dissmissAnimationController == null) {
 
-            this._dissmissAnimationController = new MIOPopOverDismissAnimationController();
-            this._dissmissAnimationController.init();
+//            if (MIOCoreIsPhone() == false) {
+                this._dissmissAnimationController = new MIOPopOverDismissAnimationController();
+                this._dissmissAnimationController.init();    
+            // }
+            // else {
+            //     this._dissmissAnimationController = new MIOModalDismissAnimationController();
+            //     this._dissmissAnimationController.init();    
+            // }
         }
 
         return this._dissmissAnimationController;
@@ -171,7 +182,7 @@ export class MIOPopOverPresentAnimationController extends MIOObject
 
     // TODO: Not iOS like transitions. For now we use css animations
     animations(transitionContext){
-        var animations = MUIClassListForAnimationType(MUIAnimationType.FadeIn);
+        let animations = MUIClassListForAnimationType(MUIAnimationType.FadeIn);
         return animations;
     }
 
@@ -193,7 +204,7 @@ export class MIOPopOverDismissAnimationController extends MIOObject
 
     // TODO: Not iOS like transitions. For now we use css animations
     animations(transitionContext){
-        var animations = MUIClassListForAnimationType(MUIAnimationType.FadeOut);
+        let animations = MUIClassListForAnimationType(MUIAnimationType.FadeOut);
         return animations;
     }
 

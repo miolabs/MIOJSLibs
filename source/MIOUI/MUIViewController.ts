@@ -295,8 +295,12 @@ export class MUIViewController extends MIOObject
             pc.presentingViewController = this;
             vc._presentationController = pc;
         }
-        else if (pc._isPresented == true)
-        {
+        
+        if (pc.presentingViewController == null) {
+            pc.presentingViewController = this;
+        }
+        
+        if (pc._isPresented == true){
             throw new Error("You try to present a view controller that is already presented"); 
         }
 
