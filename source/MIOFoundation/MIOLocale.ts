@@ -24,7 +24,7 @@ export class MIOLocale extends MIOObject
 
     initWithLocaleIdentifier(identifer:string) {
 
-        var array = identifer.split("_");
+        let array = identifer.split("_");
         if (array.length == 1) {
             this.languageIdentifier = array[0];
         }
@@ -36,7 +36,7 @@ export class MIOLocale extends MIOObject
 
     get decimalSeparator():string{
 
-        var ds;
+        let ds = "";
         
         switch (this.countryIdentifier) {
 
@@ -50,7 +50,11 @@ export class MIOLocale extends MIOObject
 
             case "UK":
                 ds =  ".";
-                break;                                
+                break;     
+                
+            case "AE":
+                ds = ".";
+                break;
         }
 
         return ds;
@@ -58,16 +62,24 @@ export class MIOLocale extends MIOObject
 
     get currencySymbol():string {
 
-        var cs;
+        let cs = "";
 
         switch(this.countryIdentifier) {
 
             case "ES":
-                cs =  "€";
+                cs = "€";
                 break;
 
             case "US":
-                cs =  "$";
+                cs = "$";
+                break;
+
+            case "UK":
+                cs = "$";
+                break;
+
+            case "AE":
+                cs = "إ.د";
                 break;
         }
 
@@ -76,7 +88,7 @@ export class MIOLocale extends MIOObject
 
     get groupingSeparator():string {
 
-        var gs;
+        let gs = "";
 
         switch(this.countryIdentifier){
 
@@ -85,6 +97,14 @@ export class MIOLocale extends MIOObject
                 break;
 
             case "US":
+                gs = ",";
+                break;
+
+            case "UK":
+                gs = ",";
+                break;
+
+            case "AE":
                 gs = ",";
                 break;
         }
