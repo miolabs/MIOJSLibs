@@ -408,17 +408,23 @@ export class MIOManagedObject extends MIOObject {
 
         let relationships = this.entity.relationshipsByName;
         for (let relName in relationships) {
-            let rel:MIORelationshipDescription = relationships[relName];
+            let rel = relationships[relName] as MIORelationshipDescription;
             if (rel.inverseRelationship != null) {
-                let parentObject:MIOManagedObject = this.valueForKey(relName);
-                if (parentObject == null) continue;
-                let parentRelationship = parentObject.entity.relationshipsByName[rel.inverseRelationship.name];
-                if (parentRelationship.isToMany == false){
-                    parentObject.setValueForKey(null, rel.inverseRelationship.name);
+                let value = this.valueForKey(relName);
+                if (value == null) return;
+                if (value instanceof MIOManagedObject) {
+                    let object = value as MIOManagedObject;
+                    let parentRelationship = object.entity.relationshipsByName[rel.inverseRelationship.name];
+                    if (parentRelationship.isToMany == false){
+                        object.setValueForKey(null, rel.inverseRelationship.name);
+                    }
+                    else {
+                        object._removeObjectForKey(this, rel.inverseRelationship.name);
+                    }
                 }
-                else {
-                    parentObject._removeObjectForKey(this, rel.inverseRelationship.name);
-                }
+                // else if (value instanceof MIOManagedObjectSet){
+                    
+                // }                
             }
         }
     }
