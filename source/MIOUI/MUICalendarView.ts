@@ -6,6 +6,8 @@ export class MUICalendarHeader extends MUIView
 {
     delegate = null;
 
+    private navBar:MUIView = null;
+
     private prevButton:MUIButton = null;
     private nextButton:MUIButton = null;
     private monthComboBox:MUIComboBox = null;
@@ -27,20 +29,18 @@ export class MUICalendarHeader extends MUIView
     }
 
     private setup(){
-
-        let navView = new MUIView();
-        navView.init();
-        MUICoreLayerAddStyle(navView.layer, "view");   
-        MUICoreLayerAddStyle(navView.layer, "calendar-nav"); 
-        this.addSubview(navView);
-
+        this.navBar = new MUIView();
+        this.navBar.init();
+        MUICoreLayerAddStyle(this.navBar.layer, "view");   
+        MUICoreLayerAddStyle(this.navBar.layer, "calendar-nav"); 
+        this.addSubview(this.navBar);
 
         if (this.prevButton == null){
             this.prevButton = new MUIButton();
             this.prevButton.init();
             MUICoreLayerAddStyle(this.prevButton.layer, "back");   
             MUICoreLayerAddStyle(this.prevButton.layer, "calendar-prev-btn"); 
-            navView.addSubview(this.prevButton); 
+            this.navBar.addSubview(this.prevButton); 
         }
         this.prevButton.setAction(this, function(){
             this.addDateOffset(-1);
@@ -50,7 +50,7 @@ export class MUICalendarHeader extends MUIView
             this.monthComboBox = new MUIComboBox();
             this.monthComboBox.init();
             MUICoreLayerAddStyle(this.monthComboBox.layer, "input-combobox");
-            navView.addSubview(this.monthComboBox); 
+            this.navBar.addSubview(this.monthComboBox); 
         }
 
         // Add months
@@ -68,7 +68,7 @@ export class MUICalendarHeader extends MUIView
             this.yearComboBox = new MUIComboBox();
             this.yearComboBox.init();            
             MUICoreLayerAddStyle(this.yearComboBox.layer, "input-combobox");            
-            navView.addSubview(this.yearComboBox); 
+            this.navBar.addSubview(this.yearComboBox); 
         }
 
         // Add years
@@ -92,7 +92,7 @@ export class MUICalendarHeader extends MUIView
             this.nextButton.init();
             MUICoreLayerAddStyle(this.nextButton.layer, "next");   
             MUICoreLayerAddStyle(this.nextButton.layer, "calendar-next-btn"); 
-            navView.addSubview(this.nextButton); 
+            this.navBar.addSubview(this.nextButton); 
         }
         this.nextButton.setAction(this, function(){
             this.addDateOffset(1);
@@ -121,6 +121,10 @@ export class MUICalendarHeader extends MUIView
 
     setYear(year){
         this.yearComboBox.selectItem(year);
+    }
+
+    setNavBarHidden(value:boolean){
+        this.navBar.setHidden(value);
     }
 
     addDateOffset(offset){
@@ -389,9 +393,7 @@ export class MUICalendarView extends MUIView{
 
     initWithLayer(layer, owner, options){
         super.initWithLayer(layer, owner, options);
-
-        if (layer.childNodes.length == 0) return;
-
+        
         if (layer.childNodes.length > 0) {
             for (let index = 0; index < layer.childNodes.length; index++) {
                 let subLayer = layer.childNodes[index];
@@ -442,6 +444,10 @@ export class MUICalendarView extends MUIView{
         }
 
         this.addDefaultDayCell();
+    }
+
+    setNavBarHidden(value:boolean){
+        this.header.setNavBarHidden(value);
     }
 
     // Calendar header delegate
