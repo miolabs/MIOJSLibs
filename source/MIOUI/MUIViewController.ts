@@ -9,6 +9,7 @@ import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MIOLocalizeString } from "../MIOCore";
 import { MUISplitViewController } from "./MUISplitViewController";
+import { MIOCoreIsPhone } from "../MIOCore/platform";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -304,11 +305,12 @@ export class MUIViewController extends MIOObject
             throw new Error("You try to present a view controller that is already presented"); 
         }
 
-        // if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
-        //     && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
-        //     && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet
-        //     && vc.modalPresentationStyle != MUIModalPresentationStyle.Popover)
-        //     vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
+        if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.Popover
+            && vc.modalPresentationStyle != MUIModalPresentationStyle.Custom)
+            vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
 
         vc.onLoadView(this, function () {
 
