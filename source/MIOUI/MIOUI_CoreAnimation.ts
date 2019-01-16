@@ -19,6 +19,10 @@ export enum MUIAnimationType
     Hinge,
     SlideInUp,
     SlideOutDown,
+    SlideInRight,
+    SlideOutRight,
+    SlideInLeft,
+    SlideOutLeft,
     HorizontalOutFlip,
     HorizontalInFlip
 }
@@ -68,7 +72,23 @@ export function MUIClassListForAnimationType(type)
             break;
 
         case MUIAnimationType.SlideOutDown:
-            array.push("slideOutDown");
+            array.push("slideOutDown");            
+            break;
+
+        case MUIAnimationType.SlideInRight:
+            array.push("slideInRight");
+            break;
+
+        case MUIAnimationType.SlideOutRight:
+            array.push("slideOutRight");
+            break;
+
+        case MUIAnimationType.SlideInLeft:
+            array.push("slideInLeft");
+            break;
+
+        case MUIAnimationType.SlideOutLeft:
+            array.push("slideOutLeft");
             break;
 
         case MUIAnimationType.HorizontalOutFlip:

@@ -304,11 +304,11 @@ export class MUIViewController extends MIOObject
             throw new Error("You try to present a view controller that is already presented"); 
         }
 
-        if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
-            && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
-            && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet
-            && vc.modalPresentationStyle != MUIModalPresentationStyle.Popover)            
-            vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
+        // if (vc.modalPresentationStyle != MUIModalPresentationStyle.FullScreen 
+        //     && vc.modalPresentationStyle != MUIModalPresentationStyle.FormSheet
+        //     && vc.modalPresentationStyle != MUIModalPresentationStyle.PageSheet
+        //     && vc.modalPresentationStyle != MUIModalPresentationStyle.Popover)
+        //     vc.modalPresentationStyle = MUIModalPresentationStyle.PageSheet;
 
         vc.onLoadView(this, function () {
 
