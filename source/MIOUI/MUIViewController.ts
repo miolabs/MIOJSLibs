@@ -275,17 +275,17 @@ export class MUIViewController extends MIOObject
         return this._popoverPresentationController;
     }
 
-    showViewController(vc, animate){
+    showViewController(vc, animated){
         vc.onLoadView(this, function () {
 
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);
 
-            _MIUShowViewController(this, vc, this, false);
+            _MIUShowViewController(this, vc, this, animated);
         });
     }
 
-    presentViewController(vc:MUIViewController, animate:boolean){           
+    presentViewController(vc:MUIViewController, animated:boolean){           
         
         let pc:MUIPresentationController = vc.presentationController;
         if (pc == null) {
@@ -332,7 +332,7 @@ export class MUIViewController extends MIOObject
                 }
                 w.setHidden(false);
 
-                _MIUShowViewController(this, vc, null, this, function () {
+                _MIUShowViewController(this, vc, null, animated, this, function () {
                     w.makeKey();
                 });    
             }

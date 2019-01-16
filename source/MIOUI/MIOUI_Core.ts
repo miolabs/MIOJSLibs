@@ -73,7 +73,7 @@ export function MUIWindowSize()
     return new MIOSize(w, h);
 }
 
-export function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completion?)
+export function _MIUShowViewController(fromVC:MUIViewController, toVC:MUIViewController, sourceVC:MUIViewController, animated:boolean, target?, completion?)
 {
     toVC.viewWillAppear();
     //toVC._childControllersWillAppear();
@@ -85,8 +85,8 @@ export function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completi
         //fromVC._childControllersWillDisappear();
     }
 
-    var view = null;
-    var pc:MUIPresentationController = null;
+    let view = null;
+    let pc:MUIPresentationController = null;
 
     if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
@@ -100,7 +100,14 @@ export function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completi
     else
         view = toVC.view;
 
-    var animationContext = {};
+    if (animated == false) {
+        _MUIAnimationDidStart(fromVC, toVC, pc, target, completion);
+        return;
+    }
+    
+    // Let's go for the animations!!
+
+    let animationContext = {};
     animationContext["presentingViewController"] = fromVC;
     animationContext["presentedViewController"] = toVC;
     animationContext["presentedView"] = view;
@@ -108,43 +115,44 @@ export function _MIUShowViewController(fromVC, toVC, sourceVC, target?, completi
     if (pc != null)
         pc.presentationTransitionWillBegin();
 
-    var ac = null;
-    if (toVC.transitioningDelegate != null)
-    {
+    let ac = null;
+    if (toVC.transitioningDelegate != null){
         ac = toVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
-    else if (sourceVC != null && sourceVC.transitioningDelegate != null)
-    {
+    else if (sourceVC != null && sourceVC.transitioningDelegate != null){
         ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
-    else if (pc != null)
-    {
+    else if (pc != null){
         ac = pc.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
 
     //view.setNeedsDisplay();
 
-    var layer = view.layer;
-        
+    let layer = view.layer;
+            
     _MUIAnimationStart(layer, ac, animationContext, this, function () {
-
-        toVC.viewDidAppear();
-        //toVC._childControllersDidAppear();
-
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
-            || toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
-
-            fromVC.viewDidDisappear();
-            //fromVC._childControllersDidDisappear();
-        }
-        if (pc != null) {
-            pc.presentationTransitionDidEnd(true);
-            pc._isPresented = true;
-        }
-
-        if (target != null && completion != null)
-            completion.call(target);
+        _MUIAnimationDidStart(fromVC, toVC, pc, target, completion);
     });
+
+}
+export function _MUIAnimationDidStart(fromVC:MUIViewController, toVC:MUIViewController, pc:MUIPresentationController, target?, completion?){
+    toVC.viewDidAppear();
+    //toVC._childControllersDidAppear();
+
+    if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
+        || toVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
+
+        fromVC.viewDidDisappear();
+        //fromVC._childControllersDidDisappear();
+    }
+    if (pc != null) {
+        pc.presentationTransitionDidEnd(true);
+        pc._isPresented = true;
+    }
+
+    if (target != null && completion != null)
+        completion.call(target);
+
 }
 
 export function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)

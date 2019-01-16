@@ -97,7 +97,7 @@ export class MUINavigationController extends MUIViewController
             if (vc.preferredContentSize != null)
                 this.preferredContentSize = vc.preferredContentSize;
 
-            _MIUShowViewController(lastVC, vc, this, false);
+            _MIUShowViewController(lastVC, vc, this, animated);
         });
     }
 
