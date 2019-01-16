@@ -11,8 +11,7 @@ export class MIOLocale extends MIOObject
     languageIdentifier = "es";
     countryIdentifier = "ES";
 
-    public static currentLocale()
-    {
+    public static currentLocale(){
         if (_mio_currentLocale == null) {
             _mio_currentLocale = new MIOLocale();
             _mio_currentLocale.initWithLocaleIdentifier("es_ES");
@@ -20,6 +19,11 @@ export class MIOLocale extends MIOObject
         //return MIOWebApplication.sharedInstance().currentLanguage;
 
         return _mio_currentLocale;
+    }
+
+    public static _setCurrentLocale(localeIdentifier:string){
+        _mio_currentLocale = new MIOLocale();
+        _mio_currentLocale.initWithLocaleIdentifier(localeIdentifier);
     }
 
     initWithLocaleIdentifier(identifer:string) {
@@ -67,6 +71,10 @@ export class MIOLocale extends MIOObject
         switch(this.countryIdentifier) {
 
             case "ES":
+            case "DE":
+            case "FR":
+            case "IT":
+            case "NL":
                 cs = "€";
                 break;
 
@@ -75,7 +83,7 @@ export class MIOLocale extends MIOObject
                 break;
 
             case "UK":
-                cs = "$";
+                cs = "£";
                 break;
 
             case "AE":

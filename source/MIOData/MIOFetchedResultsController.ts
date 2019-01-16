@@ -222,8 +222,21 @@ export class MIOFetchedResultsController extends MIOObject
         }
         else{
             let currentSection = null;
-            let currentSectionKeyPathValue = "";
-            for (let index = 0; index < this.resultObjects.length; index++){
+            let currentSectionKeyPathValue = null;
+
+            if (this.resultObjects.length == 0) return;
+
+            // Set first object
+            let firstObj:MIOManagedObject = this.resultObjects[0];  
+            currentSection = new MIOFetchSection();
+            this.sections.push(currentSection);
+            currentSectionKeyPathValue = firstObj.valueForKey(this.sectionNameKeyPath);                ;    
+            // Cache to for checking updates
+            let reference = firstObj.objectID._getReferenceObject();
+            this.registerObjects[reference] = firstObj;
+            currentSection.objects.push(firstObj);
+            
+            for (let index = 1; index < this.resultObjects.length; index++){
                 let obj:MIOManagedObject = this.resultObjects[index];                
                 // Cache to for checking updates
                 let ref = obj.objectID._getReferenceObject();

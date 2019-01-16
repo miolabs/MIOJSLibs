@@ -440,5 +440,9 @@ export class MIOManagedObjectContext extends MIOObject {
         this.blockChanges = null;
     }
 
+    reset(){
+        
+    }
+
 }
 

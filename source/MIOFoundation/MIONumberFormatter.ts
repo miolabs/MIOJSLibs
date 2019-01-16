@@ -20,13 +20,15 @@ export class MIONumberFormatter extends MIOFormatter {
     locale = null;
     minimumFractionDigits = 0;
     maximumFractionDigits = 0;
-    groupingSeparator;
+    groupingSeparator = null;
+    currencySymbol = null;
 
     init(){
         super.init();
         this.locale = MIOLocale.currentLocale();
 
         this.groupingSeparator = this.locale.groupingSeparator;
+        this.currencySymbol = this.locale.currencySymbol;
     }
 
     numberFromString(str:string){
@@ -122,6 +124,7 @@ export class MIONumberFormatter extends MIOFormatter {
         }
         
         if (this.numberStyle == MIONumberFormatterStyle.PercentStyle) res += "%";
+        if (this.numberStyle == MIONumberFormatterStyle.CurrencyStyle) res += " " + this.currencySymbol;        
 
         return res;
     }
