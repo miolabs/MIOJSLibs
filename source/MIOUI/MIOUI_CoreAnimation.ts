@@ -24,7 +24,9 @@ export enum MUIAnimationType
     SlideInLeft,
     SlideOutLeft,
     HorizontalOutFlip,
-    HorizontalInFlip
+    HorizontalInFlip,   
+    ZoomIn,
+    ZoomOut 
 }
 
 // ANIMATION TYPES
@@ -97,7 +99,15 @@ export function MUIClassListForAnimationType(type)
 
         case MUIAnimationType.HorizontalInFlip:
             array.push("flipInY");
-            break;                        
+            break;    
+            
+        case MUIAnimationType.ZoomIn:
+            array.push("zoomIn");
+            break;
+
+        case MUIAnimationType.ZoomOut:
+            array.push("zoomOut");
+            break;
     }
 
     return array;

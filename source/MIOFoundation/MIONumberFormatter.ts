@@ -111,15 +111,19 @@ export class MIONumberFormatter extends MIOFormatter {
         if (floatValue != null){            
             res += this.locale.decimalSeparator;
         
-            if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits)
-                floatValue = floatValue.substring(0, this.maximumFractionDigits);
-
-            for (let index = 0; index < this.minimumFractionDigits; index++){
-
-                if (index < floatValue.length)
+            if (this.minimumFractionDigits > 0 && floatValue.length < this.minimumFractionDigits){
+                for (let index = 0; index < this.minimumFractionDigits; index++){
+                    if (index < floatValue.length)
                     res += floatValue[index];
                 else 
                     res += "0";
+                }    
+            }
+            else if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits){
+                floatValue = floatValue.substring(0, this.maximumFractionDigits);
+            }
+            else {
+                res += floatValue;
             }
         }
         
