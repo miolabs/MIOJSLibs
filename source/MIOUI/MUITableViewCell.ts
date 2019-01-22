@@ -251,8 +251,11 @@ export class MUITableViewCell extends MUIView {
             this.addSubview(this.accessoryView);
         }
 
-        if (type == MUITableViewCellAccessoryType.None) this.accessoryView.setHidden(true);
-        else this.accessoryView.setHidden(false);
+        // if (type == MUITableViewCellAccessoryType.None) this.accessoryView.setHidden(true);
+        // else this.accessoryView.setHidden(false);
+
+        if (type == MUITableViewCellAccessoryType.None) MUICoreLayerRemoveStyle(this.layer, "checked");
+        else MUICoreLayerAddStyle(this.layer, "checked");
 
         this._accessoryType = type;
     }

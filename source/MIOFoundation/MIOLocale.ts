@@ -85,13 +85,36 @@ export class MIOLocale extends MIOObject
             case "UK":
                 cs = "£";
                 break;
-
-            case "AE":
-                cs = "إ.د";
-                break;
         }
 
         return cs;
+    }
+
+    get currencyCode(){
+        let cc = "";
+
+        switch(this.countryIdentifier){
+            case "ES":                
+            case "DE":
+            case "FR":
+            case "IT":
+            case "NL":
+                cc = "EUR";
+                break;
+
+            case "US":
+                cc = "USD";
+                break;
+
+            case "UK":
+                cc = "GBP";
+                break;
+
+            case "AE":
+                cc = "AED";
+        }
+
+        return cc;
     }
 
     get groupingSeparator():string {

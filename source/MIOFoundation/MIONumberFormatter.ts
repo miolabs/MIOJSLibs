@@ -5,7 +5,8 @@ export enum MIONumberFormatterStyle {
     NoStyle,
     DecimalStyle,
     CurrencyStyle,
-    PercentStyle
+    CurrencyISOCodeStyle,
+    PercentStyle,    
 }
 
 export enum _MIONumberFormatterType {
@@ -17,11 +18,14 @@ export enum _MIONumberFormatterType {
 export class MIONumberFormatter extends MIOFormatter {
 
     numberStyle = MIONumberFormatterStyle.NoStyle;
-    locale = null;
+    locale:MIOLocale = null;
     minimumFractionDigits = 0;
     maximumFractionDigits = 0;
     groupingSeparator = null;
     currencySymbol = null;
+    currencyCode = null;
+    private currencyHasSpaces = true;
+    private currencyIsRight = true;
 
     init(){
         super.init();
@@ -29,6 +33,14 @@ export class MIONumberFormatter extends MIOFormatter {
 
         this.groupingSeparator = this.locale.groupingSeparator;
         this.currencySymbol = this.locale.currencySymbol;
+        this.currencyCode = this.locale.currencyCode;
+
+        switch(this.locale.countryIdentifier){            
+            case "US":
+            this.currencyHasSpaces = false;
+            this.currencyIsRight = false;
+            break;
+        }
     }
 
     numberFromString(str:string){
@@ -120,7 +132,7 @@ export class MIONumberFormatter extends MIOFormatter {
                 }    
             }
             else if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits){
-                floatValue = floatValue.substring(0, this.maximumFractionDigits);
+                res += floatValue.substring(0, this.maximumFractionDigits);
             }
             else {
                 res += floatValue;
@@ -128,9 +140,30 @@ export class MIONumberFormatter extends MIOFormatter {
         }
         
         if (this.numberStyle == MIONumberFormatterStyle.PercentStyle) res += "%";
-        if (this.numberStyle == MIONumberFormatterStyle.CurrencyStyle) res += " " + this.currencySymbol;        
+        res = this.stringByAppendingCurrencyString(res);
 
         return res;
+    }
+
+    private stringByAppendingCurrencyString(text:string):string {
+        let currency = "";        
+        if (this.numberStyle == MIONumberFormatterStyle.CurrencyStyle) currency = this.currencySymbol;
+        else if (this.numberStyle == MIONumberFormatterStyle.CurrencyISOCodeStyle) currency = this.currencyCode;
+        else {
+            return text;
+        }
+
+        if (currency.length == 0) return text;
+
+        let result = "";        
+        if (this.currencyIsRight == true) {
+            result = text + (this.currencyHasSpaces ? " ":"") + currency;
+        }
+        else {
+            result = currency + (this.currencyHasSpaces ? " ":"") + text;
+        }
+
+        return result;
     }
 
     isPartialStringValid(str:string):[boolean, string]{

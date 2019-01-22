@@ -6,44 +6,36 @@ export class MIOUserDefaults
 {
     private static _sharedInstance:MIOUserDefaults = new MIOUserDefaults();
 
-    constructor()
-    {
-        if (MIOUserDefaults._sharedInstance)
-        {
+    constructor(){
+        if (MIOUserDefaults._sharedInstance){
             throw new Error("Error: Instantiation failed: Use standardUserDefaults() instead of new.");
         }
         MIOUserDefaults._sharedInstance = this;
     }
 
-    public static standardUserDefaults():MIOUserDefaults
-    {
+    public static standardUserDefaults():MIOUserDefaults{
         return MIOUserDefaults._sharedInstance;
     }
 
-    setBooleanForKey(key, value:boolean)
-    {
-        var v = value ? "1" : "0";
+    setBooleanForKey(key, value:boolean){
+        let v = value ? "1" : "0";
         this.setValueForKey(key, v);
     }
 
-    booleanForKey(key)
-    {
-        var v = this.valueForKey(key);
+    booleanForKey(key){
+        let v = this.valueForKey(key);
         return v == "1" ? true : false;
     }
 
-    setValueForKey(key, value)
-    {
+    setValueForKey(key:string, value:any){
         localStorage.setItem(key, value);
     }
 
-    valueForKey(key)
-    {
+    valueForKey(key:string):any{
         return localStorage.getItem(key);
     }
 
-    removeValueForKey(key)
-    {
+    removeValueForKey(key:string){
         localStorage.removeItem(key);
     }
 }
