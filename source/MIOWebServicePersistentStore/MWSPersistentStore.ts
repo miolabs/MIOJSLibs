@@ -490,9 +490,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let version = this.delegate.serverVersionNumberForItem(this, serverValues);            
             MIOLog("Object " + serverID + " -> Update " + (result ? "OK" : "FAIL") + " (" + version + ")");
             if (version > node.version) {
-                this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
-                MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidUpdateEntity, serverID);
+                this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);                
             }
+            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidUpdateEntity, object, serverID);
         }        
     }
 
