@@ -78,9 +78,8 @@ export class MUINavigationController extends MUIViewController
         vc.viewDidDisappear(animated);
     }
 
-    pushViewController(vc, animated?)
-    {
-        var lastVC = this.viewControllersStack[this.currentViewControllerIndex];
+    pushViewController(vc:MUIViewController, animated?:boolean){
+        let lastVC = this.viewControllersStack[this.currentViewControllerIndex];
 
         this.viewControllersStack.push(vc);
         this.currentViewControllerIndex++;
@@ -101,17 +100,16 @@ export class MUINavigationController extends MUIViewController
         });
     }
 
-    popViewController(animated?)
-    {
+    popViewController(animated?:boolean){
         if (this.currentViewControllerIndex == 0)
             return;
 
-        var fromVC = this.viewControllersStack[this.currentViewControllerIndex];
+        let fromVC = this.viewControllersStack[this.currentViewControllerIndex];
 
         this.currentViewControllerIndex--;
         this.viewControllersStack.pop();
 
-        var toVC = this.viewControllersStack[this.currentViewControllerIndex];
+        let toVC = this.viewControllersStack[this.currentViewControllerIndex];
 
         if (toVC.transitioningDelegate == null)
             toVC.transitioningDelegate = this;
@@ -120,35 +118,30 @@ export class MUINavigationController extends MUIViewController
             this.contentSize = toVC.preferredContentSize;
 
         _MUIHideViewController(fromVC, toVC, this, this, function () {
-
             fromVC.removeChildViewController(this);
             fromVC.view.removeFromSuperview();
         });
     }
 
-    popToRootViewController(animated?)
-    {
+    popToRootViewController(animated?:boolean){
         if(this.viewControllersStack.length == 1) return;
         
-        var currentVC = this.viewControllersStack.pop();
+        let currentVC = this.viewControllersStack.pop();
 
-        for(var index = this.currentViewControllerIndex - 1; index > 0; index--)
-        {
-            var vc = this.viewControllersStack.pop();
+        for(let index = this.currentViewControllerIndex - 1; index > 0; index--){
+            let vc = this.viewControllersStack.pop();
             vc.view.removeFromSuperview();
             this.removeChildViewController(vc);
         }
 
         this.currentViewControllerIndex = 0;
-        var rootVC = this.viewControllersStack[0];
+        let rootVC = this.viewControllersStack[0];
 
         this.contentSize = rootVC.preferredContentSize;
 
         _MUIHideViewController(currentVC, rootVC, this, this, function () {
-
             currentVC.view.removeFromSuperview();
             this.removeChildViewController(currentVC);
-
         });
     }
 
@@ -199,24 +192,20 @@ export class MUINavigationController extends MUIViewController
 
 export class MUIPushAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0.25;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations before transitions       
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations after transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         var animations = MUIClassListForAnimationType(MUIAnimationType.Push);
         return animations;
     }

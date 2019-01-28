@@ -102,8 +102,7 @@ export class MUITextField extends MUIControl
         return this._inputLayer.value;
     }
 
-    setPlaceholderText(text)
-    {
+    setPlaceholderText(text){
         this.placeHolder = text;
         this._inputLayer.setAttribute("placeholder", text);
     }
@@ -112,38 +111,47 @@ export class MUITextField extends MUIControl
         this.setPlaceholderText(text);
     }
 
-    setOnChangeText(target, action)
-    {
+    setOnChangeText(target, action){
         this.textChangeTarget = target;
         this.textChangeAction = action;
     }    
 
+    private _textStopPropagationFn = null;
     private _registerInputEvent(){
-
-        var instance = this;
+        let instance = this;
         this._textChangeFn = function() {
             if (instance.enabled)
                 instance._textDidChange.call(instance);
         }
 
-        this.layer.addEventListener("input", this._textChangeFn);
+        this._textStopPropagationFn = function(e){
+            e.stopPropagation();
+        };
+
+        this._textDidEndEditingFn = this._textDidEndEditing.bind(this);
+        
+        this.layer.addEventListener("input", this._textChangeFn);        
+        this.layer.addEventListener("click", this._textStopPropagationFn);
+        this._inputLayer.addEventListener("blur", this._textDidEndEditingFn);
     }
 
     private _unregisterInputEvent(){
         this.layer.removeEventListener("input", this._textChangeFn);
+        this.layer.removeEventListener("click", this._textStopPropagationFn);
+        this._inputLayer.removeEventListener("blur", this._textDidEndEditingFn);
+
     }
 
     private _textDidChange(){
-
         if (this.enabled == false) return;
 
         // Check the formater
-        var value = this._inputLayer.value;
+        let value = this._inputLayer.value;
         if (this.formatter == null) {
             this._textDidChangeDelegate(value);
         }
         else {
-            var result, newStr;
+            let result, newStr;
             [result, newStr] = this.formatter.isPartialStringValid(value);
 
             this._unregisterInputEvent();
@@ -161,14 +169,29 @@ export class MUITextField extends MUIControl
             this.textChangeAction.call(this.textChangeTarget, this, value);
     }
 
-    setOnEnterPress(target, action)
-    {
+    private didEditingAction = null;
+    private didEditingTarget = null;    
+    setOnDidEditing(target, action) {
+        this.didEditingTarget = target;
+        this.didEditingAction = action;        
+    }    
+
+    private _textDidEndEditingFn = null;
+    private _textDidEndEditing(){
+        if (this.enabled == false)  return;
+
+        //if (this.formatter != null) this.text = this.formatter.stringForObjectValue(this.text);
+
+        if (this.didEditingTarget == null || this.didEditingAction == null) return;
+        this.didEditingAction.call(this.didEditingTarget, this, this.text);
+    }
+
+    setOnEnterPress(target, action){
         this.enterPressTarget = target;
         this.enterPressAction = action;
         var instance = this;
 
-        this.layer.onkeyup = function(e)
-        {
+        this.layer.onkeyup = function(e){
             if (instance.enabled) {
                 if (e.keyCode == 13)
                     instance.enterPressAction.call(target, instance, instance._inputLayer.value);
@@ -176,34 +199,16 @@ export class MUITextField extends MUIControl
         }
     }
 
-    setOnKeyPress(target, action)
-    {
+    setOnKeyPress(target, action){
         this.keyPressTarget = target;
         this.keyPressAction = action;
         var instance = this;
 
-        this.layer.onkeydown = function(e)
-        {
+        this.layer.onkeydown = function(e){
             if (instance.enabled) {
                 instance.keyPressAction.call(target, instance, e.keyCode);
             }
         }
-    }
-
-    private didEditingAction = null;
-    private didEditingTarget = null;
-
-    setOnDidEditing(target, action) {
-        this.didEditingTarget = target;
-        this.didEditingAction = action;
-        let instance = this;
-
-        this._inputLayer.onblur = function(e){
-            if (instance.enabled) {
-                instance.didEditingAction.call(target, instance, instance.text);
-            }
-        }
-        
     }
 
     setTextRGBColor(r, g, b){
