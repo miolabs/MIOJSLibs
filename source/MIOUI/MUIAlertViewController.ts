@@ -52,9 +52,8 @@ export class MUIAlertTextField extends MUIAlertItem
 
         this.textField = new MUITextField();
         this.textField.init();
-
+    
         if (target != null && handler != null) {
-
             handler.call(target, this.textField);
         }
     }

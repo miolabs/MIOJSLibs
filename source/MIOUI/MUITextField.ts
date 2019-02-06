@@ -12,7 +12,7 @@ import { MIOLocalizeString } from "../MIOCore";
 export enum MUITextFieldType {
     NormalType,
     PasswordType,
-    SearchType
+    SearchType,    
 }
 
 export class MUITextField extends MUIControl
@@ -44,29 +44,19 @@ export class MUITextField extends MUIControl
         this._setupLayer();
     }
 
-    private _setupLayer()
-    {
-        if (this._inputLayer == null)
-        {
+    private _setupLayer(){
+        if (this._inputLayer == null){
             this._inputLayer = document.createElement("input");
 
-            if (this.type == MUITextFieldType.SearchType) {
-                this._inputLayer.style.marginLeft = "10px";
-                this._inputLayer.style.marginRight = "10px";
-            }
-            else {
-                this._inputLayer.style.marginLeft = "5px";
-                this._inputLayer.style.marginRight = "5px";
-            }
+            switch(this.type){
+                case MUITextFieldType.SearchType:
+                this._inputLayer.setAttribute("type", "search");
+                break;
 
-            this._inputLayer.style.border = "0px";
-            this._inputLayer.style.backgroundColor = "transparent";
-            this._inputLayer.style.width = "100%";
-            this._inputLayer.style.height = "100%";
-            this._inputLayer.style.color = "inherit";
-            this._inputLayer.style.fontSize = "inherit";
-            this._inputLayer.style.fontFamily = "inherit";
-            this._inputLayer.style.outline = "none";
+                default:
+                this._inputLayer.setAttribute("type", "text");
+                break;
+            }
 
             this.layer.appendChild(this._inputLayer);
         }
