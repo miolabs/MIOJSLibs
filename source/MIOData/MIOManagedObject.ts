@@ -117,6 +117,10 @@ export class MIOManagedObject extends MIOObject {
     private _storedValues = null;
     private committedValues(){
         if (this.objectID.isTemporaryID == true) return {};
+        // if (this.objectID.isTemporaryID == true && this._storedValues == null) {
+        //     this._storedValues = {};
+        //     return this._storedValues;
+        // }
 
         if (this._storedValues == null) {
             // Get from the store

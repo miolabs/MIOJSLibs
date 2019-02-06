@@ -75,11 +75,11 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
         let rv2 = rv;
         let sortValue = 0;
         if (lv.length > rv.length){
-            lv2 == lv.substr(0, rv.length);
+            lv2 = lv.substr(0, rv.length);
             sortValue = sd.ascending ? 1 : -1;
         }
         else if (lv.length < rv.length){
-            rv2 == rv.substr(0, lv.length);
+            rv2 = rv.substr(0, lv.length);
             sortValue = sd.ascending ? -1 : 1;
         }
 

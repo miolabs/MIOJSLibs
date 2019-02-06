@@ -61,6 +61,7 @@ export class MUITableViewCell extends MUIView {
     _onClickFn = null;
     _onDblClickFn = null;
     _onAccessoryClickFn = null;
+    _onEditingAccessoryClickFn = null;
 
     initWithStyle(style: MUITableViewCellStyle) {
 
@@ -130,15 +131,13 @@ export class MUITableViewCell extends MUIView {
         else this.accessoryType = MUITableViewCellAccessoryType.None;
 
         if (this.accessoryType != MUITableViewCellAccessoryType.None) return;
+        
+        this.accessoryView.layer.addEventListener("click", this.accessoryViewDidClick.bind(this));
+    }
 
-        // TODO: Change for a gesuture recongnizer or something independent of the html
-        var instance = this;
-        this.accessoryView.layer.onclick = function (e) {
-            if (instance._onAccessoryClickFn != null) {
-                e.stopPropagation();
-                instance._onAccessoryClickFn.call(instance._target, instance);
-            }
-        };
+    private accessoryViewDidClick(e:Event){
+        e.stopPropagation();
+        this._onAccessoryClickFn.call(this._target, this);
     }
 
     private editingAccessoryInsertView:MUIView = null;
@@ -203,7 +202,7 @@ export class MUITableViewCell extends MUIView {
 
     private editingAccessoryViewDidClick(e:Event){
         e.stopPropagation();
-        this._onAccessoryClickFn.call(this._target, this);
+        this._onEditingAccessoryClickFn.call(this._target, this);
     }
 
     private _setupLayer() {
@@ -238,7 +237,7 @@ export class MUITableViewCell extends MUIView {
         if (this.accessoryView == null) {
             if (this.style == MUITableViewCellStyle.Default) this.textLabel.layer.style.right = "25px";
 
-            var layer = document.createElement("div");
+            let layer = document.createElement("div");
             layer.style.position = "absolute";
             layer.style.top = "15px";
             layer.style.right = "5px";

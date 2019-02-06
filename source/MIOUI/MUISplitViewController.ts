@@ -22,8 +22,8 @@ export enum MUISplitViewControllerDisplayMode
 
 export class MUISplitViewController extends MUIViewController
 {
-    private masterView = null;
-    private detailView = null;
+    private masterView:MUIView = null;
+    private detailView:MUIView = null;
 
     preferredDisplayMode = MUISplitViewControllerDisplayMode.Automatic;
     
@@ -35,10 +35,12 @@ export class MUISplitViewController extends MUIViewController
         if (MIOCoreIsPhone() == false) MUICoreLayerAddStyle(this.masterView.layer, "master-view");
         this.view.addSubview(this.masterView);
 
-        this.detailView = new MUIView();
-        this.detailView.init();
-        if (MIOCoreIsPhone() == false) MUICoreLayerAddStyle(this.detailView.layer, "detail-view");
-        this.view.addSubview(this.detailView);
+        if (MIOCoreIsPhone() == false) {
+            this.detailView = new MUIView();
+            this.detailView.init();
+            MUICoreLayerAddStyle(this.detailView.layer, "detail-view");        
+            this.view.addSubview(this.detailView);
+        }
     }
     
     get displayMode():MUISplitViewControllerDisplayMode{

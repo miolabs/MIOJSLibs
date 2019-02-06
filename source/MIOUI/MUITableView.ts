@@ -1,7 +1,7 @@
 import { MIOObject, MIOIndexPath, MIOLocationInRange, MIORange, MIOSize, MIOBundle, MIOUUID, MIOIndexPathEqual } from "../MIOFoundation";
 import { MUIScrollView } from "./MUIScrollView";
 import { MUIView } from "./MUIView";
-import { MUITableViewCell, MUITableViewCellEditingStyle } from "./MUITableViewCell";
+import { MUITableViewCell, MUITableViewCellEditingStyle, MUITableViewCellAccessoryType } from "./MUITableViewCell";
 import { MIOClassFromString, MIOCoreLoadStyle } from "../MIOCore/platform";
 import { MUILabel } from "./MUILabel";
 import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
@@ -744,6 +744,7 @@ export class MUITableView extends MUIScrollView {
         cell._onClickFn = this.cellOnClickFn;
         cell._onDblClickFn = this.cellOnDblClickFn;
         cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
+        cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
 
         let h = this.rowHeight;
         if (this.delegate != null && typeof this.delegate.heightForRowAtIndexPath === "function") {
@@ -879,8 +880,16 @@ export class MUITableView extends MUIScrollView {
         }*/
     }
 
-    cellOnAccessoryClickFn(cell) {
+    cellOnAccessoryClickFn(cell:MUITableViewCell) {
+        if (cell.accessoryType != MUITableViewCellAccessoryType.None) return;
 
+        let indexPath: MIOIndexPath = this.indexPathForCell(cell);
+        if (this.delegate != null && typeof this.delegate.accessoryButtonTappedForRowWithIndexPath === "function") {
+            this.delegate.accessoryButtonTappedForRowWithIndexPath(this, indexPath);
+        }
+    }
+
+    cellOnEditingAccessoryClickFn(cell:MUITableViewCell) {
         let indexPath: MIOIndexPath = this.indexPathForCell(cell);
 
         if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
@@ -891,6 +900,7 @@ export class MUITableView extends MUIScrollView {
             }
         }
     }
+
 
     cellAtIndexPath(indexPath: MIOIndexPath) {
 
