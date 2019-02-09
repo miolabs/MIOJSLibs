@@ -1,4 +1,4 @@
-import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog } from "../MIOFoundation";
+import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog, MIONotificationCenter } from "../MIOFoundation";
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOAttributeType } from "./MIOAttributeDescription";
@@ -116,6 +116,7 @@ export class MIOManagedObjectModel extends MIOObject
         }
 
         //console.log("datamodel.xml parser finished");
+        MIONotificationCenter.defaultCenter().postNotification("MIOManagedObjectModelDidParseDataModel", null);
     }
 
     // #endregion
