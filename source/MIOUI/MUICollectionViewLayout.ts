@@ -1,5 +1,7 @@
-import { MIOObject, MIOSize } from "../MIOFoundation";
+import { MIOObject, MIOSize, MIOIndexPath } from "../MIOFoundation";
 import { MUICollectionView } from "./MUICollectionView";
+import { MUICollectionViewLayoutAttributes } from "./MUICollectionViewLayoutAttributes";
+import { MUICollectionViewUpdateItem } from "./MUICollectionViewUpdateItem";
 import { MUIEdgeInsets } from "./MUIEdgeInsets";
 
 export class MUICollectionViewLayout extends MIOObject
@@ -21,7 +23,16 @@ export class MUICollectionViewLayout extends MIOObject
         this.sectionInset.init();
     }
 
-    invalidateLayout(){}
+    invalidateLayout(){}    
+
+    get collectionViewContentSize():MIOSize {return MIOSize.Zero();}
+
+    layoutAttributesForItemAtIndexPath(indexPath:MIOIndexPath):MUICollectionViewLayoutAttributes{return null};
+
+    prepareForCollectionViewUpdates(updateItems:MUICollectionViewUpdateItem[]){}
+    initialLayoutAttributesForAppearingItemAtIndexPath(itemIndexPath:MIOIndexPath):MUICollectionViewLayoutAttributes {return null;}
+    finalLayoutAttributesForDisappearingItemAtIndexPath(itemIndexPath:MIOIndexPath):MUICollectionViewLayoutAttributes {return null;}
+    finalizeCollectionViewUpdates(){}
 }
 
 export enum MIOCollectionViewScrollDirection {

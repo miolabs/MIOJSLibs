@@ -20,11 +20,10 @@ export class MIOBundle extends MIOObject
 
     public static mainBundle():MIOBundle
     {
-        if (this._mainBundle == null)
-        {
+        if (this._mainBundle == null){
             // Main url. Getting from broser window url search field
 
-            var urlString = MIOCoreGetMainBundleURLString();
+            let urlString = MIOCoreGetMainBundleURLString();
 
             this._mainBundle = new MIOBundle();
             this._mainBundle.initWithURL(MIOURL.urlWithString(urlString));
@@ -33,15 +32,12 @@ export class MIOBundle extends MIOObject
         return this._mainBundle;
     }
 
-    initWithURL(url:MIOURL)
-    {
+    initWithURL(url:MIOURL){
         this.url = url;
     }
 
-    loadHTMLNamed(path, layerID, target?, completion?)
-    {            
-        if (MIOCoreGetAppType() == MIOCoreAppType.Web)
-        {
+    loadHTMLNamed(path, layerID, target?, completion?){            
+        if (MIOCoreGetAppType() == MIOCoreAppType.Web){
             if (this._webBundle == null){
                 this._webBundle = new MIOCoreBundle();
                 this._webBundle.baseURL = this.url.absoluteString;
@@ -52,9 +48,9 @@ export class MIOBundle extends MIOObject
                 // let parser = new BundleFileParser(layerData, layerID);
                 // let result = parser.parse();
 
-                var domParser = new DOMParser();
-                var items = domParser.parseFromString(layerData, "text/html");
-                var layer = items.getElementById(layerID);
+                let domParser = new DOMParser();
+                let items = domParser.parseFromString(layerData, "text/html");
+                let layer = items.getElementById(layerID);
 
                 if (target != null && completion != null)
                     completion.call(target, layer);
@@ -62,18 +58,42 @@ export class MIOBundle extends MIOObject
         }
     }
 
-    private _loadResourceFromURL(url:MIOURL, target, completion)
-    {
-        var request = MIOURLRequest.requestWithURL(url);
-        var conn =  new MIOURLConnection();
+    private _loadResourceFromURL(url:MIOURL, target, completion){
+        let request = MIOURLRequest.requestWithURL(url);
+        let conn =  new MIOURLConnection();
         conn.initWithRequestBlock(request, this, function(error, data){
-
             completion.call(target, data);
         });
     }
 
+    pathForResourceOfType(resource:string, type:string){
+        return _MIOBundleAppGetResource(resource, type);
+    }
+
 
 }
+
+var _MIOAppBundleResources = {};
+
+export function _MIOBundleAppSetResource(resource:string, type:string, content:string){
+    let files = _MIOAppBundleResources[type];
+    if (files == null) {
+        files = {};
+        _MIOAppBundleResources[type] = files;
+    }
+
+    files[resource] = content;
+}
+
+export function _MIOBundleAppGetResource(resource:string, type:string){
+    let files = _MIOAppBundleResources[type];
+    if (files == null) return null;
+
+    let content = files[resource];
+    return content;
+}
+
+
 
 /*
 export class BundleFileParser implements MIOCoreHTMLParserDelegate {

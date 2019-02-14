@@ -252,6 +252,8 @@ export class MUICollectionView extends MUIView
             sectionView.cells = [];
         }
 
+        this.selectedCellIndex = -1;
+        this.selectedCellSection = -1;    
         this._sections = [];
 
         let sections = this.dataSource.numberOfSections(this);
@@ -261,8 +263,7 @@ export class MUICollectionView extends MUIView
             section.init();
             this._sections.push(section);
 
-            if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function")
-            {
+            if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function"){
                 let hv = this.dataSource.viewForSupplementaryViewAtIndex(this, "header", sectionIndex);
                 section.header = hv;
                 if (hv != null) this.addSubview(hv);
@@ -283,8 +284,7 @@ export class MUICollectionView extends MUIView
                 cell._section = sectionIndex;
             }
 
-            if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function")
-            {
+            if (typeof this.dataSource.viewForSupplementaryViewAtIndex === "function"){
                 let fv = this.dataSource.viewForSupplementaryViewAtIndex(this, "footer", sectionIndex);
                 section.footer = fv;
                 if (fv != null) this.addSubview(fv);
@@ -296,18 +296,16 @@ export class MUICollectionView extends MUIView
     }
 
     cellOnClickFn(cell){
-        var index = cell._index;
-        var section = cell._section;
+        let index = cell._index;
+        let section = cell._section;
 
-        var canSelectCell = true;
+        let canSelectCell = true;
 
         // if (this.selectedCellIndex == index && this.selectedCellSection == section)
         //     return;
 
-        if (this.delegate != null)
-        {
-            if (typeof this.delegate.canSelectCellAtIndexPath === "function")
-                canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
+        if (this.delegate != null && typeof this.delegate.canSelectCellAtIndexPath === "function"){
+            canSelectCell = this.delegate.canSelectCellAtIndexPath(this, index, section);
         }
 
         if (canSelectCell == false)
@@ -336,16 +334,14 @@ export class MUICollectionView extends MUIView
         cell.setSelected(true);
     }
 
-    selectCellAtIndexPath(index, section)
-    {
+    selectCellAtIndexPath(index, section){
         this.selectedCellIndex = index;
         this.selectedCellSection = section;
         var cell = this._sections[section].cells[index];
         this._selectCell(cell);
     }
 
-    _deselectCell(cell)
-    {
+    _deselectCell(cell){
         cell.setSelected(false);
     }
 
@@ -409,6 +405,7 @@ export class MUICollectionView extends MUIView
                 if (x >= maxX) {
                     x = this.collectionViewLayout.sectionInset.left;
                     y += this.collectionViewLayout.itemSize.height;
+                    y += this.collectionViewLayout.minimumLineSpacing;
                 }
             }
 

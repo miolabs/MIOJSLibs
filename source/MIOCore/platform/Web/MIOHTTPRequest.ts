@@ -10,6 +10,9 @@ export function MIOHTTPRequest(instance, urlString, headers, method, body, binar
             // success!
             if (delegate != null)
                 delegate.connectionDidReceiveText(instance, this.responseText);
+            else if (binary == false || download == false) {
+                completion.call(target, this.status, this.responseText);
+            }
             else if (target != null) {
                 var type = xhr.getResponseHeader('Content-Type').split(';')[0];
                 if (type != 'application/json' && type != 'text/html') {

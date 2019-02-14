@@ -40,11 +40,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     delegate = null;
 
-    private storeURL: MIOURL = null;
-    private entitiesInfo = {};
-    private nodesByReferenceID = {};
-    private referenceIDByObjectsID = {};
-    private objectIDByReferenceID = {};
+    private storeURL: MIOURL = null;    
+    private nodesByReferenceID = {};        
 
     loadMetadata(): MIOError {
 
@@ -150,6 +147,15 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     }
 
     managedObjectContextDidUnregisterObjectsWithIDs(objectIDs){
+        for (let index = 0; index < objectIDs.length; index++){
+            let objID = objectIDs[index];
+            let serverID = this.referenceObjectForObjectID(objID);
+            let referenceID = objID.entity.name + "://" + serverID;
+
+            if (referenceID == null) throw new Error("MWSPersistentStore: Asking objectID without referenceID");
+            delete this.nodesByReferenceID[referenceID];            
+        }        
+
     }
             
     _fetchObjectWithObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext){        

@@ -1,7 +1,7 @@
 import { MUIWindow } from "./MUIWindow";
-import { MIOCoreGetLanguages, setMIOLocalizedStrings } from "../MIOCore";
+import { MIOCoreGetLanguages, setMIOLocalizedStrings, MIOCoreAddLanguage } from "../MIOCore";
 import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCore/platform";
-import { MIOURLRequest, MIOURL, MIOURLConnection } from "../MIOFoundation";
+import { MIOURLRequest, MIOURL, MIOURLConnection, _MIOBundleAppSetResource, MIOPropertyListSerialization } from "../MIOFoundation";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -14,7 +14,6 @@ export class MUIWebApplication {
     static sharedInstance(): MUIWebApplication {
 
         if (MUIWebApplication._sharedInstance == null) {
-
             MUIWebApplication._sharedInstance = new MUIWebApplication();
         }
 
@@ -22,7 +21,6 @@ export class MUIWebApplication {
     }
 
     private constructor() {
-
         if (MUIWebApplication._sharedInstance != null) {
             throw new Error("MUIWebApplication: Instantiation failed: Use sharedInstance() instead of new.");
         }
@@ -55,12 +53,12 @@ export class MUIWebApplication {
 
     //TODO: Set language in the webworker also.
     private setLanguage(lang, target, completion){
-        var languages = MIOCoreGetLanguages();
+        let languages = MIOCoreGetLanguages();
         if (languages == null) {
             completion.call(target);
         }
 
-        var url = languages[lang];
+        let url = languages[lang];
         if (url == null){
             completion.call(target);
         }
@@ -75,11 +73,34 @@ export class MUIWebApplication {
         });        
     }
 
-    run(){
-        var lang = MIOCoreGetBrowserLanguage();
-        this.setLanguage(lang, this, function(){
-            this._run();
+    private downloadAppPlist(target, completion){        
+        let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString("app.plist"));
+        let con = new MIOURLConnection();
+        con.initWithRequestBlock(request, this, function(code, data){
+            if (code == 200) {                
+                _MIOBundleAppSetResource("app", "plist", data);
+            }
+            completion.call(target, data);
         });        
+
+    }
+
+    run(){
+        this.downloadAppPlist(this, function(data){
+            if (data == null) throw new Error("We couldn't download the app.plist");
+            
+            // Get Languages from the app.plist
+            let config = MIOPropertyListSerialization.propertyListWithData(data, 0, 0, null);
+            let langs = config["Languages"];
+            for (let key in langs) {
+                let url = langs[key];
+                MIOCoreAddLanguage(key, url);
+            }
+            let lang = MIOCoreGetBrowserLanguage();
+            this.setLanguage(lang, this, function(){
+                this._run();
+            });            
+        });
     }
 
     private _run() {        
@@ -112,8 +133,7 @@ export class MUIWebApplication {
         this.defaultLanguage = key;
     }
 
-    downloadLanguage(key, fn) {
-        
+    downloadLanguage(key, fn) {        
         var url = this.languages[key];
 
         // Download
@@ -166,13 +186,11 @@ export class MUIWebApplication {
         }
     }
 
-    private _resizeEvent(event:MIOCoreEvent) {
-        
+    private _resizeEvent(event:MIOCoreEvent) {        
         this.delegate.window.layoutSubviews();
     }
 
-    private _clickEvent(event:MIOCoreEventInput)
-    {
+    private _clickEvent(event:MIOCoreEventInput){
         var target = event.coreEvent.target;
         var x = event.x;
         var y = event.y;
@@ -193,8 +211,7 @@ export class MUIWebApplication {
 
         // Checking windows
 
-        if (this._keyWindow != null) 
-        {        
+        if (this._keyWindow != null) {        
             let controlRect = this._keyWindow.layer.getBoundingClientRect();
 
             //console.log("x: " + controlRect.left + " mx: " + x);
@@ -228,7 +245,6 @@ export class MUIWebApplication {
         }
 
         this._popOverWindow.rootViewController.onLoadView(this, function () {
-
             this._popOverWindow.rootViewController.viewWillAppear(true);
             this._popOverWindow.rootViewController.viewDidAppear(true);
         });
@@ -244,13 +260,11 @@ export class MUIWebApplication {
         this._popOverWindow = null;
     }
 
-    addWindow(window)
-    {
+    addWindow(window){
         this._windows.push(window);
     }
 
-    makeKeyWindow(window)
-    {
+    makeKeyWindow(window){
         if (this._keyWindow === window) return;
 
         if (this._keyWindow != null)        

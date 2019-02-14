@@ -64,3 +64,5 @@ export * from './MUICodeEditor'
 export * from './MUIEvent'
 export * from './MUIGestureRecognizer'
 export * from './MUITapGestureRecognizer'
+
+export * from './MUIOpenPanel'

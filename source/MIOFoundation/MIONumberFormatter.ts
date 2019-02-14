@@ -170,7 +170,7 @@ export class MIONumberFormatter extends MIOFormatter {
 
         if (str.length == 0) return [true, str];
 
-        var result, newStr;
+        let result, newStr;
         [result, newStr] = this._parse(str);
 
         return [result, newStr];
@@ -178,16 +178,16 @@ export class MIONumberFormatter extends MIOFormatter {
 
     private _parse(str:string):[boolean, string, string, _MIONumberFormatterType]{
 
-        var number = 0;
-        var parseString = "";
-        var numberString = "";
-        var type = _MIONumberFormatterType.Int;
-        var minusSymbol = false;
-        var percentSymbol = false;
+        let number = 0;
+        let parseString = "";
+        let numberString = "";
+        let type = _MIONumberFormatterType.Int;
+        let minusSymbol = false;
+        let percentSymbol = false;
 
-        for (var index = 0; index < str.length; index++) {
+        for (let index = 0; index < str.length; index++) {
          
-            var ch = str[index];
+            let ch = str[index];
             if (ch == this.locale.decimalSeparator && type != _MIONumberFormatterType.Decimal){
                 parseString += ch;
                 numberString += ".";
@@ -205,12 +205,15 @@ export class MIONumberFormatter extends MIOFormatter {
                 percentSymbol = true;
                 parseString += ch;                
             }
+            else if (ch == " "){
+                continue;
+            }
             else if (!isNaN(parseInt(ch))) {
                 parseString += ch;
                 numberString += ch;
             }
             else 
-                return [false, parseString, numberString, type];
+                return [(parseString.length > 0 ? true : false), parseString, numberString, type];
         }
 
         return [true, parseString, numberString, type];

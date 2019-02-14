@@ -130,7 +130,7 @@ export class MIOManagedObjectContext extends MIOObject {
         object._setIsUpdated(false);
         this.deletedObjects.addObject(object);
         object._setIsDeleted(true);
-        this._unregisterObject(object);
+        //this._unregisterObject(object);
     }
 
     _objectWithURIRepresentationString(urlString:string){
@@ -339,6 +339,7 @@ export class MIOManagedObjectContext extends MIOObject {
             for (let index = 0; index < this.deletedObjects.length; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
                 obj._didCommit();
+                this._unregisterObject(obj);
             }
 
             // Clear
@@ -441,7 +442,35 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     reset(){
+        let pss = {};
         
+        for (let key in this.objectsByID){
+            let obj:MIOManagedObject = this.objectsByID[key];
+            
+            let arr = pss[obj.objectID.persistentStore.identifier];
+            if (arr == null) {
+                arr = [];
+                pss[obj.objectID.persistentStore.identifier] = arr;
+            }
+
+            arr.addObject(obj.objectID);
+        }        
+
+        for (let index = 0; index < this.persistentStoreCoordinator.persistentStores.length; index++){
+            let ps = this.persistentStoreCoordinator.persistentStores[index];
+            let objs = pss[ps.identifier];
+            if (objs == null || objs.length == 0) continue;
+
+            if (ps instanceof MIOIncrementalStore){
+                let is = ps as MIOIncrementalStore;
+                is.managedObjectContextDidUnregisterObjectsWithIDs(objs);
+            }                        
+        }
+
+
+        this.registerObjects = [];
+        this.objectsByID = {};
+        this.objectsByEntity = {};
     }
 
 }

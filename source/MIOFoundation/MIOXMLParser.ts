@@ -82,7 +82,6 @@ export class MIOXMLParser extends MIOObject
                 }
                 value += ch2;
             }
-
             else if (ch == " "){
                 exit = true;
             }                                
@@ -150,7 +149,7 @@ export class MIOXMLParser extends MIOObject
         if (typeof this.delegate.parserDidStartDocument === "function")
             this.delegate.parserDidStartDocument(this);
 
-        var token, value;
+        let token, value;
         [token, value] = this.nextToken();
                 
         while(token != MIOXMLTokenType.End){
@@ -162,6 +161,10 @@ export class MIOXMLParser extends MIOObject
                     break;
 
                 case MIOXMLTokenType.Identifier:
+                    this.text(value);
+                    break;                    
+
+                case MIOXMLTokenType.Slash:
                     this.text(value);
                     break;                    
 
@@ -255,9 +258,9 @@ export class MIOXMLParser extends MIOObject
             let exit = false;
 
             while (exit == false) {
-                let ch = this.nextChar();
-                if (ch == null) throw new Error("MIOXMLParser: Unexpected end of file!");
-                comments += ch;                
+                let ch2 = this.nextChar();
+                if (ch2 == null) throw new Error("MIOXMLParser: Unexpected end of file!");
+                comments += ch2;                
                 if (comments.length >= 3 && comments.substr(-3) == "-->") exit = true;
             }
 

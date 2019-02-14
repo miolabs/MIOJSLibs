@@ -115,19 +115,23 @@ export class MUITextField extends MUIControl
         }
 
         this._textStopPropagationFn = function(e){
+            //instance._textDidBeginEditing();
             e.stopPropagation();
         };
 
+        this._textDidBeginEditingFn = this._textDidBeginEditing.bind(this);
         this._textDidEndEditingFn = this._textDidEndEditing.bind(this);
         
         this.layer.addEventListener("input", this._textChangeFn);        
         this.layer.addEventListener("click", this._textStopPropagationFn);
+        this._inputLayer.addEventListener("focus", this._textDidBeginEditingFn);
         this._inputLayer.addEventListener("blur", this._textDidEndEditingFn);
     }
 
     private _unregisterInputEvent(){
         this.layer.removeEventListener("input", this._textChangeFn);
         this.layer.removeEventListener("click", this._textStopPropagationFn);
+        this._inputLayer.removeEventListener("focus", this._textDidBeginEditingFn);
         this._inputLayer.removeEventListener("blur", this._textDidEndEditingFn);
 
     }
@@ -157,13 +161,30 @@ export class MUITextField extends MUIControl
     private _textDidChangeDelegate(value){
         if (this.textChangeAction != null && this.textChangeTarget != null)
             this.textChangeAction.call(this.textChangeTarget, this, value);
+    }    
+
+    private didBeginEditingAction = null;
+    private didBeginEditingTarget = null;    
+    setOnBeginEditing(target, action) {
+        this.didBeginEditingTarget = target;
+        this.didBeginEditingAction = action;        
+    }    
+
+    private _textDidBeginEditingFn = null;
+    private _textDidBeginEditing(){
+        if (this.enabled == false)  return;
+
+        //if (this.formatter != null) this.text = this.formatter.stringForObjectValue(this.text);
+
+        if (this.didBeginEditingTarget == null || this.didBeginEditingAction == null) return;
+        this.didBeginEditingAction.call(this.didBeginEditingTarget, this, this.text);
     }
 
-    private didEditingAction = null;
-    private didEditingTarget = null;    
-    setOnDidEditing(target, action) {
-        this.didEditingTarget = target;
-        this.didEditingAction = action;        
+    private didEndEditingAction = null;
+    private didEndEditingTarget = null;    
+    setOnDidEndEditing(target, action) {
+        this.didEndEditingTarget = target;
+        this.didEndEditingAction = action;        
     }    
 
     private _textDidEndEditingFn = null;
@@ -172,8 +193,8 @@ export class MUITextField extends MUIControl
 
         //if (this.formatter != null) this.text = this.formatter.stringForObjectValue(this.text);
 
-        if (this.didEditingTarget == null || this.didEditingAction == null) return;
-        this.didEditingAction.call(this.didEditingTarget, this, this.text);
+        if (this.didEndEditingTarget == null || this.didEndEditingAction == null) return;
+        this.didEndEditingAction.call(this.didEndEditingTarget, this, this.text);
     }
 
     setOnEnterPress(target, action){
@@ -226,6 +247,10 @@ export class MUITextField extends MUIControl
 
     resignFirstResponder(){
         this._inputLayer.blur();
+    }
+
+    selectAll(control:MUITextField){
+        this._inputLayer.select();
     }
 
 }
