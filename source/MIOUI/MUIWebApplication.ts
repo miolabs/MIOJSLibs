@@ -151,12 +151,12 @@ export class MUIWebApplication {
 
     showModalViewContoller(vc) {
         let w = new MUIWindow();
-        w.initWithRootViewController(vc);
+        w.initWithRootViewController(vc);        
 
         // Add new window
         document.body.appendChild(vc.view.layer);
 
-        this._windows.push(w);
+        this.addWindow(w);
     }
 
     showMenuFromControl(control, menu) {
@@ -242,6 +242,7 @@ export class MUIWebApplication {
             this._popOverWindow.initWithRootViewController(vc.popoverPresentationController());
             //this._popOverWindow.layer.style.border = "2px solid rgb(170, 170, 170)";
             this._popOverWindow.setFrame(vc.popoverPresentationController().frame);
+            this.addWindow(this._popOverWindow);
         }
 
         this._popOverWindow.rootViewController.onLoadView(this, function () {
@@ -260,8 +261,11 @@ export class MUIWebApplication {
         this._popOverWindow = null;
     }
 
-    addWindow(window){
+    private windowZIndexOffset = 0;
+    addWindow(window:MUIWindow){
         this._windows.push(window);
+        window.layer.style.zIndex = this.windowZIndexOffset;
+        this.windowZIndexOffset += 10;
     }
 
     makeKeyWindow(window){

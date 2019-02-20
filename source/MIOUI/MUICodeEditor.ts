@@ -4,14 +4,22 @@ import { MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 
 import * as ace from 'brace';
 import 'brace/mode/javascript';
+import 'brace/mode/sql';
+import 'brace/mode/php';
+import 'brace/mode/python';
+import 'brace/mode/swift';
+import 'brace/mode/typescript';
 import 'brace/theme/monokai';
+import 'brace/theme/xcode';
 
 export enum MUICodeEditorLanguage {
     None,
     SQL,
-    Javascript,
+    Javascript,    
     PHP,
-    Swift
+    Swift,
+    Python,
+    TypeScript
 }
 
 export class MUICodeEditor extends MUIView 
@@ -49,6 +57,26 @@ export class MUICodeEditor extends MUIView
 
             case MUICodeEditorLanguage.Javascript:
                 this.editor.session.setMode("ace/mode/javascript");
+                break;
+
+            case MUICodeEditorLanguage.PHP:
+                this.editor.session.setMode("ace/mode/php");
+                break;
+
+            case MUICodeEditorLanguage.Python:
+                this.editor.session.setMode("ace/mode/python");
+                break;
+
+            case MUICodeEditorLanguage.Swift:
+                this.editor.session.setMode("ace/mode/swift");
+                break;
+
+            case MUICodeEditorLanguage.TypeScript:
+                this.editor.session.setMode("ace/mode/typescript");
+                break;
+
+            default:
+                this.editor.session.setMode("ace/mode/plain_text");
                 break;
         }
     }

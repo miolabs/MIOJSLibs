@@ -5,7 +5,6 @@ import { MIOAttributeType } from "./MIOAttributeDescription";
 import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
 
 
-
 export class MIOManagedObjectModel extends MIOObject
 {    
     private _entitiesByName = {};

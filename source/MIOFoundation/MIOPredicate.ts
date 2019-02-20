@@ -16,7 +16,12 @@ export enum MIOPredicateComparatorType {
     Contains,
     NotContains,
     In,
-    NotIn
+    NotIn    
+}
+
+export enum MIOPredicateRelationshipOperatorType {
+    ANY,
+    ALL
 }
 
 export enum MIOPredicateOperatorType {
@@ -34,18 +39,18 @@ export class MIOPredicateOperator {
     type = null;
 
     public static andPredicateOperatorType() {
-        var op = new MIOPredicateOperator(MIOPredicateOperatorType.AND);
+        let op = new MIOPredicateOperator(MIOPredicateOperatorType.AND);
         return op;
     }
 
     public static orPredicateOperatorType() {
-        var op = new MIOPredicateOperator(MIOPredicateOperatorType.OR);
+        let op = new MIOPredicateOperator(MIOPredicateOperatorType.OR);
         return op;
     }
 
     constructor(type) {
         this.type = type;
-    }
+    }    
 }
 
 export enum MIOPredicateItemValueType {
@@ -60,19 +65,21 @@ export enum MIOPredicateItemValueType {
 }
 
 export class MIOPredicateItem {
+    relationshipOperation:MIOPredicateRelationshipOperatorType = null;
     key = null;
     comparator = null;
     value = null;
     valueType = MIOPredicateItemValueType.Undefined;
 
-    evaluateObject(object) {
+    evaluateObject(object, key?) {
 
-        let lValue = null;
+        let k = key != null ? key : this.key;
+        let lValue = null;        
         if (object instanceof MIOObject) {
-            lValue = object.valueForKeyPath(this.key);
+            lValue = object.valueForKeyPath(k);
         }
         else {
-            lValue = object[this.key];
+            lValue = object[k];
         }
         
         if (lValue instanceof Date) {
@@ -123,6 +130,32 @@ export class MIOPredicateItem {
             return true;
         }
     }
+
+    evaluateRelationshipObject(object){
+        let relObjs = null;
+        let keys = this.key.split('.');
+        let lastKey = keys[keys.length - 1];
+        if (keys.length > 1) {            
+            let relKey = this.key.substring(0, this.key.length - lastKey.length - 1);
+            relObjs = object.valueForKeyPath(relKey);
+        }
+        else {
+            relObjs = object.valueForKeyPath(this.key);
+        }
+                       
+        for (let index = 0; index < relObjs.count; index++) {
+            let o = relObjs.objectAtIndex(index);
+            let result = this.evaluateObject(o, lastKey);
+            if (result == true && this.relationshipOperation == MIOPredicateRelationshipOperatorType.ANY) {
+                return true;
+            }
+            else if (result == false && this.relationshipOperation == MIOPredicateRelationshipOperatorType.ALL) {
+                return false;
+            }
+        }
+        
+        return false;        
+    }
 }
 
 export class MIOPredicateGroup {
@@ -131,18 +164,23 @@ export class MIOPredicateGroup {
 
     evaluateObject(object):boolean {
         
-        var result = false;
-        var op = null;
-        var lastResult = null;
+        let result = false;
+        let op = null;
+        let lastResult = null;
 
-        for (var count = 0; count < this.predicates.length; count++) {
-            var o = this.predicates[count];
+        for (let count = 0; count < this.predicates.length; count++) {
+            let o = this.predicates[count];
 
             if (o instanceof MIOPredicateGroup) {
                 result = o.evaluateObject(object);
             }
             else if (o instanceof MIOPredicateItem) {
-                result = o.evaluateObject(object);
+                if (o.relationshipOperation != null) {
+                    result = o.evaluateRelationshipObject(object);                    
+                }
+                else {
+                    result = o.evaluateObject(object);
+                }
             }
             else if (o instanceof MIOPredicateOperator) {
                 op = o.type;
@@ -190,14 +228,17 @@ export enum MIOPredicateTokenType{
     ContainsComparator,
     NotContainsComparator,
     InComparator,
-    NotIntComparator,
+    NotIntComparator,    
     
     OpenParenthesisSymbol,
     CloseParenthesisSymbol,
     Whitespace,
 
     AND,
-    OR
+    OR,
+
+    ANY,
+    ALL
 }
 
 export class MIOPredicate extends MIOObject {
@@ -259,6 +300,9 @@ export class MIOPredicate extends MIOObject {
         // Join operators
         this.lexer.addTokenType(MIOPredicateTokenType.AND, /^(and|&&) /i);
         this.lexer.addTokenType(MIOPredicateTokenType.OR, /^(or|\|\|) /i);        
+        // Relationship operators
+        this.lexer.addTokenType(MIOPredicateTokenType.ANY, /^any /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.ALL, /^all /i);
         // Extra
         this.lexer.addTokenType(MIOPredicateTokenType.Whitespace, /^\s+/);        
         this.lexer.ignoreTokenType(MIOPredicateTokenType.Whitespace);
@@ -292,11 +336,7 @@ export class MIOPredicate extends MIOObject {
             switch (token.type) {
 
                 case MIOPredicateTokenType.Identifier:
-                    let pi = new MIOPredicateItem();
-                    this.lexer.prevToken();
-                    this.property(pi);
-                    this.comparator(pi);
-                    this.value(pi);
+                    let pi = this.nextPredicateItem();
                     predicates.push(pi);
                     break;
 
@@ -306,7 +346,14 @@ export class MIOPredicate extends MIOObject {
 
                 case MIOPredicateTokenType.OR:
                     predicates.push(MIOPredicateOperator.orPredicateOperatorType());
-                    break;                    
+                    break;
+                    
+                case MIOPredicateTokenType.ANY:
+                    this.lexer.nextToken();
+                    let anyPI = this.nextPredicateItem();
+                    anyPI.relationshipOperation = MIOPredicateRelationshipOperatorType.ANY;
+                    predicates.push(anyPI);
+                    break;
 
                 case MIOPredicateTokenType.OpenParenthesisSymbol:
                     let pg = new MIOPredicateGroup();
@@ -330,9 +377,18 @@ export class MIOPredicate extends MIOObject {
         return predicates;
     }
 
+    private nextPredicateItem(){
+        let pi = new MIOPredicateItem();
+        this.lexer.prevToken();
+        this.property(pi);
+        this.comparator(pi);
+        this.value(pi);
+        return pi;
+    }    
+
     private property(item:MIOPredicateItem) {
         
-        var token = this.lexer.nextToken();
+        let token = this.lexer.nextToken();
 
         switch (token.type) {
 
@@ -347,7 +403,7 @@ export class MIOPredicate extends MIOObject {
 
     private comparator(item:MIOPredicateItem) {
         
-        var token = this.lexer.nextToken();
+        let token = this.lexer.nextToken();
 
         switch(token.type) {
 
@@ -395,7 +451,7 @@ export class MIOPredicate extends MIOObject {
 
     private value(item:MIOPredicateItem) {
 
-        var token = this.lexer.nextToken();
+        let token = this.lexer.nextToken();
         
         switch(token.type) {
             
@@ -437,7 +493,7 @@ export class MIOPredicate extends MIOObject {
     private booleanFromString(value:string){
 
         let v = value.toLocaleLowerCase();
-        var bv = false;
+        let bv = false;
         
         switch (v) {
 
@@ -461,7 +517,7 @@ export class MIOPredicate extends MIOObject {
     private nullFromString(value:string){
 
         let v = value.toLocaleLowerCase();
-        var nv = null;
+        let nv = null;
 
         switch (v) {
 
@@ -486,7 +542,7 @@ export function _MIOPredicateFilterObjects(objs, predicate)
 {
     if (objs == null) return [];
 
-    var resultObjects = null;    
+    let resultObjects = null;    
 
     if (objs.length == 0 || predicate == null) {
         resultObjects = objs.slice(0);        
@@ -495,7 +551,7 @@ export function _MIOPredicateFilterObjects(objs, predicate)
         
         resultObjects = objs.filter(function(obj){
 
-            var result = predicate.evaluateObject(obj);
+            let result = predicate.evaluateObject(obj);
             if (result)
                 return obj;
         });

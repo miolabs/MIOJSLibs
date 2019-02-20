@@ -50,5 +50,7 @@
     "publish": "lerna publish",
     "lint": "tslint -p ."
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/ace": "0.0.42"
+  }
 }
