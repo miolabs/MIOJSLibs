@@ -156,7 +156,7 @@ export class MUIWebApplication {
         // Add new window
         document.body.appendChild(vc.view.layer);
 
-        this.addWindow(w);
+        //this.addWindow(w);
     }
 
     showMenuFromControl(control, menu) {
@@ -242,7 +242,7 @@ export class MUIWebApplication {
             this._popOverWindow.initWithRootViewController(vc.popoverPresentationController());
             //this._popOverWindow.layer.style.border = "2px solid rgb(170, 170, 170)";
             this._popOverWindow.setFrame(vc.popoverPresentationController().frame);
-            this.addWindow(this._popOverWindow);
+            //this.addWindow(this._popOverWindow);
         }
 
         this._popOverWindow.rootViewController.onLoadView(this, function () {
@@ -260,21 +260,25 @@ export class MUIWebApplication {
 
         this._popOverWindow = null;
     }
+    
+    // addWindow(window:MUIWindow){
+    //     this._windows.push(window);
+    // }
 
     private windowZIndexOffset = 0;
-    addWindow(window:MUIWindow){
-        this._windows.push(window);
-        window.layer.style.zIndex = this.windowZIndexOffset;
-        this.windowZIndexOffset += 10;
-    }
-
-    makeKeyWindow(window){
+    makeKeyWindow(window:MUIWindow){
         if (this._keyWindow === window) return;
 
-        if (this._keyWindow != null)        
+        if (this._keyWindow != null) {
             this._keyWindow._resignKeyWindow();
+            //this.windowZIndexOffset -= 10;
+        }                    
 
-        this.addWindow(window);
+        //this.addWindow(window);
         this._keyWindow = window;
+
+        //window.layer.style.zIndex = this.windowZIndexOffset;
+        //this.windowZIndexOffset += 10;
+
     }
 }

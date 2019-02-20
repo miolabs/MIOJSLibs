@@ -115,8 +115,10 @@ export function MUIClassListForAnimationType(type)
 
 export function _MUIAddAnimations(layer, animations)
 {
+    let w = layer.offsetWidth;
     for (var index = 0; index < animations.length; index++)
         layer.classList.add(animations[index]);
+    w++;
 }
 
 export function _MUIRemoveAnimations(layer, animations)
@@ -134,8 +136,8 @@ export function _MUIAnimationStart(layer, animationController, animationContext,
         return;
     }
 
-    var duration = animationController.transitionDuration(animationContext);
-    var animations = animationController.animations(animationContext);
+    let duration = animationController.transitionDuration(animationContext);
+    let animations = animationController.animations(animationContext);
 
     animationController.animateTransition(animationContext);
 
@@ -167,11 +169,11 @@ export function _MUIAnimationStart(layer, animationController, animationContext,
 
 export function _MUIAnimationDidFinish(event)
 {
-    var animationController = event.target.animationParams["animationController"];
-    var animations = event.target.animationParams["animations"];
-    var target = event.target.animationParams["target"];
-    var completion = event.target.animationParams["completion"];
-    var layer = event.target;
+    let animationController = event.target.animationParams["animationController"];
+    let animations = event.target.animationParams["animations"];
+    let target = event.target.animationParams["target"];
+    let completion = event.target.animationParams["completion"];
+    let layer = event.target;
 
     _MUIRemoveAnimations(layer, animations);
     layer.removeEventListener("animationend", _MUIAnimationDidFinish);

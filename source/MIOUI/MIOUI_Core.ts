@@ -86,17 +86,10 @@ export function _MIUShowViewController(fromVC:MUIViewController, toVC:MUIViewCon
     }
 
     let view = null;
-    let pc:MUIPresentationController = null;
+    let pc = toVC.presentationController as MUIPresentationController;
 
-    if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
-        || toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
-        || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
-        || toVC.modalPresentationStyle == MUIModalPresentationStyle.Custom
-        || toVC.modalPresentationStyle == MUIModalPresentationStyle.Popover) {
-        
-        pc = toVC.presentationController;
+    if (pc != null) 
         view = pc.presentedView;
-    }
     else
         view = toVC.view;
 
@@ -170,41 +163,31 @@ export function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completi
     fromVC.viewWillDisappear();
     //fromVC._childControllersWillDisappear();
 
-    var view = null;
-    var pc = null;
+    let view = null;
+    let pc = fromVC.presentationController as MUIPresentationController;
 
-    if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
-        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet
-        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
-        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.Custom
-        || fromVC.modalPresentationStyle == MUIModalPresentationStyle.Popover) {
-
-        pc = fromVC.presentationController;
+    if (pc != null)
         view = pc.presentedView;
-    }
     else
         view = fromVC.view;
 
-    var ac = null;
-    if (fromVC.transitioningDelegate != null)
-    {
+    let ac = null;
+    if (fromVC.transitioningDelegate != null){
         ac = fromVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
-    else if (sourceVC != null && sourceVC.transitioningDelegate != null)
-    {
+    else if (sourceVC != null && sourceVC.transitioningDelegate != null){
         ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
-    else if (pc != null)
-    {
+    else if (pc != null){
         ac = pc.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
 
-    var animationContext = {};
+    let animationContext = {};
     animationContext["presentingViewController"] = fromVC;
     animationContext["presentedViewController"] = toVC;
     animationContext["presentedView"] = view;
 
-    var layer = view.layer;
+    let layer = view.layer;
 
     if (pc != null)
         pc.dismissalTransitionWillBegin();

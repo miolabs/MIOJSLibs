@@ -79,7 +79,10 @@ export class MUIPresentationController extends MIOObject
 
         this._calculateFrame();
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet || MIOCoreIsPhone() == true){
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
+            || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
+            || toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
+            || MIOCoreIsPhone() == true){
             MUICoreLayerAddStyle(view.layer, "modal_window");
         }       
     }
@@ -98,9 +101,7 @@ export class MUIPresentationController extends MIOObject
         let toVC = this.presentedViewController;
         let view = this.presentedView;
 
-        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen || MIOCoreIsPhone() == true){
-            //let ws = MUIWindowSize();
-            //view.setFrame(MIOFrame.frameWithRect(0, 0, ws.width, ws.height));
+        if (toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen){
             view.layer.style.left = "0px";
             view.layer.style.top = "0px";
             view.layer.style.width = "100%";
@@ -113,7 +114,7 @@ export class MUIPresentationController extends MIOObject
 
             view.setFrame(MIORect.rectWithValues(0, 0, w, h));
         }
-        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet && MIOCoreIsPhone() == false)
+        else if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet)
         {
             // Present like desktop sheet window
             let ws = MUIWindowSize();
@@ -255,8 +256,9 @@ export class MIOModalPresentAnimationController extends MIOObject
         let toVC = transitionContext.presentedViewController;
 
         if (toVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
-            || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet)
-        {
+            || toVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
+            || toVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen){
+            
             if (MIOCoreIsPhone() == true)
                 animations = MUIClassListForAnimationType(MUIAnimationType.SlideInUp);
             else 
@@ -270,7 +272,7 @@ export class MIOModalPresentAnimationController extends MIOObject
 export class MIOModalDismissAnimationController extends MIOObject
 {
     transitionDuration(transitionContext){
-        return 0.15;
+        return 0.25;
     }
 
     animateTransition(transitionContext){
@@ -282,20 +284,21 @@ export class MIOModalDismissAnimationController extends MIOObject
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
+    animations(transitionContext){
         let animations = null;
 
         let fromVC = transitionContext.presentingViewController;
 
         if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.PageSheet 
-            || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet){
+            || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FormSheet
+            || fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen){
+            
             if (MIOCoreIsPhone() == true)                        
                 animations = MUIClassListForAnimationType(MUIAnimationType.SlideOutDown);
             else 
                 animations = MUIClassListForAnimationType(MUIAnimationType.EndSheet);
-        }                            
-
+        }          
+                  
         return animations;
     }
 
