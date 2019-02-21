@@ -29,6 +29,12 @@ export enum MIOPredicateOperatorType {
     AND
 }
 
+export enum MIOPredicateBitwiseOperatorType {
+    OR,
+    AND,
+    XOR
+}
+
 export enum MIOPredicateType {
     Predicate,
     Item,
@@ -66,29 +72,34 @@ export enum MIOPredicateItemValueType {
 
 export class MIOPredicateItem {
     relationshipOperation:MIOPredicateRelationshipOperatorType = null;
+    bitwiseOperation:MIOPredicateBitwiseOperatorType = null;
+    bitwiseKey:string = null;
+    bitwiseValue = null;
     key = null;
     comparator = null;
     value = null;
     valueType = MIOPredicateItemValueType.Undefined;
 
-    evaluateObject(object, key?) {
+    evaluateObject(object, key?, lvalue?) {
 
-        let k = key != null ? key : this.key;
-        let lValue = null;        
-        if (object instanceof MIOObject) {
-            lValue = object.valueForKeyPath(k);
-        }
-        else {
-            lValue = object[k];
-        }
-        
-        if (lValue instanceof Date) {
-            let sdf = new MIOISO8601DateFormatter();
-            sdf.init();
-            lValue = sdf.stringFromDate(lValue);
-        }
-        else if (typeof lValue === "string") {
-            lValue = lValue.toLocaleLowerCase();
+        let lValue = lvalue;        
+        if (lvalue == null) {
+            let k = key != null ? key : this.key;            
+            if (object instanceof MIOObject) {
+                lValue = object.valueForKeyPath(k);
+            }
+            else {
+                lValue = object[k];
+            }
+            
+            if (lValue instanceof Date) {
+                let sdf = new MIOISO8601DateFormatter();
+                sdf.init();
+                lValue = sdf.stringFromDate(lValue);
+            }
+            else if (typeof lValue === "string") {
+                lValue = lValue.toLocaleLowerCase();
+            }    
         }
 
         let rValue = this.value;
@@ -156,6 +167,24 @@ export class MIOPredicateItem {
         
         return false;        
     }
+
+    // HACK: Dirty hack to bitwaire comparate more than 32bits    
+
+
+    evaluateBitwaseOperatorObject(object){        
+        let lvalue = object.valueForKeyPath(this.bitwiseKey);         
+        let rvalue =  parseInt(this.bitwiseValue);
+        
+        let value = 0;
+        if (this.bitwiseOperation == MIOPredicateBitwiseOperatorType.AND){
+            value = lvalue & rvalue;
+        }
+        else if (this.bitwiseOperation == MIOPredicateBitwiseOperatorType.OR){
+            value = lvalue | rvalue;
+        }
+
+        return this.evaluateObject(object, null, value);        
+    }
 }
 
 export class MIOPredicateGroup {
@@ -177,6 +206,9 @@ export class MIOPredicateGroup {
             else if (o instanceof MIOPredicateItem) {
                 if (o.relationshipOperation != null) {
                     result = o.evaluateRelationshipObject(object);                    
+                }
+                else if (o.bitwiseOperation != null){
+                    result = o.evaluateBitwaseOperatorObject(object);
                 }
                 else {
                     result = o.evaluateObject(object);
@@ -229,6 +261,9 @@ export enum MIOPredicateTokenType{
     NotContainsComparator,
     InComparator,
     NotIntComparator,    
+
+    BitwiseAND,
+    BitwiseOR,
     
     OpenParenthesisSymbol,
     CloseParenthesisSymbol,
@@ -297,6 +332,9 @@ export class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains /i);
         this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains /i);
         this.lexer.addTokenType(MIOPredicateTokenType.InComparator, /^in /i);
+        // Bitwise operators
+        this.lexer.addTokenType(MIOPredicateTokenType.BitwiseAND, /^& /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.BitwiseOR, /^\| /i);                
         // Join operators
         this.lexer.addTokenType(MIOPredicateTokenType.AND, /^(and|&&) /i);
         this.lexer.addTokenType(MIOPredicateTokenType.OR, /^(or|\|\|) /i);        
@@ -352,6 +390,13 @@ export class MIOPredicate extends MIOObject {
                     this.lexer.nextToken();
                     let anyPI = this.nextPredicateItem();
                     anyPI.relationshipOperation = MIOPredicateRelationshipOperatorType.ANY;
+                    predicates.push(anyPI);
+                    break;
+
+                case MIOPredicateTokenType.ALL:
+                    this.lexer.nextToken();
+                    let allPI = this.nextPredicateItem();
+                    anyPI.relationshipOperation = MIOPredicateRelationshipOperatorType.ALL;
                     predicates.push(anyPI);
                     break;
 
@@ -441,6 +486,26 @@ export class MIOPredicate extends MIOObject {
 
             case MIOPredicateTokenType.InComparator:
                 item.comparator = MIOPredicateComparatorType.In;
+                break;
+
+            case MIOPredicateTokenType.BitwiseAND:
+                item.bitwiseOperation = MIOPredicateBitwiseOperatorType.AND;
+                item.bitwiseKey = item.key;
+                item.key += " & ";
+                token = this.lexer.nextToken();
+                item.bitwiseValue = token.value;
+                item.key += token.value;                
+                this.comparator(item);                
+                break;
+
+            case MIOPredicateTokenType.BitwiseOR:
+                item.bitwiseOperation = MIOPredicateBitwiseOperatorType.OR;
+                item.bitwiseKey = item.key;
+                item.key += " & ";
+                token = this.lexer.nextToken();
+                item.bitwiseValue = token.value;
+                item.key += token.value;                
+                this.comparator(item);                
                 break;
 
             default:
