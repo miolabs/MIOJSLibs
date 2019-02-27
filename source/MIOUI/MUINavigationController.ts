@@ -16,7 +16,7 @@ export class MUINavigationController extends MUIViewController
 
     init(){
         super.init();
-        this.view.layer.style.overflow = "hidden";
+        this.view.layer.style.overflow = "hidden";        
     }
 
     initWithRootViewController(vc){
@@ -25,6 +25,8 @@ export class MUINavigationController extends MUIViewController
     }
 
     setRootViewController(vc){
+        this.transitioningDelegate = this;
+        
         this.rootViewController = vc;
         this.view.addSubview(vc.view);
 
@@ -85,8 +87,8 @@ export class MUINavigationController extends MUIViewController
         this.currentViewControllerIndex++;
 
         vc.navigationController = this;
-        if (vc.transitioningDelegate == null)
-            vc.transitioningDelegate = this;
+        // if (vc.transitioningDelegate == null)
+        //     vc.transitioningDelegate = this;
 
         vc.onLoadView(this, function () {
 
@@ -111,8 +113,8 @@ export class MUINavigationController extends MUIViewController
 
         let toVC = this.viewControllersStack[this.currentViewControllerIndex];
 
-        if (toVC.transitioningDelegate == null)
-            toVC.transitioningDelegate = this;
+        // if (toVC.transitioningDelegate == null)
+        //     toVC.transitioningDelegate = this;
 
         if (toVC.preferredContentSize != null)
             this.contentSize = toVC.preferredContentSize;

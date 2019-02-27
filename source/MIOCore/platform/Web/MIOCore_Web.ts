@@ -249,9 +249,9 @@ var _miocore_events_event_observers = {};
 
 export function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, observer, completion)
 {
-    var item = {"Target" : observer, "Completion" : completion};
+    let item = {"Target" : observer, "Completion" : completion};
 
-    var array = _miocore_events_event_observers[eventType];
+    let array = _miocore_events_event_observers[eventType];
     if (array == null)
     {
         array = [];
@@ -263,32 +263,37 @@ export function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, 
 
 export function MIOCoreEventUnregisterObserverForType(eventType:MIOCoreEventType, observer)
 {    
-    var obs = _miocore_events_event_observers[eventType];
+    let obs = _miocore_events_event_observers[eventType];
     if (obs == null) return;
 
-    var index = -1;
-    for (var count = 0; count < obs.length; count++){
+    let index = -1;
+    for (let count = 0; count < obs.length; count++){
     
-        var item = obs[count];
-        var target = item["Target"];        
+        let item = obs[count];
+        let target = item["Target"];        
         if (target === observer) {
             index = count;
             break;
         }
     }
 
-    if (index > -1) obs.splice(index, 1);
+    if (index > -1) {
+        console.log("removing event observer: " + obs.length);
+        obs.splice(index, 1);
+        console.log("removing event observer: " + obs.length);
+        console.log("removing event observer: " + _miocore_events_event_observers[eventType].length);
+    }
 }
 
 function _MIOCoreEventSendToObservers(obs, event:MIOCoreEvent){
 
     if (obs != null)
     {
-        for (var index = 0; index < obs.length; index++) {
+        for (let index = 0; index < obs.length; index++) {
             
-            var o = obs[index];
-            var target = o["Target"];
-            var completion = o["Completion"];
+            let o = obs[index];
+            let target = o["Target"];
+            let completion = o["Completion"];
 
             completion.call(target, event);
         }
@@ -304,10 +309,10 @@ function _MIOCoreEventSendToObservers(obs, event:MIOCoreEvent){
 window.addEventListener("keydown", function(e){
         
         // Create event
-        var event = new MIOCoreKeyEvent();
+        let event = new MIOCoreKeyEvent();
         event.initWithKeyCode(MIOCoreEventType.KeyDown, e.keyCode, e);
 
-        var observers = _miocore_events_event_observers[MIOCoreEventType.KeyDown];
+        let observers = _miocore_events_event_observers[MIOCoreEventType.KeyDown];
         _MIOCoreEventSendToObservers(observers, event);
     },
 false);
@@ -315,10 +320,10 @@ false);
 window.addEventListener('keyup', function(e){
         
         // Create event
-        var event = new MIOCoreKeyEvent();
+        let event = new MIOCoreKeyEvent();
         event.initWithKeyCode(MIOCoreEventType.KeyUp, e.keyCode, e);
 
-        var observers = _miocore_events_event_observers[MIOCoreEventType.KeyUp];
+        let observers = _miocore_events_event_observers[MIOCoreEventType.KeyUp];
         _MIOCoreEventSendToObservers(observers, event);
     },
 false);
@@ -328,10 +333,10 @@ false);
 window.addEventListener('mousedown', function(e){
         
         // Create event
-        var event = new MIOCoreKeyEvent();
+        let event = new MIOCoreKeyEvent();
         event.initWithType(MIOCoreEventType.MouseDown, e);
 
-        var observers = _miocore_events_event_observers[MIOCoreEventType.MouseDown];
+        let observers = _miocore_events_event_observers[MIOCoreEventType.MouseDown];
         _MIOCoreEventSendToObservers(observers, event);        
     },
 false);
@@ -369,10 +374,10 @@ window.addEventListener('touchend', function(e:TouchEvent){
 // UI events
 window.addEventListener("resize", function(e) {
         
-        var event = new MIOCoreEvent();
+        let event = new MIOCoreEvent();
         event.initWithType(MIOCoreEventType.Resize, e);
 
-        var observers = _miocore_events_event_observers[MIOCoreEventType.Resize];
+        let observers = _miocore_events_event_observers[MIOCoreEventType.Resize];
         _MIOCoreEventSendToObservers(observers, event);
 
 }, false);
