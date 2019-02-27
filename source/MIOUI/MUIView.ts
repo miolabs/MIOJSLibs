@@ -142,7 +142,7 @@ export class MUIView extends MIOObject
                 if (subLayer.tagName != "DIV" && subLayer.tagName != "SECTION") continue;
 
                 let className = subLayer.getAttribute("data-class");
-                if (className == null) className = "MUIView";
+                if (className == null || className.length == 0) className = "MUIView";
                 
                 let sv = MIOClassFromString(className);
                 sv.initWithLayer(subLayer, this); 
