@@ -48,7 +48,6 @@ export class MIOIncrementalStoreNode extends MIOObject {
             let type = attr.attributeType;
 
             if (value == null){
-                let attr = property as MIOAttributeDescription;
                 value = this._values[attr.serverName];
             }        
     
@@ -79,7 +78,7 @@ export class MIOIncrementalStoreNode extends MIOObject {
             else if (type == MIOAttributeType.String) {
                 return value;
             }
-            else if (type == MIOAttributeType.Date) {
+            else if (type == MIOAttributeType.Date) {                
                 let date = _MIOIncrementalStoreNodeDateTransformer.sdf.dateFromString(value);
                 return date;
             }

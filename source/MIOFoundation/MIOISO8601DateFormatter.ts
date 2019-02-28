@@ -15,14 +15,22 @@ export class MIOISO8601DateFormatter extends MIODateFormatter {
     dateFromString(str:string):Date {
 
         if (str == null) return null;
-        let dateString;
-        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari)
+        let dateString:string = null;
+        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari){
             dateString = str.split('-').join("/");
+            if (dateString.length > 19) dateString = dateString.substr(0, 19);
+        }
         else 
             dateString = str;
-        var d = new Date(dateString);
-        if (d == null) 
-            console.log("DATE FORMATTER: Error, invalid date");
+
+        let timestamp = Date.parse(dateString);
+        let d = null;
+        if (isNaN(timestamp) == false){
+            d = new Date(dateString);
+        }
+        else {
+            console.log("DATE FORMATTER: Error, invalid date");            
+        }                    
 
         return d;
     }
