@@ -346,71 +346,137 @@ export class MUIView extends MIOObject
 
         return bg;
     }
+    
+    private static animationsChanges = null;    
+    static animateWithDuration(duration:number, target, animations, completion){        
+        MUIView.animationsChanges = [];
+        animations.call(target);        
 
-    setAlpha(alpha, animate?, duration?)
-    {
-        if (animate == true || duration > 0)
-        {
-            this.layer.style.transition = "opacity " + duration + "s";
+        for (let index = 0; index < MUIView.animationsChanges.length; index++){
+            let anim = MUIView.animationsChanges[index];
+            let view = anim["View"];
+            let key = anim["Key"];
+            let value = anim["EndValue"];
+            
+            view.layer.style.transition = key + " " + duration + "s";
+            switch(key){
+                case "opacity":
+                view.layer.style.opacity = value;
+                break;
+
+                case "x":
+                view.layer.style.left = value;
+                break;
+
+                case "y":
+                view.layer.style.top = value;
+                break;
+
+                case "width":
+                view.layer.style.width = value;
+                break;
+
+                case "height":
+                view.layer.style.height = value;
+                break;
+            }
         }
+    }
 
+    setAlpha(alpha){
+        this.willChangeValue("alpha");
         this.alpha = alpha;
-        this.layer.style.opacity = alpha;
+        this.didChangeValue("alpha");
+        
+        if (MUIView.animationsChanges != null) {
+            let animation = {"View" : this, "Key" : "opacity", "EndValue": alpha};
+            MUIView.animationsChanges.addObject(animation);
+        }        
+        else {            
+            this.layer.style.opacity = alpha;
+        }        
     }
 
-    setX(x, animate?, duration?)
-    {
-        if (animate == true || duration > 0)
-        {
-            this.layer.style.transition = "left " + duration + "s";
-        }
+    private x = 0;
+    setX(x){
+        this.willChangeValue("frame");
+        this.x = x;
+        this.didChangeValue("frame");
 
-        this.layer.style.left = x + "px";
+        if (MUIView.animationsChanges != null) {
+            let animation = {"View" : this, "Key" : "left", "EndValue": x + "px"};
+            MUIView.animationsChanges.addObject(animation);
+        }        
+        else {            
+            this.layer.style.left = x + "px";
+        }        
     }
 
-    getX()
-    {
-        //var x = this.layer.clientX;
-        var x = this._getIntValueFromCSSProperty("left");
+    getX(){        
+        let x = this._getIntValueFromCSSProperty("left");
         return x;
     }
 
-    setY(y)
-    {
-        this.layer.style.top = y + "px";
+    private y = 0;
+    setY(y){
+        this.willChangeValue("frame");
+        this.y = y;
+        this.didChangeValue("frame");
+
+        if (MUIView.animationsChanges != null) {
+            let animation = {"View" : this, "Key" : "top", "EndValue": y + "px"};
+            MUIView.animationsChanges.addObject(animation);
+        }        
+        else {            
+            this.layer.style.top = y + "px";
+        }                
     }
 
-    getY()
-    {
-        //var y = this.layer.clientY;
-        var y = this._getIntValueFromCSSProperty("top");
+    getY(){        
+        let y = this._getIntValueFromCSSProperty("top");
         return y;
     }
 
-    setWidth(w)
-    {
-        this.layer.style.width = w + "px";
+    private width = 0;
+    setWidth(w){
+        this.willChangeValue("frame");
+        this.width = w;
+        this.didChangeValue("frame");
+
+        if (MUIView.animationsChanges != null) {
+            let animation = {"View" : this, "Key" : "width", "EndValue": w + "px"};
+            MUIView.animationsChanges.addObject(animation);
+        }        
+        else {            
+            this.layer.style.width = w + "px";
+        }                        
     }
 
-    getWidth()
-    {        
-        var w1 = this.layer.clientWidth;
-        var w2 = this._getIntValueFromCSSProperty("width");
-        var w = Math.max(w1, w2);
+    getWidth(){        
+        let w1 = this.layer.clientWidth;
+        let w2 = this._getIntValueFromCSSProperty("width");
+        let w = Math.max(w1, w2);
         if (isNaN(w)) w = 0;
         return w;
     }
-
-    private _height = 0;
-    setHeight(h){
-        this.willChangeValue("height");
-        this.layer.style.height = h + "px";
-        this._height = h;
+    
+    private height = 0;
+    setHeight(height){
+        this.willChangeValue("height");        
+        this.height = height;
         this.didChangeValue("height");
-    }
 
+        if (MUIView.animationsChanges != null) {
+            let animation = {"View" : this, "Key" : "height", "EndValue": height + "px"};
+            MUIView.animationsChanges.addObject(animation);
+        }        
+        else {            
+            this.layer.style.height = height + "px";
+        }        
+    }
+    
     getHeight(){
-        let h = this._height;
+        let h = this.height;
         if (h == 0) h = this.layer.clientHeight;
         else {
             if (h == 0) h = this.layer.height;
@@ -433,8 +499,8 @@ export class MUIView extends MIOObject
         this.setFrameComponents(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
         this.didChangeValue("frame");
     }
-
-    public get frame() {
+    
+    get frame() {        
         return MIORect.rectWithValues(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 

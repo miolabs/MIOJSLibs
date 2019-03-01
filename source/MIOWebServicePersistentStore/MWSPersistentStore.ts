@@ -103,7 +103,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             
             let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
             if (relNode == null) {
-                relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
+                relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, -1, relationship.destinationEntity);
                 //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                 //MIOLog("Downloading REFID: " + relRefID);
             }            
@@ -119,7 +119,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let relRefID = relRefIDs[count];
                 let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
                 if (relNode == null) {                    
-                    relNode = this.newNodeWithValuesAtServerID(relRefID, {}, -1, relationship.destinationEntity);
+                    relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, -1, relationship.destinationEntity);
                     //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                     //MIOLog("Downloading REFID: " + relRefID);
                 }
