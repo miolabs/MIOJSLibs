@@ -86,6 +86,11 @@ export class MIONumberFormatter extends MIOFormatter {
             floatValue = array[1];
         }
         
+        // Check the round rules
+        if (floatValue != null) {
+            [intValue, floatValue] = this.round(intValue, floatValue);
+        }
+
         let res = "";
         let minusOffset = intValue.charAt(0) == "-" ? 1 : 0;
     
@@ -121,28 +126,76 @@ export class MIONumberFormatter extends MIOFormatter {
             floatValue = "";
 
         if (floatValue != null){            
-            res += this.locale.decimalSeparator;
-        
+            res += this.locale.decimalSeparator;            
             if (this.minimumFractionDigits > 0 && floatValue.length < this.minimumFractionDigits){
                 for (let index = 0; index < this.minimumFractionDigits; index++){
                     if (index < floatValue.length)
-                    res += floatValue[index];
-                else 
-                    res += "0";
+                        res += floatValue[index];
+                    else 
+                        res += "0";
                 }    
-            }
-            else if (this.maximumFractionDigits > 0 && floatValue.length > this.maximumFractionDigits){
-                res += floatValue.substring(0, this.maximumFractionDigits);
             }
             else {
                 res += floatValue;
             }
         }
-        
+                
         if (this.numberStyle == MIONumberFormatterStyle.PercentStyle) res += "%";
         res = this.stringByAppendingCurrencyString(res);
 
         return res;
+    }
+
+    private round(intValue:string, floatValue:string):[string, string]{                
+        if (floatValue.length <= this.maximumFractionDigits) return[intValue, floatValue];
+
+        // Check float first
+        let inc = 0;
+        let roundedFloat = floatValue.substring(0, this.maximumFractionDigits);
+        for (let index = this.maximumFractionDigits; index > 0; index--){
+            let digit = parseInt(floatValue.substr(index, 1));
+            if ((digit + inc) < 5) break;
+            let leftIndex = index - 1;
+            let leftDigit = parseInt(floatValue.substr(leftIndex, 1));
+            if (leftDigit == 9) {
+                inc = 1;
+                if (index > this.minimumFractionDigits) roundedFloat = roundedFloat.substring(0, leftIndex);
+                else roundedFloat = roundedFloat.substr(0, leftIndex) + "0" + roundedFloat.substr(index);
+            }
+            else {
+                inc = 0;
+                let newDigit = leftDigit + 1;
+                roundedFloat = roundedFloat.substr(0, leftIndex) + newDigit.toString() + roundedFloat.substr(index);
+            }
+        }
+
+        // Removes Zeros
+        let removeIndex = null;
+        for (let index = roundedFloat.length - 1; index >= this.minimumFractionDigits; index--){
+            let digit = roundedFloat.substr(index, 1);
+            if (digit != "0") break;
+            removeIndex = index;
+        }
+        if (removeIndex != null) roundedFloat = roundedFloat.substring(0, removeIndex);
+
+        if (inc == 0) return [intValue, roundedFloat];
+        
+        let roundedInt = "";
+        for (let index = intValue.length - 1; index > 0; index--){
+            let digit = parseInt(intValue.substr(index, 1));
+            let newDigit = digit + inc;
+            if (newDigit == 10) {
+                inc = 1;                
+                roundedInt = "0" + roundedInt;                
+            }
+            else {
+                inc = 0;                
+                roundedInt = intValue.substring(0, index) + newDigit.toString() + roundedInt;
+                break;
+            }
+        }
+
+        return [roundedInt, roundedFloat];        
     }
 
     private stringByAppendingCurrencyString(text:string):string {
