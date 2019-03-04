@@ -48,7 +48,7 @@
 1. Bundle the typescript files of the project.
 
    ```bash
-   npm run build
+   npm run tsc
    ```
 
 ### Start the project
