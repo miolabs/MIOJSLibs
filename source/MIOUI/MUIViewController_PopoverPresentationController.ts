@@ -94,7 +94,7 @@ export class MUIPopoverPresentationController extends MUIPresentationController
                 x = v.layer.getBoundingClientRect().left - w - 10;
         }
 
-        v.setFrame(MIORect.rectWithValues(0, 0, w, h));
+        view.setFrame(MIORect.rectWithValues(0, 0, w, h));
         this.window.setFrame(MIORect.rectWithValues(x, y, w, h))
     }
 
