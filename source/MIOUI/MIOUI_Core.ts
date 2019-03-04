@@ -73,7 +73,7 @@ export function MUIWindowSize()
     return new MIOSize(w, h);
 }
 
-export function _MIUShowViewController(fromVC:MUIViewController, toVC:MUIViewController, sourceVC:MUIViewController, animated:boolean, target?, completion?)
+export function _MIUShowViewController(fromVC:MUIViewController, toVC:MUIViewController, sourceVC, animated:boolean, target?, completion?)
 {
     toVC.viewWillAppear();
     //toVC._childControllersWillAppear();
@@ -112,8 +112,8 @@ export function _MIUShowViewController(fromVC:MUIViewController, toVC:MUIViewCon
     if (toVC.transitioningDelegate != null){
         ac = toVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
-    else if (sourceVC != null && sourceVC.transitioningDelegate != null){
-        ac = sourceVC.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
+    else if (sourceVC != null && typeof sourceVC.animationControllerForPresentedController === "function"){
+        ac = sourceVC.animationControllerForPresentedController(toVC, fromVC, sourceVC);
     }
     else if (pc != null){
         ac = pc.transitioningDelegate.animationControllerForPresentedController(toVC, fromVC, sourceVC);
@@ -148,7 +148,7 @@ export function _MUIAnimationDidStart(fromVC:MUIViewController, toVC:MUIViewCont
 
 }
 
-export function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completion?)
+export function _MUIHideViewController(fromVC:MUIViewController, toVC:MUIViewController, sourceVC, target?, completion?)
 {
     if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
         || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext
@@ -175,8 +175,8 @@ export function _MUIHideViewController(fromVC, toVC, sourceVC, target?, completi
     if (fromVC.transitioningDelegate != null){
         ac = fromVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
     }
-    else if (sourceVC != null && sourceVC.transitioningDelegate != null){
-        ac = sourceVC.transitioningDelegate.animationControllerForDismissedController(fromVC);
+    else if (sourceVC != null && typeof sourceVC.animationControllerForDismissedController === "function"){
+        ac = sourceVC.animationControllerForDismissedController(fromVC);
     }
     else if (pc != null){
         ac = pc.transitioningDelegate.animationControllerForDismissedController(fromVC);

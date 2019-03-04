@@ -14,9 +14,10 @@ declare interface Array<T> {
 //Implemented in: MIOCore/MIOString.ts
 declare interface String {
     stringByAppendingPathComponent(path:string):string;
-    
-    lastPathComponent():string;    
     stringByDeletingLastPathComponent():string;
+
+    lastPathComponent():string;   
+    pathExtension():string;     
 
     hasPreffix(preffix:string):boolean;
     hasSuffix(suffix:string):boolean;

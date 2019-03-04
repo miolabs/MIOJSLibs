@@ -33,17 +33,14 @@ export class MUIViewController extends MIOObject
     private _layerIsReady = false;
 
     private _childViewControllers = [];
-    parentViewController = null;
+    parentViewController:MUIViewController = null;
 
-    presentingViewController = null;
-    presentedViewController = null;
+    presentingViewController:MUIViewController = null;
+    presentedViewController:MUIView = null;
     navigationController:MUINavigationController = null;
     navigationItem:MUINavigationItem = null;
     splitViewController:MUISplitViewController = null;
     tabBarController = null;
-
-    private _presentationController:MUIPresentationController = null;
-    private _popoverPresentationController:MUIPopoverPresentationController = null;
 
     modalPresentationStyle = MIOCoreIsPhone() == true ? MUIModalPresentationStyle.FullScreen : MUIModalPresentationStyle.PageSheet;
     modalTransitionStyle = MUIModalTransitionStyle.CoverVertical;
@@ -251,28 +248,28 @@ export class MUIViewController extends MIOObject
     //     //this.didMoveToParentViewController(null);
     // }
 
+    private _presentationController:MUIPresentationController = null;
     get isPresented(){
         if (this._presentationController != null)
             return this._presentationController._isPresented;
     }
 
-    get presentationController(){
-        if (this._presentationController == null && this.parentViewController != null)
-            return this.parentViewController.presentationController;
+    get presentationController():MUIPresentationController {
+        // if (this._presentationController == null && this.parentViewController != null)
+        //     return this.parentViewController.presentationController;
 
         return this._presentationController;
     }   
-
-    get popoverPresentationController(){
-        if (this._popoverPresentationController == null)
-        {
+    
+    private _popoverPresentationController:MUIPopoverPresentationController = null;
+    get popoverPresentationController():MUIPopoverPresentationController{
+        if (this._popoverPresentationController == null){
             this._popoverPresentationController = new MUIPopoverPresentationController();
             this._popoverPresentationController.init();
             this._popoverPresentationController.presentedViewController = this;
-        }
+            this._presentationController = this._popoverPresentationController;
+        }        
         
-        this._presentationController = this._popoverPresentationController;
-
         return this._popoverPresentationController;
     }
 
@@ -288,7 +285,7 @@ export class MUIViewController extends MIOObject
 
     presentViewController(vc:MUIViewController, animated:boolean){           
         
-        let pc:MUIPresentationController = vc.presentationController;
+        let pc = vc.presentationController as MUIPresentationController;
         if (pc == null) {
             pc = new MUIPresentationController();
             pc.init();

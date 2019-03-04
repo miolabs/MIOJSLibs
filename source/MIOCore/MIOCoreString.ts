@@ -30,10 +30,21 @@ export function MIOCoreStringAppendPathComponent(string:string, path):string
 export function MIOCoreStringLastPathComponent(string:string)
 {
     let index = string.lastIndexOf("/");
+    if (index == -1) return string;
     let len = string.length - index;
-    var str = string.substr(index, len);
+    let str = string.substr(index, len);
 
     return str;
+}
+
+export function MIOCoreStringPathExtension(string:string):string
+{
+    let lastPathComponent = MIOCoreStringLastPathComponent(string);
+    let items = lastPathComponent.split(".");
+    if (items.length == 1) return "";
+
+    let ext = items[items.length - 1];
+    return ext;
 }
 
 export function MIOCoreStringDeletingLastPathComponent(string:string)

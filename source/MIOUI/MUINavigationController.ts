@@ -19,13 +19,13 @@ export class MUINavigationController extends MUIViewController
         this.view.layer.style.overflow = "hidden";        
     }
 
-    initWithRootViewController(vc){
+    initWithRootViewController(vc:MUIViewController){
         this.init();
         this.setRootViewController(vc);
     }
 
-    setRootViewController(vc){
-        this.transitioningDelegate = this;
+    setRootViewController(vc:MUIViewController){
+        //this.transitioningDelegate = this;
         
         this.rootViewController = vc;
         this.view.addSubview(vc.view);
@@ -36,47 +36,33 @@ export class MUINavigationController extends MUIViewController
         this.rootViewController.navigationController = this;
 
         this.addChildViewController(vc);
-        if (this.presentationController != null) {
-            var size = vc.preferredContentSize;
-            this.contentSize = size;
-        }
+        // if (this.presentationController != null) {
+        //     var size = vc.preferredContentSize;
+        //     this.contentSize = size;
+        // }
     }
 
-    viewWillAppear(animated?){
-        if (this.currentViewControllerIndex < 0)
-            return;
-
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-
+    viewWillAppear(animated?:boolean){
+        if (this.currentViewControllerIndex < 0) return;
+        let vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewWillAppear(animated);
     }
 
     viewDidAppear(animated?){
-        if (this.currentViewControllerIndex < 0)
-            return;
-
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-
+        if (this.currentViewControllerIndex < 0) return;
+        let vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewDidAppear(animated);
     }
 
-    viewWillDisappear(animated?)
-    {
-        if (this.currentViewControllerIndex < 0)
-            return;
-
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-
+    viewWillDisappear(animated?){
+        if (this.currentViewControllerIndex < 0) return;
+        let vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewWillDisappear(animated);
     }
 
-    viewDidDisappear(animated?)
-    {
-        if (this.currentViewControllerIndex < 0)
-            return;
-
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-
+    viewDidDisappear(animated?){
+        if (this.currentViewControllerIndex < 0) return;
+        let vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewDidDisappear(animated);
     }
 
@@ -151,13 +137,9 @@ export class MUINavigationController extends MUIViewController
         this.setPreferredContentSize(size);
     }
 
-    public get preferredContentSize()
-    {
-        if (this.currentViewControllerIndex < 0)
-            return this._preferredContentSize;
-
-        var vc = this.viewControllersStack[this.currentViewControllerIndex];
-
+    public get preferredContentSize(){
+        if (this.currentViewControllerIndex < 0) return this._preferredContentSize;
+        let vc = this.viewControllersStack[this.currentViewControllerIndex];
         return vc.preferredContentSize;
     }
 
@@ -165,8 +147,7 @@ export class MUINavigationController extends MUIViewController
     private _pushAnimationController = null;
     private _popAnimationController = null;
 
-    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController)
-    {
+    animationControllerForPresentedController(presentedViewController, presentingViewController, sourceController){
         if (this._pushAnimationController == null) {
 
             this._pushAnimationController = new MUIPushAnimationController();
@@ -208,7 +189,7 @@ export class MUIPushAnimationController extends MIOObject
 
     // TODO: Not iOS like transitions. For now we use css animations
     animations(transitionContext){
-        var animations = MUIClassListForAnimationType(MUIAnimationType.Push);
+        let animations = MUIClassListForAnimationType(MUIAnimationType.Push);
         return animations;
     }
 
@@ -216,25 +197,21 @@ export class MUIPushAnimationController extends MIOObject
 
 export class MUIPopAnimationController extends MIOObject
 {
-    transitionDuration(transitionContext)
-    {
+    transitionDuration(transitionContext){
         return 0.25;
     }
 
-    animateTransition(transitionContext)
-    {
+    animateTransition(transitionContext){
         // make view configurations after transitions
     }
 
-    animationEnded(transitionCompleted)
-    {
+    animationEnded(transitionCompleted){
         // make view configurations before transitions
     }
 
     // TODO: Not iOS like transitions. For now we use css animations
-    animations(transitionContext)
-    {
-        var animations = MUIClassListForAnimationType(MUIAnimationType.Pop);
+    animations(transitionContext){
+        let animations = MUIClassListForAnimationType(MUIAnimationType.Pop);
         return animations;
     }
 

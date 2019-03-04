@@ -1,6 +1,7 @@
 import { 
     MIOCoreStringLastPathComponent, 
-    MIOCoreStringAppendPathComponent, 
+    MIOCoreStringAppendPathComponent,     
+    MIOCoreStringPathExtension,
     MIOCoreStringDeletingLastPathComponent, 
     MIOCoreStringHasPreffix, 
     MIOCoreStringHasSuffix 
@@ -11,6 +12,10 @@ import {
 String.prototype.lastPathComponent = function():string{
     return MIOCoreStringLastPathComponent(this);
 }
+
+String.prototype.pathExtension = function():string{
+    return MIOCoreStringPathExtension(this);
+} 
 
 String.prototype.stringByAppendingPathComponent = function(path:string):string{
     return MIOCoreStringAppendPathComponent(this, path);

@@ -18,8 +18,7 @@ export enum MUIPopoverArrowDirection
     Right
 }
 
-export interface MUIPopoverPresentationControllerDelegate 
-{
+export interface MUIPopoverPresentationControllerDelegate {
     popoverPresentationControllerDidDismissPopover?(popoverPresentationController:MUIPopoverPresentationController);
 }
 
@@ -61,7 +60,7 @@ export class MUIPopoverPresentationController extends MUIPresentationController
 
     _calculateFrame(){
         let vc = this.presentedViewController;
-        let view:MUIView = this.presentedView;
+        let view = this.presentedView;
 
         let w = vc.preferredContentSize.width;
         let h = vc.preferredContentSize.height;
@@ -71,9 +70,9 @@ export class MUIPopoverPresentationController extends MUIPresentationController
         let xShift = false;
 
         // Below
-        let y = v.layer.getBoundingClientRect().top + f.size.height + 10;
+        let y = view.layer.getBoundingClientRect().top + f.size.height + 10;
         if ((y + h) > window.innerHeight) // Below no, Up?
-            y = v.layer.getBoundingClientRect().top - h - 10;
+            y = view.layer.getBoundingClientRect().top - h - 10;
         if (y < 0) // Up no, horizonal shift
         {
             xShift = true;
@@ -84,15 +83,15 @@ export class MUIPopoverPresentationController extends MUIPresentationController
 
         if (xShift == false)
         {
-            x = v.layer.getBoundingClientRect().left + 10;
+            x = view.layer.getBoundingClientRect().left + 10;
             if ((x + w) > window.innerWidth)
-                x = v.layer.getBoundingClientRect().left +f.size.width - w + 10;
+                x = view.layer.getBoundingClientRect().left +f.size.width - w + 10;
         }
         else
         {
-            x = v.layer.getBoundingClientRect().left + f.size.width + 10;
+            x = view.layer.getBoundingClientRect().left + f.size.width + 10;
             if ((x + w) > window.innerWidth)
-                x = v.layer.getBoundingClientRect().left - w - 10;
+                x =view.layer.getBoundingClientRect().left - w - 10;
         }
 
         view.setFrame(MIORect.rectWithValues(0, 0, w, h));

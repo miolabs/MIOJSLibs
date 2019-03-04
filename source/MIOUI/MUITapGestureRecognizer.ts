@@ -1,6 +1,5 @@
 
-import { MUIEvent, MUIGestureRecognizerState } from ".";
-import { MUIGestureRecognizer } from ".";
+import { MUIEvent, MUIGestureRecognizer, MUIGestureRecognizerState } from ".";
 
 export class MUITapGestureRecognizer extends MUIGestureRecognizer
 {

@@ -1,4 +1,4 @@
-import { MUIView, MUICollectionView, MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle, MUILabel, MUITapGestureRecognizer, MUIGestureRecognizer, MUIGestureRecognizerState, MUIComboBox } from ".";
+import { MUIView, MUICollectionView, MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle, MUILabel, MUIGestureRecognizer, MUIGestureRecognizerState, MUITapGestureRecognizer, MUIComboBox } from ".";
 import { MIODateCopy, MIODateGetDayFromDate, MIORect, MIODateGetMonthFromDate, MIODateToday, MIODateGetYearFromDate, MIODateGetDateString, MIODateGetStringForMonth, MIODateGetDayStringFromDate } from "../MIOFoundation";
 import { MIOClassFromString } from "../MIOCore/platform/WebWorker/MIOCore_WebWorker";
 

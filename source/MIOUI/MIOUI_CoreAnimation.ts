@@ -1,3 +1,4 @@
+import { MIOObject } from "../MIOFoundation";
 
 /*
     ANIMATIONS
@@ -27,6 +28,21 @@ export enum MUIAnimationType
     HorizontalInFlip,   
     ZoomIn,
     ZoomOut 
+}
+
+export interface MUIViewControllerAnimatedTransitioning extends MIOObject
+{    
+    animationControllerForPresentedController();
+}
+
+
+export interface MUIViewControllerAnimatedTransitioning extends MIOObject
+{    
+    transitionDuration(transitionContext):number;
+    animateTransition(transitionContext):void;
+    animationEnded(transitionCompleted):void;
+    // TODO: Not iOS like transitions. For now we use css animations
+    animations(transitionContext);
 }
 
 // ANIMATION TYPES

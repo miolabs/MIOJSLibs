@@ -1,7 +1,5 @@
 import { MIOObject } from "../MIOFoundation";
-import { MUIView } from ".";
-import { MUIEvent } from ".";
-//import { MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEventUnregisterObserverForType } from "../MIOCore/platform";
+import { MUIView, MUIEvent } from ".";
 
 export enum MUIGestureRecognizerState {
     Possible,
@@ -43,7 +41,7 @@ export class MUIGestureRecognizer extends MIOObject
     private _state:MUIGestureRecognizerState = MUIGestureRecognizerState.Possible;
     private setState(state:MUIGestureRecognizerState){
         if (this.isEnabled == false) return;
-        if (this._state == state) return;
+        if (this._state == state && state != MUIGestureRecognizerState.Changed) return;
         this._state = state;
         this.block.call(this.target, this);
     }

@@ -288,8 +288,7 @@ export class MUIView extends MIOObject
 
         for(var index = 0; index < this.subviews.length; index++){
             let v = this.subviews[index];
-            if (!(v instanceof MUIView))
-            {
+            if (!(v instanceof MUIView)){
                 console.log("ERROR: trying to call setNeedsDisplay: in object that it's not a view");
             }
             else
@@ -345,42 +344,6 @@ export class MUIView extends MIOObject
         var bg = cs.getPropertyValue('background-color');
 
         return bg;
-    }
-    
-    private static animationsChanges = null;    
-    static animateWithDuration(duration:number, target, animations, completion){        
-        MUIView.animationsChanges = [];
-        animations.call(target);        
-
-        for (let index = 0; index < MUIView.animationsChanges.length; index++){
-            let anim = MUIView.animationsChanges[index];
-            let view = anim["View"];
-            let key = anim["Key"];
-            let value = anim["EndValue"];
-            
-            view.layer.style.transition = key + " " + duration + "s";
-            switch(key){
-                case "opacity":
-                view.layer.style.opacity = value;
-                break;
-
-                case "x":
-                view.layer.style.left = value;
-                break;
-
-                case "y":
-                view.layer.style.top = value;
-                break;
-
-                case "width":
-                view.layer.style.width = value;
-                break;
-
-                case "height":
-                view.layer.style.height = value;
-                break;
-            }
-        }
     }
 
     setAlpha(alpha){
@@ -537,24 +500,42 @@ export class MUIView extends MIOObject
         if (value == this._userInteraction) return;
 
         if (value == true){
-            this.layer.view_instance = this;
-            this.layer.addEventListener("mousedown", this.mouseDownEvent);
-            this.layer.addEventListener("mouseup", this.mouseUpEvent);
+            this.layer.addEventListener("mousedown", this.mouseDownEvent.bind(this));
+            this.layer.addEventListener("mouseup", this.mouseUpEvent.bind(this));
         }
         else {
             this.layer.removeEventListener("mousedown", this.mouseDownEvent);
-            this.layer.removeEventListener("mouseup", this.mouseUpEvent);            
+            this.layer.removeEventListener("mouseup", this.mouseUpEvent);             
         }
     }
 
-    mouseDownEvent(ev){    
-        let view = ev.currentTarget.view_instance;    
-        view.touchesBeganWithEvent.call(view, null, null);
+    private isMouseDown = false;
+    private mouseDownEvent(ev){   
+        let e = MUIEvent.eventWithSysEvent(ev);                 
+        this.touchesBeganWithEvent(null, e);
+        this.isMouseDown = true;
+        window.addEventListener("mousemove", this.mouseMoveEvent.bind(this));
+        ev.preventDefault(); // Prevent selection
     }
 
-    mouseUpEvent(ev){    
-        let view = ev.currentTarget.view_instance;    
-        view.touchesEndedWithEvent.call(view, null, null);
+    private mouseUpEvent(ev){   
+        this.isMouseDown = false; 
+        let e = MUIEvent.eventWithSysEvent(ev);                
+        this.touchesEndedWithEvent(null, e);
+    }
+
+    private mouseMoveEvent(ev){   
+        if (this.isMouseDown == false) return;
+        if (ev.buttons == 0) {
+            window.removeEventListener("mousemove", this.mouseMoveEvent);
+            this.isMouseDown = false;
+            let e = MUIEvent.eventWithSysEvent(ev);                
+            this.touchesEndedWithEvent(null, e);    
+        }
+        else {
+            let e = MUIEvent.eventWithSysEvent(ev);                    
+            this.touchesMovedWithEvent(null, e);
+        }
     }
 
     touchesBeganWithEvent(touches, ev:MUIEvent){
@@ -564,7 +545,7 @@ export class MUIView extends MIOObject
         }
     }
 
-    touchesMovedWithEvent(touches, ev:MUIEvent){
+    touchesMovedWithEvent(touches, ev:MUIEvent){        
         for (let index = 0; index < this.gestureRecognizers.length; index++){
             let gr:MUIGestureRecognizer = this.gestureRecognizers[index];
             gr._viewTouchesMovedWithEvent(touches, ev);
@@ -591,5 +572,84 @@ export class MUIView extends MIOObject
         gesture.view = null;
         this.gestureRecognizers.removeObject(gesture);
     }
+
+    //
+    // Animations
+    //
+
+    private static animationsChanges = null;    
+    private static animationsViews = null;
+    private static animationTarget = null;
+    private static animationCompletion = null;
+    static animateWithDuration(duration:number, target, animations, completion?){
+        MUIView.animationsChanges = [];
+        MUIView.animationsViews = [];
+        MUIView.animationTarget = target;
+        MUIView.animationCompletion = completion;
+        animations.call(target);                
+
+        for (let index = 0; index < MUIView.animationsChanges.length; index++){
+            let anim = MUIView.animationsChanges[index];
+            let view = anim["View"];
+            let key = anim["Key"];
+            let value = anim["EndValue"];            
+            
+            view.layer.style.transition = key + " " + duration + "s";
+            switch(key){
+                case "opacity":
+                view.layer.style.opacity = value;                
+                break;
+
+                case "x":
+                view.layer.style.left = value;
+                break;
+
+                case "y":
+                view.layer.style.top = value;
+                break;
+
+                case "width":
+                view.layer.style.width = value;
+                break;
+
+                case "height":
+                view.layer.style.height = value;
+                break;
+            }
+
+            MUIView.addTrackingAnimationView(view);
+        }   
+        MUIView.animationsChanges = null;                             
+    }
+
+    private static addTrackingAnimationView(view:MUIView){
+        let index = MUIView.animationsViews.indexOf(view);
+        if (index > -1) return;
+        MUIView.animationsViews.addObject(view);
+        view.layer.animationParams = {"View" : view};
+        view.layer.addEventListener("webkitTransitionEnd", MUIView.animationDidFinish);
+    }
+
+    private static removeTrackingAnimationView(view:MUIView){
+        let index = MUIView.animationsViews.indexOf(view);
+        if (index == -1) return;
+        MUIView.animationsViews.removeObject(view);                
+        view.layer.removeEventListener("webkitTransitionEnd", MUIView.animationDidFinish);            
+        view.layer.style.transition = "none";
+        view.setNeedsDisplay();
+    }
+
+    private static animationDidFinish(event){
+        let view = event.target.animationParams["View"];
+        MUIView.removeTrackingAnimationView(view);        
+        if (MUIView.animationsViews.length > 0) return;
+        MUIView.animationsChanges = null;
+        MUIView.animationsViews = null;
+        if (MUIView.animationTarget != null && MUIView.animationCompletion != null) MUIView.animationCompletion.call(MUIView.animationTarget);
+        MUIView.animationTarget = null;
+        MUIView.animationCompletion = null;
+    }
+
 }
+
 

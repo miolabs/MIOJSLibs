@@ -37,11 +37,17 @@ export class MUICodeEditor extends MUIView
         this.addSubview(this.editorView);
 
         this.editor = ace.edit(this.editorView.layer);
-        this.editor.setTheme("ace/theme/xcode");                
+        this.editor.setTheme("ace/theme/xcode");    
+        this.editor.$blockScrolling = Infinity;
     }    
+
+    layoutSubviews(){
+        this.editor.resize();
+    }
 
     set text(value){
         this.editor.setValue(value);
+        this.editor.clearSelection();
     }
 
     get text(){

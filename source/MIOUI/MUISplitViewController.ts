@@ -146,7 +146,7 @@ export class MUISplitViewController extends MUIViewController
     private _pushDetailViewController(vc:MUIViewController){
         let oldVC = this._masterViewController;
 
-        if (vc.transitioningDelegate == null) vc.transitioningDelegate = this;
+        //if (vc.transitioningDelegate == null) vc.transitioningDelegate = this;
 
         vc.onLoadView(this, function () {
 
@@ -167,8 +167,8 @@ export class MUISplitViewController extends MUIViewController
         let fromVC = this.detailViewController;
         let toVC = this.masterViewController;
 
-        if (toVC.transitioningDelegate == null)
-            toVC.transitioningDelegate = this;
+        // if (toVC.transitioningDelegate == null)
+        //     toVC.transitioningDelegate = this;
 
         if (toVC.preferredContentSize != null)
             this.contentSize = toVC.preferredContentSize;
