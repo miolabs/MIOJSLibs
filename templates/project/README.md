@@ -6,7 +6,7 @@
 * Run `npm install` - Install miojslibs and dependencies for development
 * Run `npm run update-libs` - Install && copy the miojslibs to `app/libs/miojslibs`.
 * Run `npm run scss:watch` in a separate terminal - Build the scss files of the project.
-* Run `npm run tsc` in a separate terminal - Build the typescript files of the project.
+* Run `npm run build` in a separate terminal - Build the typescript files of the project.
 * Run `npm start` - Serve the files with a basic http-server.
 
 Open the browser in [localhost:9090](http://localhost:9090/).
