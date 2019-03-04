@@ -70,9 +70,9 @@ export class MUIPopoverPresentationController extends MUIPresentationController
         let xShift = false;
 
         // Below
-        let y = view.layer.getBoundingClientRect().top + f.size.height + 10;
+        let y = v.layer.getBoundingClientRect().top + f.size.height + 10;
         if ((y + h) > window.innerHeight) // Below no, Up?
-            y = view.layer.getBoundingClientRect().top - h - 10;
+            y = v.layer.getBoundingClientRect().top - h - 10;
         if (y < 0) // Up no, horizonal shift
         {
             xShift = true;
@@ -83,18 +83,18 @@ export class MUIPopoverPresentationController extends MUIPresentationController
 
         if (xShift == false)
         {
-            x = view.layer.getBoundingClientRect().left + 10;
+            x = v.layer.getBoundingClientRect().left + 10;
             if ((x + w) > window.innerWidth)
-                x = view.layer.getBoundingClientRect().left +f.size.width - w + 10;
+                x = v.layer.getBoundingClientRect().left +f.size.width - w + 10;
         }
         else
         {
-            x = view.layer.getBoundingClientRect().left + f.size.width + 10;
+            x = v.layer.getBoundingClientRect().left + f.size.width + 10;
             if ((x + w) > window.innerWidth)
-                x =view.layer.getBoundingClientRect().left - w - 10;
+                x = v.layer.getBoundingClientRect().left - w - 10;
         }
 
-        view.setFrame(MIORect.rectWithValues(0, 0, w, h));
+        v.setFrame(MIORect.rectWithValues(0, 0, w, h));
         this.window.setFrame(MIORect.rectWithValues(x, y, w, h))
     }
 
