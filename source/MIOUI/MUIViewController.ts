@@ -259,7 +259,7 @@ export class MUIViewController extends MIOObject
         //     return this.parentViewController.presentationController;
 
         return this._presentationController;
-    }   
+    }       
     
     private _popoverPresentationController:MUIPopoverPresentationController = null;
     get popoverPresentationController():MUIPopoverPresentationController{
@@ -343,7 +343,12 @@ export class MUIViewController extends MIOObject
     }
 
     dismissViewController(animate){
-        let pc = this.presentationController;
+        let pc = this._presentationController;
+        let vc = this as MUIViewController;
+        while(pc == null) {
+            vc = vc.parentViewController;
+            pc = vc._presentationController;
+        }
         let toVC = pc.presentingViewController;
         let fromVC = pc.presentedViewController;
         let fromView = pc.presentedView;
