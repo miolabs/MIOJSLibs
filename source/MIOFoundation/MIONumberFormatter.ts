@@ -200,11 +200,14 @@ export class MIONumberFormatter extends MIOFormatter {
 
     private stringByAppendingCurrencyString(text:string):string {
         let currency = "";        
-        if (this.numberStyle == MIONumberFormatterStyle.CurrencyStyle) currency = this.currencySymbol;
+        if (this.numberStyle == MIONumberFormatterStyle.CurrencyStyle) {
+            currency = this.currencySymbol;
+            if (currency.length == 0) currency = this.currencyCode; // If there's no symbol, add the code instead.
+        }
         else if (this.numberStyle == MIONumberFormatterStyle.CurrencyISOCodeStyle) currency = this.currencyCode;
         else {
             return text;
-        }
+        }        
 
         if (currency.length == 0) return text;
 
