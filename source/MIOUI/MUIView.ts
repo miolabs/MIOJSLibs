@@ -199,8 +199,22 @@ export class MUIView extends MIOObject
         view.setNeedsDisplay();
     }
 
-    protected _addLayerToDOM(index?)
-    {
+    insertSubviewAboveSubview(view:MUIView, siblingSubview:MUIView){
+        view.setParent(this);
+        let index = this.subviews.indexOf(siblingSubview);        
+        this.subviews.splice(index, 0, view);
+        this.addLayerBeforeLayer(view.layer, siblingSubview.layer);
+        view.setNeedsDisplay();
+    }
+
+    private addLayerBeforeLayer(newLayer, layer){
+        if (newLayer._isLayerInDOM == true) return;
+        if (layer == null || newLayer == null) return;
+        this.layer.insertBefore(newLayer, layer);
+        newLayer._isLayerInDOM = true;
+    }
+
+    protected _addLayerToDOM(index?){
         if (this._isLayerInDOM == true)
             return;
 

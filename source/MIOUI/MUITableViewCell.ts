@@ -63,6 +63,8 @@ export class MUITableViewCell extends MUIView {
     _onAccessoryClickFn = null;
     _onEditingAccessoryClickFn = null;
 
+    _section = null;
+
     initWithStyle(style: MUITableViewCellStyle) {
 
         super.init();
