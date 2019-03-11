@@ -1,5 +1,5 @@
 import { MUIView, MUILayerGetFirstElementWithTag } from "./MUIView";
-import { MIOObject, MIOFormatter, MIOIndexPath, MIOSize, MIORange } from "../MIOFoundation";
+import { MIOObject, MIOFormatter, MIOIndexPath, MIOSize, MIORange, MIONumberFormatter, MIODateFormatter } from "../MIOFoundation";
 import { MUILabel } from "./MUILabel";
 import { MUIScrollView } from "./MUIScrollView";
 import { MUITableView } from "./MUITableView";
@@ -93,6 +93,8 @@ export class MUIReportTableViewColumn extends MIOObject {
         col.serverName = key;
         col.alignment = alignment;
         col.formatter = formatter;
+        if (formatter instanceof MIONumberFormatter) col.type = MUIReportTableViewColumnType.Number;
+        else if (formatter instanceof MIODateFormatter) col.type = MUIReportTableViewColumnType.Date;
         return col;
     }
 
@@ -141,7 +143,7 @@ export class MUIReportTableViewColumn extends MIOObject {
 
         this._colHeader = header;
 
-        var instance = this;
+        let instance = this;
         this._colHeader.layer.onclick = function () {
             if (instance._onHeaderClickFn != null)
                 instance._onHeaderClickFn.call(instance._target, instance);
