@@ -133,16 +133,15 @@ export class MUIViewController extends MIOObject
 
     _didLoadView(){
         this._layerIsReady = true;        
-
-        if (this._onLoadLayerTarget != null && this._onViewLoadedAction != null)
-        {
+        if (MIOCoreIsPhone() == true) MUICoreLayerAddStyle(this.view.layer, "phone");
+        
+        if (this._onLoadLayerTarget != null && this._onViewLoadedAction != null){
             this._onLoadLayerAction.call(this._onLoadLayerTarget);
             this._onLoadLayerTarget = null;
             this._onLoadLayerAction = null;
         }
 
-        if (this._onViewLoadedAction != null && this._onViewLoadedTarget != null)
-        {
+        if (this._onViewLoadedAction != null && this._onViewLoadedTarget != null){
             this.viewDidLoad();
             this._loadChildControllers();
         }
