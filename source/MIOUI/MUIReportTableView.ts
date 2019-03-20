@@ -84,7 +84,7 @@ export enum MUIReportTableViewColumnType {
 
 export class MUIReportTableViewColumn extends MIOObject {
 
-    static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifier?: string) {
+    static labelColumnWithTitle(title: string, width, minWidth, alignment, key?, formatter?:MIOFormatter, identifier?: string, formatterString?:string) {
         let col = new MUIReportTableViewColumn();
         col.title = title;
         col.identifier = identifier;
@@ -95,19 +95,22 @@ export class MUIReportTableViewColumn extends MIOObject {
         col.formatter = formatter;
         if (formatter instanceof MIONumberFormatter) col.type = MUIReportTableViewColumnType.Number;
         else if (formatter instanceof MIODateFormatter) col.type = MUIReportTableViewColumnType.Date;
+        if (formatterString != null) col.formatterString = formatterString;
         return col;
     }
 
     identifier: string = null;
     title: string = null;
-    width:string = "0";
+    width:string = "0"; 
     minWidth = 0;
     serverName: string = null;
     pixelWidth = 0;
     alignment = "center";
     formatter:MIOFormatter = null;
+    formatterString:string = "string";
     ascending = true;
     type = MUIReportTableViewColumnType.String;
+
 
     private _colHeader: MUIView = null;
 
