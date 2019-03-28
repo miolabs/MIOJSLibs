@@ -9,7 +9,8 @@
     "scss": "node-sass app -o app --output-style compressed",
     "build": "tsc -p . -w",
     "scss:watch": "npm run scss && npm run scss -- -w app",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "mkdir ./app/libs && mkdir ./app/libs/miojslibs && npm install && npm run update-libs && npm run scss && npm run tsc"
   },
   "author": "Mátyás Budavári <budavariam@gmail.com> (https://budavariam.github.io)",
   "license": "Apache-2.0",
