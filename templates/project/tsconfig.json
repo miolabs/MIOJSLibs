@@ -14,5 +14,7 @@
         "src",
         "model",
     ],
-    "exclude": []
+    "exclude": [
+        "**/*.js"
+    ]
 }
