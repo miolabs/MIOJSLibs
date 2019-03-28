@@ -165,6 +165,10 @@ export class MUIAlertViewController extends MUIViewController
     viewDidAppear(animated?) {
         super.viewDidAppear(animated);        
         this.tableView.reloadData();
+        if (this.textFields.length > 0) {
+            let tf = this.textFields[0] as MUITextField;
+            tf.becomeFirstResponder();
+        }
     }
 
     viewWillDisappear(animated?){

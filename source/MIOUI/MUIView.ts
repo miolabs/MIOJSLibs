@@ -9,6 +9,25 @@ import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
  */
 
 
+export function MUILayerSearchElementByAttribute(layer, key)
+{
+    if (layer.tagName != "DIV" && layer.tagName != "INPUT" && layer.tagName != "SECTION")
+            return null;
+
+    if (layer.getAttribute(key) == "true") return layer;
+    
+    let elementFound = null;
+
+    for (let count = 0; count < layer.childNodes.length; count++){
+        let l = layer.childNodes[count];
+        elementFound = MUILayerSearchElementByAttribute(l, key);
+        if (elementFound != null) return elementFound;
+    }
+
+    return null;
+}
+
+
 
 export function MUILayerSearchElementByID(layer, elementID)
 {
@@ -24,8 +43,7 @@ export function MUILayerSearchElementByID(layer, elementID)
 
     let elementFound = null;
 
-    for (let count = 0; count < layer.childNodes.length; count++)
-    {
+    for (let count = 0; count < layer.childNodes.length; count++){
         let l = layer.childNodes[count];
         elementFound = MUILayerSearchElementByID(l, elementID);
         if (elementFound != null)

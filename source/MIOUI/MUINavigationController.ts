@@ -73,10 +73,14 @@ export class MUINavigationController extends MUIViewController
         this.currentViewControllerIndex++;
 
         vc.navigationController = this;
-        // if (vc.transitioningDelegate == null)
-        //     vc.transitioningDelegate = this;
 
         vc.onLoadView(this, function () {
+
+            if (vc.navigationItem != null && vc.navigationItem.backBarButtonItem != null) {
+                vc.navigationItem.backBarButtonItem.setAction(this, function(){
+                    vc.navigationController.popViewController();
+                });
+            }
 
             this.view.addSubview(vc.view);
             this.addChildViewController(vc);

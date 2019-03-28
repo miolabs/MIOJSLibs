@@ -76,11 +76,12 @@ export class MIOXMLParser extends MIOObject
             else if (ch == "\"" || ch == "'") {                
                 value += ch;
                 let ch2 = this.nextChar();
-                while(ch2 != ch){                    
+                while(ch2 != ch && ch2 != "<"){                    
                     value += ch2;
                     ch2 = this.nextChar();                    
                 }
-                value += ch2;
+                if (ch2 != "<") value += ch2;
+                else this.prevChar();                
             }
             else if (ch == " "){
                 exit = true;

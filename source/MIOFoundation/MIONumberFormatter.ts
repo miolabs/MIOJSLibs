@@ -149,23 +149,23 @@ export class MIONumberFormatter extends MIOFormatter {
     private round(intValue:string, floatValue:string):[string, string]{                
         if (floatValue.length <= this.maximumFractionDigits) return[intValue, floatValue];
 
-        // Check float first
-        let inc = 0;
+        // Check float first        
         let roundedFloat = floatValue.substring(0, this.maximumFractionDigits);
-        for (let index = this.maximumFractionDigits; index > 0; index--){
-            let digit = parseInt(floatValue.substr(index, 1));
-            if ((digit + inc) < 5) break;
-            let leftIndex = index - 1;
-            let leftDigit = parseInt(floatValue.substr(leftIndex, 1));
-            if (leftDigit == 9) {
+        let d = parseInt(floatValue.substr(this.maximumFractionDigits, 1));
+        let inc =  d < 5 ? 0 : 1;
+        
+        for (let index = this.maximumFractionDigits - 1; index >= 0; index--){
+            if (inc == 0) break;
+            let digit = parseInt(floatValue.substr(index, 1));            
+            if (digit == 9) {
                 inc = 1;
-                if (index > this.minimumFractionDigits) roundedFloat = roundedFloat.substring(0, leftIndex);
-                else roundedFloat = roundedFloat.substr(0, leftIndex) + "0" + roundedFloat.substr(index);
+                if (index > this.minimumFractionDigits) roundedFloat = roundedFloat.substring(0, digit);
+                else roundedFloat = roundedFloat.substr(0, index) + "0" + (index < this.maximumFractionDigits - 1? roundedFloat.substr(index) : "");
             }
             else {
                 inc = 0;
-                let newDigit = leftDigit + 1;
-                roundedFloat = roundedFloat.substr(0, leftIndex) + newDigit.toString() + roundedFloat.substr(index);
+                let newDigit = digit + 1;
+                roundedFloat = roundedFloat.substr(0, index) + newDigit.toString() + (index < this.maximumFractionDigits - 1? roundedFloat.substr(index) : "");                
             }
         }
 

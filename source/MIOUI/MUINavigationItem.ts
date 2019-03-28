@@ -1,17 +1,20 @@
 import { MIOObject } from "../MIOFoundation";
-import { MUIView } from "./MUIView";
+import { MUIView, MUILayerSearchElementByAttribute } from "./MUIView";
+import { MUIButton } from "./MUIButton";
 
 export class MUINavigationItem extends MIOObject
-{
-    leftView:MUIView = null;
+{    
+    backBarButtonItem:MUIButton = null;
     titleView:MUIView = null;
-    rightView:MUIView = null;
     title:string = null;
 
+    private leftView:MUIView = null;    
+    private rightView:MUIView = null;
+    
     initWithLayer(layer){
         if (layer.childNodes.length > 0) {
-            for (var index = 0; index < layer.childNodes.length; index++) {
-                var subLayer = layer.childNodes[index];
+            for (let index = 0; index < layer.childNodes.length; index++) {
+                let subLayer = layer.childNodes[index];
         
                 if (subLayer.tagName != "DIV") continue;
     
@@ -31,6 +34,12 @@ export class MUINavigationItem extends MIOObject
                     this.rightView = v;
                 }
             }
+
+            let backButtonLayer = MUILayerSearchElementByAttribute(layer, "data-nav-item-back");
+            if (backButtonLayer != null) {
+                this.backBarButtonItem = new MUIButton();
+                this.backBarButtonItem.initWithLayer(backButtonLayer, this);
+            }
         }
     }
 }
@@ -38,13 +47,13 @@ export class MUINavigationItem extends MIOObject
 export function MUINavItemSearchInLayer(layer)
 {
     if (layer.childNodes.length > 0) {
-        for (var index = 0; index < layer.childNodes.length; index++) {
-            var subLayer = layer.childNodes[index];
+        for (let index = 0; index < layer.childNodes.length; index++) {
+            let subLayer = layer.childNodes[index];
     
             if (subLayer.tagName != "DIV") continue;
 
             if (subLayer.getAttribute("data-nav-item") != null) {
-                let ni:MUINavigationItem = new MUINavigationItem();
+                let ni = new MUINavigationItem();
                 ni.initWithLayer(subLayer);  
                 
                 // Check for tittle if center view doesn't exists
