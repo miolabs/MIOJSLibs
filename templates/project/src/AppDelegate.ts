@@ -17,16 +17,4 @@ class AppDelegate {
         this.window.initWithRootViewController(vc);
     }
 
-    get managedObjectContext() {
-
-        if (this._managedObjectContext != null)
-            return this._managedObjectContext;
-
-        // TODO: make object model and persistent store coordinator
-
-        this._managedObjectContext = new MIOManagedObjectContext();
-        this._managedObjectContext.init();
-
-        return this._managedObjectContext;
-    }
 }

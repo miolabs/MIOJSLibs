@@ -664,6 +664,9 @@ export class MUIView extends MIOObject
         MUIView.animationCompletion = null;
     }
 
+    eloziom() {
+    }
+
 }
 
 
