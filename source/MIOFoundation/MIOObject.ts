@@ -3,6 +3,8 @@
  */
 
 import { MIOClassFromString } from "../MIOCore/platform";
+
+
 export class MIOObject
 {
     private _className:string = null;

@@ -161,8 +161,10 @@ export class MWSTableView extends MUIView
             row.removeFromSuperview();                            
         }
 
-        this.rows = [];
-
+        this.rows = [];        
+        this.sections = [];
+        this.cells = [];
+    
         if (this.dataSource == null) return;
 
         let sections = 1;

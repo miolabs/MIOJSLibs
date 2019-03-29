@@ -20,6 +20,7 @@ export enum MIOXMLTokenType{
     CloseTag,
     Slash,
     Quote,
+    WhiteSpace,
     End
 }
 
@@ -35,6 +36,8 @@ export class MIOXMLParser extends MIOObject
     private currentElement = null;
     private currentTokenValue:MIOXMLTokenType = null;
     private lastTokenValue:MIOXMLTokenType = null;
+
+    private ignoreWhiteSpace = false;
 
     initWithString(str:string, delegate:MIOXMLParserDelegate){
         this.str = str;
@@ -84,6 +87,10 @@ export class MIOXMLParser extends MIOObject
                 else this.prevChar();                
             }
             else if (ch == " "){
+                if (this.ignoreWhiteSpace == false){
+                    if (value != "") this.prevChar();
+                    else value = " ";
+                }
                 exit = true;
             }                                
             else
@@ -124,6 +131,10 @@ export class MIOXMLParser extends MIOObject
             case "!":
                 token = MIOXMLTokenType.ExclamationMark;
                 break;
+            
+            case " ":
+                token = MIOXMLTokenType.WhiteSpace;
+                break;
 
             default:
                 break;
@@ -158,14 +169,14 @@ export class MIOXMLParser extends MIOObject
             switch(token) {
 
                 case MIOXMLTokenType.OpenTag:
+                    this.ignoreWhiteSpace = true;
                     this.openTag();
+                    this.ignoreWhiteSpace = false;
                     break;
 
                 case MIOXMLTokenType.Identifier:
-                    this.text(value);
-                    break;                    
-
                 case MIOXMLTokenType.Slash:
+                case MIOXMLTokenType.WhiteSpace:
                     this.text(value);
                     break;                    
 
