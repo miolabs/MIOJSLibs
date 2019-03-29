@@ -10,7 +10,7 @@
     "build": "tsc -p . -w",
     "scss:watch": "npm run scss && npm run scss -- -w app",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "init": "mkdir ./app/libs && mkdir ./app/libs/miojslibs && npm install && npm run update-libs && npm run scss && npm run tsc",
+    "init": "mkdir -p ./app/libs && mkdir -p ./app/libs/miojslibs && npm install && cd ../.. && npm install && cd templates/project && npm run update-libs && npm run scss",
     "build-miojs-libs": "node ../../../template-build-miojs.js",
     "build-swift-libs": "node ../../../template-build-swift.js"
   },
