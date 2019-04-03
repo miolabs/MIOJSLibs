@@ -925,7 +925,7 @@ export class MUITableView extends MUIScrollView {
 
     selectCellAtIndexPath(indexPath: MIOIndexPath) {
 
-        if (this.selectedIndexPath.isEqualToIndexPath(indexPath) == true) return;
+        if (this.selectedIndexPath != null && this.selectedIndexPath.isEqualToIndexPath(indexPath) == true) return;
 
         //if (this.selectedIndexPath != null) this.deselectCellAtIndexPath(this.selectedIndexPath);
         //this.selectedIndexPath = indexPath;
