@@ -156,7 +156,7 @@ export class MIONumberFormatter extends MIOFormatter {
         
         for (let index = this.maximumFractionDigits - 1; index >= 0; index--){
             if (inc == 0) {
-                roundedFloat = roundedFloat.substring(0, index + 1) + roundedFloat;
+                roundedFloat = floatValue.substring(0, index + 1) + roundedFloat;
                 break;
             }
             let digit = parseInt(floatValue.substr(index, 1));            
