@@ -13,6 +13,11 @@
   ],
   "exclude": [
       "../../source/MIOWebWorker",
-      "../../source/MIOUI"
+      "../../source/MIOUI",
+      "../../source/MIOCore/MIOCore_Web.ts",
+      "../../source/MIOCore/MIOCoreBundle.ts",
+      "../../source/MIOCore/MIOCoreEvents.ts",
+      "../../source/MIOCore/MIOHTTPRequest.ts",
+      "../../source/MIOFoundation/MIOLib.ts"
   ]
 }

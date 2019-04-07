@@ -2,8 +2,6 @@
  * Created by godshadow on 26/08/16.
  */
 
-/// <reference path="miolibs/MIOLib.ts" />
-
 class AppDelegate {
 
     window = null;
