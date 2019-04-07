@@ -38,7 +38,16 @@ export function MIOCoreEventRegisterObserverForType(eventType, observer, complet
 
 export enum MIOCoreEventType
 {
-    None
+    KeyUp,
+    KeyDown,
+    
+    MouseUp,
+    MouseDown,
+    TouchStart,
+    TouchEnd,
+    Click,
+    
+    Resize
 }
 
 export class MIOCoreEvent
