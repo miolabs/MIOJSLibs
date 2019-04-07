@@ -12,6 +12,7 @@
       "../../source/index.node.ts"
   ],
   "exclude": [
-      "../../source/MIOWebWorker"
+      "../../source/MIOWebWorker",
+      "../../source/MIOUI"
   ]
 }
