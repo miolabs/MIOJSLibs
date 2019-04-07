@@ -67,3 +67,5 @@ export * from './MUITapGestureRecognizer'
 export * from './MUIPanGestureRecognizer'
 
 export * from './MUIOpenPanel'
+
+export * from './MWSTableView'

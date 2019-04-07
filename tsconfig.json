@@ -20,17 +20,5 @@
       "miojs_internal",
       "node"
     ]
-  },
-  "include": [
-      "source/MIOCore",
-      "source/MIOData",
-      "source/MIOFoundation",
-      "source/MIOUI",
-      "source/MIOWebServicePersistentStore",
-      "source/MIORemoteNotificationServer",
-      "source/index.webapp.ts"
-  ],
-  "exclude": [
-      "source/MIOWebWorker"
-  ]
+  }
 }
