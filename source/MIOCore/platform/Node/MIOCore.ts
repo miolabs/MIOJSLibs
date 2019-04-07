@@ -28,3 +28,7 @@ export function MIOClassFromString(name): any{
     let newClass: any = new mioclasses[name]();
     return newClass;
 }
+
+export function MIOCoreGetBrowserLanguage(){
+    return null;
+}
