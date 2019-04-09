@@ -382,7 +382,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     private saveTarget = null;
     private saveCompletion = null;
-    performWithCompletion(target, block, completion){
+    performBlockWithCompletion(target, block, completion){
         this.saveOperations = 0;
         this.saveTarget = target;
         this.saveCompletion = completion;
