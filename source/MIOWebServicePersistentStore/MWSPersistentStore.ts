@@ -376,6 +376,33 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         return parsedValues;
     }    
 
+    //
+    // Track save operation
+    //
+
+    private saveTarget = null;
+    private saveCompletion = null;
+    performWithCompletion(target, block, completion){
+        this.saveOperations = 0;
+        this.saveTarget = target;
+        this.saveCompletion = completion;
+        block.call(this);
+    }
+
+    private saveOperations = 0;
+    private saveOperationDidAdd(op:MWSPersistenStoreOperation){
+        if (this.saveTarget == null || this.saveCompletion == null) return;
+        this.saveOperations++;
+    }
+    private saveOperationDidRemove(op:MWSPersistenStoreOperation){
+        if (this.saveTarget == null || this.saveCompletion == null) return;
+        this.saveOperations--;
+
+        if (this.saveOperations == 0) {
+            this.saveCompletion.call(this.saveTarget);
+        }
+    }
+
     private saveCount = 0;
     private saveObjects(request: MIOSaveChangesRequest, context?: MIOManagedObjectContext) {
 
@@ -439,6 +466,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.dependencyIDs = dependencyIDs;
         op.saveCount = this.saveCount;
         this.addOperation(op, serverID);        
+        this.saveOperationDidAdd(op);            
 
         MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + this.saveCount);
 
@@ -446,7 +474,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.completion = function () {
             MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
             //this.removeOperation(op, serverID);
-            this.removeUploadingOperationForServerID(serverID);            
+            this.removeUploadingOperationForServerID(serverID);
+            this.saveOperationDidRemove(op);            
 
             let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, serverValues);
@@ -482,7 +511,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.request = request;
         op.dependencyIDs = dependencyIDs;
         op.saveCount = this.saveCount;
-        this.addOperation(op, serverID);        
+        this.addOperation(op, serverID); 
+        this.saveOperationDidAdd(op);                   
 
         MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + this.saveCount);
 
@@ -491,6 +521,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);
+            this.saveOperationDidRemove(op);            
 
             let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, serverValues);            
@@ -521,7 +552,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.request = request;
         op.dependencyIDs = [];
         op.saveCount = this.saveCount;
-        this.addOperation(op, serverID);        
+        this.addOperation(op, serverID);   
+        this.saveOperationDidAdd(op);                 
 
         MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID);
 
@@ -530,6 +562,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);
+            this.saveOperationDidRemove(op);
 
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             //let version = this.delegate.serverVersionNumberForItem(this, values);
