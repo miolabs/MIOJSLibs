@@ -7,14 +7,14 @@ const PROD = process.env.NODE_ENV === 'prod';
 const ENV = process.env.NODE_ENV || 'dev';
 
 
-const packageName = `miojslibs${TARGET === 'node' ? '-core' : ''}`;
+const packageName = `miojslibs${process.env.TRANSPILER === 'true' ? '-swift-transpiler' : TARGET === 'node' ? '-core' : ''}`;
 const buildPath = path.resolve(__dirname, 'packages', packageName, 'build')
 const configFile = path.resolve(__dirname, 'packages', packageName, `tsconfig.json`);
 const buildTarget = (TARGET === 'webapp') ? 'web' : 'node';
 
 const entry = {};
 // In order to name the resulting file as the package name, and to have the correct module name for the typeingbundle
-entry[packageName] = path.join(__dirname, 'source', `index.${TARGET}.ts`);
+entry[packageName] = path.join(__dirname, `source${process.env.TRANSPILER === 'true' ? '-swift-transpiler' : ''}`, `index.${TARGET}.ts`);
 
 console.log(`BUILD MIOJSLibs for '${TARGET}' target to '${ ENV }' environment. from '${configFile}'`);
 

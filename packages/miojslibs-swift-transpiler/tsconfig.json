@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "types"
+  },
+  "include": [
+      "../../source-swift-transpiler/MIOCore",
+      "../../source-swift-transpiler/MIOCore/platform",
+      "../../source-swift-transpiler/MIOData",
+      "../../source-swift-transpiler/MIOFoundation",
+      "../../source-swift-transpiler/MIOUI",
+      "../../source-swift-transpiler/MIOWebServicePersistentStore",
+      "../../source-swift-transpiler/MIORemoteNotificationServer",
+      "../../source-swift-transpiler/index.webapp.ts"
+  ],
+  "exclude": [
+      "../../source-swift-transpiler/MIOWebWorker"
+  ]
+}

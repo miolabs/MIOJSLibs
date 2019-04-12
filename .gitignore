@@ -13,3 +13,5 @@ tools/dep_graph/*.png
 .DS_Store
 
 
+/packages/miojslibs-swift-transpiler/miojslibs-swift-transpiler/
+/source-swift-transpiler/
