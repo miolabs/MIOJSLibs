@@ -35,13 +35,11 @@ export function MUIOutlet(owner, elementID, className?, options?)
     if (layer == null) return null; // Element not found
         //throw new Error(`DIV identifier specified is not valid (${elementID})`);
         
-    if (className == null)
-        className = layer.getAttribute("data-class");
+    let cn = layer.getAttribute("data-class");    
+    if (cn == null) cn = className;        
+    if (cn == null) cn = "MUIView";
 
-    if (className == null)
-        className = "MUIView";
-
-    let classInstance = MIOClassFromString(className);
+    let classInstance = MIOClassFromString(cn);
     classInstance.initWithLayer(layer, owner, options);
     // Track outlets inside view controller (owner)
     MUIOutletRegister(owner, elementID, classInstance);

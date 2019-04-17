@@ -7,6 +7,8 @@ export class MWSTableView extends MUIView
     dataSource = null;
     delegate = null;
 
+    allowsMultipleSelection = false;
+
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
 
@@ -85,9 +87,15 @@ export class MWSTableView extends MUIView
             cell.awakeFromHTML();
         }
 
-        let tapGesture = new MUITapGestureRecognizer();
-        tapGesture.initWithTarget(this, this.cellDidTap);
-        cell.addGestureRecognizer(tapGesture);
+        // let tapGesture = new MUITapGestureRecognizer();
+        // tapGesture.initWithTarget(this, this.cellDidTap);
+        // cell.addGestureRecognizer(tapGesture);
+
+        cell._target = this;
+        cell._onClickFn = this.cellOnClickFn;
+        //cell._onDblClickFn = this.cellOnDblClickFn;
+        //cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
+        cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
 
         return cell;
     }
@@ -132,6 +140,16 @@ export class MWSTableView extends MUIView
             section.addObject(cell);
         }        
 
+    }
+
+    private removeCell(indexPath){        
+        let section = this.sections[indexPath.section];
+        let cell = section[indexPath.row];
+        
+        section.removeObjectAtIndex(indexPath.row);
+        this.rows.removeObject(cell);
+
+        cell.removeFromSuperview();
     }
 
     private nextIndexPath(indexPath:MIOIndexPath){        
@@ -188,11 +206,18 @@ export class MWSTableView extends MUIView
         }
     }
 
-    insertRowsAtIndexPaths(indexPaths, animation){
+    insertRowsAtIndexPaths(indexPaths, rowAnimation){
         for (let index = 0; index < indexPaths.length; index++){
             let ip = indexPaths[index];
             this.addCell(ip);
         }        
+    }
+
+    deleteRowsAtIndexPaths(indexPaths, rowAnimation){
+        for (let index = 0; index < indexPaths.length; index++){
+            let ip = indexPaths[index];
+            this.removeCell(ip);
+        }
     }
 
     cellAtIndexPath(indexPath:MIOIndexPath){
@@ -201,6 +226,15 @@ export class MWSTableView extends MUIView
         if (indexPath.row >= section.length) return null;
         return section[indexPath.row];
     }
+
+    indexPathForCell(cell: MUITableViewCell): MIOIndexPath {
+        let section = cell._section;
+        let sectionIndex = this.sections.indexOf(section);
+        let rowIndex = section.indexOf(cell);
+
+        return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
+    }
+
 
     private cellDidTap(gesture:MUIGestureRecognizer){
         if (gesture.state != MUIGestureRecognizerState.Ended) return;
@@ -214,6 +248,45 @@ export class MWSTableView extends MUIView
         }                
 
     }
+
+    private cellOnClickFn(cell: MUITableViewCell) {
+
+        let indexPath = this.indexPathForCell(cell);
+
+        let canSelectCell = true;
+
+        if (this.delegate != null) {
+            if (typeof this.delegate.canSelectCellAtIndexPath === "function")
+                canSelectCell = this.delegate.canSelectCellAtIndexPath(this, indexPath);
+        }
+
+        if (canSelectCell == false)
+            return;
+
+        if (this.allowsMultipleSelection == false) {                        
+            cell.selected = true;
+            if (this.delegate != null && typeof this.delegate.didSelectCellAtIndexPath === "function") {
+                this.delegate.didSelectCellAtIndexPath(this, indexPath);
+            }                
+        }
+        else {
+            //TODO:
+        }
+
+    }
+
+    private cellOnEditingAccessoryClickFn(cell:MUITableViewCell) {
+        let indexPath = this.indexPathForCell(cell);
+
+        if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
+            let editingStyle = this.delegate.editingStyleForRowAtIndexPath(this, indexPath);
+        
+            if (this.delegate != null && typeof this.delegate.commitEditingStyleForRowAtIndexPath === "function") {
+                this.delegate.commitEditingStyleForRowAtIndexPath(this, editingStyle, indexPath);
+            }
+        }
+    }
+
 }
 
 
