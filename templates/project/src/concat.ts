@@ -3,19 +3,20 @@ static readonly $infoAddress = '0x7fda2f82f830'
 viewDidLoad($info0x7fda2f82f9e0){
 let _this = this;
 
-super.viewDidLoad({}, );
+super.viewDidLoad({});
+console.log('!!!!!!!!!!!!!!!!!!')
 /*derived_to_base_expr*/_this.view[0].backgroundColor = _injectIntoOptional(MUIColor.red);
 }
 initNibNameOptionalBundleOptional($info0x7fda3329bd48, nibNameOrNil, nibBundleOrNil){
 let _this = this;
 
-super.initNibNameOptionalBundleOptional({}, nibNameOrNil, nibBundleOrNil);
+super.initNibNameOptionalBundleOptional(nibNameOrNil, nibBundleOrNil, {});
 return ;
 }
 initCoderNSCoder($info0x7fda2fc01e80, aDecoder){
 let _this = this;
 
-super.initCoderNSCoder({}, aDecoder);
+super.initCoderNSCoder(aDecoder, {});
 return ;
 }
 static readonly initCoderNSCoder$failable = true
@@ -46,15 +47,15 @@ set _window($newValue) { this._window$set($newValue) }
 didFinishLaunching($info0x7fda30100b30, application, launchOptions){
 let _this = this;
 
-_this._window = _injectIntoOptional(_create(MUIWindow, 'initFrameCGRect', {}, MUIScreen.main.bounds));
+_this._window = _injectIntoOptional(_create(MUIWindow, 'initFrameCGRect', /*MUIScreen.main.bounds*/{origin: {x: 0, y: 0}, size: {width: 400, height: 700}}, {}));
 
-const vc = _create(ViewController, 'init', {}, );
+const vc = _create(ViewController, 'init', {});
 
 ;
 
 ;
 _this._window[0].rootViewController = _injectIntoOptional(/*derived_to_base_expr*/vc);
-_this._window[0].makeKeyAndVisible({}, );
+_this._window[0].makeKeyAndVisible({});
 return true;
 }
 applicationWillResignActive($info0x7fda301014b0, application){
@@ -80,7 +81,7 @@ let _this = this;
 init($info0x7fda30418248){
 let _this = this;
 
-super.init({}, );
+super.init({});
 return ;
 }
 
