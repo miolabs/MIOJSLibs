@@ -66,6 +66,7 @@ export class MUIViewController extends MIOObject
 
         this.view = new MUIView(this.layerID);
         this.view.initWithLayer(layer, owner, options);
+        this.view.awakeFromHTML();
         
         // Search for navigation item
         this.navigationItem = MUINavItemSearchInLayer(layer);

@@ -103,6 +103,10 @@ export class MIOFetchedResultsController extends MIOObject
     }
 
     performFetch(){
+        this.registerObjects = [];
+        this.changeObjects = {};
+        this.objects2sections = {};
+
         this.resultObjects = this.managedObjectContext.executeFetch(this.fetchRequest);
         this._splitInSections();
 
@@ -273,6 +277,7 @@ export class MIOFetchedResultsController extends MIOObject
             let reference = firstObj.objectID._getReferenceObject();
             this.registerObjects[reference] = firstObj;
             currentSection.objects.push(firstObj);
+            this.objects2sections[reference] = currentSection;
             
             for (let index = 1; index < this.resultObjects.length; index++){
                 let obj:MIOManagedObject = this.resultObjects[index];                

@@ -23,9 +23,8 @@ export class MIORelationshipDescription extends MIOPropertyDescription
         this.init();
         this.name = name;
         this.destinationEntityName = destinationEntityName;
-        this.isToMany = isToMany;
-        if (serverName != null)
-            this._serverName = serverName;
+        this.isToMany = isToMany;        
+        this._serverName = serverName;
         if (inverseName != null && inverseEntityName != null){
             let ir = new MIORelationshipDescription();
             ir.initWithName(inverseName, inverseEntityName, false); 

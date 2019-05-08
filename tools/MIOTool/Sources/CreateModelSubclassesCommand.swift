@@ -231,8 +231,8 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             
             fileContent += "\n";
             
-            let first = String(name.characters.prefix(1));
-            let cname = first.uppercased() + String(name.characters.dropFirst());
+            let first = String(name.prefix(1));
+            let cname = first.uppercased() + String(name.dropFirst());
             
             fileContent += "    // Relationship: \(name)\n";
             // Var

@@ -92,9 +92,10 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
     }
     else if (lv == rv)
         return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);
-    else if (lv < rv)
-        return sd.ascending ? -1 : 1;
-    else
-        return sd.ascending ? 1 : -1;
-
+    else if (lv != null && rv != null) {
+        if (lv < rv) return sd.ascending ? -1 : 1;
+        else return sd.ascending ? 1 : -1;
+    }
+    else if (lv == null) return sd.ascending ? -1 : 1;    
+    else if (rv == null) return sd.ascending ? 1 : -1;
 }
