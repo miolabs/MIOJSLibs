@@ -388,7 +388,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         this.saveCompletion = completion;
         block.call(this);
         if (this.saveOperations == 0) {
-            this.saveCompletion.call(this.saveTarget);
+            if (this.saveCompletion != null && this.saveTarget != null) this.saveCompletion.call(this.saveTarget);
             this.saveTarget = null;
             this.saveCompletion = null;
         }
