@@ -249,6 +249,7 @@ var _miocore_events_event_observers = {};
 
 export function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, observer, completion)
 {
+    console.log("MIOCoreEvent: Register for event type: " + eventType);
     let item = {"Target" : observer, "Completion" : completion};
 
     let array = _miocore_events_event_observers[eventType];
@@ -263,6 +264,7 @@ export function MIOCoreEventRegisterObserverForType(eventType:MIOCoreEventType, 
 
 export function MIOCoreEventUnregisterObserverForType(eventType:MIOCoreEventType, observer)
 {    
+    console.log("MIOCoreEvent: Unregister for event type: " + eventType);
     let obs = _miocore_events_event_observers[eventType];
     if (obs == null) return;
 
@@ -278,10 +280,7 @@ export function MIOCoreEventUnregisterObserverForType(eventType:MIOCoreEventType
     }
 
     if (index > -1) {
-        console.log("removing event observer: " + obs.length);
         obs.splice(index, 1);
-        console.log("removing event observer: " + obs.length);
-        console.log("removing event observer: " + _miocore_events_event_observers[eventType].length);
     }
 }
 

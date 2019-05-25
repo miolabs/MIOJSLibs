@@ -3,6 +3,7 @@ import { MIOObject } from "../MIOFoundation";
 import { _MUIHideViewController, _MIUShowViewController } from "./MIOUI_Core";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
 import { MUIView } from "./MUIView";
+import { MUIModalPresentationStyle } from "./MUIViewController_PresentationController";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -73,6 +74,7 @@ export class MUINavigationController extends MUIViewController
         this.currentViewControllerIndex++;
 
         vc.navigationController = this;
+        vc.modalPresentationStyle = MUIModalPresentationStyle.FullScreen;
 
         vc.onLoadView(this, function () {
 
