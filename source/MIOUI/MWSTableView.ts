@@ -106,7 +106,11 @@ export class MWSTableView extends MUIView
     private cells = [];
 
     private addSectionHeader(section){
-
+        let header = null;
+        if (typeof this.dataSource.viewForHeaderInSection === "function") header = this.dataSource.viewForHeaderInSection(this, section) as MUIView;        
+        if (header == null) return;
+        header.hidden = false;
+        this.addSubview(header);
     }
 
     private addCell(indexPath:MIOIndexPath){
@@ -195,14 +199,14 @@ export class MWSTableView extends MUIView
             let rows = this.dataSource.numberOfRowsInSection(this, sectionIndex);            
             if (rows == 0) continue;
             
-            this.addSectionHeader(section);
+            this.addSectionHeader(sectionIndex);
             
             for (let cellIndex = 0; cellIndex < rows; cellIndex++) {
                 let ip = MIOIndexPath.indexForRowInSection(cellIndex, sectionIndex);
                 this.addCell(ip);
             }
 
-            this.addSectionFooter(section);                        
+            this.addSectionFooter(sectionIndex);                        
         }
     }
 
