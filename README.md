@@ -10,35 +10,17 @@ These libraries are designed to let you develop a web application the same way y
 
 ## **Brief history:**
 
-Nowadays the web is a important part of developing company, especially, if your target are the desktop or laptop computers.
+Have you ever wished to share code between platforms? Do you like the Apple frameworks but you want/need to develop in other platforms? Code sharing and Apple frameworks on different platforms; we are making that possible.
 
-With the new HTML5 and CSS tools you have the option to develop a web app or a native app, but usually the majority companies go web first (and last sometimes), because easy to develop an app in the web (even with different browsers) than develop an app for different OS like Windows, or macOS.
+MioLabs is porting the Apple frameworks like Foundation, UIKit and CoreData to other platforms such as the web, backend servers and hardware microcontrollers!
 
-But the way the web works it's totally different from the way native app works, from a perspective of a long native programmer.
+We choose Swift as our main language programming and now you can share both the programming logic and language and use the same API you already know and love! We have ported the libraries and created a compiler/transpiler, all based around Apple frameworks and Swift language, for the other platforms/environments.
 
-Usually, most web programmers don't know anything or at least they don't use delegation, heritance, KVC/KVO, singleton, etc. They don't have the concept of an app, there a lot of webpages, links one to another...
+This is currently under heavy development, but we have come a long way from where we were two years ago when we started to port these frameworks to the web. Now we are taking another step forward implementing Swift code into all platforms making code sharing possible and making you into a faster, more efficient developer.
 
-And it's not a bad thing, if you develop a web, but if you try to develop a huge web app, not only it's important to know all that stuff, it's important to understand when you can use and when you can't use. Of course, you can make one app with only part of this knowledge but in a long term it's going to cost you a lot more troubles updating, change things, adding new feature, etc. But If you make the right decisions, applying all the algorithm in the right way you can maintain a large application with few resources, and that’s what this framework was intended for. Do more with few.
+The MIOLabs team!
 
-I tried out a lot of web frameworks, the famous ones, the frameworks from big companies, but, finally, I saw that everyone was designed from a point of view of a web developers... at our company (that we are mainly native developers) was a challenge.
-
-We had to develop a web manager for our customers, and we did. We used frameworks like Angular or React, but in the end, cost us a lot of time and resources make the two teams (web and iOS) work together, specially in the UI section.
-
-I found that in native applications our designer tweak and polish the final look of the apps... but in the web, the final tweak was made by the programmers, they need to "run" in the browser to see how the UI looks, because the framework runtime that loads the html template. So, if you don’t run in the browser you don’t know how looks like (And we can’t force to our designers to understand what is a runtime...) Of course, there are tools that try to solve these problems, but usually are tools designed only for that framework, so if we need to change, we need to learn new tools.
-
-So, my question back of the days was: Why not use the normal HTML5 and CSS tools available, instead of custom tools for only one framework? Every designer knows how to used, of course, the answer was: Because of the runtime or the interpreter... so, Why I need a runtime to develop dynamic webs?
-
-With the standards tools for HTML5/CSS I only needed a small wrapper around tags, not a fully runtime, that I needed to download a lot of bytes... just to see the main page of the web.
-
-Also, I needed to develop a fast tutorial beacuse one special person step in our company, she didn’t code before, but she had to learn how an iOS programing works, how to code, how the patterns are used, etc. and Objective-C is really a difficult language for beginners, and swift was not stable by that time, so I decide to start with web tutorials but I need a way of programming like iOS / macOS.
-
-Now in our company all people can switch between web or native easily.
-
-After programing for a lot of environments like desktop or mobile platforms (Windows, macOS, Linux, iOS, Android, etc.) and microcontrollers (manufacter customs libs, RTOS, etc.) I found that the way of Cocoa / Cocoa touch works, brings me the possibility of do much more with less resources. For now, it’s the framework we use in our daily basis even when we code for other platforms.
-
-I want to point out something, it’s not about the Cocoa API, it’s how you use it. Things like Views, View Controllers, Notification center, Delegation, KVC/KVO, Gestures, how a Fetch Results Controller works, and so on, the things that make us more productive, not just how your app looks like, or how the API can support or not. That’s the thing we like about Cocoa / Cocoa touch.
-
-**So, I started this project to solve these things:**
+**I started this project to solve these things:**
 
 * The design team needs to see how looks like the view or app with standard HTML5/CSS tools.
 * We don’t want another runtime.
