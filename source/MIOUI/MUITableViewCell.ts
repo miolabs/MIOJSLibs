@@ -2,6 +2,7 @@
 import { MUIView } from "./MUIView";
 import { MUILabel } from "./MUILabel";
 import { MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from ".";
+import { MIOLog } from "../MIOFoundation";
 
 export enum MUITableViewCellStyle {
 
@@ -213,17 +214,21 @@ export class MUITableViewCell extends MUIView {
         let instance = this;
         this.layer.onclick = function (e) {
             if (instance._onClickFn != null) {
-                e.stopPropagation();
-                instance._onClickFn.call(instance._target, instance);
+                if(!e.detail || e.detail == 1){
+                    e.stopPropagation();
+                    instance._onClickFn.call(instance._target, instance);                
+                }
             }
+            MIOLog("CLK");
         };
 
-        this.layer.ondblclick = function (e) {
-            if (instance._onDblClickFn != null) {
-                e.stopPropagation();
-                instance._onDblClickFn.call(instance._target, instance);
-            }
-        };
+        // this.layer.ondblclick = function (e) {            
+        //     if (instance._onDblClickFn != null) {
+        //         e.stopPropagation();
+        //         instance._onDblClickFn.call(instance._target, instance);
+        //     }
+        //     MIOLog("DBL CLK");
+        // };
     }
 
     private _accessoryType:MUITableViewCellAccessoryType = MUITableViewCellAccessoryType.None;
