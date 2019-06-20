@@ -11,7 +11,7 @@ import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
 
 export function MUILayerSearchElementByAttribute(layer, key)
 {
-    if (layer.tagName != "DIV" && layer.tagName != "INPUT" && layer.tagName != "SECTION")
+    if (layer.tagName != "DIV" && layer.tagName != "INPUT" && layer.tagName != "SECTION" && layer.tagName != "SPAN")
             return null;
 
     if (layer.getAttribute(key) == "true") return layer;

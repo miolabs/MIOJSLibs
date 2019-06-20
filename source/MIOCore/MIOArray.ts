@@ -5,6 +5,10 @@ Array.prototype.addObject = function(object){
     this.push(object);
 }
 
+Array.prototype.insertObjectAtIndex = function(object, index){
+    this.splice(index, 0, object);
+}
+
 Array.prototype.removeObject = function(object){
     let index = this.indexOf(object);
     if (index > -1) {

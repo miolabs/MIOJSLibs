@@ -58,8 +58,8 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
     let sd = sortDescriptors[index];
     let key = sd.key;
 
-    let lv = a[key];
-    let rv = b[key];
+    let lv = (a instanceof MIOObject) ? a.valueForKeyPath(key) : a[key];
+    let rv = (b instanceof MIOObject) ? b.valueForKeyPath(key) : b[key];
 
     if (typeof lv === "string"){
         lv = lv.toLocaleLowerCase();

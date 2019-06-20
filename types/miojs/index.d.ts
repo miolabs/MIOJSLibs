@@ -1,6 +1,7 @@
 //Implemented in: MIOCore/MIOArray.ts
 declare interface Array<T> {
     addObject(object);
+    insertObjectAtIndex(object, index);
     removeObject(object);
     removeObjectAtIndex(index);
     objectAtIndex(index);

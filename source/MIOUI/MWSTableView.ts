@@ -1,6 +1,7 @@
 import { MUIView , MUITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from "../MIOUI";
 import { MIOUUID, MIOIndexPath } from "../MIOFoundation";
 import { MIOClassFromString } from "../MIOCore/platform";
+import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
 
 export class MWSTableView extends MUIView
 {
@@ -26,6 +27,9 @@ export class MWSTableView extends MUIView
                 else if (subLayer.getAttribute("data-tableview-header") != null) {
                     this.addHeaderWithLayer(subLayer);
                 }
+                else if (subLayer.getAttribute("data-tableview-section-header") != null) {
+                    this.addSectionHeaderWithLayer(subLayer);
+                }
                 else if (subLayer.getAttribute("data-tableview-footer") != null) {
                     this.addFooterWithLayer(subLayer);
                 }
@@ -43,6 +47,18 @@ export class MWSTableView extends MUIView
         item["class"] = cellClassname;
         item["layer"] = layer;
         this.headerLayer = item;
+    }
+
+    private sectionHeaderLayer = null;
+    private addSectionHeaderWithLayer(layer){    
+        layer.style.display = "none";    
+        let cellClassname = layer.getAttribute("data-class");
+        if (cellClassname == null) cellClassname = "MUIView";
+     
+        let item = {};
+        item["class"] = cellClassname;
+        item["layer"] = layer;
+        this.sectionHeaderLayer = item;
     }
 
     private cellPrototypes = {};
@@ -107,10 +123,22 @@ export class MWSTableView extends MUIView
 
     private addSectionHeader(section){
         let header = null;
-        if (typeof this.dataSource.viewForHeaderInSection === "function") header = this.dataSource.viewForHeaderInSection(this, section) as MUIView;        
+        if (typeof this.dataSource.viewForHeaderInSection === "function") header = this.dataSource.viewForHeaderInSection(this, section) as MUIView;                        
+        if (header == null && (typeof this.dataSource.titleForHeaderInSection === "function")) {
+            let title = this.dataSource.titleForHeaderInSection(this, section);
+            if (title == null) return;
+            let layer = this.sectionHeaderLayer["layer"].cloneNode(true);
+            layer.style.display = "";
+            header = new MUIView();
+            header.initWithLayer(layer, this);
+            header.awakeFromHTML();
+            let titleLayer = MUILayerSearchElementByAttribute(layer, "data-header-title");
+            titleLayer.innerHTML = title;
+        }
         if (header == null) return;
         header.hidden = false;
         this.addSubview(header);
+        this.rows.push({"Header": header});
     }
 
     private addCell(indexPath:MIOIndexPath){
@@ -127,8 +155,17 @@ export class MWSTableView extends MUIView
         else if (nextIP != null){
             let nextCell = this.cellAtIndexPath(nextIP);
             let index = this.rows.indexOf(nextCell);
-            this.insertSubviewAboveSubview(cell, nextCell);
-            this.rows.splice(index, 0, cell);
+            //Check for header
+            let lastRow = this.rows[index - 1];
+            if (lastRow != null && (lastRow instanceof MUIView) == false) {
+                let header = lastRow["Header"];
+                this.insertSubviewAboveSubview(cell, header);
+                this.rows.splice(index - 1, 0, cell);
+            }
+            else {
+                this.insertSubviewAboveSubview(cell, nextCell);
+                this.rows.splice(index, 0, cell);
+            }
         }
         else {
             this.addSubview(cell);
@@ -180,7 +217,13 @@ export class MWSTableView extends MUIView
         // Remove all subviews
         for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
-            row.removeFromSuperview();                            
+            if (row instanceof MUIView) {
+                row.removeFromSuperview();                            
+            }
+            else {
+                let header = row["Header"];
+                header.removeFromSuperview();
+            }            
         }
 
         this.rows = [];        
