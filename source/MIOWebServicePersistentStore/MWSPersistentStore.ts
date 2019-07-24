@@ -249,7 +249,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
     }
 
-    private updateObjectsInContext(items, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships) {
+    updateObjectsInContext(items, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships) {
 
         if (context == null) return;
         if (items == null) return;
