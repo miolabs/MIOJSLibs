@@ -188,19 +188,28 @@ export class MUITableViewCell extends MUIView {
         this._editingAccessoryType = value;
 
         // Reset
-        if (this.editingAccessoryDeleteView != null) this.editingAccessoryDeleteView.setHidden(true);
-        if (this.editingAccessoryInsertView != null) this.editingAccessoryInsertView.setHidden(true);
-        if (this.editingAccessoryView != null) this.editingAccessoryView.setHidden(true);
+        if (this.editingAccessoryDeleteView != null) this.setEditingAccessoryViewHidden(this.editingAccessoryDeleteView, true);
+        if (this.editingAccessoryInsertView != null) this.setEditingAccessoryViewHidden(this.editingAccessoryInsertView, true);
+        if (this.editingAccessoryView != null) this.setEditingAccessoryViewHidden(this.editingAccessoryView, true);
 
         // Set the view type
         if (value == MUITableViewCellEditingStyle.Insert && this.editingAccessoryInsertView != null) {
             this.editingAccessoryView = this.editingAccessoryInsertView;
-            this.editingAccessoryInsertView.setHidden(false);            
+            this.setEditingAccessoryViewHidden(this.editingAccessoryInsertView, false);            
         } 
         else if (value == MUITableViewCellEditingStyle.Delete && this.editingAccessoryDeleteView != null) {
             this.editingAccessoryView = this.editingAccessoryDeleteView;
-            this.editingAccessoryDeleteView.setHidden(false);            
+            this.setEditingAccessoryViewHidden(this.editingAccessoryDeleteView, false);            
         } 
+    }
+
+    setEditingAccessoryViewHidden(view:MUIView, value:boolean){
+        if (value == true){
+            MUICoreLayerAddStyle(view.layer, "no-visible");
+        }
+        else {
+            MUICoreLayerRemoveStyle(view.layer, "no-visible");
+        }
     }
 
     private editingAccessoryViewDidClick(e:Event){

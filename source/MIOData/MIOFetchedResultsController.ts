@@ -229,7 +229,7 @@ export class MIOFetchedResultsController extends MIOObject
             this._delegate.controllerDidChangeContent(this);
     }
 
-    private indexPathForObject(object:MIOManagedObject):MIOIndexPath{
+    indexPathForObject(object:MIOManagedObject):MIOIndexPath {
         let ref = object.objectID._getReferenceObject();
         let section = this.objects2sections[ref];
         if (section == null) return null;
