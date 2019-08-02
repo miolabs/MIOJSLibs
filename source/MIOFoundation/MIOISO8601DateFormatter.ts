@@ -35,8 +35,9 @@ export class MIOISO8601DateFormatter extends MIODateFormatter {
         return d;
     }
 
-    stringFromDate(date:Date):string {
-
+    stringForObjectValue(value:any):string {
+        
+        let date = value as Date;
         var str = "";
 
         if (date == null) return null;

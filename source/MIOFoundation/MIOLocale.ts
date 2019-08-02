@@ -49,15 +49,11 @@ export class MIOLocale extends MIOObject
                 break;
 
             case "US":
-                ds =  ".";
-                break;
-
             case "UK":
+            case "AE":  
+            case "PH":  
+            case "GQ":                    
                 ds =  ".";
-                break;     
-                
-            case "AE":
-                ds = ".";
                 break;
         }
 
@@ -85,6 +81,10 @@ export class MIOLocale extends MIOObject
             case "UK":
                 cs = "£";
                 break;
+
+            case "PH":
+                cs = "₱";
+                break;
         }
 
         return cs;
@@ -98,7 +98,7 @@ export class MIOLocale extends MIOObject
             case "DE":
             case "FR":
             case "IT":
-            case "NL":
+            case "NL":            
                 cc = "EUR";
                 break;
 
@@ -112,6 +112,16 @@ export class MIOLocale extends MIOObject
 
             case "AE":
                 cc = "AED";
+                break;
+
+            case "PH":
+                cc = "PHP";
+                break;
+
+            case "GQ":
+                cc = "FCFA";
+                break;
+        
         }
 
         return cc;
@@ -128,14 +138,10 @@ export class MIOLocale extends MIOObject
                 break;
 
             case "US":
-                gs = ",";
-                break;
-
             case "UK":
-                gs = ",";
-                break;
-
             case "AE":
+            case "PH":
+            case "GQ":
                 gs = ",";
                 break;
         }
