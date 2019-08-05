@@ -1,14 +1,15 @@
-import { MUIView , MUITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from "../MIOUI";
-import { MIOUUID, MIOIndexPath } from "../MIOFoundation";
+import { MUIView , MUITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from ".";
+import { MIOUUID, MIOIndexPath, MIOIndexPathEqual } from "../MIOFoundation";
 import { MIOClassFromString } from "../MIOCore/platform";
 import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
 
-export class MWSTableView extends MUIView
+export class UITableView extends MUIView
 {
     dataSource = null;
     delegate = null;
 
     allowsMultipleSelection = false;
+    indexPathForSelectedRow = null;
 
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
@@ -90,6 +91,8 @@ export class MWSTableView extends MUIView
     dequeueReusableCellWithIdentifier(identifier:string): MUITableViewCell {
         let item = this.cellPrototypes[identifier];
 
+        //TODO: Make it reusable
+
         let cell: MUITableViewCell = null;        
         let className = item["class"];
         cell = MIOClassFromString(className);        
@@ -103,15 +106,16 @@ export class MWSTableView extends MUIView
             cell.awakeFromHTML();
         }
 
-        // let tapGesture = new MUITapGestureRecognizer();
-        // tapGesture.initWithTarget(this, this.cellDidTap);
-        // cell.addGestureRecognizer(tapGesture);
+        let tapGesture = new MUITapGestureRecognizer();
+        tapGesture.initWithTarget(this, this.cellDidTap);
+        cell.addGestureRecognizer(tapGesture);
+        cell.addObserver(this, "selected", null);
 
-        cell._target = this;
-        cell._onClickFn = this.cellOnClickFn;
+        //cell._target = this;
+        //cell._onClickFn = this.cellOnClickFn;
         //cell._onDblClickFn = this.cellOnDblClickFn;
         //cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
-        cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
+        //cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
 
         return cell;
     }
@@ -229,6 +233,7 @@ export class MWSTableView extends MUIView
         this.rows = [];        
         this.sections = [];
         this.cells = [];
+        this.indexPathForSelectedRow = null;
     
         if (this.dataSource == null) return;
 
@@ -272,7 +277,7 @@ export class MWSTableView extends MUIView
         let section = this.sections[indexPath.section];
         if (indexPath.row >= section.length) return null;
         return section[indexPath.row];
-    }
+    }    
 
     indexPathForCell(cell: MUITableViewCell): MIOIndexPath {
         let section = cell._section;
@@ -282,18 +287,37 @@ export class MWSTableView extends MUIView
         return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
     }
 
+    deselectRowAtIndexPath(indexPath:MIOIndexPath, animated:boolean){
+        let cell = this.cellAtIndexPath(indexPath);
+        if (cell != null) cell.selected = false;
+    }
 
+    observeValueForKeyPath(key, type, object) {
+        if (type != "Did") return;
+        if (key != "selected") return;
+        
+        let cell = object as MUITableViewCell;
+        let ip = this.indexPathForCell(object);
+
+        if (cell.selected == false && MIOIndexPathEqual(ip, this.indexPathForSelectedRow) == true) this.indexPathForSelectedRow = null;
+        else if (cell.selected == true) {
+            if (this.indexPathForSelectedRow != null) this.deselectRowAtIndexPath(this.indexPathForSelectedRow, true);
+            this.indexPathForSelectedRow = this.indexPathForCell(object);
+        }
+    }
+    
     private cellDidTap(gesture:MUIGestureRecognizer){
         if (gesture.state != MUIGestureRecognizerState.Ended) return;
         let cell = gesture.view as MUITableViewCell;
-        let section = cell._section;
-        let sectionIndex = this.sections.indexOf(section);
-        let rowIndex = section.indexOfObject(cell);
+        // let section = cell._section;
+        // let sectionIndex = this.sections.indexOf(section);
+        // let rowIndex = section.indexOfObject(cell);
         
-        if (this.delegate != null && typeof this.delegate.didSelectCellAtIndexPath === "function") {
-            this.delegate.didSelectCellAtIndexPath(this, MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex));
-        }                
-
+        // if (this.delegate != null && typeof this.delegate.didSelectCellAtIndexPath === "function") {
+        //     this.delegate.didSelectCellAtIndexPath(this, MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex));
+        // }     
+        
+        this.cellOnClickFn(cell);
     }
 
     private cellOnClickFn(cell: MUITableViewCell) {
@@ -337,17 +361,17 @@ export class MWSTableView extends MUIView
 }
 
 
-class MWSTableViewSection extends MUIView 
+class UITableViewSection extends MUIView 
 {
     static section(){
 
     }
 }
 
-class MWSTableViewRow extends MUIView 
+class UITableViewRow extends MUIView 
 {
     static rowWithSectionAndCell(section, cell){
-        let row = new MWSTableViewRow();
+        let row = new UITableViewRow();
         row.init();
         row.section = section;
         row.cell = cell;

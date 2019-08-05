@@ -29,14 +29,14 @@ export class MUIToolbar extends MUIView
         // Check if we have sub nodes
         if (this.layer.childNodes.length > 0)
         {
-            for (var index = 0; index < this.layer.childNodes.length; index++)
+            for (let index = 0; index < this.layer.childNodes.length; index++)
             {
-                let layer = this.layer.childNodes[index]; // TODO: variablename shadows parameter
-                if (layer.tagName == "DIV")
+                let subLayer = this.layer.childNodes[index]; // TODO: variablename shadows parameter
+                if (subLayer.tagName == "DIV")
                 {
                     var lid = layer.getAttribute("id");
                     var tb = new MUIToolbarButton(lid); 
-                    var button = MUIToolbarButton.buttonWithLayer(layer, owner);
+                    var button = MUIToolbarButton.buttonWithLayer(subLayer, owner);
                     button.parent = this;
 
                     this._linkViewToSubview(button);

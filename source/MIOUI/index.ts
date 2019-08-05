@@ -68,4 +68,5 @@ export * from './MUIPanGestureRecognizer'
 
 export * from './MUIOpenPanel'
 
-export * from './MWSTableView'
+export * from './UITableView'
+export * from './UITableViewCell'
