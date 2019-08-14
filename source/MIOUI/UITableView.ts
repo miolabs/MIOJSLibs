@@ -2,6 +2,8 @@ import { MUIView , MUITableViewCell, MUIGestureRecognizer, MUITapGestureRecogniz
 import { MIOUUID, MIOIndexPath, MIOIndexPathEqual } from "../MIOFoundation";
 import { MIOClassFromString } from "../MIOCore/platform";
 import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
+import { MUICoreLayerRemoveStyle, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
+import { MUILabel } from "./MUILabel";
 
 export class UITableView extends MUIView
 {
@@ -35,7 +37,26 @@ export class UITableView extends MUIView
                     this.addFooterWithLayer(subLayer);
                 }
             }
-        }        
+        } 
+        
+        if (this.sectionHeaderLayer == null){
+            let header = new MUIView();
+            header.init();
+            header.setHeight(44);
+            //header.layer.style.background = "";
+            //header.layer.style.margin = "4px 8px";
+            MUICoreLayerRemoveStyle(header.layer, "view");
+            MUICoreLayerAddStyle(header.layer, "header");
+    
+            let titleLabel = new MUILabel();
+            titleLabel.init();
+            titleLabel.layer.setAttribute("data-header-title", "true");
+            MUICoreLayerRemoveStyle(titleLabel.layer, "lbl");
+            MUICoreLayerAddStyle(titleLabel.layer, "title");
+            header.addSubview(titleLabel);
+            
+            this.sectionHeaderLayer = header;
+        }
     }
 
     private headerLayer = null;

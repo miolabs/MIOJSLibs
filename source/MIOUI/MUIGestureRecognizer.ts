@@ -23,6 +23,7 @@ export class MUIGestureRecognizer extends MIOObject
     isEnabled = true;
 
     name:string = null;
+    cancelsTouchesInView = true;;
     
     private target = null;
     private block = null;

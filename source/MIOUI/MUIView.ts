@@ -551,7 +551,7 @@ export class MUIView extends MIOObject
         this.touchesBeganWithEvent(null, e);
         this.isMouseDown = true;
         window.addEventListener("mousemove", this.mouseMoveEvent.bind(this));
-        ev.preventDefault(); // Prevent selection
+        //ev.preventDefault(); // Prevent selection
     }
 
     private mouseUpEvent(ev){   
