@@ -220,16 +220,16 @@ export class UITableViewCell extends MUIView {
     private _setupLayer() {
         //this.layer.style.position = "absolute";        
 
-        let instance = this;
-        this.layer.onclick = function (e) {
-            if (instance._onClickFn != null) {
-                if(!e.detail || e.detail == 1){
-                    e.stopPropagation();
-                    instance._onClickFn.call(instance._target, instance);                
-                }
-            }
-            MIOLog("CLK");
-        };
+        // let instance = this;
+        // this.layer.onclick = function (e) {
+        //     if (instance._onClickFn != null) {
+        //         if(!e.detail || e.detail == 1){
+        //             e.stopPropagation();
+        //             instance._onClickFn.call(instance._target, instance);                
+        //         }
+        //     }
+        //     MIOLog("CLK");
+        // };
 
         // this.layer.ondblclick = function (e) {            
         //     if (instance._onDblClickFn != null) {

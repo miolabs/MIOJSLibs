@@ -314,7 +314,7 @@ export class UITableView extends MUIView
     }
 
     observeValueForKeyPath(key, type, object) {
-        if (type != "Did") return;
+        if (type != "did") return;
         if (key != "selected") return;
         
         let cell = object as MUITableViewCell;
