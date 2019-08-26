@@ -1,4 +1,4 @@
-import { MUIView , MUITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from ".";
+import { MUIView , UITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from ".";
 import { MIOUUID, MIOIndexPath, MIOIndexPathEqual } from "../MIOFoundation";
 import { MIOClassFromString } from "../MIOCore/platform";
 import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
@@ -109,12 +109,12 @@ export class UITableView extends MUIView
         this.footerLayer = item;
     }    
 
-    dequeueReusableCellWithIdentifier(identifier:string): MUITableViewCell {
+    dequeueReusableCellWithIdentifier(identifier:string): UITableViewCell {
         let item = this.cellPrototypes[identifier];
 
         //TODO: Make it reusable
 
-        let cell: MUITableViewCell = null;        
+        let cell: UITableViewCell = null;        
         let className = item["class"];
         cell = MIOClassFromString(className);        
         //cell.reuseIdentifier = identifier;
@@ -167,7 +167,7 @@ export class UITableView extends MUIView
     }
 
     private addCell(indexPath:MIOIndexPath){
-        let cell = this.dataSource.cellAtIndexPath(this, indexPath) as MUITableViewCell;
+        let cell = this.dataSource.cellAtIndexPath(this, indexPath) as UITableViewCell;
         let section = this.sections[indexPath.section];                
                 
         let nextIP = this.nextIndexPath(indexPath);
@@ -300,10 +300,13 @@ export class UITableView extends MUIView
         return section[indexPath.row];
     }    
 
-    indexPathForCell(cell: MUITableViewCell): MIOIndexPath {
+    indexPathForCell(cell: UITableViewCell): MIOIndexPath {
         let section = cell._section;
         let sectionIndex = this.sections.indexOf(section);
+        if (section == -1) return null;
+
         let rowIndex = section.indexOf(cell);
+        if (rowIndex == -1) return null;
 
         return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
     }
@@ -317,7 +320,7 @@ export class UITableView extends MUIView
         if (type != "did") return;
         if (key != "selected") return;
         
-        let cell = object as MUITableViewCell;
+        let cell = object as UITableViewCell;
         let ip = this.indexPathForCell(object);
 
         if (cell.selected == false && MIOIndexPathEqual(ip, this.indexPathForSelectedRow) == true) this.indexPathForSelectedRow = null;
@@ -329,7 +332,7 @@ export class UITableView extends MUIView
     
     private cellDidTap(gesture:MUIGestureRecognizer){
         if (gesture.state != MUIGestureRecognizerState.Ended) return;
-        let cell = gesture.view as MUITableViewCell;
+        let cell = gesture.view as UITableViewCell;
         // let section = cell._section;
         // let sectionIndex = this.sections.indexOf(section);
         // let rowIndex = section.indexOfObject(cell);
@@ -341,7 +344,7 @@ export class UITableView extends MUIView
         this.cellOnClickFn(cell);
     }
 
-    private cellOnClickFn(cell: MUITableViewCell) {
+    private cellOnClickFn(cell: UITableViewCell) {
 
         let indexPath = this.indexPathForCell(cell);
 
@@ -367,7 +370,7 @@ export class UITableView extends MUIView
 
     }
 
-    private cellOnEditingAccessoryClickFn(cell:MUITableViewCell) {
+    private cellOnEditingAccessoryClickFn(cell:UITableViewCell) {
         let indexPath = this.indexPathForCell(cell);
 
         if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
