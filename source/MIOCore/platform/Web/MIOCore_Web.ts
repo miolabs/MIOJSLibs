@@ -68,6 +68,10 @@ export function MIOCoreGetMainBundleURLString():string{
     return window.location.href;
 }
 
+export function MIOCoreGetMainURLString(): string {
+    return window.location.href;
+}
+
 export function MIOCoreDeviceTypeString(){
     return navigator.userAgent.toLowerCase();
 }

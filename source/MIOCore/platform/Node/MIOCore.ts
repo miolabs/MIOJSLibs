@@ -6,6 +6,10 @@ export function MIOCoreGetMainBundleURLString(): string {
     return "";
 }
 
+export function MIOCoreGetMainURLString(): string {
+    return "";
+}
+
 export class MIOCoreBundle {
     baseURL: string;
     loadHMTLFromPath(path, layerID, instance, callback) {};
