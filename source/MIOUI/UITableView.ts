@@ -302,6 +302,8 @@ export class UITableView extends MUIView
 
     indexPathForCell(cell: UITableViewCell): MIOIndexPath {
         let section = cell._section;
+        if (section == null) return;
+        
         let sectionIndex = this.sections.indexOf(section);
         if (section == -1) return null;
 
