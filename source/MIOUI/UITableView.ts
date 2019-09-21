@@ -132,11 +132,11 @@ export class UITableView extends MUIView
         cell.addGestureRecognizer(tapGesture);
         cell.addObserver(this, "selected", null);
 
-        //cell._target = this;
+        cell._target = this;
         //cell._onClickFn = this.cellOnClickFn;
         //cell._onDblClickFn = this.cellOnDblClickFn;
         //cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
-        //cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
+        cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
 
         return cell;
     }
