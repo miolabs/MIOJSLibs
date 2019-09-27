@@ -45,6 +45,7 @@ export class MIOLocale extends MIOObject
         switch (this.countryIdentifier) {
 
             case "ES":
+            case "NL":
                 ds =  ",";
                 break;
 
@@ -134,6 +135,7 @@ export class MIOLocale extends MIOObject
         switch(this.countryIdentifier){
 
             case "ES":
+            case "NL":
                 gs = ".";
                 break;
 
