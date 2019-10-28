@@ -26,6 +26,10 @@ export class MIODateFormatter extends MIOFormatter {
             this.browserDateSeparatorSymbol = "-";
     }
 
+    getObjectValueForString(str:string) {
+        return this.dateFromString(str);
+    }
+
     dateFromString(str:string):Date {
 
         let result, value, dateString;
