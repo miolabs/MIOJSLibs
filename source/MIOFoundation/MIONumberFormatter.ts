@@ -43,6 +43,10 @@ export class MIONumberFormatter extends MIOFormatter {
         }
     }
 
+    getObjectValueForString(str:string) {
+        return this.numberFromString(str);
+    }
+
     numberFromString(str:string){
 
         if(str === null) return null;

@@ -12,6 +12,10 @@ export class MIOISO8601DateFormatter extends MIODateFormatter {
 
     timeZone = null;
 
+    getObjectValueForString(str:string) {
+        return this.dateFromString(str);
+    }
+
     dateFromString(str:string):Date {
 
         if (str == null) return null;
