@@ -54,6 +54,8 @@ export class MIOManagedObjectModel extends MIOObject
 
             this.currentEntity = new MIOEntityDescription();
             this.currentEntity.initWithEntityName(name, parentEntity);
+
+            MIOLog("\n\n--- " + name);
         }
         else if (element == "attribute") {
 
@@ -121,6 +123,8 @@ export class MIOManagedObjectModel extends MIOObject
     // #endregion
 
     private _addAttribute(name, type, optional, serverName, syncable, defaultValueString){
+
+        MIOLog((serverName != null ? serverName : name) + " (" + type + ", optional=" + optional + (defaultValue != null? ", defaultValue: " + defaultValue : "") + "): ");
 
         var attrType = null;
         var defaultValue = null;

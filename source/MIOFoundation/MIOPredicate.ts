@@ -264,6 +264,11 @@ export enum MIOPredicateTokenType{
 
     BitwiseAND,
     BitwiseOR,
+
+    PlusOperation,
+    MinusOperation,
+    MultiplyOperation,
+    DivisionOperation,
     
     OpenParenthesisSymbol,
     CloseParenthesisSymbol,
@@ -335,6 +340,8 @@ export class MIOPredicate extends MIOObject {
         // Bitwise operators
         this.lexer.addTokenType(MIOPredicateTokenType.BitwiseAND, /^& /i);
         this.lexer.addTokenType(MIOPredicateTokenType.BitwiseOR, /^\| /i);                
+        // Operations
+        //this.lexer.addTokenType(MIOPredicateTokenType.MinusOperation, /^- /i);
         // Join operators
         this.lexer.addTokenType(MIOPredicateTokenType.AND, /^(and|&&) /i);
         this.lexer.addTokenType(MIOPredicateTokenType.OR, /^(or|\|\|) /i);        
@@ -507,7 +514,7 @@ export class MIOPredicate extends MIOObject {
                 item.key += token.value;                
                 this.comparator(item);                
                 break;
-
+    
             default:
                 throw new Error(`MIOPredicate: Error. Unexpected comparator. (${token.value})`);                                
         }
