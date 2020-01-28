@@ -69,8 +69,6 @@ export class MIOBundle extends MIOObject
     pathForResourceOfType(resource:string, type:string){
         return _MIOBundleAppGetResource(resource, type);
     }
-
-
 }
 
 var _MIOAppBundleResources = {};

@@ -115,10 +115,12 @@ export class MIOPropertyListSerialization extends MIOObject
         if (element == "key") {
             this.currentKey = this.currentString;            
         }
-        else if (element == "string" || element == "integer" || element == "real" || element == "data") {
+        else if (element == "string" || element == "integer" || element == "real" || element == "data" || element == "true" || element == "false") {
             this.currentValue = this.currentString;
             if (element == "integer") this.currentValue = parseInt(this.currentString);
             if (element == "real") this.currentValue = parseFloat(this.currentString);
+            if (element == "true") this.currentValue = true;
+            if (element == "false") this.currentValue = false;
             if (this.currentElementType == 1) this.currentElement.push(this.currentValue);
             else if (this.currentElementType == 0 && this.currentKey != null){
                 let key = this.currentKey;
