@@ -88,7 +88,7 @@ export class UITableView extends MUIView
         layer.style.display = "none";
         let cellIdentifier = layer.getAttribute("data-cell-identifier");
         let cellClassname = layer.getAttribute("data-class");
-        if (cellClassname == null) cellClassname = "MUITableViewCell";
+        if (cellClassname == null) cellClassname = "UITableViewCell";
 
         let item = {};
         item["class"] = cellClassname;

@@ -154,27 +154,38 @@ export class MIONumberFormatter extends MIOFormatter {
         if (floatValue.length <= this.maximumFractionDigits) return[intValue, floatValue];
 
         // Check float first        
-        let roundedFloat = "";
-        let d = parseInt(floatValue.substr(this.maximumFractionDigits, 1));
-        let inc =  d < 5 ? 0 : 1;
+        let roundedFloat = floatValue   
+        //let d = parseInt(floatValue.substr(floatValue.length - 1, 1));
+        let inc = 0;//d < 5 ? 0 : 1;
+        let stopCount = floatValue.length;
         
-        for (let index = this.maximumFractionDigits - 1; index >= 0; index--){
-            if (inc == 0) {
-                roundedFloat = floatValue.substring(0, index + 1) + roundedFloat;
-                break;
+        for (let index = floatValue.length - 1; index >= 0; index--){
+            //roundedFloat = roundedFloat.substr(0, index);
+            
+            // if (inc == 0) {
+            //     roundedFloat = floatValue.substring(0, index + 1) + roundedFloat;
+            // }
+
+            let digit = parseInt(roundedFloat.substr(index, 1)) + inc;
+            inc = digit < 5 ? 0 : 1;
+            if (index >= this.maximumFractionDigits){
+                roundedFloat = roundedFloat.substr(0, index);
             }
-            let digit = parseInt(floatValue.substr(index, 1));            
-            if (digit == 9) {
+            else if (digit == 10){
                 inc = 1;
-                roundedFloat = "0" + roundedFloat;                
+                stopCount = 1;
+                roundedFloat = roundedFloat.substr(0, index) + "0" + roundedFloat.substr(index + 1);
             }
             else {
                 inc = 0;
-                let newDigit = digit + 1;
-                roundedFloat = newDigit + roundedFloat;                
+                stopCount = 0;
+                roundedFloat = roundedFloat.substr(0, index) + digit + roundedFloat.substr(index + 1);
             }
+            
+            if (stopCount == 0) break;            
+            stopCount--;
         }
-
+        
         // Removes Zeros
         let removeIndex = null;
         for (let index = roundedFloat.length - 1; index >= this.minimumFractionDigits; index--){
@@ -183,6 +194,8 @@ export class MIONumberFormatter extends MIOFormatter {
             removeIndex = index;
         }
         if (removeIndex != null) roundedFloat = roundedFloat.substring(0, removeIndex);
+
+        if (roundedFloat.length == 0) roundedFloat = null;
 
         if (inc == 0) return [intValue, roundedFloat];
         
