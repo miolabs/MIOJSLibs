@@ -65,4 +65,9 @@ export class MUISegmentedControl extends MUIControl
         let item = this.segmentedItems[this.selectedSegmentedIndex];
         item.setSelected(true);
     }
+
+    setTitleForSegmentedAtIndex(title:string, index){
+        let btn = this.segmentedItems[index];
+        btn.title = title;
+    }
 }

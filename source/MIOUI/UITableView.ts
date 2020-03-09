@@ -42,11 +42,10 @@ export class UITableView extends MUIView
         if (this.sectionHeaderLayer == null){
             let header = new MUIView();
             header.init();
-            header.setHeight(44);
-            //header.layer.style.background = "";
-            //header.layer.style.margin = "4px 8px";
+            header.setHeight(44);            
             MUICoreLayerRemoveStyle(header.layer, "view");
             MUICoreLayerAddStyle(header.layer, "header");
+            header.layer.style.position = "relative";            
     
             let titleLabel = new MUILabel();
             titleLabel.init();
@@ -311,6 +310,11 @@ export class UITableView extends MUIView
         if (rowIndex == -1) return null;
 
         return MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
+    }
+
+    selectRowAtIndexPath(indexPath:MIOIndexPath, animated:boolean){
+        let cell = this.cellAtIndexPath(indexPath);
+        if (cell != null) cell.selected = true;
     }
 
     deselectRowAtIndexPath(indexPath:MIOIndexPath, animated:boolean){

@@ -17,14 +17,25 @@ export class MIOUserDefaults
         return MIOUserDefaults._sharedInstance;
     }
 
-    setBooleanForKey(key, value:boolean){
+    setBooleanForKey(key:string, value:boolean){
         let v = value ? "1" : "0";
         this.setValueForKey(key, v);
     }
 
-    booleanForKey(key){
+    booleanForKey(key:string):boolean{
         let v = this.valueForKey(key);
         return v == "1" ? true : false;
+    }
+
+    setIntegerForKey(key:string, value:number){
+        let v = value.toString();
+        this.setValueForKey(key, v);
+    }
+
+    integerForKey(key:string):number {
+        let v = parseInt(this.valueForKey(key));
+        if (isNaN(v) == true) return 0;
+        return v;
     }
 
     setValueForKey(key:string, value:any){
