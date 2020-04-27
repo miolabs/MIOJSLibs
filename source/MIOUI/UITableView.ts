@@ -292,6 +292,14 @@ export class UITableView extends MUIView
         }
     }
 
+    reloadRowsAtIndexPaths(indexPaths, rowAnimation){
+        for (let index = 0; index < indexPaths.length; index++){
+            const ip = indexPaths[index];
+            // Just to force to the update UI of the cells
+            this.dataSource.cellAtIndexPath(this, ip);
+        }
+    }
+
     cellAtIndexPath(indexPath:MIOIndexPath){
         if (indexPath.section >= this.sections.length) return null;
         let section = this.sections[indexPath.section];
