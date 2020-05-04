@@ -177,8 +177,8 @@ export class MUICalendarDaysView extends MUIView {
     initWithDelegate(delegate) {        
         super.init();
         this.delegate = delegate;
-        MUICoreLayerAddStyle(this.layer, "calendar-days-view");
-        this.setupHeaderLayer();
+        //MUICoreLayerAddStyle(this.layer, "calendar-days-view");
+        //this.setupHeaderLayer();
     }
 
     setMonthAndYear(month, year) {
@@ -207,11 +207,14 @@ export class MUICalendarDaysView extends MUIView {
         this._dayViewIndex = 0;
 
         //this._setupDays();
+        this.setupHeaderLayer();
         this.setupDaysLayer();
     }
 
     private tableLayer = null;
     private setupHeaderLayer(){
+        if (this.tableLayer != null) this.tableLayer.innerHTML = ""; // To remove everything
+
         this.tableLayer = MUICoreLayerCreateWithStyle("calendar-days-view", null, "table");
         MUICoreLayerAddSublayer(this.layer, this.tableLayer);
  
@@ -387,8 +390,8 @@ export class MUICalendarDayCell extends MUIView {
         super.initWithLayer(layer, owner, options);
 
         if (this.layer.childNodes.length > 0) {
-            for (var index = 0; index < this.layer.childNodes.length; index++) {
-                var subLayer = this.layer.childNodes[index];
+            for (let index = 0; index < this.layer.childNodes.length; index++) {
+                const subLayer = this.layer.childNodes[index];
 
                 if (subLayer.tagName != "DIV")
                     continue;
@@ -409,6 +412,7 @@ export class MUICalendarDayCell extends MUIView {
 
             this.dayLabel = new MUILabel();
             this.dayLabel.init();
+            this.dayLabel.layer.setAttribute("data-day-label", "true");
             //MUICoreLayerRemoveStyle(this.dayLabel.layer, "view");
             //MUICoreLayerAddStyle(this.dayLabel.layer, "day-label");
             this.addSubview(this.dayLabel);    
