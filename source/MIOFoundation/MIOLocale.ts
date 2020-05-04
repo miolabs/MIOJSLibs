@@ -1,17 +1,19 @@
 import { MIOObject } from "./MIOObject";
+import { NSCalendar } from "./NSCalendar";
 
 /**
  * Created by godshadow on 30/3/16.
  */
 
+export var NSLocaleCalendar = "NSLocaleCalendar";
 var _mio_currentLocale;
 
 export class MIOLocale extends MIOObject
 {
-    languageIdentifier = "es";
-    countryIdentifier = "ES";
+    languageCode = "es";
+    countryCode = "ES";
 
-    public static currentLocale(){
+    public static currentLocale():MIOLocale{
         if (_mio_currentLocale == null) {
             _mio_currentLocale = new MIOLocale();
             _mio_currentLocale.initWithLocaleIdentifier("es_ES");
@@ -30,19 +32,38 @@ export class MIOLocale extends MIOObject
 
         let array = identifer.split("_");
         if (array.length == 1) {
-            this.languageIdentifier = array[0];
+            this.languageCode = array[0];
         }
         else if (array.length == 2) {
-            this.languageIdentifier = array[0];
-            this.countryIdentifier = array[1];
+            this.languageCode = array[0];
+            this.countryCode = array[1];
         }
+    }
+
+    objectForKey(key:string){
+        switch(key){
+            case NSLocaleCalendar:
+                return this.calendar();                
+        }
+
+        return null;
+    }
+
+    private _calendar:NSCalendar = null; 
+    private calendar():NSCalendar {
+        if (this._calendar != null) return this._calendar;
+
+        this._calendar = new NSCalendar();
+        this._calendar.init();
+
+        return this._calendar;
     }
 
     get decimalSeparator():string{
 
         let ds = "";
         
-        switch (this.countryIdentifier) {
+        switch (this.countryCode) {
 
             case "ES":
             case "NL":
@@ -65,7 +86,7 @@ export class MIOLocale extends MIOObject
 
         let cs = "";
 
-        switch(this.countryIdentifier) {
+        switch(this.countryCode) {
 
             case "ES":
             case "DE":
@@ -94,7 +115,7 @@ export class MIOLocale extends MIOObject
     get currencyCode(){
         let cc = "";
 
-        switch(this.countryIdentifier){
+        switch(this.countryCode){
             case "ES":                
             case "DE":
             case "FR":
@@ -132,7 +153,7 @@ export class MIOLocale extends MIOObject
 
         let gs = "";
 
-        switch(this.countryIdentifier){
+        switch(this.countryCode){
 
             case "ES":
             case "NL":

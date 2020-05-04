@@ -35,7 +35,7 @@ export class MIONumberFormatter extends MIOFormatter {
         this.currencySymbol = this.locale.currencySymbol;
         this.currencyCode = this.locale.currencyCode;
 
-        switch(this.locale.countryIdentifier){            
+        switch(this.locale.countryCode){            
             case "US":
             this.currencyHasSpaces = false;
             this.currencyIsRight = false;

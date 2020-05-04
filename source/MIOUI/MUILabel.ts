@@ -71,22 +71,23 @@ export class MUILabel extends MUIView
         }
     }
 */
-    setText(text){
-        this.text = text;
-    }
-    
-    get text(){
+    getText():string{
         return this._textLayer.innerHTML;
     }
 
-    set text(text){
+    setText(text:string){
         this._textLayer.innerHTML = text != null ? text : "";
     }
+    
+    get text():string{ return this.getText(); }
+    set text(text:string){ this.setText(text); }
 
-    setTextAlignment(alignment)
-    {
+
+    setTextAlignment(alignment){
         this.layer.style.textAlign = alignment;
     }
+
+    set textAlignment(alignment) { this.setTextAlignment(alignment); }
 
     setHightlighted(value)
     {

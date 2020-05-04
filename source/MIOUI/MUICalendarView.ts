@@ -1,6 +1,7 @@
-import { MUIView, MUICollectionView, MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle, MUILabel, MUIGestureRecognizer, MUIGestureRecognizerState, MUITapGestureRecognizer, MUIComboBox } from ".";
-import { MIODateCopy, MIODateGetDayFromDate, MIORect, MIODateGetMonthFromDate, MIODateToday, MIODateGetYearFromDate, MIODateGetDateString, MIODateGetStringForMonth, MIODateGetDayStringFromDate } from "../MIOFoundation";
-import { MIOClassFromString } from "../MIOCore/platform/WebWorker/MIOCore_WebWorker";
+import { MUIView, MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle, MUILabel, MUIGestureRecognizer, MUIGestureRecognizerState, MUITapGestureRecognizer, MUIComboBox } from ".";
+import { MIODateCopy, MIODateGetDayFromDate, MIORect, MIODateGetMonthFromDate, MIODateToday, MIODateGetYearFromDate, MIODateGetDateString, MIODateGetStringForMonth, MIOLocale, NSLocaleCalendar } from "../MIOFoundation";
+import { MUICoreLayerCreateWithStyle, MUICoreLayerAddSublayer, MUICoreLayerCreate } from "./MIOUI_CoreLayer";
+import { MIOLocalizeString } from "../MIOCore";
 
 export class MUICalendarHeader extends MUIView
 {
@@ -97,7 +98,7 @@ export class MUICalendarHeader extends MUIView
         this.nextButton.setAction(this, function(){
             this.addDateOffset(1);
         });
-
+/*
         let calendarDaysBar = new MUIView();
         calendarDaysBar.init();
         MUICoreLayerRemoveStyle(calendarDaysBar.layer, "view");
@@ -112,7 +113,7 @@ export class MUICalendarHeader extends MUIView
             MUICoreLayerRemoveStyle(dh.layer, "view");
             MUICoreLayerAddStyle(dh.layer, "day-title");
             calendarDaysBar.addSubview(dh);
-        }
+        }*/
     }
 
     setMonth(month){
@@ -128,7 +129,7 @@ export class MUICalendarHeader extends MUIView
     }
 
     addDateOffset(offset){
-        let m =  parseInt(this.monthComboBox.getSelectedItem());
+        let m = parseInt(this.monthComboBox.getSelectedItem());
         let y = parseInt(this.yearComboBox.getSelectedItem());
 
         m += offset;
@@ -176,7 +177,8 @@ export class MUICalendarDaysView extends MUIView {
     initWithDelegate(delegate) {        
         super.init();
         this.delegate = delegate;
-        MUICoreLayerAddStyle(this.layer, "calendar-days-view");        
+        MUICoreLayerAddStyle(this.layer, "calendar-days-view");
+        this.setupHeaderLayer();
     }
 
     setMonthAndYear(month, year) {
@@ -204,7 +206,88 @@ export class MUICalendarDaysView extends MUIView {
         this._dayViews = [];
         this._dayViewIndex = 0;
 
-        this._setupDays();
+        //this._setupDays();
+        this.setupDaysLayer();
+    }
+
+    private tableLayer = null;
+    private setupHeaderLayer(){
+        this.tableLayer = MUICoreLayerCreateWithStyle("calendar-days-view", null, "table");
+        MUICoreLayerAddSublayer(this.layer, this.tableLayer);
+ 
+        // Setup Header (Days of the week)
+        const dayTitle = ["SU", "MO", "TU", "WE", "TH", "FR", "SA", "SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+        const calendar = MIOLocale.currentLocale().objectForKey(NSLocaleCalendar);
+        const firstDay = calendar.firstWeekday();
+        const header = MUICoreLayerCreate(null, "thead");
+        MUICoreLayerAddSublayer(this.tableLayer, header);
+
+        let row = MUICoreLayerCreate(null, "tr"); 
+        MUICoreLayerAddSublayer(header, row);
+
+        for (let index = 0; index < 7; index++){
+            let dayLayer = MUICoreLayerCreate(null, "th");
+            //TODO: Create a function in CoreLayer to hide the HTML stuff
+            dayLayer.innerHTML = MIOLocalizeString(dayTitle[index + firstDay], dayTitle[index + firstDay]);
+            MUICoreLayerAddSublayer(row, dayLayer);            
+        }
+    }
+
+    private setupDaysLayer(){ 
+        this.firstDate = new Date(this._year, this._month, 1); 
+        this.lastDate = new Date(this._year, this._month + 1, 0);
+        let currentDate = new Date(this._year, this._month, 1);
+
+        let rowIndex = MIODateGetDayFromDate(currentDate);
+        const calendar = MIOLocale.currentLocale().objectForKey(NSLocaleCalendar);
+        const firstDay = calendar.firstWeekday();
+        let startIndex = rowIndex + firstDay;
+
+        const body = MUICoreLayerCreate(null, "tbody"); 
+        MUICoreLayerAddSublayer(this.tableLayer, body);
+
+        let row = MUICoreLayerCreate(null, "tr"); 
+        MUICoreLayerAddSublayer(body, row);
+
+        for (let colIndex = 0; colIndex < startIndex; colIndex++) {
+            MUICoreLayerAddSublayer(row, MUICoreLayerCreateWithStyle("empty-cell", null, "td")); 
+        }
+        
+        let lastColIndex = 0;
+        for (rowIndex = 0; rowIndex < 6; rowIndex++) {
+            
+            if (row == null) {
+                row = MUICoreLayerCreate(null, "tr"); 
+                MUICoreLayerAddSublayer(body, row);
+            }            
+            
+            for (let colIndex = startIndex; colIndex < 7; colIndex++){
+
+                // Add day cell
+                const cell = MUICoreLayerCreateWithStyle("day-cell", null, "td");
+                MUICoreLayerAddSublayer(row, cell);                
+                
+                let dayView = this._dayCellAtDate(currentDate);
+                this._dayViews.push(dayView);
+                MUICoreLayerAddSublayer(cell, dayView.layer);
+                dayView.setSelected(false);
+                dayView.setDate(currentDate);    
+
+                currentDate.setDate(currentDate.getDate() + 1);
+                lastColIndex = colIndex;
+
+                if (currentDate > this.lastDate) break;
+            }
+
+            startIndex = 0;
+            row = null;
+        }
+
+        // Fill last column with empty cells
+        for (let colIndex = lastColIndex; colIndex < 7; colIndex++){
+            MUICoreLayerAddSublayer(row, MUICoreLayerCreateWithStyle("empty-cell", null, "td")); 
+        }
+
     }
 
     private _dayCellAtDate(date) {
@@ -349,7 +432,7 @@ export class MUICalendarDayCell extends MUIView {
         let m = today.getMonth();
         let y = today.getFullYear();
 
-        this.dayLabel.text = date.getDate();        
+        //this.dayLabel.text = date.getDate();        
 
         let isToday = (this._day == d && this._month == m && this._year == y);
         this.setToday(isToday);

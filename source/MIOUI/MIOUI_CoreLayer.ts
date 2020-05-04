@@ -24,8 +24,8 @@ export function MUICoreLayerIDFromClassname(classname:string): string {
     return layerID;
 }
 
-export function MUICoreLayerCreate(layerID?) {
-    var layer = document.createElement("DIV");
+export function MUICoreLayerCreate(layerID?, type?:string) {
+    var layer = document.createElement(type || "DIV");
     if (layerID != null)
         layer.setAttribute("id", layerID);
 
@@ -42,8 +42,8 @@ export function MUICoreLayerRemoveSublayer(layer, subLayer){
     layer.removeChild(subLayer);
 }
 
-export function MUICoreLayerCreateWithStyle(style, layerID?) {
-    var layer = MUICoreLayerCreate(layerID);
+export function MUICoreLayerCreateWithStyle(style, layerID?, type?:string) {
+    var layer = MUICoreLayerCreate(layerID, type);
     MUICoreLayerAddStyle(layer, style);
 
     return layer;
