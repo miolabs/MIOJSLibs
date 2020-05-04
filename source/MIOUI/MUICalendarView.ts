@@ -254,6 +254,7 @@ export class MUICalendarDaysView extends MUIView {
         }
         
         let lastColIndex = 0;
+        let lastRow = null;
         for (rowIndex = 0; rowIndex < 6; rowIndex++) {
             
             if (row == null) {
@@ -280,12 +281,13 @@ export class MUICalendarDaysView extends MUIView {
             }
 
             startIndex = 0;
+            lastRow = row;
             row = null;
         }
 
         // Fill last column with empty cells
         for (let colIndex = lastColIndex; colIndex < 7; colIndex++){
-            MUICoreLayerAddSublayer(row, MUICoreLayerCreateWithStyle("empty-cell", null, "td")); 
+            MUICoreLayerAddSublayer(lastRow, MUICoreLayerCreateWithStyle("empty-cell", null, "td")); 
         }
 
     }
@@ -296,7 +298,7 @@ export class MUICalendarDaysView extends MUIView {
 
         return dv;
     }
-
+/*
     private _setupDays() {
         
         this.firstDate = new Date(this._year, this._month, 1); 
@@ -328,27 +330,28 @@ export class MUICalendarDaysView extends MUIView {
 
     layoutSubviews() {
         // Layout days
-        let x = 0;
-        let y = 0;
-        let w = this.getWidth() / 7;
-        let h = w;
+        // let x = 0;
+        // let y = 0;
+        // let w = this.getWidth() / 7;
+        // let h = w;
 
-        // Offset x mapping index by day
-        let offsetX = [0, w, w * 2, w * 3, w * 4, w * 5, w * 6];
+        // // Offset x mapping index by day
+        // let offsetX = [0, w, w * 2, w * 3, w * 4, w * 5, w * 6];
 
-        for (let index = 0; index < this._dayViews.length; index++) {
-            let dv = this._dayViews[index];
+        // for (let index = 0; index < this._dayViews.length; index++) {
+        //     let dv = this._dayViews[index];
 
-            x = offsetX[MIODateGetDayFromDate(dv.date)];
-            y = dv.weekRow * h;
+        //     x = offsetX[MIODateGetDayFromDate(dv.date)];
+        //     y = dv.weekRow * h;
             
-            dv.setFrame(MIORect.rectWithValues(x, y, w, h));
-            dv.layoutSubviews();
-        }
+        //     dv.setFrame(MIORect.rectWithValues(x, y, w, h));
+        //     dv.layoutSubviews();
+        // }
 
-        let contentHeight = (this._weekRows * h) + 2;
-        this.setHeight(contentHeight);
+        // let contentHeight = (this._weekRows * h) + 2;
+        // this.setHeight(contentHeight);
     }    
+    */
 }
 
 export class MUICalendarDayCell extends MUIView {
@@ -375,8 +378,8 @@ export class MUICalendarDayCell extends MUIView {
 
     init() {
         super.init();
-        MUICoreLayerRemoveStyle(this.layer, "view");
-        MUICoreLayerAddStyle(this.layer, "day-cell");
+        //MUICoreLayerRemoveStyle(this.layer, "view");
+        //MUICoreLayerAddStyle(this.layer, "day-cell");
         this._setupLayer();
     }
 
@@ -406,8 +409,8 @@ export class MUICalendarDayCell extends MUIView {
 
             this.dayLabel = new MUILabel();
             this.dayLabel.init();
-            MUICoreLayerRemoveStyle(this.dayLabel.layer, "view");
-            MUICoreLayerAddStyle(this.dayLabel.layer, "day-label");
+            //MUICoreLayerRemoveStyle(this.dayLabel.layer, "view");
+            //MUICoreLayerAddStyle(this.dayLabel.layer, "day-label");
             this.addSubview(this.dayLabel);    
         }
 
@@ -432,7 +435,7 @@ export class MUICalendarDayCell extends MUIView {
         let m = today.getMonth();
         let y = today.getFullYear();
 
-        //this.dayLabel.text = date.getDate();        
+        this.dayLabel.text = date.getDate().toString();        
 
         let isToday = (this._day == d && this._month == m && this._year == y);
         this.setToday(isToday);
