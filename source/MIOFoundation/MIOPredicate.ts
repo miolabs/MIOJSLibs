@@ -1,6 +1,7 @@
 import { MIOCoreLexer } from "../MIOCore";
 import { MIOObject } from "./MIOObject";
 import { MIOISO8601DateFormatter } from "./MIOISO8601DateFormatter";
+import { MIOLog } from "./MIOLog";
 
 /**
  * Created by godshadow on 1/5/16.
@@ -67,7 +68,8 @@ export enum MIOPredicateItemValueType {
     Number,
     Boolean,    
     Null,
-    Property
+    Property,
+    Class
 }
 
 export class MIOPredicateItem {
@@ -278,7 +280,9 @@ export enum MIOPredicateTokenType{
     OR,
 
     ANY,
-    ALL
+    ALL,
+
+    Class
 }
 
 export class MIOPredicate extends MIOObject {
@@ -287,16 +291,20 @@ export class MIOPredicate extends MIOObject {
 
     private lexer:MIOCoreLexer = null;
 
-    public static predicateWithFormat(format) {
+    public static predicateWithFormat(format:string, ...args:any[]) {
         let p = new MIOPredicate();
-        p.initWithFormat(format);
+        p.initWithFormat(format, ...args);
 
         return p;
     }
 
-    initWithFormat(format) {
+    initWithFormat(format:string, ...args:any[]) {
         this._predicateFormat = format;
-        this.parse(format);
+        let values = args;
+        // for (let index = 1; index < args.length; index++){
+        //     values.push(args[index]);
+        // }
+        this.parse(this._predicateFormat, values);
     }
 
     private _predicateFormat:string = null;
@@ -351,23 +359,41 @@ export class MIOPredicate extends MIOObject {
         // Extra
         this.lexer.addTokenType(MIOPredicateTokenType.Whitespace, /^\s+/);        
         this.lexer.ignoreTokenType(MIOPredicateTokenType.Whitespace);
+        
+        // Placeholder
+        this.lexer.addTokenType(MIOPredicateTokenType.Class, /^%@/i);
+
         // Identifiers - Has to be the last one
         this.lexer.addTokenType(MIOPredicateTokenType.Identifier, /^[a-zA-Z-_][a-zA-Z0-9-_\.]*/);            
 
         this.lexer.tokenize();
     }    
 
-    private parse(format:string){
+    private predicateArguments = null;
+    private predicateArgumentIndex = 0;
+    private nextPlaceHolderArgument(){
+        if (this.predicateArguments == null ||  this.predicateArgumentIndex == this.predicateArguments.length) {
+            throw new Error("MIOPredicate: Error. Invalid number of arguments.");
+        }
+        const arg = this.predicateArguments[this.predicateArgumentIndex];
+        this.predicateArgumentIndex++;
+        return arg;
+    }
 
-        console.log("**** Start predicate format parser")
-        console.log(format);
-        console.log("****")
+    private parse(format:string, values:any[]){
+
+        this.predicateArguments = values;
+
+        MIOLog("**** Start predicate format parser");
+        MIOLog(format);
+        if (values.length > 0) MIOLog(values);
+        MIOLog("****");
         
         this.tokenizeWithFormat(format);
         this.predicateGroup = new MIOPredicateGroup();
         this.predicateGroup.predicates = this.parsePredicates();
         
-        console.log("**** End predicate format parser")
+        MIOLog("**** End predicate format parser");
     }
 
     private parsePredicates(){
@@ -555,6 +581,11 @@ export class MIOPredicate extends MIOObject {
             case MIOPredicateTokenType.Identifier:
                 item.value = token.value;
                 item.valueType = MIOPredicateItemValueType.Property;
+                break;
+
+            case MIOPredicateTokenType.Class:
+                item.value = this.nextPlaceHolderArgument();
+                item.valueType = MIOPredicateItemValueType.Class;
                 break;
 
             default:

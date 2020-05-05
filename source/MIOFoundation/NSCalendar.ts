@@ -1,6 +1,30 @@
 import { MIOObject } from "./MIOObject";
 import { MIOLocale } from "./MIOLocale"
 
+export enum NSCalendarUnit
+{
+    Era,
+    Year,
+    YearForWeekOfYear,
+    Quarter,
+    Month,
+
+    WeekOfYear,
+    WeekOfMonth,
+    Weekday,
+    WeekdayOrdinal,
+    Day,
+
+    Hour,
+    Minute,
+    Second,
+    Nanosecond,
+
+    Calendar,
+    TimeZone
+
+}
+
 export class NSCalendar extends MIOObject
 {
     firstWeekday():number {
@@ -35,4 +59,19 @@ export class NSCalendar extends MIOObject
 
     get locale():MIOLocale {return this.getLocale();}
     set locale(locale:MIOLocale) {this.setLocale(locale);}
+
+    componentFromDate(component:NSCalendarUnit, date:Date):number {
+        
+        if (component == NSCalendarUnit.Weekday) {
+            let day = date.getDay();    // O means Sunday
+            day -= this.firstWeekday(); // We decrement the first the of the week depends on the calendar
+            if (day < 0) {
+                day = 7 + day;
+            }
+            return day;
+        }
+
+        return 0;
+    }
+
 }

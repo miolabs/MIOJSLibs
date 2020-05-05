@@ -1,7 +1,8 @@
 import { MUIView, MUIButton, MUICoreLayerAddStyle, MUICoreLayerRemoveStyle, MUILabel, MUIGestureRecognizer, MUIGestureRecognizerState, MUITapGestureRecognizer, MUIComboBox } from ".";
-import { MIODateCopy, MIODateGetDayFromDate, MIORect, MIODateGetMonthFromDate, MIODateToday, MIODateGetYearFromDate, MIODateGetDateString, MIODateGetStringForMonth, MIOLocale, NSLocaleCalendar } from "../MIOFoundation";
+import { MIODateCopy, MIODateGetMonthFromDate, MIODateToday, MIODateGetYearFromDate, MIODateGetDateString, MIODateGetStringForMonth, MIOLocale, NSLocaleCalendar } from "../MIOFoundation";
 import { MUICoreLayerCreateWithStyle, MUICoreLayerAddSublayer, MUICoreLayerCreate } from "./MIOUI_CoreLayer";
 import { MIOLocalizeString } from "../MIOCore";
+import { NSCalendarUnit } from "../MIOFoundation/NSCalendar";
 
 export class MUICalendarHeader extends MUIView
 {
@@ -214,6 +215,9 @@ export class MUICalendarDaysView extends MUIView {
     private tableLayer = null;
     private setupHeaderLayer(){
         if (this.tableLayer != null) this.tableLayer.innerHTML = ""; // To remove everything
+        for (let cell of this._dayViews){
+            cell.removeFromSuperview();
+        }
 
         this.tableLayer = MUICoreLayerCreateWithStyle("calendar-days-view", null, "table");
         MUICoreLayerAddSublayer(this.layer, this.tableLayer);
@@ -221,7 +225,7 @@ export class MUICalendarDaysView extends MUIView {
         // Setup Header (Days of the week)
         const dayTitle = ["SU", "MO", "TU", "WE", "TH", "FR", "SA", "SU", "MO", "TU", "WE", "TH", "FR", "SA"];
         const calendar = MIOLocale.currentLocale().objectForKey(NSLocaleCalendar);
-        const firstDay = calendar.firstWeekday();
+        const firstDay = calendar.firstWeekday() ;
         const header = MUICoreLayerCreate(null, "thead");
         MUICoreLayerAddSublayer(this.tableLayer, header);
 
@@ -230,9 +234,10 @@ export class MUICalendarDaysView extends MUIView {
 
         for (let index = 0; index < 7; index++){
             let dayLayer = MUICoreLayerCreate(null, "th");
+            const dayTitleIndex = index + firstDay ;
             //TODO: Create a function in CoreLayer to hide the HTML stuff
-            dayLayer.innerHTML = MIOLocalizeString(dayTitle[index + firstDay], dayTitle[index + firstDay]);
-            MUICoreLayerAddSublayer(row, dayLayer);            
+            dayLayer.innerHTML = MIOLocalizeString(dayTitle[dayTitleIndex], dayTitle[dayTitleIndex]);
+            MUICoreLayerAddSublayer(row, dayLayer);
         }
     }
 
@@ -241,10 +246,8 @@ export class MUICalendarDaysView extends MUIView {
         this.lastDate = new Date(this._year, this._month + 1, 0);
         let currentDate = new Date(this._year, this._month, 1);
 
-        let rowIndex = MIODateGetDayFromDate(currentDate);
         const calendar = MIOLocale.currentLocale().objectForKey(NSLocaleCalendar);
-        const firstDay = calendar.firstWeekday();
-        let startIndex = rowIndex + firstDay;
+        let startIndex = calendar.componentFromDate(NSCalendarUnit.Weekday, currentDate);
 
         const body = MUICoreLayerCreate(null, "tbody"); 
         MUICoreLayerAddSublayer(this.tableLayer, body);
@@ -258,7 +261,7 @@ export class MUICalendarDaysView extends MUIView {
         
         let lastColIndex = 0;
         let lastRow = null;
-        for (rowIndex = 0; rowIndex < 6; rowIndex++) {
+        for (let rowIndex = 0; currentDate <= this.lastDate && rowIndex < 6; rowIndex++) {
             
             if (row == null) {
                 row = MUICoreLayerCreate(null, "tr"); 
@@ -287,9 +290,10 @@ export class MUICalendarDaysView extends MUIView {
             lastRow = row;
             row = null;
         }
+        
 
         // Fill last column with empty cells
-        for (let colIndex = lastColIndex; colIndex < 7; colIndex++){
+        for (let colIndex = lastColIndex+1; colIndex < 7; colIndex++){
             MUICoreLayerAddSublayer(lastRow, MUICoreLayerCreateWithStyle("empty-cell", null, "td")); 
         }
 
