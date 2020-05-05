@@ -56,3 +56,9 @@ export function MUICoreLayerAddStyle(layer, style) {
 export function MUICoreLayerRemoveStyle(layer, style) {
     layer.classList.remove(style);
 }
+
+export function MUICoreLayerCreateFromLayer(layer) {
+    return layer.cloneNode(true);
+}
+
+

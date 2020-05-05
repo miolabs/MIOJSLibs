@@ -70,3 +70,4 @@ export * from './MUIOpenPanel'
 
 export * from './UITableView'
 export * from './UITableViewCell'
+export * from './UIPageControl'

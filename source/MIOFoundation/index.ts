@@ -45,3 +45,5 @@ export * from './MIOLog'
 export * from './MIONumber'
 export * from './MIOSortDescriptor'
 export * from './MIOPropertyListSerialization'
+
+export * from './NSCalendar'
