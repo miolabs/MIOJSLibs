@@ -4,6 +4,7 @@ import { _MUIHideViewController, _MIUShowViewController } from "./MIOUI_Core";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
 import { MUIView } from "./MUIView";
 import { MUIModalPresentationStyle } from "./MUIViewController_PresentationController";
+import { MUICoreLayerAddStyle, MUICoreLayerRemoveStyle } from "./MIOUI_CoreLayer";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -17,7 +18,8 @@ export class MUINavigationController extends MUIViewController
 
     init(){
         super.init();
-        this.view.layer.style.overflow = "hidden";        
+        // this.view.layer.style.overflow = "hidden";        
+        MUICoreLayerAddStyle( this.view.layer, "ui-navigation-controller" ) ;
     }
 
     initWithRootViewController(vc:MUIViewController){
@@ -43,6 +45,30 @@ export class MUINavigationController extends MUIViewController
         // }
     }
 
+
+    updateHeight = ( howMany:number = 1 ) => {
+        // if (this.view.layer && this.viewControllersStack.length>0){
+        //     const heights = [ ] ;
+
+        //     for ( let i = howMany ; i -- > 0 ; ) {
+        //         const lastController = this.viewControllersStack[ this.viewControllersStack.length - i - 1 ]
+        //             , layer = lastController.view.layer ;
+
+        //         if (layer){ 
+        //             const children = layer.children ;
+        //             let height = 0 ;
+
+        //             for ( let i = children.length ; i -- > 0 ; )
+        //                 height += children[ i ].offsetHeight ;
+
+        //             heights.push( height ) ;
+        //         }
+        //     }
+
+        //     this.view.layer.style.height = Math.max( ...heights ) + "px" ;
+        // }
+    }
+
     viewWillAppear(animated?:boolean){
         if (this.currentViewControllerIndex < 0) return;
         let vc = this.viewControllersStack[this.currentViewControllerIndex];
@@ -53,6 +79,7 @@ export class MUINavigationController extends MUIViewController
         if (this.currentViewControllerIndex < 0) return;
         let vc = this.viewControllersStack[this.currentViewControllerIndex];
         vc.viewDidAppear(animated);
+        this.updateHeight( ) ;
     }
 
     viewWillDisappear(animated?){
@@ -90,13 +117,27 @@ export class MUINavigationController extends MUIViewController
             if (vc.preferredContentSize != null)
                 this.preferredContentSize = vc.preferredContentSize;
 
-            _MIUShowViewController(lastVC, vc, this, animated);
+            _MIUShowViewController(lastVC, vc, this, animated,this,this.hidePreviousViewControllers);
         });
+    }
+
+    hidePreviousViewControllers( howMany: number = 1 ){
+        const stack = this.viewControllersStack ;
+        
+        for ( let i = stack.length - howMany ; i -- > 0 ; )
+            MUICoreLayerAddStyle( stack[ i ].view.layer, "hidden" );
+
+        for ( let i = howMany ; i -- > 0 ; )
+            MUICoreLayerRemoveStyle( stack[ stack.length - i - 1 ].view.layer, "hidden" );
+
+        this.updateHeight( howMany ) ;
     }
 
     popViewController(animated?:boolean){
         if (this.currentViewControllerIndex == 0)
             return;
+
+        this.hidePreviousViewControllers( 2 ) ;
 
         let fromVC = this.viewControllersStack[this.currentViewControllerIndex];
 
