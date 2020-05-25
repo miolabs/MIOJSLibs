@@ -24,17 +24,16 @@ export class MIOIncrementalStoreNode extends MIOObject {
         this._version = version;
     }
 
-    updateWithValues(values, version) {
-        for(let property in values)
-            this._values[property] = values[property];
-       // this._values = values;
+    updateWithValues(values:any, version:number) {
+        for (let property of Object.keys(values))
+            this._values[property] = values[property]
         this._version = version;
     }
 
     private _values = null;
     valueForPropertyDescription(property:MIOPropertyDescription) {
 
-        var value = this._values[property.name];
+        let value = this._values[property.name];
 
         if (property instanceof MIORelationshipDescription) {
             let rel = property as MIORelationshipDescription;

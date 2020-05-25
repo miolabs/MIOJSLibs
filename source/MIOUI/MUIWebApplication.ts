@@ -1,6 +1,6 @@
 import { MUIWindow } from "./MUIWindow";
 import { MIOCoreGetLanguages, setMIOLocalizedStrings, MIOCoreAddLanguage } from "../MIOCore";
-import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput } from "../MIOCore/platform";
+import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput, MIOCoreGetQueryOptions, MIOCoreGetMainBundleURLString } from "../MIOCore/platform";
 import { MIOURLRequest, MIOURL, MIOURLConnection, _MIOBundleAppSetResource, MIOPropertyListSerialization } from "../MIOFoundation";
 
 /**
@@ -105,7 +105,18 @@ export class MUIWebApplication {
 
     private _run() {        
 
-        this.delegate.didFinishLaunching();
+        let url = MIOCoreGetMainBundleURLString();
+        let queryOptions = MIOCoreGetQueryOptions();
+
+        let options = {}
+        options["url"] = url;
+        for (let index = 0; index < queryOptions.length; index++) {
+            const op = queryOptions[index];
+            const array = op.split("=");
+            options[array[0]] = decodeURIComponent(array[1]);
+        }
+
+        this.delegate.didFinishLaunching(options);
         
         this.delegate.window.makeKeyAndVisible();
         this._mainWindow = this.delegate.window;        

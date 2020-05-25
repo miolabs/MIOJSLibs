@@ -73,10 +73,11 @@ export class MIOManagedObjectModel extends MIOObject
             let name = attributes["name"];
             let destinationEntityName = attributes["destinationEntity"];
             let toMany = attributes["toMany"];
-            let serverName = attributes["serverName"];            
+            let serverName = attributes["serverName"]; 
+            let optional = attributes["optional"] != null ? attributes["optional"].toLowerCase() : "yes";                                   
             let inverseName = attributes["inverseName"];
             let inverseEntity = attributes["inverseEntity"];            
-            this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity);
+            this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity, optional);
         }
         else if (element == "configuration") {
             this.currentConfigName = attributes["name"];
@@ -173,7 +174,7 @@ export class MIOManagedObjectModel extends MIOObject
         this.currentEntity.addAttribute(name, attrType, defaultValue, optional, serverName, syncable);
     }
 
-    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string){
+    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string, optional:boolean){
 
         let isToMany = false;
         if (toMany != null && (toMany.toLocaleLowerCase() == "yes" || toMany.toLocaleLowerCase() == "true")){

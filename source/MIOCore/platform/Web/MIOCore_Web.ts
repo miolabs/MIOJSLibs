@@ -64,6 +64,18 @@ export function MIOGetDefaultLanguage()
 }
 */
 
+export function MIOCoreGetQueryOptions(){
+
+    let searchString = window.location.search;
+    if (searchString.length == 0) return [];
+
+    if (searchString.length > 0 && searchString[0] == "?") searchString = searchString.substr(1);
+            
+    let params = searchString.split("&");
+    return params;
+}
+
+
 export function MIOCoreGetMainBundleURLString():string{
     return window.location.href;
 }
@@ -237,10 +249,11 @@ declare function main(args);
 
 window.onload = function(e) {
     
-    var url = MIOCoreGetMainBundleURLString();
+    let url = MIOCoreGetMainBundleURLString();
     console.log("Main URL: " + url);
-    var args = url; // Todo get only the query string
-
+    let args = MIOCoreGetQueryOptions();
+    args.unshift(url);
+    
     main(args);
 };
 
