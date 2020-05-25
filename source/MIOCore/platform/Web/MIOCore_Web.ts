@@ -77,11 +77,21 @@ export function MIOCoreGetQueryOptions(){
 
 
 export function MIOCoreGetMainBundleURLString():string{
-    return window.location.href;
+    return MIOCoreGetMainURLString();
 }
 
 export function MIOCoreGetMainURLString(): string {
-    return window.location.href;
+    
+    let url_string = window.location.protocol ? window.location.protocol + "//" : "";
+    url_string += window.location.host;    
+    if (window.location.pathname.substr(-1) == "/") {
+        url_string += window.location.pathname;
+    }
+    else {        
+        url_string += window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    }
+        
+    return url_string;
 }
 
 export function MIOCoreDeviceTypeString(){
