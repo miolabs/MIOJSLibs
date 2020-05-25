@@ -4,8 +4,11 @@ import { MIOClassFromString } from "../MIOCore/platform";
 import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
 import { MUICoreLayerRemoveStyle, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MUILabel } from "./MUILabel";
+import { UIScrollView } from "./UIScrollView";
+import { UIEdgeInsets } from "./UIEdgeInsets";
 
-export class UITableView extends MUIView
+
+export class UITableView extends UIScrollView
 {
     dataSource = null;
     delegate = null;

@@ -68,6 +68,8 @@ export * from './MUIPanGestureRecognizer'
 
 export * from './MUIOpenPanel'
 
+export * from './UIEdgeInsets'
+export * from './UIScrollView'
 export * from './UITableView'
 export * from './UITableViewCell'
 export * from './UIPageControl'

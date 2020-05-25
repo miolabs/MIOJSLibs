@@ -38,8 +38,8 @@ export enum UITableViewCellSelectionStyle {
     Default
 }
 
-export class UITableViewCell extends MUIView {
-
+export class UITableViewCell extends MUIView 
+{
     reuseIdentifier: string = null;
 
     nodeID: string = null;
