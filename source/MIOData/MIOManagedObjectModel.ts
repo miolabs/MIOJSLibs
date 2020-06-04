@@ -1,4 +1,4 @@
-import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog, MIONotificationCenter } from "../MIOFoundation";
+import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog, MIONotificationCenter, MIOBundle } from "../MIOFoundation";
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOAttributeType } from "./MIOAttributeDescription";
@@ -24,17 +24,31 @@ export class MIOManagedObjectModel extends MIOObject
 
     initWithContentsOfURL(url:MIOURL){
 
+        // check if we already have it
+        let type = url.absoluteString.match(/\.[0-9a-z]+$/i)[0].substring(1)
+        let resource = url.absoluteString.substring(0, url.absoluteString.length - type.length - 1);
+
+        let data = MIOBundle.mainBundle().pathForResourceOfType(resource, type);
+        if (data != null) {
+            this.parseContents(data);
+            return;
+        }
+
+        // Download the file
         let request = MIOURLRequest.requestWithURL(url);
 
         let uc = new MIOURLConnection();
         uc.initWithRequest(request, this);
     }
 
-    connectionDidReceiveText(urlConnection, text){
-        
+    connectionDidReceiveText(urlConnection, data){        
+        this.parseContents(data)
+    }
+
+    private parseContents(contents) {
         let parser = new MIOXMLParser();
-        parser.initWithString(text, this);
-        parser.parse();        
+        parser.initWithString(contents, this);
+        parser.parse();                
     }
 
     // #region XML Parser delegate

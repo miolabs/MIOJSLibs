@@ -298,7 +298,7 @@ export class MIOManagedObject extends MIOObject {
                 return obj;
             }
             else {                
-                // Tick. I store the value in a private property when the object is temporary
+                // Trick. I store the value in a private property when the object is temporary
                 let set:MIOManagedObjectSet = this["_" + relationship.name];
                 if (set == null) {
                     set = MIOManagedObjectSet._setWithManagedObject(this, relationship);

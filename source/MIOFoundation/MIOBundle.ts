@@ -5,6 +5,7 @@ import { MIOObject } from "./MIOObject";
 import { MIOURL } from "./MIOURL";
 import { MIOURLRequest } from "./MIOURLRequest";
 import { MIOURLConnection } from "./MIOURLConnection";
+import { MIOLog } from "./MIOLog";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -14,12 +15,14 @@ export class MIOBundle extends MIOObject
 {
     url:MIOURL = null;
 
+    private identifier:string = null;
+    
     private static _mainBundle = null;
 
     private _webBundle:MIOCoreBundle = null;
 
-    public static mainBundle():MIOBundle
-    {
+    public static mainBundle():MIOBundle {
+        
         if (this._mainBundle == null){
             // Main url. Getting from broser window url search field
 
@@ -27,6 +30,7 @@ export class MIOBundle extends MIOObject
 
             this._mainBundle = new MIOBundle();
             this._mainBundle.initWithURL(MIOURL.urlWithString(urlString));
+            this._mainBundle.identifier = "MainBundle";
         }
 
         return this._mainBundle;
@@ -57,40 +61,126 @@ export class MIOBundle extends MIOObject
             });
         }
     }
-
-    private _loadResourceFromURL(url:MIOURL, target, completion){
-        let request = MIOURLRequest.requestWithURL(url);
-        let conn =  new MIOURLConnection();
-        conn.initWithRequestBlock(request, this, function(error, data){
-            completion.call(target, data);
-        });
-    }
-
+    
     pathForResourceOfType(resource:string, type:string){
-        return _MIOBundleAppGetResource(resource, type);
+        return _MIOBundleAppGetResource(this.identifier, resource, type);
     }
 }
 
-var _MIOAppBundleResources = {};
 
-export function _MIOBundleAppSetResource(resource:string, type:string, content:string){
-    let files = _MIOAppBundleResources[type];
+let _MIOCoreBundleLoadTarget = null;
+let _MIOCoreBundleLoadCompltion = null;
+
+export function _MIOBundleLoadBundles(url:MIOURL, target, completion) {
+    // Download and create the App Bundles    
+
+    _MIOCoreBundleLoadTarget = target;
+    _MIOCoreBundleLoadCompltion = completion;
+
+    let request = MIOURLRequest.requestWithURL(url);
+    let conn =  new MIOURLConnection();
+    conn.initWithRequestBlock(request, this, function(code, data){
+        
+        if (code != 200) {
+            completion.call(target, data);
+            return;
+        }
+        
+        // Process the data
+        let bundleJSON = null;
+        try {
+            bundleJSON = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));    
+        } catch (error) {
+            MIOLog ("BUNDLE JSON PARSER ERROR: " + error);            
+            MIOLog ("BUNDLE JSON PARSER DATA: " + data);            
+            completion.call(target, data);
+            return;
+        }
+
+        // Keep going
+
+        for (let key in bundleJSON) {
+            let resources = bundleJSON[key];
+            _MIOBundleCreateBundle(key, resources);
+        }
+
+    });
+
+}
+
+let _MIOBundleResourcesDownloadingCount = 0
+
+export function  _MIOBundleCreateBundle(key:string, resources){    
+
+    for (let urlString of resources) {
+        
+        let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString(urlString));
+        let conn =  new MIOURLConnection();
+        
+        _MIOBundleResourcesDownloadingCount++;
+        conn.initWithRequestBlock(request, this, function(code, data){
+            _MIOBundleResourcesDownloadingCount--;
+
+            if (code == 200) {
+                let type = urlString.match(/\.[0-9a-z]+$/i)[0].substring(1)
+                let resource = urlString.substring(0, urlString.length - type.length - 1);
+                _MIOBundleSetResource(key, resource, type, data);
+            }
+
+            _MIOBundleResourceDownloadCheck();
+        });    
+    }
+
+}
+
+export function  _MIOBundleResourceDownloadCheck(){
+    if (_MIOBundleResourcesDownloadingCount > 0) return;
+    
+    _MIOCoreBundleLoadCompltion.call(_MIOCoreBundleLoadTarget);
+    
+    _MIOCoreBundleLoadCompltion = null;
+    _MIOCoreBundleLoadTarget = null;
+}
+
+export function  _MIOBundleLoadResourceFromURL(url:MIOURL, target, completion){
+    let request = MIOURLRequest.requestWithURL(url);
+    let conn =  new MIOURLConnection();
+    conn.initWithRequestBlock(request, this, function(error, data){
+        completion.call(target, data);
+    });
+}
+
+
+let _MIOAppBundles = {};
+
+export function _MIOBundleSetResource(identifier:string, resource:string, type:string, content:string){
+
+    let bundle = _MIOAppBundles[identifier];
+    if (bundle == null) {
+        bundle = {}
+        _MIOAppBundles[identifier] = bundle;
+    }
+
+    let files = bundle[type];
     if (files == null) {
         files = {};
-        _MIOAppBundleResources[type] = files;
+        bundle[type] = files;
     }
 
     files[resource] = content;
 }
 
-export function _MIOBundleAppGetResource(resource:string, type:string){
-    let files = _MIOAppBundleResources[type];
+export function _MIOBundleAppGetResource(identifier:string, resource:string, type:string){
+
+    let bundle = _MIOAppBundles[identifier];
+    if (bundle == null) return null;    
+
+    let files = bundle[type];
     if (files == null) return null;
 
     let content = files[resource];
     return content;
 }
-
 
 
 /*

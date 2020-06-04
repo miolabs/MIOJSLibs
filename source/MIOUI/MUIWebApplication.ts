@@ -1,7 +1,8 @@
 import { MUIWindow } from "./MUIWindow";
 import { MIOCoreGetLanguages, setMIOLocalizedStrings, MIOCoreAddLanguage } from "../MIOCore";
 import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput, MIOCoreGetQueryOptions, MIOCoreGetMainBundleURLString } from "../MIOCore/platform";
-import { MIOURLRequest, MIOURL, MIOURLConnection, _MIOBundleAppSetResource, MIOPropertyListSerialization } from "../MIOFoundation";
+import { MIOURLRequest, MIOURL, MIOURLConnection, MIOPropertyListSerialization, _MIOBundleLoadBundles } from "../MIOFoundation";
+import { MIOBundle } from "../../../../Apps/DLOrderWeb/libs/MIOFoundation";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -73,24 +74,27 @@ export class MUIWebApplication {
         });        
     }
 
-    private downloadAppPlist(target, completion){        
-        let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString("app.plist"));
-        let con = new MIOURLConnection();
-        con.initWithRequestBlock(request, this, function(code, data){
-            if (code == 200) {                
-                _MIOBundleAppSetResource("app", "plist", data);
-            }
-            completion.call(target, data);
-        });        
+    // private downloadAppPlist(target, completion){        
+    //     let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString("app.plist"));
+    //     let con = new MIOURLConnection();
+    //     con.initWithRequestBlock(request, this, function(code, data){
+    //         if (code == 200) {                
+    //             _MIOBundleAppSetResource("app", "plist", data);
+    //         }
+    //         completion.call(target, data);
+    //     });        
 
-    }
+    // }
 
     run(){
-        this.downloadAppPlist(this, function(data){
-            if (data == null) throw new Error("We couldn't download the app.plist");
-            
+
+        _MIOBundleLoadBundles(MIOURL.urlWithString("bundles.json"), this, function(){
+                        
             // Get Languages from the app.plist
-            let config = MIOPropertyListSerialization.propertyListWithData(data, 0, 0, null);
+            let appPlistData = MIOBundle.mainBundle().pathForResourceOfType("App", "plist");
+            if (appPlistData == null) throw new Error("We couldn't download the app.plist");
+
+            let config = MIOPropertyListSerialization.propertyListWithData(appPlistData, 0, 0, null);
             let langs = config["Languages"];
             for (let key in langs) {
                 let url = langs[key];
