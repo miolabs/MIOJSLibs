@@ -91,7 +91,7 @@ export class MUIWebApplication {
         _MIOBundleLoadBundles(MIOURL.urlWithString("bundles.json"), this, function(){
                         
             // Get Languages from the app.plist
-            let appPlistData = MIOBundle.mainBundle().pathForResourceOfType("App", "plist");
+            let appPlistData = MIOBundle.mainBundle().pathForResourceOfType("app", "plist");
             if (appPlistData == null) throw new Error("We couldn't download the app.plist");
 
             let config = MIOPropertyListSerialization.propertyListWithData(appPlistData, 0, 0, null);
