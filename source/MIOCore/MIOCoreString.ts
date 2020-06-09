@@ -49,21 +49,21 @@ export function MIOCoreStringPathExtension(string:string):string
 
 export function MIOCoreStringDeletingLastPathComponent(string:string)
 {
-    var index = string.lastIndexOf("/");
-    var str = string.substr(0, index);
+    let index = string.lastIndexOf("/");
+    let str = string.substr(0, index);
 
     return str;
 }
 
 export function MIOCoreStringStandardizingPath(string)
 {
-    var array = string.split("/");
+    let array = string.split("/");
 
-    var newArray = []; 
-    var index = 0;
+    let newArray = []; 
+    let index = 0;
     for (let count = 0; count < array.length; count++)
     {
-        var component:string = array[count];
+        let component:string = array[count];
         if (component.substr(0,2) == "..")
             index--;
         else 
@@ -73,7 +73,7 @@ export function MIOCoreStringStandardizingPath(string)
         }                
     }
 
-    var str = "";
+    let str = "";
     if (index > 0)
         str = newArray[0];
 
@@ -107,4 +107,11 @@ export function setMIOLocalizedStrings(data) {
 
 export function getMIOLocalizedStrings() {
     return _MIOLocalizedStrings
+}
+
+
+export function MIOStringWithFormat(format, ...args:any[]):string {
+    if (args.length == 0) return format;
+
+    return format.replace('%s', args[0]);
 }
