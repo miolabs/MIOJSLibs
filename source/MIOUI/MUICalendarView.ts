@@ -178,7 +178,7 @@ export class MUICalendarDaysView extends MUIView {
     initWithDelegate(delegate) {        
         super.init();
         this.delegate = delegate;
-        //MUICoreLayerAddStyle(this.layer, "calendar-days-view");
+        MUICoreLayerAddStyle(this.layer, "ui-calendar-body");
         //this.setupHeaderLayer();
     }
 
