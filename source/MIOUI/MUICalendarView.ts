@@ -214,13 +214,17 @@ export class MUICalendarDaysView extends MUIView {
 
     private tableLayer = null;
     private setupHeaderLayer(){
-        if (this.tableLayer != null) this.tableLayer.innerHTML = ""; // To remove everything
+        if (this.tableLayer == null) {
+            this.tableLayer = MUICoreLayerCreateWithStyle("calendar-days-view", null, "table");
+            MUICoreLayerAddSublayer(this.layer, this.tableLayer);
+        }
+        else {
+            this.tableLayer.innerHTML = ""; // To remove everything
+        }
+
         for (let cell of this._dayViews){
             cell.removeFromSuperview();
         }
-
-        this.tableLayer = MUICoreLayerCreateWithStyle("calendar-days-view", null, "table");
-        MUICoreLayerAddSublayer(this.layer, this.tableLayer);
  
         // Setup Header (Days of the week)
         const dayTitle = ["SU", "MO", "TU", "WE", "TH", "FR", "SA", "SU", "MO", "TU", "WE", "TH", "FR", "SA"];
