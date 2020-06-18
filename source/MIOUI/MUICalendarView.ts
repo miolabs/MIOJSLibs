@@ -275,14 +275,16 @@ export class MUICalendarDaysView extends MUIView {
             for (let colIndex = startIndex; colIndex < 7; colIndex++){
 
                 // Add day cell
-                const cell = MUICoreLayerCreateWithStyle("day-cell", null, "td");
-                MUICoreLayerAddSublayer(row, cell);                
+                const cellLayer = MUICoreLayerCreateWithStyle("day-cell", null, "td");
+                MUICoreLayerAddSublayer(row, cellLayer);                
                 
                 let dayView = this._dayCellAtDate(currentDate);
                 this._dayViews.push(dayView);
-                MUICoreLayerAddSublayer(cell, dayView.layer);
+                MUICoreLayerAddSublayer(cellLayer, dayView.layer);
                 dayView.setSelected(false);
                 dayView.setDate(currentDate);    
+
+                if (dayView.isToday == true) MUICoreLayerAddStyle(cellLayer, "today");
 
                 currentDate.setDate(currentDate.getDate() + 1);
                 lastColIndex = colIndex;
@@ -386,6 +388,7 @@ export class MUICalendarDayCell extends MUIView {
     get selected() {return this._selected;}
 
     private _isToday = false;
+    get isToday() { return this._isToday; }
 
     init() {
         super.init();
@@ -435,6 +438,7 @@ export class MUICalendarDayCell extends MUIView {
     // private _onClick() {
     //     this.setSelected(true);
     // }
+
     setDate(date: Date) {
         this._date = new Date(date.getTime());
 
@@ -449,18 +453,18 @@ export class MUICalendarDayCell extends MUIView {
 
         this.dayLabel.text = date.getDate().toString();        
 
-        let isToday = (this._day == d && this._month == m && this._year == y);
-        this.setToday(isToday);
+        this._isToday = (this._day == d && this._month == m && this._year == y);
+        //this.setToday(isToday);
     }
 
-    setToday(value:boolean){
-        if (value == true){
-            MUICoreLayerAddStyle(this.layer, "today");
-        }
-        else {
-            MUICoreLayerRemoveStyle(this.layer, "today");            
-        }        
-    }
+    // setToday(value:boolean){
+    //     if (value == true){
+    //         MUICoreLayerAddStyle(this.layer, "today");
+    //     }
+    //     else {
+    //         MUICoreLayerRemoveStyle(this.layer, "today");            
+    //     }        
+    // }
 
     setSelected(value:boolean){
 
@@ -469,9 +473,9 @@ export class MUICalendarDayCell extends MUIView {
         this.willChangeValue("selected");
         this._selected = value;
         if (value == true)
-            MUICoreLayerAddStyle(this.layer, "selected");
+            MUICoreLayerAddStyle(this.layer.parentNode, "selected");
         else 
-            MUICoreLayerRemoveStyle(this.layer, "selected");
+            MUICoreLayerRemoveStyle(this.layer.parentNode, "selected");
         this.didChangeValue("selected");
     }
 }
@@ -683,7 +687,7 @@ export class MUICalendarView extends MUIView{
             if (canSelect == false) return; 
 
             if(this.selectedDayCell != null && this.selectedDayCell !== dayCell) {                
-                this.selectedDayCell.setSelected(false);
+                this.selectedDayCell.setSelected(false);                
                 if (this.delegate != null && typeof this.delegate.didDeselectDayCellAtDate === "function")
                 this.delegate.didDeselectDayCellAtDate.call(this.delegate, this, this.selectedDayCell.date);
             }
