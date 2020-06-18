@@ -1,8 +1,7 @@
 import { MUIWindow } from "./MUIWindow";
 import { MIOCoreGetLanguages, setMIOLocalizedStrings, MIOCoreAddLanguage } from "../MIOCore";
 import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput, MIOCoreGetQueryOptions, MIOCoreGetMainBundleURLString } from "../MIOCore/platform";
-import { MIOURLRequest, MIOURL, MIOURLConnection, MIOPropertyListSerialization, _MIOBundleLoadBundles } from "../MIOFoundation";
-import { MIOBundle } from "../../../../Apps/DLOrderWeb/libs/MIOFoundation";
+import { MIOURLRequest, MIOURL, MIOURLConnection, MIOPropertyListSerialization, _MIOBundleLoadBundles, MIOBundle } from "../MIOFoundation";
 
 /**
  * Created by godshadow on 11/3/16.

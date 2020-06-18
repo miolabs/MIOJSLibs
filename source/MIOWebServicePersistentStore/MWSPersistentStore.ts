@@ -103,7 +103,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             
             let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
             if (relNode == null) {
-                relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, -1, relationship.destinationEntity);
+                relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, 0, relationship.destinationEntity);
                 //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                 //MIOLog("Downloading REFID: " + relRefID);
             }            
@@ -119,7 +119,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let relRefID = relRefIDs[count];
                 let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
                 if (relNode == null) {                    
-                    relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, -1, relationship.destinationEntity);
+                    relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, 0, relationship.destinationEntity);
                     //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                     //MIOLog("Downloading REFID: " + relRefID);
                 }
@@ -455,11 +455,11 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let serverID = this.delegate.serverIDForObject(this, object);
         // We need to create an empty node before we call server Values for object,
         // because inside we call valueForKey that needs the a node.
-        this.newNodeWithValuesAtServerID(serverID, {}, -1, object.entity, object.objectID);
+        this.newNodeWithValuesAtServerID(serverID, {}, 0, object.entity, object.objectID);
         
         // We update the node with the values
         let values = this.delegate.serverValuesForObject(this, object, true);
-        this.updateNodeWithValuesAtServerID(serverID, values, 0, object.entity);
+        this.updateNodeWithValuesAtServerID(serverID, values, 1, object.entity);
         
         let dependencyIDs = [];
 
