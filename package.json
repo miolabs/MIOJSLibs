@@ -28,7 +28,6 @@
     "karma-jasmine": "^1.1.1",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-spec-reporter": "^0.0.32",
-    "lerna": "^2.11.0",
     "npx": "^10.2.0",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
@@ -51,6 +50,7 @@
     "lint": "tslint -p ."
   },
   "dependencies": {
-    "@types/ace": "0.0.42"
+    "@types/ace": "0.0.42",
+    "lerna": "^3.22.1"
   }
 }
