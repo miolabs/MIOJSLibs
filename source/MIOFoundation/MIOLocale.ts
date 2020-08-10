@@ -74,7 +74,8 @@ export class MIOLocale extends MIOObject
             case "UK":
             case "AE":  
             case "PH":  
-            case "GQ":                    
+            case "GQ":
+            case "AW":                                        
                 ds =  ".";
                 break;
         }
@@ -106,6 +107,10 @@ export class MIOLocale extends MIOObject
 
             case "PH":
                 cs = "₱";
+                break;
+
+            case "AW":
+                cs = "ƒ";
                 break;
         }
 
@@ -143,7 +148,10 @@ export class MIOLocale extends MIOObject
             case "GQ":
                 cc = "FCFA";
                 break;
-        
+
+            case "AW":
+                cc = "AWG";
+                break;        
         }
 
         return cc;
@@ -165,6 +173,7 @@ export class MIOLocale extends MIOObject
             case "AE":
             case "PH":
             case "GQ":
+            case "AW":
                 gs = ",";
                 break;
         }
@@ -173,5 +182,7 @@ export class MIOLocale extends MIOObject
     }
 }
 
+
+// End locale
 
 

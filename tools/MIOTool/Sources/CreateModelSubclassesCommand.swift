@@ -8,6 +8,12 @@
 
 import Foundation
 
+enum ModelSubClassType
+{
+    case Swift
+    case JavaScript
+}
+
 func CreateModelSubClasses() -> Command? {
     
     var fileName:String? = NextArg()
@@ -16,25 +22,39 @@ func CreateModelSubClasses() -> Command? {
         fileName = "/datamodel.xml"
     }
     
-    return CreateModelSubClassesCommand(withFilename: fileName!);
+    var type = ModelSubClassType.JavaScript
+    
+    let options = NextArg()
+    if options != nil {
+        switch options {
+        case "--output-swift":
+            type = ModelSubClassType.Swift
+
+        default: break
+        }
+    }
+    
+    return CreateModelSubClassesCommand(withFilename: fileName!, type: type)
 }
 
 class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     
-    var fileContent:String = "";
-    var filename:String = "";
+    var fileContent:String = ""
+    var filename:String = ""
     
-    var currentClassName:String = "";
-    var currentClassEntityName:String = "";
+    var currentClassName:String = ""
+    var currentClassEntityName:String = ""
     
-    var modelPath:String?;
-    var modelFilename:String;
+    var modelPath:String?
+    var modelFilename:String
+    var modelType:ModelSubClassType
     
-    var modelContent:String = "\nfunction DMRegisterModelClasses()\n{";
-    
-    init(withFilename filename:String) {
+    var modelContent:String = "\nfunction DMRegisterModelClasses()\n{"
         
-        self.modelFilename = filename;
+    init(withFilename filename:String, type:ModelSubClassType) {
+        
+        self.modelFilename = filename
+        self.modelType = type
     }
     
     override func execute() {

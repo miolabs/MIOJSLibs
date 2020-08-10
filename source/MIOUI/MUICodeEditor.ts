@@ -39,10 +39,32 @@ export class MUICodeEditor extends MUIView
         this.editor = ace.edit(this.editorView.layer);
         this.editor.setTheme("ace/theme/xcode");    
         this.editor.$blockScrolling = Infinity;
+
+        var editorInstance = this;
+        this.editor.on("change", function(e) {
+            if (editorInstance.editor.curOp && editorInstance.editor.curOp.command.name) console.log("user change");
+            else {
+                editorInstance.didChangeText.call(editorInstance); 
+                console.log("other change");
+            }
+        });
     }    
 
     layoutSubviews(){
         this.editor.resize();
+    }
+
+    private onTextChangeTarget = null;
+    private onTextChangeCompletion = null;
+    onTextChange(target, completion) {
+        this.onTextChangeTarget = target;
+        this.onTextChangeCompletion = completion;
+    }
+
+    private didChangeText(){
+        if (this.onTextChangeCompletion != null && this.onTextChangeTarget != null) {
+            this.onTextChangeCompletion.call(this.onTextChangeTarget, this, this.text);
+        }
     }
 
     set text(value){
