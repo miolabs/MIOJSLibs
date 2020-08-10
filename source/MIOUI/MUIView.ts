@@ -9,10 +9,24 @@ import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
  */
 
 
+const g_supported_tags = { "DIV"    : true
+                         , "INPUT"  : true
+                         , "SECTION": true
+                         , "SPAN"   : true
+                         , "BUTTON" : true 
+                         , "LABEL"  : true 
+                         , "FORM"   : true
+                         }
+
+export function is_supported_tag ( tagName: string )
+{
+  return g_supported_tags[ tagName ] === true ;
+}
+
 export function MUILayerSearchElementByAttribute(layer, key)
 {
-    if (layer.tagName != "DIV" && layer.tagName != "INPUT" && layer.tagName != "SECTION" && layer.tagName != "SPAN")
-            return null;
+    if ( !is_supported_tag( layer.tagName ) )
+         return null;
 
     if (layer.getAttribute(key) == "true") return layer;
     
@@ -31,8 +45,8 @@ export function MUILayerSearchElementByAttribute(layer, key)
 
 export function MUILayerSearchElementByID(layer, elementID)
 {
-    if (layer.tagName != "DIV" && layer.tagName != "INPUT" && layer.tagName != "SECTION")
-            return null;
+    if ( !is_supported_tag( layer.tagName ) )
+         return null;
 
     if (layer.getAttribute("data-outlet") == elementID)
         return layer;
