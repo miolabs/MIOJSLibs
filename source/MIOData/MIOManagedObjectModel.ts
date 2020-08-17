@@ -63,11 +63,11 @@ export class MIOManagedObjectModel extends MIOObject
         if (element == "entity"){
 
             let name = attributes["name"];
-            let parentName = attributes["parentEntity"];
-            let parentEntity = parentName != null ? this._entitiesByName[parentName] : null;
+            let parentName = attributes["parentEntity"];            
 
             this.currentEntity = new MIOEntityDescription();
-            this.currentEntity.initWithEntityName(name, parentEntity);
+            this.currentEntity.initWithEntityName(name, null, this);
+            this.currentEntity.parentEntityName = parentName;
 
             MIOLog("\n\n--- " + name);
         }
@@ -118,17 +118,17 @@ export class MIOManagedObjectModel extends MIOObject
     parserDidEndDocument(parser:MIOXMLParser){
 
         // Check every relation ship and assign the right destination entity
-        for (var entityName in this._entitiesByName) {
-
-            let e:MIOEntityDescription = this._entitiesByName[entityName];
-            for (var index = 0; index < e.relationships.length; index++) {
-                let r:MIORelationshipDescription = e.relationships[index];
+        for (let entityName in this._entitiesByName) {
+            let entity = this._entitiesByName[entityName] as MIOEntityDescription;
+            entity.build();
+            // for (var index = 0; index < e.relationships.length; index++) {
+            //     let r:MIORelationshipDescription = e.relationships[index];
                 
-                if (r.destinationEntity == null){
-                    let de = this._entitiesByName[r.destinationEntityName];
-                    r.destinationEntity = de;
-                }
-            }
+            //     if (r.destinationEntity == null){
+            //         let de = this._entitiesByName[r.destinationEntityName];
+            //         r.destinationEntity = de;
+            //     }
+            // }
         }
 
         //console.log("datamodel.xml parser finished");

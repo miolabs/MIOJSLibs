@@ -61,6 +61,7 @@ export class MUICodeEditor extends MUIView
         this.onTextChangeCompletion = completion;
     }
 
+    // New callback
     private didChangeText(){
         if (this.onTextChangeCompletion != null && this.onTextChangeTarget != null) {
             this.onTextChangeCompletion.call(this.onTextChangeTarget, this, this.text);

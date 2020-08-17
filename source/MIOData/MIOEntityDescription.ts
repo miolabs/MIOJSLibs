@@ -27,6 +27,8 @@ export class MIOEntityDescription extends MIOObject {
     private _managedObjectClassName = "MIOEntityDescription";
     get managedObjectClassName():string {return this._managedObjectClassName;}
 
+    managedObjectModel:MIOManagedObjectModel = null;
+
     public static entityForNameInManagedObjectContext(entityName:string, context:MIOManagedObjectContext):MIOEntityDescription {
         let entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, context);
         return entity;
@@ -41,11 +43,12 @@ export class MIOEntityDescription extends MIOObject {
         return obj;
     }
 
-    initWithEntityName(entityName:string, superEntity?:MIOEntityDescription) {
+    initWithEntityName(entityName:string, superEntity:MIOEntityDescription, model:MIOManagedObjectModel) {
         super.init();
         this.name = entityName;
         this._managedObjectClassName = entityName;
         this.superentity = superEntity;
+        this.managedObjectModel = model;
         
         if (superEntity == null) return;
         
@@ -60,7 +63,7 @@ export class MIOEntityDescription extends MIOObject {
             else if (property instanceof MIORelationshipDescription){
                 let rel = property as MIORelationshipDescription;
                 if (rel.inverseRelationship != null) {
-                    this.addRelationship(rel.name, rel.destinationEntityName, rel.isToMany, rel.serverName, rel.inverseRelationship.name, rel.inverseRelationship.entity.name);
+                    this.addRelationship(rel.name, rel.destinationEntityName, rel.isToMany, rel.serverName, rel.inverseRelationship.name, rel.inverseRelationship.destinationEntityName);
                 }
                 else {
                     this.addRelationship(rel.name, rel.destinationEntityName, rel.isToMany, rel.serverName);
@@ -110,5 +113,45 @@ export class MIOEntityDescription extends MIOObject {
 
     serverRelationshipName(name){
         return this.serverRelationships[name];
+    }
+
+    parentEntityName:string = null;
+    private isBuilt = false;
+    build() {
+
+        if (this.isBuilt) { return; }
+        this.isBuilt = true;
+        
+        if (this.parentEntityName != null) {
+            let parentEntity =  this.managedObjectModel.entitiesByName[this.parentEntityName];
+            this.superentity = parentEntity;
+            //parentEntity.subentities.append(this);
+            parentEntity.build();
+            
+            for (let key in parentEntity.propertiesByName) {
+                let prop = parentEntity.propertiesByName[key];
+                if (prop instanceof MIOAttributeDescription) {
+                    let attr = prop as MIOAttributeDescription;
+                    this.addAttribute(attr.name, attr.attributeType, attr.defaultValue, attr.optional);
+                }
+                else if (prop instanceof MIORelationshipDescription) {
+                    let rel = prop as MIORelationshipDescription;
+                    this.addRelationship(rel.name,rel.destinationEntityName, rel.isToMany, null, rel.inverseName, rel.inverseEntityName);
+                }
+            }
+        }
+        
+        for (let key in this.relationshipsByName) {
+            let rel = this.relationshipsByName[key] as MIORelationshipDescription;
+            if (rel.destinationEntity == null) {
+                rel.destinationEntity = this.managedObjectModel.entitiesByName[rel.destinationEntityName];
+            }
+            
+            if (rel.inverseName != null && rel.inverseEntityName != null) {
+                let inverseEntity = this.managedObjectModel.entitiesByName[rel.inverseEntityName];
+                let inverseRelation = inverseEntity.relationshipsByName[rel.inverseName];
+                rel.inverseRelationship = inverseRelation
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 enum ModelSubClassType
 {
@@ -119,7 +120,8 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     }
     
     private func openModelEntity(filename:String, classname:String, parentName:String?) {
-    
+            
+        
         self.filename = "/\(filename)_ManagedObject.ts";
         let cn = classname + "_ManagedObject";
         self.currentClassEntityName = cn;
