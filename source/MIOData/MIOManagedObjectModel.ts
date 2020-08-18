@@ -190,11 +190,14 @@ export class MIOManagedObjectModel extends MIOObject
 
     private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string, optional:boolean){
 
+        MIOLog((serverName != null ? serverName : name) + " (" + destinationEntityName + ", optional=" + optional + ", inverseEntity: " + inverseEntity + ", inverseName: "  + inverseName + ")");
+
         let isToMany = false;
         if (toMany != null && (toMany.toLocaleLowerCase() == "yes" || toMany.toLocaleLowerCase() == "true")){
             isToMany = true;
-        }
-        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity);
+        }        
+
+        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity, optional);
     }
 
     private _setEntityForConfiguration(entity, configuration:string) {
