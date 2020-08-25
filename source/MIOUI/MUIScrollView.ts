@@ -79,7 +79,7 @@ export class MUIScrollView extends MUIView {
         else 
             return;
 
-        console.log("Content Offset y: " + offsetY + " - delta y: " + deltaY);
+        //console.log("Content Offset y: " + offsetY + " - delta y: " + deltaY);
 
         this.setNeedsDisplay();
 
