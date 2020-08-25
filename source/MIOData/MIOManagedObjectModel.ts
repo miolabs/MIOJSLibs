@@ -76,11 +76,10 @@ export class MIOManagedObjectModel extends MIOObject
             let name = attributes["name"];
             let type = attributes["attributeType"];
             let serverName = attributes["serverName"];            
-            let optional = attributes["optional"] != null ? attributes["optional"].toLowerCase() : "yes";            
-            let optionalValue = optional == "no" ? false : true;
+            let optional = attributes["optional"] != null ? attributes["optional"] : "YES";            
             let syncable = attributes["syncable"];
             let defaultValueString = attributes["defaultValueString"];
-            this._addAttribute(name, type, optionalValue, serverName, syncable, defaultValueString);
+            this._addAttribute(name, type, optional, serverName, syncable, defaultValueString);
         }        
         else if (element == "relationship") {
         
@@ -88,7 +87,7 @@ export class MIOManagedObjectModel extends MIOObject
             let destinationEntityName = attributes["destinationEntity"];
             let toMany = attributes["toMany"];
             let serverName = attributes["serverName"]; 
-            let optional = attributes["optional"] != null ? attributes["optional"].toLowerCase() : "yes";                                   
+            let optional = attributes["optional"] != null ? attributes["optional"] : "YES";                                   
             let inverseName = attributes["inverseName"];
             let inverseEntity = attributes["inverseEntity"];            
             this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity, optional);
@@ -137,7 +136,7 @@ export class MIOManagedObjectModel extends MIOObject
 
     // #endregion
 
-    private _addAttribute(name, type, optional, serverName, syncable, defaultValueString){
+    private _addAttribute(name:string, type:string, optional:string, serverName:string, syncable:string, defaultValueString:string){
 
         MIOLog((serverName != null ? serverName : name) + " (" + type + ", optional=" + optional + (defaultValue != null? ", defaultValue: " + defaultValue : "") + "): ");
 
@@ -181,14 +180,20 @@ export class MIOManagedObjectModel extends MIOObject
 
             default:
                 MIOLog("MIOManagedObjectModel: Unknown class type: " + type);
-                if (defaultValueString != null) defaultValue = defaultValueString; 
+                if (defaultValueString != null) defaultValue = defaultValueString;
                 break;
         }
+
+        let opt = true;
+        if (optional != null && (optional.toLocaleLowerCase() == "no" || optional.toLocaleLowerCase() == "false")) opt = false;
         
-        this.currentEntity.addAttribute(name, attrType, defaultValue, optional, serverName, syncable);
+        let sync = true;
+        if (syncable != null && (syncable.toLocaleLowerCase() == "no" || optional.toLocaleLowerCase() == "false")) sync = false;
+
+        this.currentEntity.addAttribute(name, attrType, defaultValue, opt, serverName, sync);
     }
 
-    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string, optional:boolean){
+    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string, optional:string){
 
         MIOLog((serverName != null ? serverName : name) + " (" + destinationEntityName + ", optional=" + optional + ", inverseEntity: " + inverseEntity + ", inverseName: "  + inverseName + ")");
 
@@ -197,7 +202,10 @@ export class MIOManagedObjectModel extends MIOObject
             isToMany = true;
         }        
 
-        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity, optional);
+        let opt = true;
+        if (optional != null && (optional.toLocaleLowerCase() == "no" || optional.toLocaleLowerCase() == "false")) opt = false;
+
+        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity, opt);
     }
 
     private _setEntityForConfiguration(entity, configuration:string) {

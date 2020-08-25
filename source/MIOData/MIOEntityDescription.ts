@@ -136,7 +136,7 @@ export class MIOEntityDescription extends MIOObject {
                 }
                 else if (prop instanceof MIORelationshipDescription) {
                     let rel = prop as MIORelationshipDescription;
-                    this.addRelationship(rel.name,rel.destinationEntityName, rel.isToMany, null, rel.inverseName, rel.inverseEntityName);
+                    this.addRelationship(rel.name,rel.destinationEntityName, rel.isToMany, null, rel.inverseName, rel.inverseEntityName, rel.optional);
                 }
             }
         }
