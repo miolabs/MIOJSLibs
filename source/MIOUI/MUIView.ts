@@ -592,6 +592,7 @@ export class MUIView extends MIOObject
         for (let index = 0; index < this.gestureRecognizers.length; index++){
             let gr:MUIGestureRecognizer = this.gestureRecognizers[index];
             gr._viewTouchesBeganWithEvent(touches, ev);
+            //if (gr.delaysTouchesBegan == true) continue;
         }
     }
 

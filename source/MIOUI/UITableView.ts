@@ -348,8 +348,11 @@ export class UITableView extends UIScrollView
     }
     
     private cellDidTap(gesture:MUIGestureRecognizer){
-        if (gesture.state != MUIGestureRecognizerState.Ended) return;
+        if (gesture.state != MUIGestureRecognizerState.Ended) return;        
         let cell = gesture.view as UITableViewCell;
+
+        if (cell.editingAccessoryDeleteView != null && gesture.lastSystemEvent.sysEvent.target == cell.editingAccessoryDeleteView.layer) return;
+
         // let section = cell._section;
         // let sectionIndex = this.sections.indexOf(section);
         // let rowIndex = section.indexOfObject(cell);

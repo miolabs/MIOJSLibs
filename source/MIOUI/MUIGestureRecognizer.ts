@@ -23,7 +23,9 @@ export class MUIGestureRecognizer extends MIOObject
     isEnabled = true;
 
     name:string = null;
-    cancelsTouchesInView = true;;
+    cancelsTouchesInView = true;
+    delaysTouchesBegan = false;
+    delaysTouchesEnded = false;
     
     private target = null;
     private block = null;
@@ -47,16 +49,19 @@ export class MUIGestureRecognizer extends MIOObject
         this.block.call(this.target, this);
     }
     
-    
+    lastSystemEvent:MUIEvent = null;
     touchesBeganWithEvent(touches, ev:MUIEvent){
+        this.lastSystemEvent = ev;
         this.state = MUIGestureRecognizerState.Began;
     }    
 
     touchesMovedWithEvent(touches, ev:MUIEvent){
+        this.lastSystemEvent = ev;
         this.state = MUIGestureRecognizerState.Changed;
     }
 
     touchesEndedWithEvent(touches, ev:MUIEvent){
+        this.lastSystemEvent = ev;
         this.state = MUIGestureRecognizerState.Ended;
     }
 

@@ -11,9 +11,11 @@ export class MUIEvent extends MIOObject
 
     x = 0;
     y = 0;
+    sysEvent = null;
     initWithSysEvent(e){
         super.init();
 
+        this.sysEvent = e;
         this.x = e.clientX;
         this.y = e.clientY;
     }

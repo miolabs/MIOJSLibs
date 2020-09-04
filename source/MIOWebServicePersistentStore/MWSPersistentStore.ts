@@ -279,7 +279,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let parsedValues = this.checkRelationships(values, entity, context, relationshipNodes);
 
         let serverID = this.delegate.serverIDForItem(this, parsedValues, entity.name);
-        if (serverID == null) throw new Error("MWSPersistentStore: SERVER ID CAN NOT BE NULL. (" + entity.name + ")");
+        if (serverID == null) {
+            throw new Error("MWSPersistentStore: SERVER ID CAN NOT BE NULL. (" + entity.name + ")");
+        }
         
         let version = this.delegate.serverVersionNumberForItem(this, parsedValues, entity.name);        
 
@@ -482,12 +484,13 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);
-            this.saveOperationDidRemove(op);            
 
             let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, serverValues);
             MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
             if (version > 1) this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
+            
+            this.saveOperationDidRemove(op);            
         }  
     }
 
@@ -527,8 +530,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.completion = function () {
             MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
             //this.removeOperation(op, serverID);
-            this.removeUploadingOperationForServerID(serverID);
-            this.saveOperationDidRemove(op);            
+            this.removeUploadingOperationForServerID(serverID);            
 
             let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             let version = this.delegate.serverVersionNumberForItem(this, serverValues);            
@@ -536,7 +538,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             if (version > node.version) {
                 this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);                
             }
-            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidUpdateEntity, object, serverID);
+            
+            this.saveOperationDidRemove(op);
+            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidUpdateEntity, object, serverID);            
         }        
     }
 
@@ -568,12 +572,12 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.completion = function () {
             MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
             //this.removeOperation(op, serverID);
-            this.removeUploadingOperationForServerID(serverID);
-            this.saveOperationDidRemove(op);
+            this.removeUploadingOperationForServerID(serverID);            
 
             let [result] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             //let version = this.delegate.serverVersionNumberForItem(this, values);
             MIOLog("Object " + serverID + " -> Deleted " + (result ? "OK" : "FAIL"));                     
+            this.saveOperationDidRemove(op);
         }  
     }
 

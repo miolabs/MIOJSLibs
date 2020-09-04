@@ -35,6 +35,8 @@ func CreateModelSubClasses() -> Command? {
         }
     }
     
+    NSFetchIndexDescription
+    
     return CreateModelSubClassesCommand(withFilename: fileName!, type: type)
 }
 
