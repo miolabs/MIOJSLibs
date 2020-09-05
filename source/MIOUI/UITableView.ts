@@ -206,8 +206,9 @@ export class UITableView extends UIScrollView
         }
         else {
             section.addObject(cell);
-        }        
-
+        }   
+        
+        if (cell.selected == true) this.indexPathForSelectedRow = indexPath;
     }
 
     private removeCell(indexPath){        
