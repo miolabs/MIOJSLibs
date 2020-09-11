@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		146681AD250A85A300DC2048 /* SwiftModelOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146681AC250A85A300DC2048 /* SwiftModelOutput.swift */; };
+		146681AF250A85BD00DC2048 /* JavascriptModelOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146681AE250A85BD00DC2048 /* JavascriptModelOutput.swift */; };
 		1498C59F209640CA0009CF61 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C592209640C90009CF61 /* Command.swift */; };
 		1498C5A0209640CA0009CF61 /* CreateProjectTemplateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C593209640C90009CF61 /* CreateProjectTemplateCommand.swift */; };
 		1498C5A1209640CA0009CF61 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C594209640C90009CF61 /* main.swift */; };
@@ -35,6 +37,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		146681AC250A85A300DC2048 /* SwiftModelOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwiftModelOutput.swift; path = Sources/SwiftModelOutput.swift; sourceTree = "<group>"; };
+		146681AE250A85BD00DC2048 /* JavascriptModelOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavascriptModelOutput.swift; sourceTree = "<group>"; };
 		1498C5882096407E0009CF61 /* MIOTool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MIOTool; sourceTree = BUILT_PRODUCTS_DIR; };
 		1498C592209640C90009CF61 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Command.swift; path = Sources/Command.swift; sourceTree = "<group>"; };
 		1498C593209640C90009CF61 /* CreateProjectTemplateCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CreateProjectTemplateCommand.swift; path = Sources/CreateProjectTemplateCommand.swift; sourceTree = "<group>"; };
@@ -62,6 +66,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		146681AB250A855300DC2048 /* Model Subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				1498C59E209640CA0009CF61 /* CreateModelSubclassesCommand.swift */,
+				146681AC250A85A300DC2048 /* SwiftModelOutput.swift */,
+				146681AE250A85BD00DC2048 /* JavascriptModelOutput.swift */,
+			);
+			name = "Model Subclasses";
+			sourceTree = "<group>";
+		};
 		1498C57F2096407E0009CF61 = {
 			isa = PBXGroup;
 			children = (
@@ -81,11 +95,11 @@
 		1498C5AC209640CE0009CF61 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				146681AB250A855300DC2048 /* Model Subclasses */,
 				1498C592209640C90009CF61 /* Command.swift */,
 				1498C596209640C90009CF61 /* Common.swift */,
 				1498C598209640CA0009CF61 /* Create.swift */,
 				1498C59D209640CA0009CF61 /* CreateModel.swift */,
-				1498C59E209640CA0009CF61 /* CreateModelSubclassesCommand.swift */,
 				1498C595209640C90009CF61 /* CreateModelTemplateCommand.swift */,
 				1498C59A209640CA0009CF61 /* CreateProject.swift */,
 				1498C593209640C90009CF61 /* CreateProjectTemplateCommand.swift */,
@@ -178,10 +192,12 @@
 				1498C5A6209640CA0009CF61 /* DeployCommand.swift in Sources */,
 				1498C5A8209640CA0009CF61 /* Deploy.swift in Sources */,
 				1498C5AA209640CA0009CF61 /* CreateModel.swift in Sources */,
+				146681AD250A85A300DC2048 /* SwiftModelOutput.swift in Sources */,
 				1498C5A2209640CA0009CF61 /* CreateModelTemplateCommand.swift in Sources */,
 				1498C5AB209640CA0009CF61 /* CreateModelSubclassesCommand.swift in Sources */,
 				1498C5A3209640CA0009CF61 /* Common.swift in Sources */,
 				1498C5A4209640CA0009CF61 /* Options.swift in Sources */,
+				146681AF250A85BD00DC2048 /* JavascriptModelOutput.swift in Sources */,
 				1498C5A9209640CA0009CF61 /* Model.swift in Sources */,
 				1498C5A5209640CA0009CF61 /* Create.swift in Sources */,
 				1498C5A1209640CA0009CF61 /* main.swift in Sources */,

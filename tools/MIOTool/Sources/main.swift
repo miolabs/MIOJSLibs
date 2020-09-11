@@ -9,8 +9,8 @@
 import Foundation
 
 if (ArgsCount() == 1) {
-    
-    print("Not enough params!");
+    print("MIOTool v1.0\n");
+    print("Not enough params!\n");
 }
 
 var cmd:Command? = nil;
