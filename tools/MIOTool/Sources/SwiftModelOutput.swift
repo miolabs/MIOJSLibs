@@ -81,10 +81,10 @@ class SwiftModelOutput : ModelOutputDelegate
     func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
         fileContent += "    // Relationship: \(name)\n";
-        fileContent += "    public var \(name):NSSet? { get { value(forKey: \"\(name)\") as! String } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+        fileContent += "    public var \(name):NSSet? { get { value(forKey: \"\(name)\") as! NSSet } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         
         if (toMany == "NO") {
-            fileContent += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as! String } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+            fileContent += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as\(optional ? "?" : "!")  \(destinationEntity) } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         }
         else {
             let first = String(name.prefix(1));
