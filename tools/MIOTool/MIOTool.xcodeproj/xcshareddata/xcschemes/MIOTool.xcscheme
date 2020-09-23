@@ -64,11 +64,15 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+<<<<<<< HEAD
             argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Apps/DLWebManager/model/datamodel.xml"
+=======
+            argument = "/Users/david/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents"
+>>>>>>> fa355349a07a984d21678964e06399d535edd979
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
