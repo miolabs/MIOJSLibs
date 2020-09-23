@@ -357,10 +357,10 @@ export class MIOManagedObject extends MIOObject {
     //
 
 
-    _addObjectForKey(object, key:string){        
+    _addObjectForKey(object, key:string){
         let set:MIOManagedObjectSet = this.valueForKey(key);
         if (set == null) {
-            let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];            
+            let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
             set = MIOManagedObjectSet._setWithManagedObject(this, rel);
         }        
         set.addObject(object);

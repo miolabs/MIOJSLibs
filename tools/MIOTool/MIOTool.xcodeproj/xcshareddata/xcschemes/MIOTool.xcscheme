@@ -65,11 +65,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Apps/DLWebManager/model/datamodel.xml"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-swift"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

@@ -165,6 +165,8 @@ class JavascriptModelOutput : ModelOutputDelegate
         
         modelContent += "\n\t MIOCoreRegisterClassByName('" + self.currentClassName + "_ManagedObject', " + self.currentClassName + "_ManagedObject);";
         modelContent += "\n\t MIOCoreRegisterClassByName('" + self.currentClassName + "', " + self.currentClassName + ");";
+        
+        print("Entity: \(self.currentClassName)")
     }
     
     func writeModelFile()
