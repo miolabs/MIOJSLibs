@@ -159,15 +159,15 @@ class SwiftModelOutput : ModelOutputDelegate
             WriteTextFile(content: content, path: fp)
         }
         
-        modelContent += "\n\_MIOCoreRegisterClass(type: " + self.currentClassName + ".self', forKey: \"" + self.currentClassName + "\")"
+        modelContent += "\n\t_MIOCoreRegisterClass(type: " + self.currentClassName + ".self, forKey: \"" + self.currentClassName + "\")"
     }
     
     func writeModelFile()
     {
         let modelPath = ModelPath()
         
-        modelContent += "\n\t}\n"
-        let path = modelPath + "/CoreDataClasses.swift"
+        modelContent += "\n\t}\n}\n"
+        let path = modelPath + "/_CoreDataClasses.swift"
         WriteTextFile(content:modelContent, path:path)
     }
 }
