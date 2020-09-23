@@ -34,10 +34,11 @@ class SwiftModelOutput : ModelOutputDelegate
         currentParentClassName = parentName
         
         fileContent = "\n"
-        fileContent += "// Generated class \(cn) by MIOTool\n";
-        fileContent += "import MIOCoreData"
-        fileContent += "\n\n";
-        fileContent += "extension \(cn)\n{\n";
+        fileContent += "// Generated class \(cn) by MIOTool\n"
+        fileContent += "import Foundation\n"
+        fileContent += "import MIOCoreData\n"
+        fileContent += "\n\n"
+        fileContent += "extension \(cn)\n{\n"
     }
     
     func appendAttribute(name:String, type:String, optional:Bool, defaultValue:String?)
@@ -48,7 +49,7 @@ class SwiftModelOutput : ModelOutputDelegate
             t = "Int"
         
         case "Decimal":
-            t = "Int"
+            t = "Decimal"
             
         case "Integer 16":
             t = "Int16"
@@ -65,6 +66,9 @@ class SwiftModelOutput : ModelOutputDelegate
         case "Boolean":
             t = "Bool"
             
+        case "Transformable":
+            t = "String" // was "NSObject"
+            
         default:
             t = type
         }
@@ -75,35 +79,38 @@ class SwiftModelOutput : ModelOutputDelegate
         // Setter and Getter of property primitive value (raw)
         let first = String(name.prefix(1))
         let cname = first.uppercased() + String(name.dropFirst())
-        primitiveProperties.append("    public var primitive\(cname):\(t) { get { primitiveValue(forKey: \"primitive\(cname)\") as\(optional ? "?" : "!") \(t) } set { setPrimitiveValue(newValue, forKey: \"primitive\(cname)\") } }\n")
+        primitiveProperties.append("    public var primitive\(cname):\(t)\(optional ? "?" : "") { get { primitiveValue(forKey: \"primitive\(cname)\") as\(optional ? "?" : "!") \(t) } set { setPrimitiveValue(newValue, forKey: \"primitive\(cname)\") } }\n")
     }
     
     func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
         fileContent += "    // Relationship: \(name)\n";
-        fileContent += "    public var \(name):NSSet? { get { value(forKey: \"\(name)\") as! NSSet } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+       
         
         if (toMany == "NO") {
             fileContent += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as\(optional ? "?" : "!")  \(destinationEntity) } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         }
         else {
+            fileContent += "    public var \(name):[\(destinationEntity)] { get { value(forKey: \"\(name)\") as! [\(destinationEntity)] } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+            
             let first = String(name.prefix(1));
+            
             let cname = first.uppercased() + String(name.dropFirst());
                        
             var content = "// MARK: Generated accessors for \(name)\n"
             content += "extension \(self.currentClassName)\n"
             content += "{\n"
             content += "    @objc(add\(cname)Object:)\n"
-            content += "    public func addTo\(cname)(_ value: \(destinationEntity))\n"
+            content += "    public func addTo\(cname)(_ value: \(destinationEntity)) { _addObject(value, forKey: \"\(name)\") }\n"
             content += "\n"
             content += "    @objc(remove\(cname)Object:)\n"
-            content += "    public func removeFrom\(cname)(_ value: \(destinationEntity))\n"
+            content += "    public func removeFrom\(cname)(_ value: \(destinationEntity)) { _removeObject(value, forKey: \"\(name)\") }\n"
             content += "\n"
             content += "    @objc(add\(cname):)\n"
-            content += "    public func addTo\(cname)(_ values: NSSet)\n"
+            content += "    public func addTo\(cname)(_ values: NSSet) {}\n"
             content += "\n"
             content += "    @objc(remove\(cname):)\n"
-            content += "    public func removeFrom\(cname)(_ values: NSSet)\n"
+            content += "    public func removeFrom\(cname)(_ values: NSSet) {}\n"
             content += "}\n"
             
             relationships.append(content)
@@ -139,6 +146,7 @@ class SwiftModelOutput : ModelOutputDelegate
             content += "//\n"
             content += "// Generated class \(self.currentClassName)\n"
             content += "//\n"
+            content += "import Foundation\n"
             content += "import MIOCoreData\n"
             content += "\n"
             content += "@objc(\(self.currentClassName))\n"
