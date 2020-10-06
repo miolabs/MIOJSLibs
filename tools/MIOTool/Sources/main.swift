@@ -9,7 +9,7 @@
 import Foundation
 
 if (ArgsCount() == 1) {
-    print("MIOTool v1.0\n");
+    print("MIOTool v1.2\n");
     print("Not enough params!\n");
 }
 

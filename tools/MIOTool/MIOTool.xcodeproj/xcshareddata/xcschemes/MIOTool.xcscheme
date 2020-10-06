@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1170"
+   LastUpgradeVersion = "1200"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1498C5872096407E0009CF61"
+               BlueprintIdentifier = "143CC321252B74BF001B5BA0"
                BuildableName = "MIOTool"
                BlueprintName = "MIOTool"
                ReferencedContainer = "container:MIOTool.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1498C5872096407E0009CF61"
+            BlueprintIdentifier = "143CC321252B74BF001B5BA0"
             BuildableName = "MIOTool"
             BlueprintName = "MIOTool"
             ReferencedContainer = "container:MIOTool.xcodeproj">
@@ -64,20 +64,20 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-<<<<<<< HEAD
-            argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/godshadow/Projects/Apps/DLWebManager/model/datamodel.xml"
-=======
-            argument = "/Users/david/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents"
->>>>>>> fa355349a07a984d21678964e06399d535edd979
+            argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents "
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-swift"
-            isEnabled = "NO">
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--entity"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "TimeRange"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
@@ -91,7 +91,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1498C5872096407E0009CF61"
+            BlueprintIdentifier = "143CC321252B74BF001B5BA0"
             BuildableName = "MIOTool"
             BlueprintName = "MIOTool"
             ReferencedContainer = "container:MIOTool.xcodeproj">
