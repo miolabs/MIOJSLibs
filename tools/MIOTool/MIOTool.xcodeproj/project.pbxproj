@@ -7,39 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		143CC32B252B74F0001B5BA0 /* CreateModelSubclassesCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C59E209640CA0009CF61 /* CreateModelSubclassesCommand.swift */; };
-		143CC32C252B74F0001B5BA0 /* SwiftModelOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146681AC250A85A300DC2048 /* SwiftModelOutput.swift */; };
-		143CC32D252B74F0001B5BA0 /* JavascriptModelOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146681AE250A85BD00DC2048 /* JavascriptModelOutput.swift */; };
-		143CC32E252B74F0001B5BA0 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C592209640C90009CF61 /* Command.swift */; };
-		143CC32F252B74F0001B5BA0 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C596209640C90009CF61 /* Common.swift */; };
-		143CC330252B74F0001B5BA0 /* Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C598209640CA0009CF61 /* Create.swift */; };
-		143CC331252B74F0001B5BA0 /* CreateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C59D209640CA0009CF61 /* CreateModel.swift */; };
-		143CC332252B74F0001B5BA0 /* CreateModelTemplateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C595209640C90009CF61 /* CreateModelTemplateCommand.swift */; };
-		143CC333252B74F0001B5BA0 /* CreateProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C59A209640CA0009CF61 /* CreateProject.swift */; };
-		143CC334252B74F0001B5BA0 /* CreateProjectTemplateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C593209640C90009CF61 /* CreateProjectTemplateCommand.swift */; };
-		143CC335252B74F0001B5BA0 /* Deploy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C59B209640CA0009CF61 /* Deploy.swift */; };
-		143CC336252B74F0001B5BA0 /* DeployCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C599209640CA0009CF61 /* DeployCommand.swift */; };
-		143CC337252B74F0001B5BA0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C594209640C90009CF61 /* main.swift */; };
-		143CC338252B74F0001B5BA0 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C59C209640CA0009CF61 /* Model.swift */; };
-		143CC339252B74F0001B5BA0 /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1498C597209640CA0009CF61 /* Options.swift */; };
+		1457DCCD252C69400046DDAC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1457DCCC252C69400046DDAC /* main.swift */; };
+		1457DCD5252C69850046DDAC /* JavascriptModelOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1457DCD4252C69850046DDAC /* JavascriptModelOutput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		143CC320252B74BF001B5BA0 /* CopyFiles */ = {
+		1457DCC8252C69400046DDAC /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = /usr/share/man/man1;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		143CC322252B74BF001B5BA0 /* MIOTool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MIOTool; sourceTree = BUILT_PRODUCTS_DIR; };
+		1457DCCA252C69400046DDAC /* MIOTool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MIOTool; sourceTree = BUILT_PRODUCTS_DIR; };
+		1457DCCC252C69400046DDAC /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		1457DCD4252C69850046DDAC /* JavascriptModelOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JavascriptModelOutput.swift; path = Sources/JavascriptModelOutput.swift; sourceTree = "<group>"; };
 		146681AC250A85A300DC2048 /* SwiftModelOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwiftModelOutput.swift; path = Sources/SwiftModelOutput.swift; sourceTree = "<group>"; };
-		146681AE250A85BD00DC2048 /* JavascriptModelOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavascriptModelOutput.swift; sourceTree = "<group>"; };
 		1498C592209640C90009CF61 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Command.swift; path = Sources/Command.swift; sourceTree = "<group>"; };
 		1498C593209640C90009CF61 /* CreateProjectTemplateCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CreateProjectTemplateCommand.swift; path = Sources/CreateProjectTemplateCommand.swift; sourceTree = "<group>"; };
 		1498C594209640C90009CF61 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Sources/main.swift; sourceTree = "<group>"; };
@@ -56,7 +44,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		143CC31F252B74BF001B5BA0 /* Frameworks */ = {
+		1457DCC7252C69400046DDAC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -66,12 +54,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1457DCCB252C69400046DDAC /* MIOTool */ = {
+			isa = PBXGroup;
+			children = (
+				1457DCCC252C69400046DDAC /* main.swift */,
+			);
+			path = MIOTool;
+			sourceTree = "<group>";
+		};
 		146681AB250A855300DC2048 /* Model Subclasses */ = {
 			isa = PBXGroup;
 			children = (
+				1457DCD4252C69850046DDAC /* JavascriptModelOutput.swift */,
 				1498C59E209640CA0009CF61 /* CreateModelSubclassesCommand.swift */,
 				146681AC250A85A300DC2048 /* SwiftModelOutput.swift */,
-				146681AE250A85BD00DC2048 /* JavascriptModelOutput.swift */,
 			);
 			name = "Model Subclasses";
 			sourceTree = "<group>";
@@ -80,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				1498C5AC209640CE0009CF61 /* Sources */,
+				1457DCCB252C69400046DDAC /* MIOTool */,
 				1498C5892096407E0009CF61 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,7 +84,7 @@
 		1498C5892096407E0009CF61 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				143CC322252B74BF001B5BA0 /* MIOTool */,
+				1457DCCA252C69400046DDAC /* MIOTool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,14 +112,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		143CC321252B74BF001B5BA0 /* MIOTool */ = {
+		1457DCC9252C69400046DDAC /* MIOTool */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 143CC326252B74BF001B5BA0 /* Build configuration list for PBXNativeTarget "MIOTool" */;
+			buildConfigurationList = 1457DCCE252C69400046DDAC /* Build configuration list for PBXNativeTarget "MIOTool" */;
 			buildPhases = (
-				143CC31E252B74BF001B5BA0 /* Sources */,
-				143CC31F252B74BF001B5BA0 /* Frameworks */,
-				143CC320252B74BF001B5BA0 /* CopyFiles */,
-				143CC33E252B7913001B5BA0 /* ShellScript */,
+				1457DCC6252C69400046DDAC /* Sources */,
+				1457DCC7252C69400046DDAC /* Frameworks */,
+				1457DCC8252C69400046DDAC /* CopyFiles */,
+				1457DCD2252C69550046DDAC /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -130,7 +127,7 @@
 			);
 			name = MIOTool;
 			productName = MIOTool;
-			productReference = 143CC322252B74BF001B5BA0 /* MIOTool */;
+			productReference = 1457DCCA252C69400046DDAC /* MIOTool */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -143,7 +140,7 @@
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "MIO Research Labs";
 				TargetAttributes = {
-					143CC321252B74BF001B5BA0 = {
+					1457DCC9252C69400046DDAC = {
 						CreatedOnToolsVersion = 12.0.1;
 					};
 				};
@@ -160,13 +157,13 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				143CC321252B74BF001B5BA0 /* MIOTool */,
+				1457DCC9252C69400046DDAC /* MIOTool */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		143CC33E252B7913001B5BA0 /* ShellScript */ = {
+		1457DCD2252C69550046DDAC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -186,32 +183,19 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		143CC31E252B74BF001B5BA0 /* Sources */ = {
+		1457DCC6252C69400046DDAC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				143CC32B252B74F0001B5BA0 /* CreateModelSubclassesCommand.swift in Sources */,
-				143CC32C252B74F0001B5BA0 /* SwiftModelOutput.swift in Sources */,
-				143CC32D252B74F0001B5BA0 /* JavascriptModelOutput.swift in Sources */,
-				143CC32E252B74F0001B5BA0 /* Command.swift in Sources */,
-				143CC32F252B74F0001B5BA0 /* Common.swift in Sources */,
-				143CC330252B74F0001B5BA0 /* Create.swift in Sources */,
-				143CC331252B74F0001B5BA0 /* CreateModel.swift in Sources */,
-				143CC332252B74F0001B5BA0 /* CreateModelTemplateCommand.swift in Sources */,
-				143CC333252B74F0001B5BA0 /* CreateProject.swift in Sources */,
-				143CC334252B74F0001B5BA0 /* CreateProjectTemplateCommand.swift in Sources */,
-				143CC335252B74F0001B5BA0 /* Deploy.swift in Sources */,
-				143CC336252B74F0001B5BA0 /* DeployCommand.swift in Sources */,
-				143CC337252B74F0001B5BA0 /* main.swift in Sources */,
-				143CC338252B74F0001B5BA0 /* Model.swift in Sources */,
-				143CC339252B74F0001B5BA0 /* Options.swift in Sources */,
+				1457DCCD252C69400046DDAC /* main.swift in Sources */,
+				1457DCD5252C69850046DDAC /* JavascriptModelOutput.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		143CC327252B74BF001B5BA0 /* Debug */ = {
+		1457DCCF252C69400046DDAC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -227,7 +211,7 @@
 			};
 			name = Debug;
 		};
-		143CC328252B74BF001B5BA0 /* Release */ = {
+		1457DCD0252C69400046DDAC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -354,11 +338,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		143CC326252B74BF001B5BA0 /* Build configuration list for PBXNativeTarget "MIOTool" */ = {
+		1457DCCE252C69400046DDAC /* Build configuration list for PBXNativeTarget "MIOTool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				143CC327252B74BF001B5BA0 /* Debug */,
-				143CC328252B74BF001B5BA0 /* Release */,
+				1457DCCF252C69400046DDAC /* Debug */,
+				1457DCD0252C69400046DDAC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

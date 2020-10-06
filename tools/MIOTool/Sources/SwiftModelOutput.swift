@@ -233,6 +233,7 @@ class SwiftModelOutput : ModelOutputDelegate
         
         modelContent += "\n\t}\n}\n"
         modelContent += "#endif\n"
+        
         let path = modelPath + "/_CoreDataClasses.swift"
         WriteTextFile(content:modelContent, path:path)
     }
