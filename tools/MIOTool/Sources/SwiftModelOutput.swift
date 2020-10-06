@@ -113,7 +113,7 @@ class SwiftModelOutput : ModelOutputDelegate
     
     func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
-        fileContent2 += "    // Relationship: \(name)\n";
+        fileContent2 += "    // Relationship: \(name)\n"
        
         
         if (toMany == "NO") {
@@ -121,12 +121,12 @@ class SwiftModelOutput : ModelOutputDelegate
             fileContent2 += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as\(optional ? "?" : "!")  \(destinationEntity) } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         }
         else {
-            fileContent += "    @NSManaged public var \(name):[\(destinationEntity)]\n"
-            fileContent2 += "    public var \(name):[\(destinationEntity)] { get { value(forKey: \"\(name)\") as! [\(destinationEntity)] } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+            fileContent += "    @NSManaged public var \(name):NSSet?\n"
+            fileContent2 += "    public var \(name):NSSet? { get { value(forKey: \"\(name)\") as? NSSet } set { setValue(newValue, forKey: \"\(name)\") }}\n"
             
-            let first = String(name.prefix(1));
+            let first = String(name.prefix(1))
             
-            let cname = first.uppercased() + String(name.dropFirst());
+            let cname = first.uppercased() + String(name.dropFirst())
                        
             var content = "// MARK: Generated accessors for \(name)\n"
             content += "extension \(self.currentClassName)\n"
