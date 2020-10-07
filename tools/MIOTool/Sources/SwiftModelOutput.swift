@@ -121,8 +121,8 @@ class SwiftModelOutput : ModelOutputDelegate
             fileContent2 += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as\(optional ? "?" : "!")  \(destinationEntity) } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         }
         else {
-            fileContent += "    @NSManaged public var \(name):NSSet?\n"
-            fileContent2 += "    public var \(name):NSSet? { get { value(forKey: \"\(name)\") as? NSSet } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+            fileContent += "    @NSManaged public var \(name):Set<\(destinationEntity)>\n"
+            fileContent2 += "    public var \(name):Set<\(destinationEntity)> { get { value(forKey: \"\(name)\") as! Set<\(destinationEntity)> } set { setValue(newValue, forKey: \"\(name)\") }}\n"
             
             let first = String(name.prefix(1))
             
@@ -138,10 +138,10 @@ class SwiftModelOutput : ModelOutputDelegate
             content += "    @NSManaged public func removeFrom\(cname)(_ value: \(destinationEntity))\n"
             content += "\n"
             content += "    @objc(add\(cname):)\n"
-            content += "    @NSManaged public func addTo\(cname)(_ values: NSSet)\n"
+            content += "    @NSManaged public func addTo\(cname)(_ values: Set<\(destinationEntity)>)\n"
             content += "\n"
             content += "    @objc(remove\(cname):)\n"
-            content += "    @NSManaged public func removeFrom\(cname)(_ values: NSSet)\n"
+            content += "    @NSManaged public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>)\n"
             content += "}\n"
             
             relationships.append(content)
@@ -156,10 +156,10 @@ class SwiftModelOutput : ModelOutputDelegate
             content2 += "    public func removeFrom\(cname)(_ value: \(destinationEntity)) { _removeObject(value, forKey: \"\(name)\") }\n"
             content2 += "\n"
             content2 += "    @objc(add\(cname):)\n"
-            content2 += "    public func addTo\(cname)(_ values: NSSet) {}\n"
+            content2 += "    public func addTo\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "\n"
             content2 += "    @objc(remove\(cname):)\n"
-            content2 += "    public func removeFrom\(cname)(_ values: NSSet) {}\n"
+            content2 += "    public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "}\n"
             
             relationships2.append(content)
