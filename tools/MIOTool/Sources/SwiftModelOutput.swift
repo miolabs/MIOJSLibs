@@ -162,7 +162,7 @@ class SwiftModelOutput : ModelOutputDelegate
             content2 += "    public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "}\n"
             
-            relationships2.append(content)
+            relationships2.append(content2)
         }
     }
     
