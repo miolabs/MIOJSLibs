@@ -113,7 +113,7 @@ class SwiftModelOutput : ModelOutputDelegate
     
     func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
-        fileContent2 += "    // Relationship: \(name)\n";
+        fileContent2 += "    // Relationship: \(name)\n"
        
         
         if (toMany == "NO") {
@@ -121,12 +121,12 @@ class SwiftModelOutput : ModelOutputDelegate
             fileContent2 += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as\(optional ? "?" : "!")  \(destinationEntity) } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         }
         else {
-            fileContent += "    @NSManaged public var \(name):[\(destinationEntity)]\n"
-            fileContent2 += "    public var \(name):[\(destinationEntity)] { get { value(forKey: \"\(name)\") as! [\(destinationEntity)] } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+            fileContent += "    @NSManaged public var \(name):Set<\(destinationEntity)>\n"
+            fileContent2 += "    public var \(name):Set<\(destinationEntity)> { get { value(forKey: \"\(name)\") as! Set<\(destinationEntity)> } set { setValue(newValue, forKey: \"\(name)\") }}\n"
             
-            let first = String(name.prefix(1));
+            let first = String(name.prefix(1))
             
-            let cname = first.uppercased() + String(name.dropFirst());
+            let cname = first.uppercased() + String(name.dropFirst())
                        
             var content = "// MARK: Generated accessors for \(name)\n"
             content += "extension \(self.currentClassName)\n"
@@ -138,10 +138,10 @@ class SwiftModelOutput : ModelOutputDelegate
             content += "    @NSManaged public func removeFrom\(cname)(_ value: \(destinationEntity))\n"
             content += "\n"
             content += "    @objc(add\(cname):)\n"
-            content += "    @NSManaged public func addTo\(cname)(_ values: NSSet)\n"
+            content += "    @NSManaged public func addTo\(cname)(_ values: Set<\(destinationEntity)>)\n"
             content += "\n"
             content += "    @objc(remove\(cname):)\n"
-            content += "    @NSManaged public func removeFrom\(cname)(_ values: NSSet)\n"
+            content += "    @NSManaged public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>)\n"
             content += "}\n"
             
             relationships.append(content)
@@ -156,13 +156,13 @@ class SwiftModelOutput : ModelOutputDelegate
             content2 += "    public func removeFrom\(cname)(_ value: \(destinationEntity)) { _removeObject(value, forKey: \"\(name)\") }\n"
             content2 += "\n"
             content2 += "    @objc(add\(cname):)\n"
-            content2 += "    public func addTo\(cname)(_ values: NSSet) {}\n"
+            content2 += "    public func addTo\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "\n"
             content2 += "    @objc(remove\(cname):)\n"
-            content2 += "    public func removeFrom\(cname)(_ values: NSSet) {}\n"
+            content2 += "    public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "}\n"
             
-            relationships2.append(content)
+            relationships2.append(content2)
         }
     }
     
