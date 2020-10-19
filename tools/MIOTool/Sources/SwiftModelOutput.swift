@@ -24,9 +24,9 @@ class SwiftModelOutput : ModelOutputDelegate
     var relationships:[String] = []
     var relationships2:[String] = []
     
-    var modelContent:String = "#if os(macOS) || os(Linux)\nimport Foundation\nimport MIOCore\n\nextension DLDB\n{\n\tfunc registerRuntimeObjects(){\n"
+    var modelContent:String = "#if !APPLE_CORE_DATA\nimport Foundation\nimport MIOCore\n\nextension DLDB\n{\n\tfunc registerRuntimeObjects(){\n"
     
-    func openModelEntity(filename:String, classname:String, parentName:String?)
+    func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     {
         self.filename = "/\(filename)+CoreDataProperties.swift"
         self.filename2 = "/\(filename)+MIOCoreDataProperties.swift"
@@ -41,7 +41,7 @@ class SwiftModelOutput : ModelOutputDelegate
         currentParentClassName = parentName
         
         fileContent = "\n"
-        fileContent = "#if os(iOS) || os(tvOS) || os(watchOS)\n"
+        fileContent = "#if APPLE_CORE_DATA\n"
         fileContent += "// Generated class \(cn) by MIOTool\n"
         fileContent += "import Foundation\n"
         fileContent += "import CoreData\n"
@@ -49,7 +49,7 @@ class SwiftModelOutput : ModelOutputDelegate
         fileContent += "extension \(cn)\n{\n"
         
         fileContent2 = "\n"
-        fileContent2 = "#if os(macOS) || os(Linux)\n"
+        fileContent2 = "#if !APPLE_CORE_DATA\n"
         fileContent2 += "// Generated class \(cn) by MIOTool\n"
         fileContent2 += "import Foundation\n"
         fileContent2 += "import MIOCoreData\n"
@@ -58,7 +58,7 @@ class SwiftModelOutput : ModelOutputDelegate
 
     }
     
-    func appendAttribute(name:String, type:String, optional:Bool, defaultValue:String?)
+    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?)
     {
         let t:String
         let cast_t:String
@@ -111,7 +111,7 @@ class SwiftModelOutput : ModelOutputDelegate
         primitiveProperties.append("    public var primitive\(cname):\(t) { get { primitiveValue(forKey: \"primitive\(cname)\") \(cast_t) } set { setPrimitiveValue(newValue, forKey: \"primitive\(cname)\") } }\n")
     }
     
-    func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
+    func appendRelationship(command:CreateModelSubClassesCommand, name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
         fileContent2 += "    // Relationship: \(name)\n"
        
@@ -121,8 +121,8 @@ class SwiftModelOutput : ModelOutputDelegate
             fileContent2 += "    public var \(name):\(destinationEntity)\(optional ? "?" : "") { get { value(forKey: \"\(name)\") as\(optional ? "?" : "!")  \(destinationEntity) } set { setValue(newValue, forKey: \"\(name)\") }}\n"
         }
         else {
-            fileContent += "    @NSManaged public var \(name):Set<\(destinationEntity)>\n"
-            fileContent2 += "    public var \(name):Set<\(destinationEntity)> { get { value(forKey: \"\(name)\") as! Set<\(destinationEntity)> } set { setValue(newValue, forKey: \"\(name)\") }}\n"
+            fileContent += "    @NSManaged public var \(name):Set<\(destinationEntity)>?\n"
+            fileContent2 += "    public var \(name):Set<\(destinationEntity)>? { get { value(forKey: \"\(name)\") as? Set<\(destinationEntity)> } set { setValue(newValue, forKey: \"\(name)\") }}\n"
             
             let first = String(name.prefix(1))
             
@@ -132,16 +132,20 @@ class SwiftModelOutput : ModelOutputDelegate
             content += "extension \(self.currentClassName)\n"
             content += "{\n"
             content += "    @objc(add\(cname)Object:)\n"
-            content += "    @NSManaged public func addTo\(cname)(_ value: \(destinationEntity))\n"
+            //content += "    @NSManaged public func addTo\(cname)(_ value: \(destinationEntity))\n"
+            content += "    @NSManaged public func add\(cname)Object(_ value: \(destinationEntity))\n"
             content += "\n"
             content += "    @objc(remove\(cname)Object:)\n"
-            content += "    @NSManaged public func removeFrom\(cname)(_ value: \(destinationEntity))\n"
+            //content += "    @NSManaged public func removeFrom\(cname)(_ value: \(destinationEntity))\n"
+            content += "    @NSManaged public func remove\(cname)Object(_ value: \(destinationEntity))\n"
             content += "\n"
             content += "    @objc(add\(cname):)\n"
-            content += "    @NSManaged public func addTo\(cname)(_ values: Set<\(destinationEntity)>)\n"
+            //content += "    @NSManaged public func addTo\(cname)(_ values: NSSet)\n"
+            content += "    @NSManaged public func add\(cname)(_ values: Set<\(destinationEntity)>)\n"
             content += "\n"
             content += "    @objc(remove\(cname):)\n"
-            content += "    @NSManaged public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>)\n"
+            //content += "    @NSManaged public func removeFrom\(cname)(_ values: NSSet)\n"
+            content += "    @NSManaged public func remove\(cname)(_ values: Set<\(destinationEntity)>)\n"
             content += "}\n"
             
             relationships.append(content)
@@ -150,23 +154,27 @@ class SwiftModelOutput : ModelOutputDelegate
             content2 += "extension \(self.currentClassName)\n"
             content2 += "{\n"
             content2 += "    @objc(add\(cname)Object:)\n"
-            content2 += "    public func addTo\(cname)(_ value: \(destinationEntity)) { _addObject(value, forKey: \"\(name)\") }\n"
+            //content2 += "    public func addTo\(cname)(_ value: \(destinationEntity)) { _addObject(value, forKey: \"\(name)\") }\n"
+            content2 += "    public func add\(cname)Object(_ value: \(destinationEntity)) { _addObject(value, forKey: \"\(name)\") }\n"
             content2 += "\n"
             content2 += "    @objc(remove\(cname)Object:)\n"
-            content2 += "    public func removeFrom\(cname)(_ value: \(destinationEntity)) { _removeObject(value, forKey: \"\(name)\") }\n"
+            //content2 += "    public func removeFrom\(cname)(_ value: \(destinationEntity)) { _removeObject(value, forKey: \"\(name)\") }\n"
+            content2 += "    public func remove\(cname)Object(_ value: \(destinationEntity)) { _removeObject(value, forKey: \"\(name)\") }\n"
             content2 += "\n"
             content2 += "    @objc(add\(cname):)\n"
-            content2 += "    public func addTo\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
+            //content2 += "    public func addTo\(cname)(_ values: NSSet) {}\n"
+            content2 += "    public func add\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "\n"
             content2 += "    @objc(remove\(cname):)\n"
-            content2 += "    public func removeFrom\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
+            //content2 += "    public func removeFrom\(cname)(_ values: NSSet) {}\n"
+            content2 += "    public func remove\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
             content2 += "}\n"
             
             relationships2.append(content2)
         }
     }
     
-    func closeModelEntity()
+    func closeModelEntity(command:CreateModelSubClassesCommand)
     {
         fileContent += "}\n"
         fileContent2 += "}\n"
@@ -190,7 +198,7 @@ class SwiftModelOutput : ModelOutputDelegate
         fileContent2 += "}\n"
                 
         fileContent += "#endif\n"
-        let modelPath = ModelPath()
+        let modelPath = command.modelPath
         let path = modelPath + filename
         //Write to disc
         WriteTextFile(content:fileContent, path:path)
@@ -227,9 +235,9 @@ class SwiftModelOutput : ModelOutputDelegate
         modelContent += "\n\t\t_MIOCoreRegisterClass(type: " + self.currentClassName + ".self, forKey: \"" + self.currentClassName + "\")"
     }
     
-    func writeModelFile()
+    func writeModelFile(command:CreateModelSubClassesCommand)
     {
-        let modelPath = ModelPath()
+        let modelPath = command.modelPath
         
         modelContent += "\n\t}\n}\n"
         modelContent += "#endif\n"

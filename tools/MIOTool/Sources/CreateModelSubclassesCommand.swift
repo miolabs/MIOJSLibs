@@ -17,14 +17,16 @@ enum ModelSubClassType
 
 protocol ModelOutputDelegate
 {
-    func openModelEntity(filename:String, classname:String, parentName:String?)
-    func closeModelEntity()
-    func appendAttribute(name:String, type:String, optional:Bool, defaultValue:String?)
-    func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
-    func writeModelFile()
+    func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
+    func closeModelEntity(command:CreateModelSubClassesCommand)
+    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?)
+    func appendRelationship(command:CreateModelSubClassesCommand, name:String, destinationEntity:String, toMany:String, optional:Bool)
+    func writeModelFile(command:CreateModelSubClassesCommand)
 }
 
 func CreateModelSubClasses() -> Command? {
+    
+    let path:String = NextArg() ?? CurrentPath()
     
     var fileName:String? = NextArg()
     
@@ -52,11 +54,12 @@ func CreateModelSubClasses() -> Command? {
         options = NextArg()
     }
         
-    return CreateModelSubClassesCommand(withFilename: fileName!, type: type, entity:entity)
+    return CreateModelSubClassesCommand(withFilename: fileName!, path: path, type: type, entity:entity)
 }
 
 class CreateModelSubClassesCommand : Command, XMLParserDelegate {
-        
+    
+    public var modelPath:String
     var modelFilePath:String
     var modelType:ModelSubClassType
     
@@ -65,10 +68,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     var customEntity:String?
     var customEntityFound = false
                 
-    init(withFilename filename:String, type:ModelSubClassType, entity:String?) {
+    init(withFilename filename:String, path:String, type:ModelSubClassType, entity:String?) {
         
         self.customEntity = entity
         
+        self.modelPath = path
         self.modelFilePath = filename
         self.modelType = type
         
@@ -84,7 +88,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     
     override func execute() {
                 
-        let parser = XMLParser(contentsOf:URL.init(fileURLWithPath:modelFilePath))
+        let parser = XMLParser(contentsOf:URL.init(fileURLWithPath:modelPath + "/" + modelFilePath))
         if (parser != nil) {
             parser!.delegate = self;
             parser!.parse();
@@ -102,11 +106,11 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             if customEntity != nil {
                 if customEntity! != classname { return }
                 customEntityFound = true
-                outputDelegate?.openModelEntity(filename:filename!, classname:classname!, parentName:parentName)
+                outputDelegate?.openModelEntity(command:self, filename:filename!, classname:classname!, parentName:parentName)
             }
             else {
                 customEntityFound = true
-                outputDelegate?.openModelEntity(filename:filename!, classname:classname!, parentName:parentName)
+                outputDelegate?.openModelEntity(command:self, filename:filename!, classname:classname!, parentName:parentName)
             }
         }
         else if (elementName == "attribute") {
@@ -118,7 +122,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             let optional = attributeDict["optional"] ?? "NO";
             let defaultValue = attributeDict["defaultValueString"];
             
-            outputDelegate?.appendAttribute(name:name!, type:type!, optional:(optional == "YES"), defaultValue: defaultValue)
+            outputDelegate?.appendAttribute(command:self, name:name!, type:type!, optional:(optional == "YES"), defaultValue: defaultValue)
         }
         else if (elementName == "relationship") {
             
@@ -129,7 +133,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             let destinationEntity = attributeDict["destinationEntity"];
             let toMany = attributeDict["toMany"] ?? "NO"
             
-            outputDelegate?.appendRelationship(name:name!, destinationEntity:destinationEntity!, toMany:toMany, optional:(optional == "YES"))
+            outputDelegate?.appendRelationship(command:self, name:name!, destinationEntity:destinationEntity!, toMany:toMany, optional:(optional == "YES"))
         }
     }
     
@@ -138,7 +142,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         if (elementName == "entity") {
             if customEntityFound == false { return }
             customEntityFound = false
-            outputDelegate?.closeModelEntity()
+            outputDelegate?.closeModelEntity(command:self)
         }
     }
     
@@ -151,7 +155,7 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     }
     
     func parserDidEndDocument(_ parser: XMLParser) {
-        if customEntity == nil { outputDelegate?.writeModelFile() }
+        if customEntity == nil { outputDelegate?.writeModelFile(command:self) }
     }
     
 }

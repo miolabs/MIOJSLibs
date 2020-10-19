@@ -19,7 +19,7 @@ class JavascriptModelOutput : ModelOutputDelegate
     
     var modelContent:String = "\nfunction DMRegisterModelClasses()\n{"
     
-    func openModelEntity(filename:String, classname:String, parentName:String?)
+    func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     {
         self.filename = "/\(filename)_ManagedObject.ts";
         let cn = classname + "_ManagedObject";
@@ -40,7 +40,7 @@ class JavascriptModelOutput : ModelOutputDelegate
         fileContent += "class \(cn) extends \(parentObject)\n{\n";
     }
     
-    func appendAttribute(name:String, type:String, optional:Bool, defaultValue:String?)
+    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?)
     {
         var t = ":"
         
@@ -98,7 +98,7 @@ class JavascriptModelOutput : ModelOutputDelegate
         fileContent += "    }\n";
     }
     
-    func appendRelationship(name:String, destinationEntity:String, toMany:String, optional:Bool)
+    func appendRelationship(command:CreateModelSubClassesCommand, name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
         if (toMany == "NO") {
             fileContent += "    // Relationship: \(name)\n";
@@ -139,7 +139,7 @@ class JavascriptModelOutput : ModelOutputDelegate
         }
     }
     
-    func closeModelEntity()
+    func closeModelEntity(command:CreateModelSubClassesCommand)
     {
         fileContent += "}\n";
         
@@ -169,7 +169,7 @@ class JavascriptModelOutput : ModelOutputDelegate
         print("Entity: \(self.currentClassName)")
     }
     
-    func writeModelFile()
+    func writeModelFile(command:CreateModelSubClassesCommand)
     {
         let modelPath = ModelPath()
         

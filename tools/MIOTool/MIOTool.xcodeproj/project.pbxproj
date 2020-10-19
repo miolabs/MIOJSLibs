@@ -69,8 +69,8 @@
 		146681AB250A855300DC2048 /* Model Subclasses */ = {
 			isa = PBXGroup;
 			children = (
-				1457DCD4252C69850046DDAC /* JavascriptModelOutput.swift */,
 				1498C59E209640CA0009CF61 /* CreateModelSubclassesCommand.swift */,
+				1457DCD4252C69850046DDAC /* JavascriptModelOutput.swift */,
 				146681AC250A85A300DC2048 /* SwiftModelOutput.swift */,
 			);
 			name = "Model Subclasses";
