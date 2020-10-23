@@ -217,7 +217,7 @@ class SwiftModelOutput : ModelOutputDelegate
             content += "// Generated class \(self.currentClassName)\n"
             content += "//\n"
             content += "import Foundation\n"
-            content += "#if os(macOS) || os(Linux)n"
+            content += "#if os(macOS) || os(Linux)\n"
             content += "import MIOCoreData\n"
             content += "#else\n"
             content += "#import CoreData\n"
