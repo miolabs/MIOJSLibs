@@ -1,35 +1,34 @@
 //For code completion the interface is defined in types/mio/index.d.ts
 
-
-Array.prototype.addObject = function(object){
+Array.prototype.addObject = function(object:any){
     this.push(object);
 }
 
-Array.prototype.insertObjectAtIndex = function(object, index){
+Array.prototype.insertObjectAtIndex = function(object:any, index:number){
     this.splice(index, 0, object);
 }
 
-Array.prototype.removeObject = function(object){
+Array.prototype.removeObject = function(object:any){
     let index = this.indexOf(object);
     if (index > -1) {
         this.splice(index, 1);
     }
 }
 
-Array.prototype.removeObjectAtIndex = function(index){        
+Array.prototype.removeObjectAtIndex = function(index:number) {        
     this.splice(index, 1);    
 }
 
-Array.prototype.indexOfObject = function(object){
+Array.prototype.indexOfObject = function(object:any): number {
     return this.indexOf(object);
 }
 
-Array.prototype.containsObject = function(object):boolean{
+Array.prototype.containsObject = function(object:any): boolean {
     let index = this.indexOf(object);
     return index > -1 ? true : false;
 }
 
-Array.prototype.objectAtIndex = function(index){        
+Array.prototype.objectAtIndex = function(index:number): any {        
     return this[index];
 }
 

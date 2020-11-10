@@ -58,39 +58,41 @@ class SwiftModelOutput : ModelOutputDelegate
 
     }
     
-    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?)
+    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?, usesScalarValueType:Bool)
     {
         let t:String
         let cast_t:String
         
         switch type {
+        
+        case "Boolean":
+            t = usesScalarValueType ? "NSNumber?" : "Bool"
+            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Bool"
+        
         case "Integer":
-            t = optional ? "NSNumber?" : "Int"
-            cast_t = optional ? "as? NSNumber" : "as! Int"
-                    
-        case "Decimal":
-            t = optional ? "Decimal?" : "Decimal"
-            cast_t = optional ? "as? Decimal" : "as! Decimal"
-            
+            t = usesScalarValueType ? "NSNumber?" : "Int"
+            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int"
+                                
         case "Integer 16":
-            t = optional ? "NSNumber?" : "Int16"
-            cast_t = optional ? "as? NSNumber" : "as! Int16"
+            t = usesScalarValueType ? "NSNumber?" : "Int16"
+            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int16"
             
         case "Integer 8":
-            t = optional ? "NSNumber?" : "Int8"
-            cast_t = optional ? "as? NSNumber" : "as! Int8"
+            t = usesScalarValueType ? "NSNumber?" : "Int8"
+            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int8"
         
         case "Integer 32":
-            t = optional ? "NSNumber?" : "Int32"
-            cast_t = optional ? "as? NSNumber" : "as! Int32"
+            t = usesScalarValueType ? "NSNumber?" : "Int32"
+            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int32"
             
         case "Integer 64":
-            t = optional ? "NSNumber?" : "Int64"
-            cast_t = optional ? "as? NSNumber" : "as! Int64"
-                    
-        case "Boolean":
-            t = optional ? "NSNumber?" : "Bool"
-            cast_t = optional ? "as? NSNumber" : "as! Bool"
+            t = usesScalarValueType ? "NSNumber?" : "Int64"
+            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int64"
+
+        case "Decimal":
+            t = "NSDecimalNumber?"
+            cast_t = "NSDecimalNumber?"
+            
             
         case "Transformable":
             t = "String?" // was "NSObject"

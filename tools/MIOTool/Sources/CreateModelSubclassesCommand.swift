@@ -19,7 +19,7 @@ protocol ModelOutputDelegate
 {
     func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     func closeModelEntity(command:CreateModelSubClassesCommand)
-    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?)
+    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?, usesScalarValueType:Bool)
     func appendRelationship(command:CreateModelSubClassesCommand, name:String, destinationEntity:String, toMany:String, optional:Bool)
     func writeModelFile(command:CreateModelSubClassesCommand)
 }
@@ -117,12 +117,13 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             
             if customEntityFound == false { return }
             
-            let name = attributeDict["name"];
-            let type = attributeDict["attributeType"];
-            let optional = attributeDict["optional"] ?? "NO";
-            let defaultValue = attributeDict["defaultValueString"];
+            let name = attributeDict["name"]
+            let type = attributeDict["attributeType"]
+            let optional = attributeDict["optional"] ?? "NO"
+            let defaultValue = attributeDict["defaultValueString"]
+            let usesScalarValueType = attributeDict["usesScalarValueType"] ?? "YES"
             
-            outputDelegate?.appendAttribute(command:self, name:name!, type:type!, optional:(optional == "YES"), defaultValue: defaultValue)
+            outputDelegate?.appendAttribute(command:self, name:name!, type:type!, optional:(optional == "YES"), defaultValue: defaultValue, usesScalarValueType: (usesScalarValueType == "YES"))
         }
         else if (elementName == "relationship") {
             

@@ -40,7 +40,7 @@ class JavascriptModelOutput : ModelOutputDelegate
         fileContent += "class \(cn) extends \(parentObject)\n{\n";
     }
     
-    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?)
+    func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?, usesScalarValueType:Bool)
     {
         var t = ":"
         

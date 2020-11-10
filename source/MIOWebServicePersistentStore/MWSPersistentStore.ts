@@ -12,6 +12,7 @@ import { MIOEntityDescription } from "../MIOData/MIOEntityDescription";
 import { MIOManagedObjectContext } from "../MIOData/MIOManagedObjectContext";
 import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
 import { MWSRequestType } from "./MWSRequest";
+import { MIOManagedObjectSet } from "../MIOData/MIOManagedObjectSet";
 
 export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
 export let MWSPersistentStoreDidUpdateEntity = "MWSPersistentStoreDidUpdateEntity";
@@ -417,35 +418,89 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         if (context == null) return;
 
+        if (typeof this.delegate.saveRequestForWebStore === "function") {            
+            this.saveObjectsOnServer(request.insertedObjects, request.updatedObjects, request.deletedObjects);
+            return;
+        }
+
         let inserts = request.insertedObjects;
-        for (let entityName in inserts) {
-            let array = inserts[entityName];
-            for (let index = 0; index < array.length; index++) {
-                let obj: MIOManagedObject = array[index];                
-                this.insertObjectToServer(obj);
-            }
+        for (let index = 0; index < inserts.count; index++) {
+            let obj = inserts.objectAtIndex(index) as MIOManagedObject;                
+            this.insertObjectToServer(obj);            
         }
 
         let updates = request.updatedObjects;
-        for (let entityName in updates) {
-            let array = updates[entityName];
-            for (let index = 0; index < array.length; index++) {
-                let obj: MIOManagedObject = array[index];
-                this.updateObjectOnServer(obj);
-            }
+        for (let index = 0; index < updates.count; index++) {
+            let obj = updates.objectAtIndex(index) as MIOManagedObject;                
+            this.updateObjectOnServer(obj);            
         }
 
         let deletes = request.deletedObjects;
-        for (let entityName in deletes) {
-            let array = deletes[entityName];
-            for (let index = 0; index < array.length; index++) {
-                let obj: MIOManagedObject = array[index];
-                this.deleteObjectOnServer(obj);                
-            }
+        for (let index = 0; index < deletes.count; index++) {
+            let obj = deletes.objectAtIndex(index) as MIOManagedObject;                
+            this.deleteObjectOnServer(obj);            
         }
 
         this.uploadToServer();
         this.saveCount++;
+    }
+
+    saveObjectsOnServer(insertedObjects: MIOManagedObjectSet, updatedObjects: MIOManagedObjectSet, deletedObjects: MIOManagedObjectSet){
+        
+        const items = [];
+
+        for (let index = 0; index < insertedObjects.count; index++) {
+            let obj = insertedObjects.objectAtIndex(index);
+            const values = this.delegate.serverValuesForObject(this, obj, true, "INSERT");
+            const serverID = this.delegate.serverIDForObject(this, obj);
+            this.newNodeWithValuesAtServerID(serverID, values["values"], 0, obj.entity, obj.objectID);
+            if (this.delegate.canSynchronizeEntity(this, obj.entity, "INSERT")) items.push(values);
+        }
+
+        for (let index = 0; index < updatedObjects.count; index++) {
+            let obj = updatedObjects.objectAtIndex(index);
+            const values = this.delegate.serverValuesForObject(this, obj, true, "UPDATE");
+            const serverID = this.delegate.serverIDForObject(this, obj);
+            this.updateNodeWithValuesAtServerID(serverID, values["values"], 0, obj.entity);
+            if (this.delegate.canSynchronizeEntity(this, obj.entity, "UPDATE")) items.push(values);
+        }
+
+        for (let index = 0; index < deletedObjects.count; index++) {
+            let obj = deletedObjects.objectAtIndex(index);
+            const values = this.delegate.serverValuesForObject(this, obj, true, "DELETE");
+            const serverID = this.delegate.serverIDForObject(this, obj);
+            this.deleteNodeAtServerID(serverID, obj.entity);
+            if (this.delegate.canSynchronizeEntity(this, obj.entity, "DELETE")) items.push(values);
+        }
+
+        if (items.length == 0) return;
+        
+        const request = this.delegate.saveRequestForWebStore(this, items);
+        if (request == null) return;
+        request.type = MWSRequestType.Save;
+
+        let op = new MWSPersistenStoreOperation();
+        op.initWithDelegate(this);
+        op.request = request;        
+        op.saveCount = this.saveCount;
+
+        MIOLog("OPERATION: Will save");
+
+        op.target = this;
+        op.completion = function () {
+            MIOLog("OPERATION: Did save");
+            //this.removeOperation(op, serverID);
+            //this.removeUploadingOperationForServerID(serverID);
+
+            // let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
+            // let version = this.delegate.serverVersionNumberForItem(this, serverValues);
+            // MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
+            // if (version > 1) this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
+            
+            // this.saveOperationDidRemove(op);            
+        }  
+
+        this.saveOperationQueue.addOperation(op);
     }
 
     insertObjectToServer(object: MIOManagedObject) {
@@ -611,7 +666,16 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }        
     }
 
-    private saveOperationQueue:MIOOperationQueue = null;
+    private _saveOperationQueue:MIOOperationQueue = null;
+    private get saveOperationQueue(): MIOOperationQueue {
+        if (this._saveOperationQueue == null) {
+            this._saveOperationQueue = new MIOOperationQueue();
+            this.saveOperationQueue.init();
+        }
+        
+        return this._saveOperationQueue;
+    }
+
     private saveOperationsByReferenceID = {};
     private uploadingOperations = {};
 
@@ -630,18 +694,11 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     
     private uploadToServer() {
 
-        if (this.saveOperationQueue == null) {
-            this.saveOperationQueue = new MIOOperationQueue();
-            this.saveOperationQueue.init();
-
-            //this.saveOperationQueue.addObserver(this, "operationCount", null);
-        }
-
         for (let refID in this.saveOperationsByReferenceID) {
             let op = this.saveOperationsByReferenceID[refID];
             this.checkOperationDependecies(op, op.dependencyIDs);
             this.addUploadingOperation(op, refID);            
-            this.saveOperationQueue.addOperation(op);            
+            this.saveOperationQueue.addOperation(op);
         }
 
         this.saveOperationsByReferenceID = {};

@@ -320,23 +320,23 @@ export class MIOManagedObjectContext extends MIOObject {
         if (this.parent == null) {
             // Save to persistent store
             let saveRequest = new MIOSaveChangesRequest();
-            saveRequest.initWithObjects(insertedObjectsByEntityName, updatedObjectsByEntityName, deletedObjectsByEntityName);
+            saveRequest.initWithObjects(this.insertedObjects, this.updatedObjects, this.deletedObjects);
             //TODO: Execute save per store configuration            
             let store: MIOPersistentStore = this.persistentStoreCoordinator.persistentStores[0];
             store._executeRequest(saveRequest, this);
 
             //Clear values
-            for (let index = 0; index < this.insertedObjects.length; index++) {
+            for (let index = 0; index < this.insertedObjects.count; index++) {
                 let obj: MIOManagedObject = this.insertedObjects.objectAtIndex(index);
                 obj._didCommit();
             }
 
-            for (let index = 0; index < this.updatedObjects.length; index++) {
+            for (let index = 0; index < this.updatedObjects.count; index++) {
                 let obj: MIOManagedObject = this.updatedObjects.objectAtIndex(index);
                 obj._didCommit();
             }
 
-            for (let index = 0; index < this.deletedObjects.length; index++) {
+            for (let index = 0; index < this.deletedObjects.count; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
                 obj._didCommit();
                 this._unregisterObject(obj);

@@ -152,7 +152,7 @@ export class MIOManagedObject extends MIOObject {
             else if (property instanceof MIORelationshipDescription) {
                 let relationship = property as MIORelationshipDescription;                
                 
-                if (relationship.isToMany == false) {                    
+                if (relationship.   isToMany == false) {                    
                     let objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectID != null){
                         storedValues[relationship.name] = objectID;
