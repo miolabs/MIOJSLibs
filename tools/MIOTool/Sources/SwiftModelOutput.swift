@@ -66,29 +66,37 @@ class SwiftModelOutput : ModelOutputDelegate
         switch type {
         
         case "Boolean":
-            t = usesScalarValueType ? "NSNumber?" : "Bool"
-            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Bool"
+            t = usesScalarValueType == false ? "NSNumber?" : "Bool"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Bool"
         
         case "Integer":
-            t = usesScalarValueType ? "NSNumber?" : "Int"
-            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int"
+            t = usesScalarValueType == false ? "NSNumber?" : "Int"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Int"
                                 
         case "Integer 16":
-            t = usesScalarValueType ? "NSNumber?" : "Int16"
-            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int16"
+            t = usesScalarValueType == false ? "NSNumber?" : "Int16"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Int16"
             
         case "Integer 8":
-            t = usesScalarValueType ? "NSNumber?" : "Int8"
-            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int8"
+            t = usesScalarValueType == false ? "NSNumber?" : "Int8"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Int8"
         
         case "Integer 32":
-            t = usesScalarValueType ? "NSNumber?" : "Int32"
-            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int32"
+            t = usesScalarValueType == false ? "NSNumber?" : "Int32"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Int32"
             
         case "Integer 64":
-            t = usesScalarValueType ? "NSNumber?" : "Int64"
-            cast_t = usesScalarValueType ? "as? NSNumber" : "as! Int64"
+            t = usesScalarValueType == false ? "NSNumber?" : "Int64"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Int64"
 
+        case "Float":
+            t = usesScalarValueType == false ? "NSNumber?" : "Float"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Float"
+
+        case "Double":
+            t = usesScalarValueType == false ? "NSNumber?" : "Double"
+            cast_t = usesScalarValueType == false ? "as? NSNumber" : "as! Double"
+            
         case "Decimal":
             t = "NSDecimalNumber?"
             cast_t = "as? NSDecimalNumber"
