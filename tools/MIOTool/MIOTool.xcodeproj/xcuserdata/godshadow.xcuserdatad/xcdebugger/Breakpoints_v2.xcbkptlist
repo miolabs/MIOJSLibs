@@ -3,4 +3,207 @@
    uuid = "BC3184E5-9FA8-46E2-85E1-B7EE832A89BA"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5B14D78E-8BCE-45D7-9E21-9A96374E0947"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/CreateModelSubclassesCommand.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "execute()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E95F86EE-8164-48CF-A4E8-AB88D1DA7777"
+            shouldBeEnabled = "No"
+            condition = "usesScalarValueType == &quot;NO&quot;"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/CreateModelSubclassesCommand.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "parser(_:didStartElement:namespaceURI:qualifiedName:attributes:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/SwiftModelOutput.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
+            landmarkName = "appendAttribute(command:name:type:optional:defaultValue:usesScalarValueType:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "689">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "1120">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "1548">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "1976">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "2404">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "2832">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "3260">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "3688">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "4116">
+               </Location>
+               <Location
+                  uuid = "3D3B1883-F055-4A8B-98A6-4A4DA8B23E4A - 19b76be55ce84016"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MIOTool.SwiftModelOutput.appendAttribute(command: MIOTool.CreateModelSubClassesCommand, name: Swift.String, type: Swift.String, optional: Swift.Bool, defaultValue: Swift.Optional&lt;Swift.String&gt;, usesScalarValueType: Swift.Bool) -&gt; ()"
+                  moduleName = "MIOTool"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/godshadow/Projects/Libs/MIOJSLibs/tools/MIOTool/Sources/SwiftModelOutput.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "4384">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
