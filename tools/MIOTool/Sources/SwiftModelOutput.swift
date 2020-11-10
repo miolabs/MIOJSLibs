@@ -91,7 +91,7 @@ class SwiftModelOutput : ModelOutputDelegate
 
         case "Decimal":
             t = "NSDecimalNumber?"
-            cast_t = "NSDecimalNumber?"
+            cast_t = "as? NSDecimalNumber"
             
             
         case "Transformable":
