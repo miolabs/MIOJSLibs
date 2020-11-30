@@ -230,14 +230,13 @@ class SwiftModelOutput : ModelOutputDelegate
             content += "#if APPLE_CORE_DATA\n"
             content += "import CoreData\n"
             content += "#else\n"
-            content += "#import MIOCoreData\n"
+            content += "import MIOCoreData\n"
             content += "#endif\n"
             content += "\n"
             content += "@objc(\(self.currentClassName))\n"
             content += "public class \(self.currentClassName) : \(currentParentClassName ?? "NSManagedObject")\n"
             content += "{\n"
             content += "\n}\n"
-            content += "#endif\n"
 
             WriteTextFile(content: content, path: fp)
         }
