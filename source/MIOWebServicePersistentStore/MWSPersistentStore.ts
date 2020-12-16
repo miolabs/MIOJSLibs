@@ -42,7 +42,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     delegate = null;
 
     private storeURL: MIOURL = null;    
-    private nodesByReferenceID = {};        
+    private nodesByReferenceID = {};  
+    
+    public useSaveBlocks = false;
 
     loadMetadata(): MIOError {
 
@@ -418,7 +420,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         if (context == null) return;
 
-        if (typeof this.delegate.saveRequestForWebStore === "function") {            
+        if (this.useSaveBlocks == true && typeof this.delegate.saveRequestForWebStore === "function") {            
             this.saveObjectsOnServer(request.insertedObjects, request.updatedObjects, request.deletedObjects);
             return;
         }

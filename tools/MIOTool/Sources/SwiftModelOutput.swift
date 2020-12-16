@@ -173,11 +173,11 @@ class SwiftModelOutput : ModelOutputDelegate
             content2 += "\n"
             content2 += "    @objc(add\(cname):)\n"
             //content2 += "    public func addTo\(cname)(_ values: NSSet) {}\n"
-            content2 += "    public func add\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
+            content2 += "    public func add\(cname)(_ values: Set<\(destinationEntity)>) { for obj in values { _addObject(obj, forKey: \"\(name)\") } }\n"
             content2 += "\n"
             content2 += "    @objc(remove\(cname):)\n"
             //content2 += "    public func removeFrom\(cname)(_ values: NSSet) {}\n"
-            content2 += "    public func remove\(cname)(_ values: Set<\(destinationEntity)>) {}\n"
+            content2 += "    public func remove\(cname)(_ values: Set<\(destinationEntity)>) { for obj in values { _removeObject(obj, forKey: \"\(name)\") } }\n"
             content2 += "}\n"
             
             relationships2.append(content2)
