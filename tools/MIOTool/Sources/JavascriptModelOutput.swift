@@ -143,7 +143,8 @@ class JavascriptModelOutput : ModelOutputDelegate
     {
         fileContent += "}\n";
         
-        let modelPath = ModelPath()
+//        let modelPath = ModelPath()
+        let modelPath = command.modelPath
         let path = modelPath + filename
         //Write to disc
         WriteTextFile(content:fileContent, path:path)
@@ -171,7 +172,8 @@ class JavascriptModelOutput : ModelOutputDelegate
     
     func writeModelFile(command:CreateModelSubClassesCommand)
     {
-        let modelPath = ModelPath()
+//        let modelPath = ModelPath()
+        let modelPath = command.modelPath
         
         modelContent += "\n}\n"
         let path = modelPath + "/datamodel.ts";

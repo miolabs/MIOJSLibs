@@ -152,7 +152,7 @@ export class MIOManagedObject extends MIOObject {
             else if (property instanceof MIORelationshipDescription) {
                 let relationship = property as MIORelationshipDescription;                
                 
-                if (relationship.   isToMany == false) {                    
+                if (relationship.isToMany == false) {                    
                     let objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
                     if (objectID != null){
                         storedValues[relationship.name] = objectID;
@@ -358,25 +358,39 @@ export class MIOManagedObject extends MIOObject {
 
 
     _addObjectForKey(object, key:string){
-        let set:MIOManagedObjectSet = this.valueForKey(key);
+        let set:MIOManagedObjectSet = this._changedValues[key];
+        
+        if (set == null) {
+            // Check for committed value
+            let storedSet = this.primitiveValueForKey(key);
+            set = storedSet != null ? storedSet.copy() : null;
+        }
+
         if (set == null) {
             let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
             set = MIOManagedObjectSet._setWithManagedObject(this, rel);
-        }        
+        }
+
         set.addObject(object);
         this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
     }
 
     _removeObjectForKey(object, key:string){        
-        let set:MIOManagedObjectSet = this.valueForKey(key);
+        let set:MIOManagedObjectSet = this._changedValues[key];
+        
         if (set == null) {
-            let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];                    
+            // Check for committed value
+            let storedSet = this.primitiveValueForKey(key);
+            set = storedSet != null ? storedSet.copy() : null;
+        }
+
+        if (set == null) {
+            let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
             set = MIOManagedObjectSet._setWithManagedObject(this, rel);
         }
-        else {
-            set.removeObject(object);
-        }
+
+        set.removeObject(object);
         this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
     }

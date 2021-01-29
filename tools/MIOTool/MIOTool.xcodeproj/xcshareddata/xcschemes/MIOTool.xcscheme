@@ -65,14 +65,26 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "DualLinkDB.xcdatamodeld/DualLinkDB.xcdatamodel/contents"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-swift"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Apps/DLWebManager/model"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "datamodel.xml"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--output-js"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

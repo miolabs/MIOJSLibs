@@ -103,8 +103,8 @@ class SwiftModelOutput : ModelOutputDelegate
             
             
         case "Transformable":
-            t = "String?" // was "NSObject"
-            cast_t = "as? String"
+            t = optional ? "" : "Any"
+            cast_t = optional ? "" : "as! Any"
             
         default:
             t = optional ? "\(type)?" : type

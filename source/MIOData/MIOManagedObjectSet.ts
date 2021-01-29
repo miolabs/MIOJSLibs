@@ -110,4 +110,49 @@ export class MIOManagedObjectSet extends MIOObject {
         this.objects = [];
         this.objectIDs = [];
     }
+
+    intersection(set:MIOManagedObjectSet) : MIOManagedObjectSet {
+        let intersect = MIOManagedObjectSet._setWithManagedObject(this.mo, this.relationship);
+
+        for (let index = 0; index < set.count; index++) {
+            let obj = set.objectAtIndex(index);
+            if (this.containsObject(obj)) intersect.addObject(obj);
+        }
+
+        return intersect;
+    }
+
+    subtracting(set:MIOManagedObjectSet) : MIOManagedObjectSet {
+        let substract = MIOManagedObjectSet._setWithManagedObject(this.mo, this.relationship);
+ 
+        for (let index = 0; index < this.count; index++) {
+            let obj = this.objectAtIndex(index);
+            if (set.containsObject(obj) == false) substract.addObject(obj);
+        }
+
+        return substract;
+    }
+
+    map(block){
+        let array = [];
+        for(let index = 0; index < this.count; index++){ 
+            let obj = this.objectAtIndex(index);
+            let mapValue = block(obj);
+            array.addObject(mapValue);
+        }
+        return array;
+    }
+
+    copy() : MIOManagedObjectSet {
+
+        let set = MIOManagedObjectSet._setWithManagedObject(this.mo, this.relationship);
+
+        for (let index = 0; index < this.count; index++) {
+            let obj = this.objectAtIndex(index);
+            set.addObject(obj);
+        }
+
+        return set;
+
+    }
 }

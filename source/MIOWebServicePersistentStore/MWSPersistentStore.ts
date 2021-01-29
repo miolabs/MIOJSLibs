@@ -278,7 +278,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID, relationshipNodes?) {
 
-        // Check the objects inside values        
+        // Check the objects inside values  
+        if (values.length == 0) return;
+              
         let parsedValues = this.checkRelationships(values, entity, context, relationshipNodes);
 
         let serverID = this.delegate.serverIDForItem(this, parsedValues, entity.name);
