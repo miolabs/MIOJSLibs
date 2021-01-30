@@ -331,15 +331,31 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
     private updateNodeWithValuesAtServerID(serverID:string, values, version, entity:MIOEntityDescription){                
         let referenceID = entity.name + "://" + serverID;
-        let node = this.nodesByReferenceID[referenceID];
+        let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;
+
+        for (let key in entity.relationshipsByName) {
+            let rel = entity.relationshipsByName[key] as MIORelationshipDescription;
+            if (rel.isToMany == false) continue;
+            let syncValues = values[key];
+            if (syncValues == null) continue;
+            
+            let cachedValues = node.valueForPropertyDescription(rel);                           
+            let addValues = syncValues[0];
+            let removeValues = syncValues[0];
+            
+            for (let v of addValues) {cachedValues.addOject(v)}
+            for (let v of removeValues) {cachedValues.removeObject(v)}
+            values[key] = cachedValues;
+        }
+        
         node.updateWithValues(values, version);
-        MIOLog("Updating REFID: " + referenceID);        
+        MIOLog("Updating REFID: " + referenceID);
     }
 
-    private deleteNodeAtServerID(serverID:string, entity:MIOEntityDescription){                
+    private deleteNodeAtServerID(serverID:string, entity:MIOEntityDescription){
         let referenceID = entity.name + "://" + serverID;
         delete this.nodesByReferenceID[referenceID];
-        MIOLog("Deleting REFID: " + referenceID);        
+        MIOLog("Deleting REFID: " + referenceID);    
     }    
 
     private partialRelationshipObjects = {};
