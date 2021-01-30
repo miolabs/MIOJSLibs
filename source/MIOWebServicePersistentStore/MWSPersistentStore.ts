@@ -322,7 +322,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let objID = objectID != null ? objectID : this.newObjectIDForEntity(entity, serverID);
 
         let node = new MIOIncrementalStoreNode();
-        node.initWithObjectID(objID, values, version);
+        node.initWithObjectID(objID, {}, version);
+        node.updateWithValues(values, version);
         this.nodesByReferenceID[referenceID] = node;
         MIOLog("Inserting REFID: " + referenceID);
                 
@@ -333,19 +334,25 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let referenceID = entity.name + "://" + serverID;
         let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;
 
-        for (let key in entity.relationshipsByName) {
-            let rel = entity.relationshipsByName[key] as MIORelationshipDescription;
-            if (rel.isToMany == false) continue;
-            let syncValues = values[key];
-            if (syncValues == null) continue;
-            
-            let cachedValues = node.valueForPropertyDescription(rel);                           
-            let addValues = syncValues[0];
-            let removeValues = syncValues[0];
-            
-            for (let v of addValues) {cachedValues.addOject(v)}
-            for (let v of removeValues) {cachedValues.removeObject(v)}
-            values[key] = cachedValues;
+        if (this.useSaveBlocks) {
+            for (let key in entity.relationshipsByName) {
+                let rel = entity.relationshipsByName[key] as MIORelationshipDescription;
+                if (rel.isToMany == false) continue;
+                let syncValues = values[key];
+                if (syncValues == null) continue;
+
+                let addValues = syncValues[0];
+                let removeValues = syncValues[0];
+
+                let cachedValues = node.valueForPropertyDescription(rel);
+                if (cachedValues == null) {
+                    cachedValues = addValues;
+                } else {                
+                    for (let v of addValues) {cachedValues.addOject(v)}
+                    for (let v of removeValues) {cachedValues.removeObject(v)}
+                    values[key] = cachedValues;
+                }
+            }
         }
         
         node.updateWithValues(values, version);
