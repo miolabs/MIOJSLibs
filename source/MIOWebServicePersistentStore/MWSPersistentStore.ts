@@ -323,7 +323,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let node = new MIOIncrementalStoreNode();
         node.initWithObjectID(objID, {}, version);
-        node.updateWithValues(values, version);
+        this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
         this.nodesByReferenceID[referenceID] = node;
         MIOLog("Inserting REFID: " + referenceID);
                 
