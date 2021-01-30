@@ -1,4 +1,4 @@
-
+import "../MIOCore" ;
 
 export * from "./MIOAttributeDescription"
 export * from "./MIOEntityDescription"

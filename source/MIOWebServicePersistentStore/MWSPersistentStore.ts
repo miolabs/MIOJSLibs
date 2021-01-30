@@ -344,12 +344,12 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let addValues = syncValues[0];
                 let removeValues = syncValues[1];
 
-                let cachedValues = node.valueForPropertyDescription(rel);
+                const cachedValues = node.valueForPropertyDescription(rel);
                 if (cachedValues == null) {
                     values[key] = addValues;
                 } else {                
-                    for (let v of addValues) {cachedValues.addOject(v)}
-                    for (let v of removeValues) {cachedValues.removeObject(v)}
+                    for (const v of addValues) {cachedValues.addObject(v)}
+                    for (const v of removeValues) {cachedValues.removeObject(v)}
                     values[key] = cachedValues;
                 }
             }
