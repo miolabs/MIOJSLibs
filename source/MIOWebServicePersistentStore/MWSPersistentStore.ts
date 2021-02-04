@@ -113,8 +113,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             return relNode.objectID;
         }
         else {                        
-            let relRefIDs = node.valueForPropertyDescription(relationship);
-            if (relRefIDs == null) return null;        
+            let values = node.valueForPropertyDescription(relationship);
+            if (values == null) return null;        
+
+            let relRefIDs = values[2];
 
             let array = [];
             for (let count = 0; count < relRefIDs.length; count++) {
@@ -122,7 +124,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let relRefID = relRefIDs[count];
                 let relNode = this.nodeWithServerID(relRefID, relationship.destinationEntity);
                 if (relNode == null) {                    
-                    relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier":relRefID}, 0, relationship.destinationEntity);
+                    relNode = this.newNodeWithValuesAtServerID(relRefID, {"identifier": relRefID}, 0, relationship.destinationEntity);
                     //this.fetchObjectWithReferenceID(relRefID, relationship.destinationEntityName, context);
                     //MIOLog("Downloading REFID: " + relRefID);
                 }
@@ -346,10 +348,12 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
                 let cachedValues = node.valueForPropertyDescription(rel);
                 if (cachedValues == null) {
-                    values[key] = addValues;
+                    values[key] = [[], [], addValues];
                 } else {                
-                    for (let v of addValues) {cachedValues.addOject(v)}
-                    for (let v of removeValues) {cachedValues.removeObject(v)}
+                    let new_values = cachedValues[2];
+                    for (let v of addValues) {new_values.addObject(v)}
+                    for (let v of removeValues) {new_values.removeObject(v)}
+                    cachedValues[2] = new_values;
                     values[key] = cachedValues;
                 }
             }
