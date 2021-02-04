@@ -193,8 +193,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("Downloaded REFID: " + serverID);
             delete this.fetchingObjects[serverID];
             
-            if (result == true) {
-                this.updateObjectInContext(values, fetchRequest.entity, context);                
+            if (result === true && values.length > 0) {
+                this.updateObjectInContext(values[0], fetchRequest.entity, context);                
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
         });
@@ -343,12 +343,24 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let syncValues = values[key];
                 if (syncValues == null) continue;
 
+                if ( syncValues.length === 0 ) {
+                     values[key] = null;
+                     continue ;
+                }
+
+                // CASE: syncValues is [string] OR [string[],string[],string[]]
+                // It comes from "server"
+                if (!Array.isArray( syncValues[ 0 ] )) {
+                     values[key] = [[], [], syncValues] ;
+                     continue ;
+                }
+
                 let addValues = syncValues[0];
                 let removeValues = syncValues[1];
 
                 const cachedValues = node.valueForPropertyDescription(rel);
                 if (cachedValues == null) {
-                    values[key] = [[], [], addValues];
+                    values[key] = [addValues, [], addValues];
                 } else {                
                     let new_values = cachedValues[2];
                     for (let v of addValues) {new_values.addObject(v)}
