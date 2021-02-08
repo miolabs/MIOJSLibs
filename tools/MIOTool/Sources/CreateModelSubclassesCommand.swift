@@ -11,8 +11,8 @@ import CoreData
 
 enum ModelSubClassType
 {
-    case Swift
-    case JavaScript
+    case swift
+    case javascript
 }
 
 protocol ModelOutputDelegate
@@ -26,25 +26,22 @@ protocol ModelOutputDelegate
 
 func CreateModelSubClasses() -> Command? {
     
-    let path:String = NextArg() ?? CurrentPath()
+    var path:String = CurrentPath()
     
-    var fileName:String? = NextArg()
+    let fileName:String = NextArg() ?? "\(CurrentPath())/datamodel.xml"
     
-    if (fileName == nil) {
-        fileName = "/datamodel.xml"
-    }
-    
-    var type:ModelSubClassType = .JavaScript
+    var type:ModelSubClassType = .javascript
     var entity:String?
     
     var options = NextArg()
     while options != nil {
         switch options {
-        case "--output-js":
-            type = .JavaScript
-        case "--output-swift":
-            type = .Swift
-
+        case "--output-code":
+            type = parseOutputCode()
+        
+        case "--output-folder":
+            path = NextArg()!
+            
         case "--entity":
             entity = NextArg()
             
@@ -54,7 +51,19 @@ func CreateModelSubClasses() -> Command? {
         options = NextArg()
     }
         
-    return CreateModelSubClassesCommand(withFilename: fileName!, path: path, type: type, entity:entity)
+    return CreateModelSubClassesCommand(withFilename: fileName, path: path, type: type, entity:entity)
+}
+
+func parseOutputCode() -> ModelSubClassType {
+    let code = NextArg()
+    
+    switch code {
+    case "swift":
+        return .swift
+    case "javascript":
+        return .javascript
+    default: return .javascript
+    }
 }
 
 class CreateModelSubClassesCommand : Command, XMLParserDelegate {
@@ -72,23 +81,39 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         
         self.customEntity = entity
         
-        self.modelPath = path
-        self.modelFilePath = filename
+        self.modelFilePath = CreateModelSubClassesCommand.parsePath(filename)
+        self.modelPath = CreateModelSubClassesCommand.parsePath(path)
+        
         self.modelType = type
         
         switch type {
-        case .JavaScript:
+        case .javascript:
             outputDelegate = JavascriptModelOutput()
         
-        case .Swift:
+        case .swift:
             outputDelegate = SwiftModelOutput()
             
         }
     }
     
+    static func parsePath(_ path:String) -> String {
+        var newPath = path
+        
+        if newPath.hasPrefix("\"") {
+            newPath = String(newPath.dropFirst().dropLast().trimmingCharacters(in: .whitespaces))
+        }
+        
+        if newPath.hasPrefix("/") == false {
+            newPath = CurrentPath() + "/" + newPath
+        }
+        
+        return (newPath as NSString).standardizingPath
+    }
+        
     override func execute() {
                 
-        let parser = XMLParser(contentsOf:URL.init(fileURLWithPath:modelPath + "/" + modelFilePath))
+        print("Parsing file: \(modelFilePath)")
+        let parser = XMLParser(contentsOf:URL(fileURLWithPath: modelFilePath))
         if (parser != nil) {
             parser!.delegate = self;
             parser!.parse();
