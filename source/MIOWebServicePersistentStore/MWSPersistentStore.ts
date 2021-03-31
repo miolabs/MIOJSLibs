@@ -585,6 +585,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
+            if (typeof this.delegate.insertRequestDidFinishForWebStore === "function") this.delegate.insertRequestDidFinishForWebStore(object);
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);
 
@@ -632,6 +633,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
+            if (typeof this.delegate.updateRequestDidFinishForWebStore === "function") this.delegate.updateRequestDidFinishForWebStore(object);
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);            
 
@@ -674,6 +676,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
+            if (typeof this.delegate.deleteRequestDidFinishForWebStore === "function") this.delegate.deleteRequestDidFinishForWebStore(object);
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);            
 
