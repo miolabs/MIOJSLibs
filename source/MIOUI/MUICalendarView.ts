@@ -284,6 +284,22 @@ export class MUICalendarDaysView extends MUIView {
                 dayView.setSelected(false);
                 dayView.setDate(currentDate);    
 
+                for (let i = 0; i < 7; i++) { MUICoreLayerRemoveStyle(cellLayer, "day-" + i); }
+                MUICoreLayerAddStyle(cellLayer, "day-" + currentDate.getDay());
+        
+                let canSelect = true;
+                if (this.delegate != null && this.delegate.delegate != null && typeof this.delegate.delegate.canSelectDate === "function"){            
+                    canSelect = this.delegate.delegate.canSelectDate.call(this.delegate.delegate, this, currentDate);
+                }
+        
+                if (canSelect == true) {
+                    MUICoreLayerRemoveStyle(cellLayer, "disabled")
+                }
+                else {
+                    MUICoreLayerAddStyle(cellLayer, "disabled")
+                }
+        
+
                 if (dayView.isToday == true) MUICoreLayerAddStyle(cellLayer, "today");
 
                 currentDate.setDate(currentDate.getDate() + 1);
