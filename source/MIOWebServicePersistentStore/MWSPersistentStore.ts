@@ -343,14 +343,14 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let syncValues = values[key];
                 if (syncValues == null) continue;
 
-                if ( syncValues.length === 0 ) {
+                if (syncValues.length === 0) {
                      values[key] = null;
                      continue ;
                 }
 
                 // CASE: syncValues is [string] OR [string[],string[],string[]]
                 // It comes from "server"
-                if (!Array.isArray( syncValues[ 0 ] )) {
+                if (!Array.isArray(syncValues[ 0 ])) {
                      values[key] = [[], [], syncValues] ;
                      continue ;
                 }
@@ -433,8 +433,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         this.saveTarget = target;
         this.saveCompletion = completion;
         block.call(this);
-        if (this.saveOperations == 0) {
-            if (this.saveCompletion != null && this.saveTarget != null) this.saveCompletion.call(this.saveTarget);
+        if (this.saveCompletion == null || this.saveTarget == null) return;
+        if (this.saveOperations === 0) {
+            this.saveCompletion.call(this.saveTarget);
             this.saveTarget = null;
             this.saveCompletion = null;
         }
@@ -445,6 +446,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (this.saveTarget == null || this.saveCompletion == null) return;
         this.saveOperations++;
     }
+
     private saveOperationDidRemove(op:MWSPersistenStoreOperation){
         if (this.saveTarget == null || this.saveCompletion == null) return;
         this.saveOperations--;
@@ -542,10 +544,11 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             // MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
             // if (version > 1) this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
             
-            // this.saveOperationDidRemove(op);            
+            this.saveOperationDidRemove(op);            
         }  
-
+        
         this.saveOperationQueue.addOperation(op);
+        this.saveOperationDidAdd(op);
     }
 
     insertObjectToServer(object: MIOManagedObject) {
@@ -582,6 +585,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Insert " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
+            if (typeof this.delegate.insertRequestDidFinishForWebStore === "function") this.delegate.insertRequestDidFinishForWebStore(object);
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);
 
@@ -629,6 +633,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Update " + object.entity.name + " -> " + serverID + ":" + op.saveCount + " (OK)");
+            if (typeof this.delegate.updateRequestDidFinishForWebStore === "function") this.delegate.updateRequestDidFinishForWebStore(object);
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);            
 
@@ -671,6 +676,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         op.target = this;
         op.completion = function () {
             MIOLog("OPERATION: Delete " + object.entity.name + " -> " + serverID + "(OK)");
+            if (typeof this.delegate.deleteRequestDidFinishForWebStore === "function") this.delegate.deleteRequestDidFinishForWebStore(object);
             //this.removeOperation(op, serverID);
             this.removeUploadingOperationForServerID(serverID);            
 

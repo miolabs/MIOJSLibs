@@ -149,6 +149,10 @@ export class MIOEntityDescription extends MIOObject {
             
             if (rel.inverseName != null && rel.inverseEntityName != null) {
                 let inverseEntity = this.managedObjectModel.entitiesByName[rel.inverseEntityName];
+                if (inverseEntity == null) {
+                    throw new Error("KK");
+                }
+
                 let inverseRelation = inverseEntity.relationshipsByName[rel.inverseName];
                 rel.inverseRelationship = inverseRelation
             }
