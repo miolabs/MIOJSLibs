@@ -103,7 +103,7 @@ class SwiftModelOutput : ModelOutputDelegate
             
             
         case "Transformable":
-            t = optional ? "" : "Any"
+            t = optional ? "Any?" : "Any"
             cast_t = optional ? "" : "as! Any"
             
         default:
