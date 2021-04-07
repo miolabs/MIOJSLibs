@@ -112,10 +112,10 @@ export class MUICollectionView extends MUIView
         let item = {};
         item["class"] = cellClassname;
         item["layer"] = subLayer;
-        let size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
-        if (size != null) item["size"] = size;
-        let bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
-        if (bg != null) item["bg"] = bg;
+        // let size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        // if (size != null) item["size"] = size;
+        // let bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
+        // if (bg != null) item["bg"] = bg;
 
         this._cellPrototypes[cellIdentifier] = item;
     }
@@ -128,10 +128,10 @@ export class MUICollectionView extends MUIView
         var item = {};
         item["class"] = viewClassname;
         item["layer"] = subLayer;
-        var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
-        if (size != null) item["size"] = size;
-        var bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
-        if (bg != null) item["bg"] = bg;
+        // var size = new MIOSize(subLayer.clientWidth, subLayer.clientHeight);
+        // if (size != null) item["size"] = size;
+        // var bg = window.getComputedStyle(subLayer ,null).getPropertyValue('background-color');
+        // if (bg != null) item["bg"] = bg;
 
         this._supplementaryViews[viewIdentifier] = item;
     }
@@ -160,6 +160,7 @@ export class MUICollectionView extends MUIView
         if (layer != null) {
             let newLayer = layer.cloneNode(true);
             newLayer.style.display = "";
+            newLayer.style = "";
             cell.initWithLayer(newLayer);
             cell.awakeFromHTML();
         }
