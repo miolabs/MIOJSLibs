@@ -12,7 +12,7 @@ export class MUICollectionViewLayout extends MIOObject
     minimumInteritemSpacing = 0;
     itemSize = new MIOSize(0,0);
     estimatedItemSize = new MIOSize(0,0);
-    sectionInset:MUIEdgeInsets = null;
+    sectionInset:MUIEdgeInsets = MUIEdgeInsets.Zero();
     headerReferenceSize:MIOSize = new MIOSize(0, 0);
     footerReferenceSize:MIOSize = new MIOSize(0, 0);
 
