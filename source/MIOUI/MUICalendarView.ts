@@ -573,6 +573,9 @@ export class MUICalendarView extends MUIView{
         this.selectedMonth = month;
         this.selectedYear = year;
         this.daysView.setMonthAndYear(month, year);
+        if (this.delegate != null && typeof this.delegate.didMonthAndYearChange === "function"){            
+            this.delegate.didMonthAndYearChange.call(this.delegate, this, month, year);
+        }        
     }
 
     private selectedMonth = null;
