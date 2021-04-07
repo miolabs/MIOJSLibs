@@ -65,6 +65,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB 59.xcdatamodel/contents&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Libs/MIOCoreData/Tests/TestModel/TestModel.xcdatamodeld/TestModel.xcdatamodel/contents"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -73,6 +77,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/Classes"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Libs/MIOCoreData/Tests/TestModel/Classes"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

@@ -589,6 +589,7 @@ export class MUICalendarView extends MUIView{
     }
 
     reloadData(){
+        this.layoutSubviews();
     }
 
     layoutSubviews(){
