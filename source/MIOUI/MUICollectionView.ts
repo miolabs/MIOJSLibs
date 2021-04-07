@@ -1,6 +1,7 @@
 import { MUIView } from "./MUIView";
 import { MIOObject, MIOSize, MIOIndexPath } from "../MIOFoundation";
 import { MUICollectionViewFlowLayout } from "./MUICollectionViewLayout";
+import { MUICoreLayerAddStyle, MUICoreLayerAddSublayer, MUICoreLayerRemoveStyle } from "./MIOUI_CoreLayer";
 
 /**
  * Created by godshadow on 09/11/2016.
@@ -40,6 +41,13 @@ export class MUICollectionViewCell extends MUIView
         this.willChangeValue("selected");
         this.selected = value;
         this.didChangeValue("selected");
+
+        if (value == true) {
+            MUICoreLayerAddStyle(this.layer, "selected");
+        }
+        else {
+            MUICoreLayerRemoveStyle(this.layer, "selected");   
+        }
     }
 }
 
@@ -332,7 +340,7 @@ export class MUICollectionView extends MUIView
     }
 
     _selectCell(cell){
-        cell.setSelected(true);
+        cell.setSelected(true);    
     }
 
     selectCellAtIndexPath(index, section){
@@ -343,7 +351,7 @@ export class MUICollectionView extends MUIView
     }
 
     _deselectCell(cell){
-        cell.setSelected(false);
+        cell.setSelected(false);        
     }
 
     deselectCellAtIndexPath(indexPath:MIOIndexPath)
