@@ -49,12 +49,18 @@ export function MUICoreLayerCreateWithStyle(style, layerID?, type?:string) {
     return layer;
 }
 
-export function MUICoreLayerAddStyle(layer, style) {
-    layer.classList.add(style);
+export function MUICoreLayerAddStyle(layer, style: string) {
+    const classes = style.split( " " ).filter( c => c !== "" ) ;
+
+    for ( const c of classes )
+          layer.classList.add( c ) ;
 }
 
-export function MUICoreLayerRemoveStyle(layer, style) {
-    layer.classList.remove(style);
+export function MUICoreLayerRemoveStyle(layer, style: string) {
+    const classes = style.split( " " ).filter( c => c !== "" ) ;
+
+    for ( const c of classes )
+          layer.classList.remove( c ) ;
 }
 
 export function MUICoreLayerCreateFromLayer(layer) {

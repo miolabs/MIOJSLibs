@@ -589,7 +589,7 @@ export class MUICalendarView extends MUIView{
     }
 
     reloadData(){
-        this.layoutSubviews();
+        this.setMonthAndYear(this.selectedMonth, this.selectedYear); 
     }
 
     layoutSubviews(){
