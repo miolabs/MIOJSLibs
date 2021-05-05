@@ -319,9 +319,9 @@ export class MUIView extends MIOObject
 
     layoutSubviews(){
                 
-        for(var index = 0; index < this.subviews.length; index++)
+        for(let index = 0; index < this.subviews.length; index++)
         {
-            var v = this.subviews[index];
+            const v = this.subviews[index];
             if ((v instanceof MUIView) == false) throw new Error("layout: Trying to layout an object that is not a view");
             v.setNeedsDisplay();
         }

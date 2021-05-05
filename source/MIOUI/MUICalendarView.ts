@@ -281,8 +281,14 @@ export class MUICalendarDaysView extends MUIView {
                 let dayView = this._dayCellAtDate(currentDate);
                 this._dayViews.push(dayView);
                 MUICoreLayerAddSublayer(cellLayer, dayView.layer);
-                dayView.setSelected(false);
-                dayView.setDate(currentDate);    
+                if (dayView._selected == true) {
+                    MUICoreLayerAddStyle(cellLayer, "selected");
+                }
+                else {
+                    MUICoreLayerRemoveStyle(cellLayer, "selected");
+                }
+                
+                dayView.setDate(currentDate);
 
                 for (let i = 0; i < 7; i++) { MUICoreLayerRemoveStyle(cellLayer, "day-" + i); }
                 MUICoreLayerAddStyle(cellLayer, "day-" + currentDate.getDay());
@@ -488,9 +494,9 @@ export class MUICalendarDayCell extends MUIView {
 
         this.willChangeValue("selected");
         this._selected = value;
-        if (value == true)
+        if (this.layer.parentNode != null && value == true)        
             MUICoreLayerAddStyle(this.layer.parentNode, "selected");
-        else 
+        else if (this.layer.parentNode != null && value == false)
             MUICoreLayerRemoveStyle(this.layer.parentNode, "selected");
         this.didChangeValue("selected");
     }
@@ -587,21 +593,22 @@ export class MUICalendarView extends MUIView{
         this.header.setYear(year);
         this.daysView.setMonthAndYear(month, year);
     }
-
-    reloadData(){
-        this.layoutSubviews();
+    
+    reloadData(){                
+        this.visibleDayCells = {};
+        this.setNeedsDisplay();
     }
 
     layoutSubviews(){
         super.layoutSubviews();
-
-        if (this.selectedMonth == null || this.selectedYear == null){
-            
+        
+        if (this.selectedMonth == null || this.selectedYear == null) {
             let today = MIODateToday();
             if (this.selectedMonth == null) this.selectedMonth = MIODateGetMonthFromDate(today);
             if (this.selectedYear == null) this.selectedYear = MIODateGetYearFromDate(today);
-            this.setMonthAndYear(this.selectedMonth, this.selectedYear); 
         }
+            
+        this.setMonthAndYear(this.selectedMonth, this.selectedYear);       
     }
 
     private visibleDayCells = {};
@@ -626,7 +633,7 @@ export class MUICalendarView extends MUIView{
     }
 
     selectDayCellAtDate(date:Date){
-        let cell = this.cellDayAtDate(date);
+        let cell = this.cellDayAtDate(date); 
         if (cell.selected == true) return;
         if (cell != null) this._didChangeDayCellSelectedValue(cell);
     }
