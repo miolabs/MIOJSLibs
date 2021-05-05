@@ -72,12 +72,20 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Libs/MIOCoreData/Tests/TestModel/TestModel.xcdatamodeld/TestModel.xcdatamodel/contents"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--output-folder"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/Classes"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Libs/MIOCoreData/Tests/TestModel/Classes"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/MIOCoreData/Tests/TestModel/Classes"
