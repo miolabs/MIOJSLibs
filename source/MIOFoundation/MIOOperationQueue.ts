@@ -5,6 +5,8 @@ export class MIOOperationQueue extends MIOObject {
 
     private _operations = [];
 
+    maxConcurrentOperationCount = -1; //NSOperationQueueDefaultMaxConcurrentOperationCount
+
     addOperation(operation: MIOOperation) {
 
         if (operation.isFinished == true) {
@@ -22,7 +24,8 @@ export class MIOOperationQueue extends MIOObject {
         }
         else {
             operation.addObserver(this, "isFinished", null);
-            if (this.suspended == false) operation.start();
+            //if (this.suspended == false) operation.start();
+            this.checkOperationQueue();
         }
     }
 
@@ -62,10 +65,31 @@ export class MIOOperationQueue extends MIOObject {
         if (value == true) return;
 
         // This means we need to re-active every operation
+        // for(let index = 0; index < this.operations.length; index++){
+        //     let op:MIOOperation = this.operations[index];
+        //     if (op.ready == true) op.start();
+        // }
+        this.checkOperationQueue();
+    }
+
+    private operationExecutingCount = 0;
+    private checkOperationQueue() {
+        if (this.suspended) return;
+
         for(let index = 0; index < this.operations.length; index++){
             let op:MIOOperation = this.operations[index];
-            if (op.ready == true) op.start();
+            if (op.ready == false) continue; 
+            if (op.isExecuting == true) continue;
+
+            if (this.maxConcurrentOperationCount == -1 || this.maxConcurrentOperationCount == 0) {
+                op.start();
+            }
+            else if (this.operationExecutingCount < this.maxConcurrentOperationCount) {
+                this.maxConcurrentOperationCount++;
+                op.start();
+            }            
         }
+
     }
 
     observeValueForKeyPath(keyPath: string, type: string, object, ctx) {
@@ -77,7 +101,8 @@ export class MIOOperationQueue extends MIOObject {
             if (op.ready == true) {
                 op.removeObserver(this, "ready");
                 op.addObserver(this, "isFinished", null);
-                if (this.suspended == false) op.start();
+                //if (this.suspended == false) op.start();
+                this.checkOperationQueue();
             }
         }
         else if (keyPath == "isFinished"){
@@ -87,6 +112,8 @@ export class MIOOperationQueue extends MIOObject {
                 this.removeOperation(op);
                 if (op.target != null && op.completion != null)
                 op.completion.call(op.target);
+                this.operationExecutingCount--;
+                this.checkOperationQueue();
             }
         }
     }
