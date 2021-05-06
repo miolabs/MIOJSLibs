@@ -549,6 +549,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         
         this.saveOperationQueue.addOperation(op);
         this.saveOperationDidAdd(op);
+
+        //this.uploadToServer();
     }
 
     insertObjectToServer(object: MIOManagedObject) {
@@ -722,6 +724,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (this._saveOperationQueue == null) {
             this._saveOperationQueue = new MIOOperationQueue();
             this.saveOperationQueue.init();
+            this.saveOperationQueue.maxConcurrentOperationCount = 1;
         }
         
         return this._saveOperationQueue;
@@ -749,7 +752,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let op = this.saveOperationsByReferenceID[refID];
             this.checkOperationDependecies(op, op.dependencyIDs);
             this.addUploadingOperation(op, refID);            
-            this.saveOperationQueue.addOperation(op);
+            this.saveOperationQueue.addOperation(op);           
         }
 
         this.saveOperationsByReferenceID = {};
@@ -764,7 +767,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
         else {
             let lastOP = array.lastObject();
-            op.addDependency(lastOP);
+            op.addDependency(lastOP);       
         }
 
         array.push(op);        
