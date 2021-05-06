@@ -85,7 +85,7 @@ export class MIOOperationQueue extends MIOObject {
                 op.start();
             }
             else if (this.operationExecutingCount < this.maxConcurrentOperationCount) {
-                this.maxConcurrentOperationCount++;
+                this.operationExecutingCount++;
                 op.start();
             }            
         }
