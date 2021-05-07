@@ -595,8 +595,14 @@ export class MUICalendarView extends MUIView{
     }
 
     get selectedDateString():string {
-        const date = this.selectedYear + "-" + ("00" + (this.selectedMonth+1)).slice(-2) + "-01" ;
-        return date;
+
+        if (this.selectedYear == null || this.selectedMonth) {
+            return MIODateGetDateString(new Date());       
+        }
+        else {
+            const date = this.selectedYear + "-" + ("00" + (this.selectedMonth+1)).slice(-2) + "-01" ;
+            return date;    
+        }
     }
     
     reloadData(){                
