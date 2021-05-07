@@ -173,7 +173,7 @@ export class MUICalendarDaysView extends MUIView {
     private _dayViewIndex = 0;
 
     private _weekRows = 0;
-    private delegate = null;
+    private delegate = null;         
 
     initWithDelegate(delegate) {        
         super.init();
@@ -281,6 +281,8 @@ export class MUICalendarDaysView extends MUIView {
                 let dayView = this._dayCellAtDate(currentDate);
                 this._dayViews.push(dayView);
                 MUICoreLayerAddSublayer(cellLayer, dayView.layer);
+                
+                dayView.setSelected(dayView._selected);
                 if (dayView._selected == true) {
                     MUICoreLayerAddStyle(cellLayer, "selected");
                 }
