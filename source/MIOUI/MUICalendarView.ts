@@ -280,17 +280,17 @@ export class MUICalendarDaysView extends MUIView {
                 
                 let dayView = this._dayCellAtDate(currentDate);
                 this._dayViews.push(dayView);
-                MUICoreLayerAddSublayer(cellLayer, dayView.layer);
+                dayView.setDate(currentDate);
                 
-                dayView.setSelected(dayView._selected);
+                MUICoreLayerAddSublayer(cellLayer, dayView.layer);
+                                
                 if (dayView._selected == true) {
                     MUICoreLayerAddStyle(cellLayer, "selected");
+                    this.delegate._updateSelectedDate(dayView);
                 }
                 else {
                     MUICoreLayerRemoveStyle(cellLayer, "selected");
-                }
-                
-                dayView.setDate(currentDate);
+                }                                
 
                 for (let i = 0; i < 7; i++) { MUICoreLayerRemoveStyle(cellLayer, "day-" + i); }
                 MUICoreLayerAddStyle(cellLayer, "day-" + currentDate.getDay());
@@ -607,7 +607,7 @@ export class MUICalendarView extends MUIView{
         }
     }
     
-    reloadData(){                
+    reloadData(){
         this.visibleDayCells = {};
         this.setNeedsDisplay();
     }
@@ -740,5 +740,10 @@ export class MUICalendarView extends MUIView{
                 this.delegate.didSelectDayCellAtDate.call(this.delegate, this, dayCell.date);
             }    
         }
+    }
+
+    private _updateSelectedDate(dayCell:MUICalendarDayCell) {
+        this.selectedDate = dayCell.date;
+        this.selectedDayCell = dayCell;
     }
 }
