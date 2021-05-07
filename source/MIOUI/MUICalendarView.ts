@@ -593,6 +593,11 @@ export class MUICalendarView extends MUIView{
         this.header.setYear(year);
         this.daysView.setMonthAndYear(month, year);
     }
+
+    get selectedDateString():string {
+        const date = this.selectedYear + "-" + ("00" + (this.selectedMonth+1)).slice(-2) + "-01" ;
+        return date;
+    }
     
     reloadData(){                
         this.visibleDayCells = {};
