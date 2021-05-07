@@ -596,7 +596,7 @@ export class MUICalendarView extends MUIView{
 
     get selectedDateString():string {
 
-        if (this.selectedYear == null || this.selectedMonth) {
+        if (this.selectedYear == null || this.selectedMonth == null) {
             return MIODateGetDateString(new Date());       
         }
         else {
