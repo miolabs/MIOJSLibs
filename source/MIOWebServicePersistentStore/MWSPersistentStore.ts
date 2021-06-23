@@ -1,4 +1,3 @@
-
 import { MIOURL, MIOError, MIOUUID, MIONotificationCenter, MIOLog, MIOOperationQueue } from "../MIOFoundation";
 import { MIOPersistentStoreRequest } from "../MIOData/MIOPersistentStoreRequest";
 import { MIOManagedObjectID } from "../MIOData/MIOManagedObjectID";
@@ -11,7 +10,7 @@ import { MIOManagedObject } from "../MIOData/MIOManagedObject";
 import { MIOEntityDescription } from "../MIOData/MIOEntityDescription";
 import { MIOManagedObjectContext } from "../MIOData/MIOManagedObjectContext";
 import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
-import { MWSRequestType } from "./MWSRequest";
+import { MWSRequest, MWSRequestType } from "./MWSRequest";
 import { MIOManagedObjectSet } from "../MIOData/MIOManagedObjectSet";
 
 export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
@@ -116,7 +115,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let values = node.valueForPropertyDescription(relationship);
             if (values == null) return null;        
 
-            let relRefIDs = values[2];
+            let relRefIDs = values[2] || [];
 
             let array = [];
             for (let count = 0; count < relRefIDs.length; count++) {
@@ -295,13 +294,18 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let refresh = false;
         let node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, entity);
         if (node == null) {
-            MIOLog("New version: " + entity.name + " (" + version + ")");                        
-            node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, entity, objectID);            
+            let objectEntity = entity;
+            let entityName = values["classname"];
+            if (entity.name != entityName) {
+                objectEntity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
+            }
+            MIOLog("New version: " + entityName + " (" + version + ")");
+            node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity, objectID);
             refresh = true;
         }
         else if (version > node.version){
-            MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");            
-            this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, entity);              
+            MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");   
+            this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, entity);
             refresh = true;
         } 
 
@@ -326,16 +330,38 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let node = new MIOIncrementalStoreNode();
         node.initWithObjectID(objID, {}, version);
         this.nodesByReferenceID[referenceID] = node;
-        this.updateNodeWithValuesAtServerID(serverID, values, version, entity);        
+        let parsedValues = this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
         MIOLog("Inserting REFID: " + referenceID);
                 
+        if (entity.superentity != null) {            
+            this._newNodeWithValuesAtServerID(serverID, values, version, entity.superentity, objID);
+        }
+
         return node;
+    }
+
+    private _newNodeWithValuesAtServerID(serverID:string, values, version, entity:MIOEntityDescription, objectID:MIOManagedObjectID) {
+        
+        let referenceID = entity.name + "://" + serverID;
+        
+        let node = new MIOIncrementalStoreNode();
+        node.initWithObjectID(objectID, {}, version);
+        this.nodesByReferenceID[referenceID] = node;    
+        MIOLog("Inserting REFID: " + referenceID);    
+
+        if (entity.superentity != null) {
+            this._newNodeWithValuesAtServerID(serverID, values, version, entity.superentity, objectID);
+        }
     }
 
     private updateNodeWithValuesAtServerID(serverID:string, values, version, entity:MIOEntityDescription){                
         let referenceID = entity.name + "://" + serverID;
         let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;
 
+        if (node.objectID.entity.name != entity.name) {
+            node = this.nodesByReferenceID[node.objectID.entity.name + "://" + node.objectID._getReferenceObject()];
+        }
+        
         if (this.useSaveBlocks) {
             for (let key in entity.relationshipsByName) {
                 let rel = entity.relationshipsByName[key] as MIORelationshipDescription;
@@ -371,6 +397,14 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             }
         }
         
+        node.updateWithValues(values, version);
+        MIOLog("Updating REFID: " + referenceID);        
+        return values;
+    }
+
+    private _updateWithValues(serverID:string, values, version, entity:MIOEntityDescription) {
+        let referenceID = entity.name + "://" + serverID;
+        let node = this.nodesByReferenceID[referenceID] as MIOIncrementalStoreNode;
         node.updateWithValues(values, version);
         MIOLog("Updating REFID: " + referenceID);
     }
@@ -526,6 +560,49 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (request == null) return;
         request.type = MWSRequestType.Save;
 
+        this.addSaveBlockRequest(request);
+
+        // let op = new MWSPersistenStoreOperation();
+        // op.initWithDelegate(this);
+        // op.request = request;        
+        // op.saveCount = this.saveCount;
+
+        // MIOLog("OPERATION: Will save");
+
+        // op.target = this;
+        // op.completion = function () {
+        //     MIOLog("OPERATION: Did save");
+        //     //this.removeOperation(op, serverID);
+        //     //this.removeUploadingOperationForServerID(serverID);
+
+        //     // let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
+        //     // let version = this.delegate.serverVersionNumberForItem(this, serverValues);
+        //     // MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
+        //     // if (version > 1) this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
+            
+        //     this.saveOperationDidRemove(op);            
+        // }  
+        
+        // this.saveOperationQueue.addOperation(op);
+        // this.saveOperationDidAdd(op);
+
+        //this.uploadToServer();
+    }    
+
+    private saveBlockQueue = [];
+    private saveBlockOperationCount = 0;    
+    addSaveBlockRequest(request:MWSRequest) {
+        this.saveBlockQueue.addObject(request);
+        this.checkSaveBlockRequests();
+    }
+
+    checkSaveBlockRequests() {
+        if (this.saveBlockOperationCount > 0) return;
+        if (this.saveBlockQueue.length == 0) return;
+
+        this.saveBlockOperationCount++;
+        const request = this.saveBlockQueue.firstObject();        
+
         let op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
         op.request = request;        
@@ -535,23 +612,19 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         op.target = this;
         op.completion = function () {
-            MIOLog("OPERATION: Did save");
-            //this.removeOperation(op, serverID);
-            //this.removeUploadingOperationForServerID(serverID);
-
+            MIOLog("OPERATION: Did save");            
             // let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
-            // let version = this.delegate.serverVersionNumberForItem(this, serverValues);
-            // MIOLog("Object " + serverID + " -> Insert " + (result ? "OK" : "FAIL") + " (" + version + ")");                     
-            // if (version > 1) this.updateObjectInContext(serverValues, object.entity, object.managedObjectContext, object.objectID);
-            
-            this.saveOperationDidRemove(op);            
+            this.saveOperationDidRemove(op);
+            if (op.responseCode == 200) {
+                this.saveBlockOperationCount--;
+                this.saveBlockQueue.removeObjectAtIndex(0);
+                this.checkSaveBlockRequests();
+            }
         }  
         
         this.saveOperationQueue.addOperation(op);
-        this.saveOperationDidAdd(op);
-
-        //this.uploadToServer();
-    }
+        this.saveOperationDidAdd(op);        
+    }    
 
     insertObjectToServer(object: MIOManagedObject) {
 

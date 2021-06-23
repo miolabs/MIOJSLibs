@@ -42,7 +42,7 @@ class JavascriptModelOutput : ModelOutputDelegate
     
     func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?, usesScalarValueType:Bool)
     {
-        var t = ":"
+        var t = ":" 
         
         switch type {
         case "Integer",
@@ -64,6 +64,13 @@ class JavascriptModelOutput : ModelOutputDelegate
         case "Array",
              "Dictionary":
             t = ""
+            
+        case "UUID":
+            t += "string"
+            
+            
+        case "Transformable":
+            t += "string"
             
         default:
             t += type
