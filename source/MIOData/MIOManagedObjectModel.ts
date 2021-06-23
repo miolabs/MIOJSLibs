@@ -178,6 +178,11 @@ export class MIOManagedObjectModel extends MIOObject
                 if (defaultValueString != null) defaultValue = MIODateFromString(defaultValueString); 
                 break;
 
+            case "Transformable":
+                attrType = MIOAttributeType.Transformable;
+                if (defaultValueString != null) defaultValue = defaultValueString;
+                break;
+
             default:
                 MIOLog("MIOManagedObjectModel: Unknown class type: " + type);
                 if (defaultValueString != null) defaultValue = defaultValueString;

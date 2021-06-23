@@ -8,7 +8,8 @@ export enum MIOAttributeType {
     Float,
     Number,
     String,
-    Date   
+    Date,
+    Transformable   
 }
 
 export class MIOAttributeDescription extends MIOPropertyDescription

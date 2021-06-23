@@ -81,6 +81,11 @@ export class MIOIncrementalStoreNode extends MIOObject {
                 let date = _MIOIncrementalStoreNodeDateTransformer.sdf.dateFromString(value);
                 return date;
             }
+            else if (type == MIOAttributeType.Transformable) {                
+                let v = JSON.parse(value);
+                return v;
+            }
+
         }
         
         return value;
