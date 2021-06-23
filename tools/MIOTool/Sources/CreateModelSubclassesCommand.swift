@@ -159,7 +159,9 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
             let destinationEntity = attributeDict["destinationEntity"];
             let toMany = attributeDict["toMany"] ?? "NO"
             
-            outputDelegate?.appendRelationship(command:self, name:name!, destinationEntity:destinationEntity!, toMany:toMany, optional:(optional == "YES"))
+            if destinationEntity != nil {
+                outputDelegate?.appendRelationship(command:self, name:name!, destinationEntity:destinationEntity!, toMany:toMany, optional:(optional == "YES"))
+            }
         }
     }
     
