@@ -1,6 +1,6 @@
 {
   "name": "miojslibs",
-  "version": "0.9.168",
+  "version": "0.9.169",
   "description": "These libraries are designed to develop a web application in the same way you'd develop a native iOS/macOS application.",
   "main": "dist/js/miojslibs.js",
   "types": "dist/typings/miojslibs/index.d.ts",
@@ -57,5 +57,5 @@
     "url": "https://github.com/MIOLabs/MIOJSLibs/issues"
   },
   "homepage": "https://github.com/miolabs/MIOJSLibs/blob/master/packages/miojslibs/README.md",
-  "gitHead": "189af0cfe567537b22973a52e5e2ca15cf68cb98"
+  "gitHead": "6fa84ecfe41ae2ad70d0965d9c5d5cd938c1b668"
 }

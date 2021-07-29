@@ -1,6 +1,6 @@
 {
   "name": "miojslibs-core",
-  "version": "0.9.166",
+  "version": "0.9.169",
   "description": "These libraries are the building blocks of MIOJSLibs.",
   "main": "dist/js/miojslibs-core.js",
   "types": "dist/typings/miojslibs-core/index.d.ts",
