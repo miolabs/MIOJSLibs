@@ -124,7 +124,6 @@ class SwiftModelOutput : ModelOutputDelegate
     func appendRelationship(command:CreateModelSubClassesCommand, name:String, destinationEntity:String, toMany:String, optional:Bool)
     {
         fileContent2 += "    // Relationship: \(name)\n"
-       
         
         if (toMany == "NO") {
             fileContent += "    @NSManaged public var \(name):\(destinationEntity)\(optional ? "?" : "")\n"

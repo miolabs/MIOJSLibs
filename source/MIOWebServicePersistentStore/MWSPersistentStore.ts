@@ -12,6 +12,7 @@ import { MIOManagedObjectContext } from "../MIOData/MIOManagedObjectContext";
 import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
 import { MWSRequest, MWSRequestType } from "./MWSRequest";
 import { MIOManagedObjectSet } from "../MIOData/MIOManagedObjectSet";
+import { MIOCoreObjectClone } from "../MIOCore"
 
 export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
 export let MWSPersistentStoreDidUpdateEntity = "MWSPersistentStoreDidUpdateEntity";
@@ -532,7 +533,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let obj = insertedObjects.objectAtIndex(index);
             const values = this.delegate.serverValuesForObject(this, obj, true, "INSERT");
             const serverID = this.delegate.serverIDForObject(this, obj);
-            this.newNodeWithValuesAtServerID(serverID, values["values"], 1, obj.entity, obj.objectID);
+            this.newNodeWithValuesAtServerID(serverID, MIOCoreObjectClone(values["values"]), 1, obj.entity, obj.objectID);
             if (this.delegate.canSynchronizeEntity(this, obj.entity, "INSERT")) items.push(values);
         }
 
@@ -542,7 +543,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             const serverID = this.delegate.serverIDForObject(this, obj);
             let node = this.nodeWithServerID(obj.objectID._getReferenceObject(), obj.entity);
             let version = node.version + 1;
-            this.updateNodeWithValuesAtServerID(serverID, values["values"], version, obj.entity);
+            this.updateNodeWithValuesAtServerID(serverID, MIOCoreObjectClone(values["values"]), version, obj.entity);
             if (this.delegate.canSynchronizeEntity(this, obj.entity, "UPDATE")) items.push(values);
         }
 

@@ -71,3 +71,28 @@ export function MIOCoreRegisterClassByName(name, object){
 export function MIOCoreClassByName(name){
     return _micore_classes_by_name[name];
 }
+
+export function MIOCoreObjectClone(obj) {
+
+    let new_obj = {};
+    for (let key in obj) {
+        let v = obj[key];
+        if (v instanceof Array) new_obj[key] = MIOCoreArrayClone(v);
+        else if (v instanceof Object) new_obj[key] = MIOCoreObjectClone(v);        
+        else new_obj[key] = v;
+    }
+
+    return new_obj;
+}
+
+export function MIOCoreArrayClone(array){
+
+    let new_array = [];
+    for (let v of array) {        
+        if (v instanceof Array) new_array.push(MIOCoreArrayClone(v));
+        else if (v instanceof Object) new_array.push(MIOCoreObjectClone(v));        
+        else new_array.push(v);
+    }
+
+    return new_array;
+}

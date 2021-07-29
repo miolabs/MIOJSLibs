@@ -21,7 +21,7 @@ class JavascriptModelOutput : ModelOutputDelegate
     
     func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     {
-        self.filename = "/\(filename)_ManagedObject.ts";
+        self.filename = "/\(filename)_ManagedObject.ts";    
         let cn = classname + "_ManagedObject";
         self.currentClassEntityName = cn;
         self.currentClassName = classname;

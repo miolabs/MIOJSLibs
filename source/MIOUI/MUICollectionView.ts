@@ -63,6 +63,8 @@ export class MUICollectionView extends MUIView
     dataSource = null;
     delegate = null;
 
+    calculateLayout = false;
+
     private _collectionViewLayout:MUICollectionViewFlowLayout = null;
 
     private _cellPrototypes = {};
@@ -381,15 +383,15 @@ export class MUICollectionView extends MUIView
         for (let count = 0; count < this._sections.length; count++)
         {
             let section = this._sections[count];
-            // x = this.collectionViewLayout.sectionInset.left;
+            if (this.calculateLayout == true) x = this.collectionViewLayout.sectionInset.left;
 
             // Add header view
-            if (section.header != null)
+            if (section.header != null && this.calculateLayout == true)
             {
-                // section.header.setY(y);
-                // let offsetY = section.header.getHeight();
-                // if (offsetY <= 0) offsetY = 23;
-                // y += offsetY + this.collectionViewLayout.headerReferenceSize.height;
+                section.header.setY(y);
+                let offsetY = section.header.getHeight();
+                if (offsetY <= 0) offsetY = 23;
+                y += offsetY + this.collectionViewLayout.headerReferenceSize.height;
             }
 
             // Add cells
@@ -402,31 +404,38 @@ export class MUICollectionView extends MUIView
                         this.delegate.willDisplayCellAtIndexPath(this, cell, index, count);
                 }
 
-                // cell.setWidth(this.collectionViewLayout.itemSize.width);
-                // cell.setHeight(this.collectionViewLayout.itemSize.height);
+                if (this.calculateLayout == true) {
+                    cell.setWidth(this.collectionViewLayout.itemSize.width);
+                    cell.setHeight(this.collectionViewLayout.itemSize.height);
 
-                // cell.setX(x);
-                // cell.setY(y);
+                    cell.setX(x);
+                    cell.setY(y);
+                }
 
                 cell.setNeedsDisplay();
 
-                // x += this.collectionViewLayout.itemSize.width + this.collectionViewLayout.minimumInteritemSpacing;                
-                // if (x >= maxX) {
-                //     x = this.collectionViewLayout.sectionInset.left;
-                //     y += this.collectionViewLayout.itemSize.height;
-                //     y += this.collectionViewLayout.minimumLineSpacing;
-                // }
+                if (this.calculateLayout == true) {
+                    x += this.collectionViewLayout.itemSize.width + this.collectionViewLayout.minimumInteritemSpacing;                
+                    if (x >= maxX) {
+                        x = this.collectionViewLayout.sectionInset.left;
+                        y += this.collectionViewLayout.itemSize.height;
+                        y += this.collectionViewLayout.minimumLineSpacing;
+                    }
+                }
             }
 
-            // y += this.collectionViewLayout.minimumLineSpacing;
+            if (this.calculateLayout == true) {
 
-            // Add footer view
-            if (section.footer != null)
-            {
-                // section.footer.setY(y);
-                // let offsetY = section.footer.getHeight();
-                // if (offsetY <= 0) offsetY = 23;
-                // y += offsetY + this.collectionViewLayout.footerReferenceSize.height;
+                y += this.collectionViewLayout.minimumLineSpacing;
+
+                // Add footer view
+                if (section.footer != null)
+                {
+                    section.footer.setY(y);
+                    let offsetY = section.footer.getHeight();
+                    if (offsetY <= 0) offsetY = 23;
+                    y += offsetY + this.collectionViewLayout.footerReferenceSize.height;
+                }
             }
         }
     }

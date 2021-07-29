@@ -3,6 +3,8 @@ import { MIOFetchRequest } from "./MIOFetchRequest";
 import { MIOManagedObjectContext, MIOManagedObjectContextDidSaveNotification, MIOManagedObjectContextObjectsDidChange, MIOUpdatedObjectsKey, MIOInsertedObjectsKey, MIODeletedObjectsKey, MIORefreshedObjectsKey } from "./MIOManagedObjectContext";
 import { MIOManagedObject } from "./MIOManagedObject";
 import { _MIOSortDescriptorSortObjects } from "../MIOFoundation/MIOSortDescriptor";
+import { MIOManagedObjectModel } from "./MIOManagedObjectModel"
+import { MIOEntityDescription } from "./MIOEntityDescription";
 
 /**
  * Created by godshadow on 12/4/16.
@@ -39,13 +41,14 @@ export class MIOFetchedResultsController extends MIOObject
     fetchRequest:MIOFetchRequest = null;
     managedObjectContext:MIOManagedObjectContext  = null;
     sectionNameKeyPath = null;
+    fetchEntity:MIOEntityDescription = null;
     
     private registerObjects = {};
 
     initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?){
         this.fetchRequest = request;
         this.managedObjectContext = managedObjectContext;
-        this.sectionNameKeyPath = sectionNameKeyPath;
+        this.sectionNameKeyPath = sectionNameKeyPath;        
     }
 
     private _delegate:MIOFetchedResultsControllerDelegate = null;
@@ -58,35 +61,30 @@ export class MIOFetchedResultsController extends MIOObject
         // TODO: Add and remove notification observer
 
         if (delegate != null) {
-            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(notification:MIONotification){
+            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextDidSaveNotification, function(this:MIOFetchedResultsController, notification:MIONotification){
 
                 let moc:MIOManagedObjectContext = notification.object;
                 if (moc !== this.managedObjectContext) return;
+                
+                let entityName = this.fetchRequest.entityName;
 
-                let ins_objs = notification.userInfo[MIOInsertedObjectsKey];
-                let upd_objs = notification.userInfo[MIOUpdatedObjectsKey];
-                let del_objs = notification.userInfo[MIODeletedObjectsKey];
-                
-                let entityName = this.fetchRequest.entityName;                
-                
-                if (ins_objs[entityName] != null || upd_objs[entityName] != null || del_objs[entityName] != null)
-                    this.updateContent(ins_objs[entityName]?ins_objs[entityName]:[], 
-                                        upd_objs[entityName]?upd_objs[entityName]:[], 
-                                        del_objs[entityName]?del_objs[entityName]:[]);
+                let ins_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIOInsertedObjectsKey]);
+                let upd_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIOUpdatedObjectsKey]);
+                let del_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIODeletedObjectsKey]);
+                                
+                this.updateContent(ins_objs, upd_objs, del_objs);
             });
 
-            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextObjectsDidChange, function(notification:MIONotification) {
+            MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextObjectsDidChange, function(this:MIOFetchedResultsController, notification:MIONotification) {
 
                 let moc:MIOManagedObjectContext = notification.object;
                 if (moc !== this.managedObjectContext) return;
 
                 let refreshed = notification.userInfo[MIORefreshedObjectsKey];
                 if (refreshed == null) return;
-                let entityName = this.fetchRequest.entityName;                
-                
-                let objects = refreshed[entityName];
-                if (objects == null) return;
+                let entityName = this.fetchRequest.entityName;
 
+                let objects = this.objectsFromEntitiesAndSubentities(entityName, refreshed);
                 this.refreshObjects(objects);
             });
         }
@@ -94,6 +92,30 @@ export class MIOFetchedResultsController extends MIOObject
             MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextDidSaveNotification);
             MIONotificationCenter.defaultCenter().removeObserver(this, MIOManagedObjectContextObjectsDidChange);
         }
+    }
+
+    private checkEntity(entityName:string, fetchEntityName:string) : boolean {
+
+        if (entityName == fetchEntityName) return true;
+
+        let entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, this.managedObjectContext);
+        if (entity.superentity == null) return false;        
+
+        return this.checkEntity(entity.superentity.name, fetchEntityName);
+    }
+
+    private objectsFromEntitiesAndSubentities(entityName:string, entities:any){        
+        let objects:MIOSet = new MIOSet();
+        if (entities == null) return objects;
+
+        for (let key in entities) {
+            if (this.checkEntity(key, entityName) == false) continue;            
+            let objs = entities[key];
+            if (objs instanceof MIOSet) objs = objs.allObjects;
+            for (let i = 0; i < objs.length; i++) objects.addObject(objs[i]);
+        }
+                
+        return objects;
     }
 
     // TODO: Replace resultObjects to fetchedObjects
@@ -150,7 +172,9 @@ export class MIOFetchedResultsController extends MIOObject
         }        
     }
 
-    private refreshObjects(objects:MIOSet){        
+    private refreshObjects(objects:MIOSet){ 
+        if (objects.count == 0) return;
+
         this.checkObjects(objects);
         this.resultObjects = _MIOSortDescriptorSortObjects(this.resultObjects, this.fetchRequest.sortDescriptors);
         this._splitInSections();
@@ -159,7 +183,7 @@ export class MIOFetchedResultsController extends MIOObject
 
     private changeObjects = {};
 
-    private updateContent(inserted, updated, deleted){
+    private updateContent(inserted:MIOSet, updated:MIOSet, deleted:MIOSet){
         
         this.changeObjects = {};
 
