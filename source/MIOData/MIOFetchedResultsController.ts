@@ -71,8 +71,9 @@ export class MIOFetchedResultsController extends MIOObject
                 let ins_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIOInsertedObjectsKey]);
                 let upd_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIOUpdatedObjectsKey]);
                 let del_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIODeletedObjectsKey]);
-                                
-                this.updateContent(ins_objs, upd_objs, del_objs);
+
+                if ( ins_objs.length > 0 || upd_objs.length > 0 || del_objs.length > 0 )
+                     this.updateContent(ins_objs, upd_objs, del_objs);
             });
 
             MIONotificationCenter.defaultCenter().addObserver(this, MIOManagedObjectContextObjectsDidChange, function(this:MIOFetchedResultsController, notification:MIONotification) {
