@@ -9,8 +9,10 @@ import 'brace/mode/php';
 import 'brace/mode/python';
 import 'brace/mode/swift';
 import 'brace/mode/typescript';
+import 'brace/mode/json';
 import 'brace/theme/monokai';
 import 'brace/theme/xcode';
+
 
 export enum MUICodeEditorLanguage {
     None,
@@ -19,7 +21,8 @@ export enum MUICodeEditorLanguage {
     PHP,
     Swift,
     Python,
-    TypeScript
+    TypeScript,
+    JSON
 }
 
 export class MUICodeEditor extends MUIView 
@@ -37,7 +40,7 @@ export class MUICodeEditor extends MUIView
         this.addSubview(this.editorView);
 
         this.editor = ace.edit(this.editorView.layer);
-        this.editor.setTheme("ace/theme/xcode");    
+        this.editor.setTheme("ace/theme/xcode");
         this.editor.$blockScrolling = Infinity;
 
         var editorInstance = this;
@@ -103,6 +106,10 @@ export class MUICodeEditor extends MUIView
             case MUICodeEditorLanguage.TypeScript:
                 this.editor.session.setMode("ace/mode/typescript");
                 break;
+
+            case MUICodeEditorLanguage.JSON:
+                this.editor.session.setMode("ace/mode/json");
+                break;    
 
             default:
                 this.editor.session.setMode("ace/mode/plain_text");

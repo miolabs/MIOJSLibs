@@ -65,7 +65,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB 62.xcdatamodel/contents&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/DualLinkDB.xcdatamodeld/DualLinkDB 61.xcdatamodel/contents&quot;"
@@ -77,11 +77,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-folder"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/DualLinkDB/Sources/DualLinkDB/model/Classes"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Libs/MIOCoreData/Tests/TestModel/Classes"
@@ -89,31 +89,39 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-code"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "swift"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Apps/DLWebManager/model/datamodel.xml"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Apps/DLOrderWeb/model/datamodel.xml"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-folder"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/godshadow/Projects/Apps/DLWebManager/model/"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/godshadow/Projects/Apps/DLOrderWeb/model/"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--output-code"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "javascript"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

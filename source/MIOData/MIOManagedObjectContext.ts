@@ -74,18 +74,32 @@ export class MIOManagedObjectContext extends MIOObject {
         this.registerObjects.addObject(object);
         this.objectsByID[object.objectID.URIRepresentation.absoluteString] = object;
 
-        let entityName = object.entity.name;
+        // let entityName = object.entity.name;
+        // let array = this.objectsByEntity[entityName];
+        // if (array == null) {
+        //     array = [];
+        //     this.objectsByEntity[entityName] = array;
+        // }
+        // array.addObject(object);
+
+        this._registerObjectForEntity(object, object.entity);
+
+        if (object.objectID.persistentStore instanceof MIOIncrementalStore){
+            let is = object.objectID.persistentStore as MIOIncrementalStore;
+            is.managedObjectContextDidRegisterObjectsWithIDs([object.objectID]);
+        }        
+    }
+
+    private _registerObjectForEntity(object:MIOManagedObject, entity:MIOEntityDescription) {        
+        let entityName = entity.name;
         let array = this.objectsByEntity[entityName];
         if (array == null) {
             array = [];
             this.objectsByEntity[entityName] = array;
         }
         array.addObject(object);
-
-        if (object.objectID.persistentStore instanceof MIOIncrementalStore){
-            let is = object.objectID.persistentStore as MIOIncrementalStore;
-            is.managedObjectContextDidRegisterObjectsWithIDs([object.objectID]);
-        }        
+        
+        if (entity.superentity != null) this._registerObjectForEntity(object, entity.superentity);
     }
 
     private _unregisterObject(object: MIOManagedObject) {
