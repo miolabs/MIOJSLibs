@@ -18,6 +18,8 @@ export class MIOEntityDescription extends MIOObject {
 
     superentity:MIOEntityDescription = null;
 
+    isAbstract = false;
+
     private _properties = [];
     private _propertiesByName = {};
 

@@ -17,7 +17,7 @@ export class MUISegmentedControl extends MUIControl
 
         for (let index = 0; index < this.layer.childNodes.length; index++){
             let itemLayer = this.layer.childNodes[index];
-            if (itemLayer.tagName == "DIV"){
+            if (itemLayer.tagName == "DIV" || itemLayer.tagName == "BUTTON"){
                 let si = new MUIButton();
                 si.initWithLayer(itemLayer, owner);
                 si.type = MUIButtonType.PushIn;

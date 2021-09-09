@@ -1,5 +1,6 @@
 import { Chart } from 'chart.js'
 import { MUIView } from "./MUIView";
+import { MUICoreLayerAddStyle } from '.';
 
 export enum MUIChartViewType {
     Bar,
@@ -46,6 +47,7 @@ export class MUIChartView extends MUIView {
 
     private createCanvas(){
         this.canvas = document.createElement("canvas");
+        MUICoreLayerAddStyle(this.canvas, "mui-chart-view-canvas");
         this.canvas.style.width = "100%";
         this.canvas.style.height = "100%";
         this.layer.appendChild(this.canvas);

@@ -16,6 +16,9 @@ const g_supported_tags = { "DIV"    : true
                          , "BUTTON" : true 
                          , "LABEL"  : true 
                          , "FORM"   : true
+                         , "MAIN"   : true
+                         , "HEADER" : true
+                         , "NAV"    : true
                          }
 
 export function is_supported_tag ( tagName: string )

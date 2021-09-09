@@ -3,7 +3,7 @@ import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectID } from "./MIOManagedObjectID";
 import { MIOManagedObject } from "./MIOManagedObject";
 
-export class MIOManagedObjectSet extends MIOObject {
+export class MIOManagedObjectSet<T = any> extends MIOObject {
 
     static _setWithManagedObject(object:MIOManagedObject, relationship:MIORelationshipDescription) {
         let mos = new MIOManagedObjectSet();
@@ -133,11 +133,11 @@ export class MIOManagedObjectSet extends MIOObject {
         return substract;
     }
 
-    map(block){
+    map(block: (e:T, index:number, s:MIOManagedObjectSet<T>) => any) {
         let array = [];
         for(let index = 0; index < this.count; index++){ 
             let obj = this.objectAtIndex(index);
-            let mapValue = block(obj);
+            let mapValue = block(obj, index, this);
             array.addObject(mapValue);
         }
         return array;

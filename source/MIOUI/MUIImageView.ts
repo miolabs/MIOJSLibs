@@ -1,3 +1,4 @@
+import { MIORect } from "../MIOFoundation";
 import { MUILayerGetFirstElementWithTag, MUIView } from "./MUIView";
 
 /**
@@ -16,6 +17,11 @@ export class MUIImageView extends MUIView
     initWithLayer(layer, owner, options?){
         super.initWithLayer(layer, owner, options);
         this._imageLayer = MUILayerGetFirstElementWithTag(this.layer, "IMG");
+        this.setupLayers();
+    }
+
+    initWithFrame(frame: MIORect){        
+        super.initWithFrame(frame);
         this.setupLayers();
     }
 
@@ -40,11 +46,11 @@ export class MUIImageView extends MUIView
 
     setHeight(h){
         super.setHeight(h);
-        this._imageLayer.setAttribute("height", h);
+        if (this._imageLayer != null) this._imageLayer.setAttribute("height", h);
     }
 
     setWidth(w){
         super.setWidth(w);
-        this._imageLayer.setAttribute("width", w);
+        if (this._imageLayer != null) this._imageLayer.setAttribute("width", w);
     }
 }

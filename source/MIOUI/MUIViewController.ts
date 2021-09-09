@@ -9,7 +9,7 @@ import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MIOLocalizeString } from "../MIOCore";
 import { MUISplitViewController } from "./MUISplitViewController";
-import { MIOCoreIsPhone } from "../MIOCore/platform";
+import { MIOCoreIsPhone, MIOCoreIsPad } from "../MIOCore/platform";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -135,6 +135,8 @@ export class MUIViewController extends MIOObject
     _didLoadView(){
         this._layerIsReady = true;        
         if (MIOCoreIsPhone() == true) MUICoreLayerAddStyle(this.view.layer, "phone");
+        else if (MIOCoreIsPad() == true) MUICoreLayerAddStyle(this.view.layer, "pad");
+        else MUICoreLayerAddStyle(this.view.layer, "desktop");
         
         if (this._onLoadLayerTarget != null && this._onViewLoadedAction != null){
             this._onLoadLayerAction.call(this._onLoadLayerTarget);
@@ -445,7 +447,7 @@ export class MUIViewController extends MIOObject
         this.setPreferredContentSize(size);
     }
 
-    public get preferredContentSize(){
+    public get preferredContentSize():MIOSize{
         return this._preferredContentSize;
     }
 

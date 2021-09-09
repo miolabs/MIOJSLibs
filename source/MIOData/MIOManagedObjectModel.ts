@@ -63,11 +63,13 @@ export class MIOManagedObjectModel extends MIOObject
         if (element == "entity"){
 
             let name = attributes["name"];
-            let parentName = attributes["parentEntity"];            
+            let parentName = attributes["parentEntity"]; 
+            let is_abstract = attributes["isAbstract"] ? attributes["isAbstract"] : "NO";
 
             this.currentEntity = new MIOEntityDescription();
             this.currentEntity.initWithEntityName(name, null, this);
             this.currentEntity.parentEntityName = parentName;
+            this.currentEntity.isAbstract = (is_abstract.toLowerCase() == "yes");
 
             MIOLog("\n\n--- " + name);
         }
