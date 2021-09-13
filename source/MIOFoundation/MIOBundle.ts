@@ -121,10 +121,12 @@ export function  _MIOBundleCreateBundle(key:string, resources){
         conn.initWithRequestBlock(request, this, function(code, data){
             _MIOBundleResourcesDownloadingCount--;
 
-            if (code == 200) {
-                let type = urlString.match(/\.[0-9a-z]+$/i)[0].substring(1)
-                let resource = urlString.substring(0, urlString.length - type.length - 1);
+            if (code == 200) {                
+                let type = urlString.match(/\.[0-9a-z]+$/i);
+                if (type != null && type.length > 0) type = type[0].substring(1);
+                let resource = type != null ? urlString.substring(0, urlString.length - type.length - 1) : urlString ;
                 _MIOBundleSetResource(key, resource, type, data);
+
             }
 
             _MIOBundleResourceDownloadCheck();
@@ -161,10 +163,12 @@ export function _MIOBundleSetResource(identifier:string, resource:string, type:s
         _MIOAppBundles[identifier] = bundle;
     }
 
-    let files = bundle[type];
+    let t = type;
+    if (type == null) t = "NO_TYPE";
+    let files = bundle[t];
     if (files == null) {
         files = {};
-        bundle[type] = files;
+        bundle[t] = files;
     }
 
     files[resource] = content;
@@ -175,7 +179,9 @@ export function _MIOBundleAppGetResource(identifier:string, resource:string, typ
     let bundle = _MIOAppBundles[identifier];
     if (bundle == null) return null;    
 
-    let files = bundle[type];
+    let t = type;
+    if (type == null) t = "NO_TYPE";
+    let files = bundle[t];
     if (files == null) return null;
 
     let content = files[resource];

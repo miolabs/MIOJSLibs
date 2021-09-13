@@ -17,7 +17,7 @@ class AppDelegate {
     didFinishLaunching() {
         
         var vc = new ViewController("view");
-        vc.initWithResource("layout/View.html");
+        vc.initWithResource("dlorderweblib/layout/View.html");
 
         this.window = new MUIWindow();
         this.window.initWithRootViewController(vc);

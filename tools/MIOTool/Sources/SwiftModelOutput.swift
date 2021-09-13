@@ -11,6 +11,8 @@ import Foundation
 
 class SwiftModelOutput : ModelOutputDelegate
 {
+    var namespace:String? = nil
+    
     var fileContent:String = ""
     var fileContent2:String = ""
     var filename:String = ""
@@ -25,6 +27,10 @@ class SwiftModelOutput : ModelOutputDelegate
     var relationships2:[String] = []
     
     var modelContent:String = "#if !APPLE_CORE_DATA\nimport Foundation\nimport MIOCore\n\nextension DLDB\n{\n\tfunc registerRuntimeObjects(){\n"
+    
+    func setNamespace(command: CreateModelSubClassesCommand, namespace: String?) {
+        self.namespace = namespace
+    }
     
     func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     {

@@ -11,6 +11,8 @@ import Foundation
 
 class JavascriptModelOutput : ModelOutputDelegate
 {
+    var namespace:String? = nil
+    
     var fileContent:String = ""
     var filename:String = ""
     
@@ -18,6 +20,10 @@ class JavascriptModelOutput : ModelOutputDelegate
     var currentClassEntityName:String = ""
     
     var modelContent:String = "\nfunction DMRegisterModelClasses()\n{"
+    
+    func setNamespace(command: CreateModelSubClassesCommand, namespace: String?) {
+        self.namespace = namespace
+    }
     
     func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     {
@@ -34,9 +40,14 @@ class JavascriptModelOutput : ModelOutputDelegate
             fileContent += "\n/// <reference path=\"\(parentName!).ts\" />\n"
         }
         
+        if namespace != nil {
+            fileContent += "\nnamespace \(namespace!)\n{\n";
+        }
+        
         fileContent += "\n";
         fileContent += "// Generated class \(cn)\n";
         fileContent += "\n";
+        fileContent +=  namespace != nil ? "export " : ""
         fileContent += "class \(cn) extends \(parentObject)\n{\n";
     }
     
@@ -149,6 +160,9 @@ class JavascriptModelOutput : ModelOutputDelegate
     func closeModelEntity(command:CreateModelSubClassesCommand)
     {
         fileContent += "}\n";
+        if namespace != nil {
+            fileContent += "\n}\n";
+        }
         
 //        let modelPath = ModelPath()
         let modelPath = command.modelPath
@@ -164,15 +178,24 @@ class JavascriptModelOutput : ModelOutputDelegate
             content += "// Generated class \(self.currentClassName)\n"
             content += "//\n"
             content += "\n/// <reference path=\"\(self.currentClassEntityName).ts\" />\n"
-            content += "\nclass \(self.currentClassName) extends \(self.currentClassEntityName)\n"
+            if namespace != nil {
+                content += "\nnamespace \(namespace!)\n{\n";
+            }
+            content += "\n"
+            content += namespace != nil ? "export " : ""
+            content += "class \(self.currentClassName) extends \(self.currentClassEntityName)\n"
             content += "{\n"
             content += "\n}\n";
+            if namespace != nil {
+                content += "\n}\n";
+            }
 
             WriteTextFile(content: content, path: fp)
         }
-        
-        modelContent += "\n\t MIOCoreRegisterClassByName('" + self.currentClassName + "_ManagedObject', " + self.currentClassName + "_ManagedObject);";
-        modelContent += "\n\t MIOCoreRegisterClassByName('" + self.currentClassName + "', " + self.currentClassName + ");";
+                        
+        let ns = namespace != nil ? "\(namespace!)." : ""
+        modelContent += "\n\t MIOCoreRegisterClassByName('" + ns + self.currentClassName + "_ManagedObject', " + ns + self.currentClassName + "_ManagedObject);";
+        modelContent += "\n\t MIOCoreRegisterClassByName('" + ns + self.currentClassName + "', " + ns + self.currentClassName + ");";
         
         print("Entity: \(self.currentClassName)")
     }

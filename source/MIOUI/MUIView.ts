@@ -21,6 +21,7 @@ const g_supported_tags = { "DIV"    : true
                          , "NAV"    : true
                          , "OL"     : true
                          , "LI"     : true
+                         , "FOOTER" : true
                          }
 
 export function is_supported_tag ( tagName: string )

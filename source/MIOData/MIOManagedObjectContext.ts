@@ -155,7 +155,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
         let obj:MIOManagedObject = this.objectsByID[objectID.URIRepresentation.absoluteString];
         if (obj == null) {
-            obj = MIOClassFromString(objectID.entity.name);
+            obj = MIOClassFromString(objectID.entity.managedObjectClassName);
             obj._initWithObjectID(objectID, this);  
             this._registerObject(obj);               
         }
@@ -173,7 +173,7 @@ export class MIOManagedObjectContext extends MIOObject {
             obj._setIsFault(true);
         }
         else if (obj == null && node != null){
-            obj = MIOClassFromString(objectID.entity.name);
+            obj = MIOClassFromString(objectID.entity.managedObjectClassName);
             obj._initWithObjectID(objectID, this);
             this._registerObject(obj);
         }

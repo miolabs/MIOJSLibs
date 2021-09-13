@@ -17,6 +17,7 @@ enum ModelSubClassType
 
 protocol ModelOutputDelegate
 {
+    func setNamespace(command:CreateModelSubClassesCommand, namespace:String?)
     func openModelEntity(command:CreateModelSubClassesCommand, filename:String, classname:String, parentName:String?)
     func closeModelEntity(command:CreateModelSubClassesCommand)
     func appendAttribute(command:CreateModelSubClassesCommand, name:String, type:String, optional:Bool, defaultValue:String?, usesScalarValueType:Bool)
@@ -32,6 +33,7 @@ func CreateModelSubClasses() -> Command? {
     
     var type:ModelSubClassType = .javascript
     var entity:String?
+    var namespace:String?
     
     var options = NextArg()
     while options != nil {
@@ -44,6 +46,9 @@ func CreateModelSubClasses() -> Command? {
             
         case "--entity":
             entity = NextArg()
+
+        case "--namespace":
+            namespace = NextArg()
             
         default: break
         }
@@ -51,18 +56,16 @@ func CreateModelSubClasses() -> Command? {
         options = NextArg()
     }
         
-    return CreateModelSubClassesCommand(withFilename: fileName, path: path, type: type, entity:entity)
+    return CreateModelSubClassesCommand(withFilename: fileName, path: path, type: type, entity:entity, namespace:namespace)
 }
 
 func parseOutputCode() -> ModelSubClassType {
     let code = NextArg()
     
     switch code {
-    case "swift":
-        return .swift
-    case "javascript":
-        return .javascript
-    default: return .javascript
+    case "swift":       return .swift
+    case "javascript":  return .javascript
+    default:            return .javascript
     }
 }
 
@@ -71,13 +74,14 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
     public var modelPath:String
     var modelFilePath:String
     var modelType:ModelSubClassType
+    var namespace:String?
     
-    var outputDelegate:ModelOutputDelegate?
+    var outputDelegate:ModelOutputDelegate? = nil
     
     var customEntity:String?
     var customEntityFound = false
                 
-    init(withFilename filename:String, path:String, type:ModelSubClassType, entity:String?) {
+    init(withFilename filename:String, path:String, type:ModelSubClassType, entity:String?, namespace:String? = nil) {
         
         self.customEntity = entity
         
@@ -85,15 +89,16 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         self.modelPath = CreateModelSubClassesCommand.parsePath(path)
         
         self.modelType = type
+        self.namespace = namespace
         
         switch type {
-        case .javascript:
-            outputDelegate = JavascriptModelOutput()
-        
-        case .swift:
-            outputDelegate = SwiftModelOutput()
-            
-        }
+        case .javascript:   outputDelegate = JavascriptModelOutput()
+        case .swift:        outputDelegate = SwiftModelOutput()
+        }                
+    }
+    
+    func parserDidStartDocument(_ parser: XMLParser) {
+        outputDelegate?.setNamespace(command: self, namespace: namespace)
     }
     
     static func parsePath(_ path:String) -> String {

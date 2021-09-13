@@ -1,4 +1,4 @@
-import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog, MIONotificationCenter, MIOBundle } from "../MIOFoundation";
+import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog, MIONotificationCenter, MIOBundle, MIOPropertyListSerialization } from "../MIOFoundation";
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOAttributeType } from "./MIOAttributeDescription";
@@ -22,11 +22,25 @@ export class MIOManagedObjectModel extends MIOObject
         return entity;
     }
 
+    private _namespace:string = null;
     initWithContentsOfURL(url:MIOURL){
 
         // check if we already have it
-        let type = url.absoluteString.match(/\.[0-9a-z]+$/i)[0].substring(1)
+        let type = url.absoluteString.match(/\.[0-9a-z]+$/i)[0].substring(1);
         let resource = url.absoluteString.substring(0, url.absoluteString.length - type.length - 1);
+
+        if (type == "xcdatamodeld") {
+            // Core Data Bundle
+            let versionFile = url.absoluteString + "/xccurrentversion";
+            let versionData = MIOBundle.mainBundle().pathForResourceOfType(versionFile, null);
+            let versionInfo = MIOPropertyListSerialization.propertyListWithData(versionData, 0, 0, null);
+            
+            resource = url.absoluteString + "/" + versionInfo["_XCCurrentVersionName"] + "/contents";
+            type = "xml";
+
+            const components = versionInfo["_XCCurrentVersionName"].split(".");
+            this._namespace = components[0];
+        }
 
         let data = MIOBundle.mainBundle().pathForResourceOfType(resource, type);
         if (data != null) {
@@ -63,13 +77,15 @@ export class MIOManagedObjectModel extends MIOObject
         if (element == "entity"){
 
             let name = attributes["name"];
+            let classname = attributes["representedClassName"] || name;
             let parentName = attributes["parentEntity"]; 
             let is_abstract = attributes["isAbstract"] ? attributes["isAbstract"] : "NO";
 
             this.currentEntity = new MIOEntityDescription();
-            this.currentEntity.initWithEntityName(name, null, this);
+            let cs = this._namespace == null ? classname : this._namespace + "." + classname;
+            this.currentEntity.initWithEntityName(name, null, this, cs);
             this.currentEntity.parentEntityName = parentName;
-            this.currentEntity.isAbstract = (is_abstract.toLowerCase() == "yes");
+            this.currentEntity.isAbstract = (is_abstract.toLowerCase() == "yes");            
 
             MIOLog("\n\n--- " + name);
         }
@@ -111,7 +127,7 @@ export class MIOManagedObjectModel extends MIOObject
 
         if (element == "entity") {
             let entity = this.currentEntity;
-            this._entitiesByName[entity.managedObjectClassName] = entity;
+            this._entitiesByName[entity.name] = entity;
             this.currentEntity = null;
         }
     }
