@@ -60,9 +60,13 @@ export class MUIWebApplication {
 
         let url = languages[lang];
         if (url == null){
-            completion.call(target);
+            url = languages[ Object.keys( languages )[ 0 ] ];
         }
         
+        if ( !url ) {
+          console.error( "NO LANGUAGE found for ", lang ) ;
+        }
+
         let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString(url));
         let con = new MIOURLConnection();
         con.initWithRequestBlock(request, this, function(code, data){
