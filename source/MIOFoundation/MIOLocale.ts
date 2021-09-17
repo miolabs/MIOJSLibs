@@ -75,7 +75,8 @@ export class MIOLocale extends MIOObject
             case "AE":  
             case "PH":  
             case "GQ":
-            case "AW":                                        
+            case "AW":
+            case "NG":                                        
                 ds =  ".";
                 break;
         }
@@ -97,21 +98,11 @@ export class MIOLocale extends MIOObject
                 cs = "€";
                 break;
 
-            case "US":
-                cs = "$";
-                break;
-
-            case "UK":
-                cs = "£";
-                break;
-
-            case "PH":
-                cs = "₱";
-                break;
-
-            case "AW":
-                cs = "ƒ";
-                break;
+            case "US": cs = "$"; break;
+            case "UK": cs = "£"; break;
+            case "PH": cs = "₱"; break;
+            case "AW": cs = "ƒ"; break;
+            case "NG": cs = "₦"; break;
         }
 
         return cs;
@@ -129,29 +120,13 @@ export class MIOLocale extends MIOObject
                 cc = "EUR";
                 break;
 
-            case "US":
-                cc = "USD";
-                break;
-
-            case "UK":
-                cc = "GBP";
-                break;
-
-            case "AE":
-                cc = "AED";
-                break;
-
-            case "PH":
-                cc = "PHP";
-                break;
-
-            case "GQ":
-                cc = "FCFA";
-                break;
-
-            case "AW":
-                cc = "AWG";
-                break;        
+            case "US": cc = "USD"; break;
+            case "UK": cc = "GBP"; break;
+            case "AE": cc = "AED"; break;
+            case "PH": cc = "PHP"; break;
+            case "GQ": cc = "FCFA"; break;
+            case "AW": cc = "AWG"; break;
+            case "NG": cc = "NGN"; break;
         }
 
         return cc;
@@ -174,6 +149,7 @@ export class MIOLocale extends MIOObject
             case "PH":
             case "GQ":
             case "AW":
+            case "NG":
                 gs = ",";
                 break;
         }
