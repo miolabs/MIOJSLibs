@@ -301,7 +301,7 @@ export class MIOFetchedResultsController extends MIOObject
             let firstObj:MIOManagedObject = this.resultObjects[0];  
             currentSection = new MIOFetchSection();
             this.sections.push(currentSection);
-            currentSectionKeyPathValue = firstObj.valueForKey(this.sectionNameKeyPath);                ;    
+            currentSectionKeyPathValue = firstObj.valueForKeyPath(this.sectionNameKeyPath); 
             // Cache to for checking updates
             let reference = firstObj.objectID._getReferenceObject();
             this.registerObjects[reference] = firstObj;
@@ -314,7 +314,7 @@ export class MIOFetchedResultsController extends MIOObject
                 let ref = obj.objectID._getReferenceObject();
                 this.registerObjects[ref] = obj;
 
-                let value = obj.valueForKey(this.sectionNameKeyPath);                
+                let value = obj.valueForKeyPath(this.sectionNameKeyPath);          
 
                 if (currentSectionKeyPathValue != value) {
                     currentSection = new MIOFetchSection();

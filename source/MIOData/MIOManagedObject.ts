@@ -201,6 +201,23 @@ export class MIOManagedObject extends MIOObject {
     willAccessValueForKey(key:string) {};
     didAccessValueForKey(key:string) {};
 
+    // valueForKeyPath(keyPath:string) : any {
+
+    //     let keys = keyPath.split(".");
+        
+    //     const k = keys[0];
+    //     let value = this.valueForKey(k);
+        
+    //     // This means we are at the end of the key path tree
+    //     if (keys.length == 1) return value;
+        
+    //     // We need to follow the tree
+    //     const object = value as MIOManagedObject;
+    //     keys.removeObjectAtIndex(0);
+    //     const newKeyPath = keys.join(".")
+    //     return object.valueForKeyPath(newKeyPath);
+    // }
+
     valueForKey(key:string){
         if (key == null) return null;
 
