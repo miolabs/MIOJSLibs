@@ -29,7 +29,7 @@ export class MUIWebView extends MUIView
             this._iframeLayer.setAttribute("scrolling", "auto");
             this._iframeLayer.setAttribute("frameborder", "0");
             this._iframeLayer.setAttribute("width", "100%");
-            this._iframeLayer.setAttribute("height", "100%");            
+            this._iframeLayer.setAttribute("height", "100%");
             this.layer.appendChild(this._iframeLayer);
         }
     }

@@ -6,6 +6,7 @@ import { MIOURL } from "./MIOURL";
 import { MIOURLRequest } from "./MIOURLRequest";
 import { MIOURLConnection } from "./MIOURLConnection";
 import { MIOLog } from "./MIOLog";
+import { MIOLocale } from ".";
 
 /**
  * Created by godshadow on 9/4/16.
@@ -36,8 +37,28 @@ export class MIOBundle extends MIOObject
         return this._mainBundle;
     }
 
+
+    private static bundlesByIdentifier = {};
+    public static bundleWithIdentifier(identifier:string) : MIOBundle {
+        let b = this.bundlesByIdentifier[identifier];
+        if (b != null) return b;
+
+        let data = _MIOAppBundles[identifier];
+        if (data == null) return null;
+
+        b = new MIOBundle();
+        b.initWithIdentifier(identifier);
+        
+        this.bundleWithIdentifier[identifier] = b;
+        return b;
+    } 
+
     initWithURL(url:MIOURL){
         this.url = url;
+    }
+
+    initWithIdentifier(identifier:string){
+        this.identifier = identifier;
     }
 
     loadHTMLNamed(path, layerID, target?, completion?){            
@@ -65,6 +86,27 @@ export class MIOBundle extends MIOObject
     pathForResourceOfType(resource:string, type:string){
         return _MIOBundleAppGetResource(this.identifier, resource, type);
     }
+
+    private localize_strings_table = {};
+    localizedStringForKey(key:string, value:string, table:string){
+        const lang = MIOLocale.currentLocale().languageCode;
+        const table_locale = table + "_" + lang;
+
+        let items = this.localize_strings_table[table_locale];
+        if (items != null) return items[key] != null ? items[key] : value;
+        
+        let data = this.pathForResourceOfType(table + "/" + lang, "json");
+        if (data == null) return value;
+        
+        try {
+            let json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
+            this.localize_strings_table[table_locale] = json    
+            return json[key] != null ? json[key] : value;
+        }
+        catch {
+            return value
+        }
+    }
 }
 
 
@@ -79,7 +121,7 @@ export function _MIOBundleLoadBundles(url:MIOURL, target, completion) {
 
     let request = MIOURLRequest.requestWithURL(url);
     let conn =  new MIOURLConnection();
-    conn.initWithRequestBlock(request, this, function(code, data){
+    conn.initWithRequestBlock(request, this, function(code:number, data:any){
         
         if (code != 200) {
             completion.call(target, data);
@@ -98,12 +140,10 @@ export function _MIOBundleLoadBundles(url:MIOURL, target, completion) {
         }
 
         // Keep going
-
         for (let key in bundleJSON) {
             let resources = bundleJSON[key];
             _MIOBundleCreateBundle(key, resources);
         }
-
     });
 
 }
@@ -156,6 +196,8 @@ export function  _MIOBundleLoadResourceFromURL(url:MIOURL, target, completion){
 let _MIOAppBundles = {};
 
 export function _MIOBundleSetResource(identifier:string, resource:string, type:string, content:string){
+
+    console.log("ID: " + identifier + ", " + resource + ", " + type);
 
     let bundle = _MIOAppBundles[identifier];
     if (bundle == null) {

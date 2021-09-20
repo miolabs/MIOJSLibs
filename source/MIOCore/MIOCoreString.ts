@@ -85,7 +85,6 @@ export function MIOCoreStringStandardizingPath(string)
     return str;
 }
 
-
 let _MIOLocalizedStrings = null;
 
 export function MIOLocalizeString(key, defaultValue)
