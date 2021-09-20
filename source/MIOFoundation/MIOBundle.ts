@@ -40,7 +40,7 @@ export class MIOBundle extends MIOObject
 
     private static bundlesByIdentifier = {};
     public static bundleWithIdentifier(identifier:string) : MIOBundle {
-        let b = this.bundlesByIdentifier[identifier];
+        let b = MIOBundle.bundlesByIdentifier[identifier];
         if (b != null) return b;
 
         let data = _MIOAppBundles[identifier];
@@ -49,7 +49,7 @@ export class MIOBundle extends MIOObject
         b = new MIOBundle();
         b.initWithIdentifier(identifier);
         
-        this.bundleWithIdentifier[identifier] = b;
+        MIOBundle.bundlesByIdentifier[identifier] = b;
         return b;
     } 
 
@@ -59,6 +59,7 @@ export class MIOBundle extends MIOObject
 
     initWithIdentifier(identifier:string){
         this.identifier = identifier;
+        this.url = MIOURL.urlWithString(MIOCoreGetMainBundleURLString());
     }
 
     loadHTMLNamed(path, layerID, target?, completion?){            
@@ -68,7 +69,14 @@ export class MIOBundle extends MIOObject
                 this._webBundle.baseURL = this.url.absoluteString;
             }
 
-            this._webBundle.loadHMTLFromPath(path, layerID, this, function(layerData){
+            let localizations = null;
+
+            if (this.localize_strings_table != null) {
+                const lang = MIOLocale.currentLocale().languageCode;
+                localizations = this.localize_strings_table[this.identifier.toLowerCase() + "/languages"][lang];
+            }                        
+
+            this._webBundle.loadHMTLFromPath(path, layerID, localizations, this, function(layerData){
                                 
                 // let parser = new BundleFileParser(layerData, layerID);
                 // let result = parser.parse();
@@ -87,20 +95,25 @@ export class MIOBundle extends MIOObject
         return _MIOBundleAppGetResource(this.identifier, resource, type);
     }
 
-    private localize_strings_table = {};
+    private localize_strings_table = null;
     localizedStringForKey(key:string, value:string, table:string){
+        if (this.localize_strings_table == null) this.localize_strings_table = {};
+
         const lang = MIOLocale.currentLocale().languageCode;
         const table_locale = table + "_" + lang;
 
-        let items = this.localize_strings_table[table_locale];
-        if (items != null) return items[key] != null ? items[key] : value;
+        let items = this.localize_strings_table[table];
+        if (items == null) items = {};
+        let strings = items[lang];
+        if (strings != null) return strings[key] != null ? strings[key] : value;
         
         let data = this.pathForResourceOfType(table + "/" + lang, "json");
         if (data == null) return value;
         
         try {
             let json = JSON.parse(data.replace(/(\r\n|\n|\r)/gm, ""));
-            this.localize_strings_table[table_locale] = json    
+            items[lang] = json;
+            this.localize_strings_table[table] = items;
             return json[key] != null ? json[key] : value;
         }
         catch {

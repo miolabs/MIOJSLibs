@@ -74,12 +74,14 @@ export class MUIViewController extends MIOObject
         this.loadView();        
     }
 
-    initWithResource(path){
+    private bundlelIdentifier:string = null;
+    initWithResource(path:string, bundle?:string){
         if (path == null) throw new Error("MIOViewController:initWithResource can't be null");
 
         super.init();        
 
         this._htmlResourcePath = path;
+        this.bundlelIdentifier = bundle;
         this.loadView();
     }
 
@@ -120,8 +122,8 @@ export class MUIViewController extends MIOObject
             return;
         }
         
-        let mainBundle = MIOBundle.mainBundle();
-        mainBundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layer) {            
+        const bundle = this.bundlelIdentifier == null ? MIOBundle.mainBundle() : MIOBundle.bundleWithIdentifier(this.bundlelIdentifier);
+        bundle.loadHTMLNamed(this._htmlResourcePath, this.layerID, this, function (layer) {            
             
             // Search for navigation item
             this.navigationItem = MUINavItemSearchInLayer(layer);

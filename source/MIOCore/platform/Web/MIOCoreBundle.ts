@@ -14,13 +14,14 @@ export class MIOCoreBundle
 
     private _isDownloadingResource = false;
     
-    loadHMTLFromPath(path, layerID, target, completion)
+    loadHMTLFromPath(path, layerID, localizeTable, target, completion)
     {
         if (this._layoutWorker == null)
         {
             this._layoutWorker = new Worker("libs/miojslibs/webworkers/Bundle_WebWorker.js");
             // TODO: Set language so we can translate every html file in background
-            this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : getMIOLocalizedStrings()});
+            let localizedStrings = localizeTable != null ? localizeTable : getMIOLocalizedStrings();
+            this._layoutWorker.postMessage({"CMD" : "SetLanguageStrings", "LanguageStrings" : localizedStrings });
             
             var instance = this;
             this._layoutWorker.onmessage = function (event) {
