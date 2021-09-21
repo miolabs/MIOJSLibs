@@ -12,7 +12,7 @@ export function MIOCoreGetMainURLString(): string {
 
 export class MIOCoreBundle {
     baseURL: string;
-    loadHMTLFromPath(path, layerID, instance, callback) {};
+    loadHMTLFromPath(path, layerID, localizations, instance, callback) {};
 }
 
 export enum MIOCoreBrowserType
