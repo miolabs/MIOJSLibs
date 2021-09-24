@@ -485,6 +485,10 @@ export class MIOManagedObjectContext extends MIOObject {
         this.registerObjects = [];
         this.objectsByID = {};
         this.objectsByEntity = {};
+        
+        this.insertedObjects = MIOSet.set();
+        this.updatedObjects = MIOSet.set();
+        this.deletedObjects = MIOSet.set();        
     }
 
 }
