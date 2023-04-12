@@ -1,6 +1,6 @@
 import { XMLHttpRequest } from "xmlhttprequest";
 
-export function MIOHTTPRequest(instance, urlString: string, headers, method, body, binary, delegate, target, completion, download: boolean) {
+export function MIOHTTPRequest(instance, urlString: string, headers, method, body, binary, delegate, target, completion, download: boolean, fileName?:string) {
     let xhr = new XMLHttpRequest();
 
     xhr.onload = function () {

@@ -118,8 +118,8 @@ export class MUIButton extends MUIControl
         this.action = action;
     }
 
-    setTitle(title){
-        this._titleLayer.innerHTML = title;
+    setTitle(title:string){
+        this._titleLayer.innerHTML = title != null ? title : "";
     }
 
     set title(title){

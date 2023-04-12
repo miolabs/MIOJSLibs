@@ -82,7 +82,7 @@ export class MIOIncrementalStoreNode extends MIOObject {
                 return date;
             }
             else if (type == MIOAttributeType.Transformable) {                
-                let v = JSON.parse(value);
+                let v = value != null ? JSON.parse(value) : null;
                 return v;
             }
 

@@ -69,17 +69,18 @@ export enum MIOPredicateItemValueType {
     Boolean,    
     Null,
     Property,
-    Class
+    Class,
+    Array
 }
 
 export class MIOPredicateItem {
-    relationshipOperation:MIOPredicateRelationshipOperatorType = null;
-    bitwiseOperation:MIOPredicateBitwiseOperatorType = null;
-    bitwiseKey:string = null;
+    relationshipOperation:MIOPredicateRelationshipOperatorType|null = null;
+    bitwiseOperation:MIOPredicateBitwiseOperatorType|null = null;
+    bitwiseKey:string|null = null;
     bitwiseValue = null;
-    key = null;
+    key:string|null = null;
     comparator = null;
-    value = null;
+    value:any|null = null;
     valueType = MIOPredicateItemValueType.Undefined;
 
     evaluateObject(object, key?, lvalue?) {
@@ -124,22 +125,14 @@ export class MIOPredicateItem {
             return (lValue > rValue);
         else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
             return (lValue >= rValue);        
-        else if (this.comparator == MIOPredicateComparatorType.Contains) {
-            if (lValue == null)
-                return false;
-
-            if (lValue.indexOf(rValue) > -1)
-                return true;
-
+        else if (this.comparator == MIOPredicateComparatorType.Contains || this.comparator == MIOPredicateComparatorType.In) {
+            if (lValue == null) return false;
+            if (lValue.indexOf(rValue) > -1) return true;
             return false;
         }
-        else if (this.comparator == MIOPredicateComparatorType.NotContains) {
-            if (lValue == null)
-                return true;
-
-            if (lValue.indexOf(rValue) > -1)
-                return false;
-
+        else if (this.comparator == MIOPredicateComparatorType.NotContains || this.comparator == MIOPredicateComparatorType.NotIn) {
+            if (lValue == null) return true;
+            if (lValue.indexOf(rValue) > -1) return false;
             return true;
         }
     }
@@ -274,6 +267,9 @@ export enum MIOPredicateTokenType{
     
     OpenParenthesisSymbol,
     CloseParenthesisSymbol,
+    OpenBracketSymbol,
+    CloseBracketSymbol,
+    CommaSymbol,
     Whitespace,
 
     AND,
@@ -335,6 +331,9 @@ export class MIOPredicate extends MIOObject {
         // Symbols
         this.lexer.addTokenType(MIOPredicateTokenType.OpenParenthesisSymbol, /^\(/);
         this.lexer.addTokenType(MIOPredicateTokenType.CloseParenthesisSymbol, /^\)/);
+        this.lexer.addTokenType(MIOPredicateTokenType.OpenBracketSymbol, /^\[/);
+        this.lexer.addTokenType(MIOPredicateTokenType.CloseBracketSymbol, /^\]/);
+        this.lexer.addTokenType(MIOPredicateTokenType.CommaSymbol, /^\,/);
         // Comparators
         this.lexer.addTokenType(MIOPredicateTokenType.MinorOrEqualComparator, /^<=/);
         this.lexer.addTokenType(MIOPredicateTokenType.MinorComparator, /^</);
@@ -345,6 +344,7 @@ export class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains /i);
         this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains /i);
         this.lexer.addTokenType(MIOPredicateTokenType.InComparator, /^in /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.NotIntComparator, /^not in /i);
         // Bitwise operators
         this.lexer.addTokenType(MIOPredicateTokenType.BitwiseAND, /^& /i);
         this.lexer.addTokenType(MIOPredicateTokenType.BitwiseOR, /^\| /i);                
@@ -384,29 +384,30 @@ export class MIOPredicate extends MIOObject {
 
         this.predicateArguments = values;
 
-        MIOLog("**** Start predicate format parser");
-        MIOLog(format);
-        if (values.length > 0) MIOLog(values);
-        MIOLog("****");
+        // MIOLog("**** Start predicate format parser");
+        // MIOLog(format);
+        // if (values.length > 0) MIOLog(values);
+        // MIOLog("****");
         
         this.tokenizeWithFormat(format);
         this.predicateGroup = new MIOPredicateGroup();
         this.predicateGroup.predicates = this.parsePredicates();
         
-        MIOLog("**** End predicate format parser");
+        // MIOLog("**** End predicate format parser");
     }
 
     private parsePredicates(){
 
         let token = this.lexer.nextToken();
         let predicates = [];
-        let exit = false;
+        let exit = false;        
 
         while (token != null && exit == false) {
             
             switch (token.type) {
 
                 case MIOPredicateTokenType.Identifier:
+
                     let pi = this.nextPredicateItem();
                     predicates.push(pi);
                     break;
@@ -521,6 +522,10 @@ export class MIOPredicate extends MIOObject {
                 item.comparator = MIOPredicateComparatorType.In;
                 break;
 
+            case MIOPredicateTokenType.NotIntComparator:
+                item.comparator = MIOPredicateComparatorType.NotIn;
+                break;
+    
             case MIOPredicateTokenType.BitwiseAND:
                 item.bitwiseOperation = MIOPredicateBitwiseOperatorType.AND;
                 item.bitwiseKey = item.key;
@@ -553,44 +558,61 @@ export class MIOPredicate extends MIOObject {
         
         switch(token.type) {
             
-            case MIOPredicateTokenType.UUIDValue:
-                item.value = token.value;
-                item.valueType = MIOPredicateItemValueType.UUID;
-                break;
-            
-            case MIOPredicateTokenType.StringValue:
-                item.value = token.value.substring(1, token.value.length - 1);
-                item.valueType = MIOPredicateItemValueType.String;
-                break;
-
-            case MIOPredicateTokenType.NumberValue:
-                item.value = token.value;
-                item.valueType = MIOPredicateItemValueType.Number;
-                break;
-
-            case MIOPredicateTokenType.BooleanValue:
-                item.value = this.booleanFromString(token.value);
-                item.valueType = MIOPredicateItemValueType.Boolean;
-                break;
-
-            case MIOPredicateTokenType.NullValue:
-                item.value = this.nullFromString(token.value);
-                item.valueType = MIOPredicateItemValueType.Null;
-                break;
-
-            case MIOPredicateTokenType.Identifier:
-                item.value = token.value;
-                item.valueType = MIOPredicateItemValueType.Property;
-                break;
-
             case MIOPredicateTokenType.Class:
                 item.value = this.nextPlaceHolderArgument();
                 item.valueType = MIOPredicateItemValueType.Class;
                 break;
 
+            case MIOPredicateTokenType.OpenBracketSymbol:
+                this.parseArray( item );
+                break;
+
             default:
-                throw new Error(`MIOPredicate: Error. Unexpected comparator. (${token.value})`);
+                 [item.value, item.valueType] = this.valueFromToken(token);                
         }            
+    }
+
+    private valueFromToken( token ) : [any, MIOPredicateItemValueType] {
+        switch(token.type) {
+            
+            case MIOPredicateTokenType.UUIDValue:
+                return [token.value, MIOPredicateItemValueType.UUID]                
+            
+            case MIOPredicateTokenType.StringValue:
+                let value = token.value.substring(1, token.value.length - 1);
+                return [value, MIOPredicateItemValueType.String];
+
+            case MIOPredicateTokenType.NumberValue:
+                return [token.value, MIOPredicateItemValueType.Number];                                
+
+            case MIOPredicateTokenType.BooleanValue:
+                return [this.booleanFromString(token.value), MIOPredicateItemValueType.Boolean];
+
+            case MIOPredicateTokenType.NullValue:
+                return [this.nullFromString(token.value), MIOPredicateItemValueType.Null];
+
+            case MIOPredicateTokenType.Identifier:
+                return [token.value, MIOPredicateItemValueType.Property];
+
+            default:
+                throw new Error(`MIOPredicate: Error. Unexpected value. (${token.value})`);
+        }
+    }
+
+    private parseArray(item:MIOPredicateItem) {
+        let values:any[] = [];
+        let token = this.lexer.nextToken();
+        while (token.type != MIOPredicateTokenType.CloseBracketSymbol) {                    
+            if (token.type == MIOPredicateTokenType.CommaSymbol) {
+                token = this.lexer.nextToken();
+                continue;
+            }
+            let v = this.valueFromToken( token )[0];
+            values.push( v );
+            token = this.lexer.nextToken();
+        } 
+        item.value = values;
+        item.valueType = MIOPredicateItemValueType.Array;
     }
 
     private booleanFromString(value:string){

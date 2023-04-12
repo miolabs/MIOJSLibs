@@ -67,12 +67,14 @@ export class MIOLocale extends MIOObject
 
             case "ES":
             case "NL":
+            case "FR":
                 ds =  ",";
                 break;
 
             case "US":
             case "UK":
-            case "AE":  
+            case "AE":
+            case "QA":
             case "PH":  
             case "GQ":
             case "AW":
@@ -122,7 +124,8 @@ export class MIOLocale extends MIOObject
 
             case "US": cc = "USD"; break;
             case "UK": cc = "GBP"; break;
-            case "AE": cc = "AED"; break;
+            case "AE": cc = "AED"; break;            
+            case "QA": cc = "QAR"; break;
             case "PH": cc = "PHP"; break;
             case "GQ": cc = "FCFA"; break;
             case "AW": cc = "AWG"; break;
@@ -140,12 +143,14 @@ export class MIOLocale extends MIOObject
 
             case "ES":
             case "NL":
+            case "FR":
                 gs = ".";
                 break;
 
             case "US":
             case "UK":
             case "AE":
+            case "QA":
             case "PH":
             case "GQ":
             case "AW":

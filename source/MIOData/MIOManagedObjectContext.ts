@@ -41,7 +41,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
     private _parent: MIOManagedObjectContext = null;
 
-    private managedObjectChanges = {};
+    // private managedObjectChanges = {};
 
     private objectsByEntity = {};
     private objectsByID = {};
@@ -120,11 +120,15 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     insertObject(object: MIOManagedObject) {
+        if (this.insertedObjects.containsObject(object)) return;
+
         let store = this.persistentStoreCoordinator._persistentStoreForObject(object);
         let objectID = object.objectID;
 
         objectID._setStoreIdentifier(store.identifier);
         objectID._setPersistentStore(store);
+
+        if (this.updatedObjects.containsObject(object)) { this.updatedObjects.removeObject(object); }
 
         this.insertedObjects.addObject(object);
         this._registerObject(object);
@@ -132,12 +136,17 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     updateObject(object: MIOManagedObject) {
+        if (this.updatedObjects.containsObject(object)) return;        
         if (this.insertedObjects.containsObject(object)) return;
+        if (this.deletedObjects.containsObject(object)) return;
         this.updatedObjects.addObject(object);
         object._setIsUpdated(true);
     }
 
     deleteObject(object: MIOManagedObject) {
+        if (this.deletedObjects.containsObject(object)) { return; }
+        if (this.updatedObjects.containsObject(object)) { this.updatedObjects.removeObject(object); }
+        
         this.insertedObjects.removeObject(object);
         object._setIsInserted(false);
         this.updatedObjects.removeObject(object);
@@ -468,6 +477,7 @@ export class MIOManagedObjectContext extends MIOObject {
             }
 
             arr.addObject(obj.objectID);
+            obj._didCommit();
         }        
 
         for (let index = 0; index < this.persistentStoreCoordinator.persistentStores.length; index++){
@@ -479,9 +489,8 @@ export class MIOManagedObjectContext extends MIOObject {
                 let is = ps as MIOIncrementalStore;
                 is.managedObjectContextDidUnregisterObjectsWithIDs(objs);
             }                        
-        }
-
-
+        }        
+        
         this.registerObjects = [];
         this.objectsByID = {};
         this.objectsByEntity = {};

@@ -1,4 +1,4 @@
-import { MIOCoreLexer } from "../MIOCore";
+import { MIOCoreLexer, MIOLocalizeString } from "../MIOCore";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -10,24 +10,31 @@ export enum MIODateFirstWeekDay{
 }
 
 var _MIODateFirstWeekDay = MIODateFirstWeekDay.Monday;
-var _MIODateStringDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-var _MIODateStringMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var _MIODateStringDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+var _MIODateStringMonths = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
 
 export function MIODateSetFirstWeekDay(day:MIODateFirstWeekDay){
 
     _MIODateFirstWeekDay = day;
     if (day == MIODateFirstWeekDay.Sunday)
-        _MIODateStringDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        _MIODateStringDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     else
-        _MIODateStringDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        _MIODateStringDays = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
 }
 
 export function MIODateGetStringForMonth(month)
-{
-    return _MIODateStringMonths[month];
+{    
+    let m = _MIODateStringMonths[month];
+    return MIOLocalizeString(m, m); 
+
 }
 
 export function MIODateGetStringForDay(day:number)
+{
+    return _MIODateStringDays[day];
+}
+
+export function MIODateGetLocalizedStringForDay(day:number)
 {
     return _MIODateStringDays[day];
 }

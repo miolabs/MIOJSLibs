@@ -2,11 +2,11 @@ import { MIOObject } from "./MIOObject";
 
 export class MIOOperation extends MIOObject {
 
-    name:string = null;
-    target = null;
-    completion = null;
+    name:string|null = null;
+    target:any|null = null;
+    completion:any|null = null;
 
-    private _dependencies = [];
+    private _dependencies:MIOOperation[] = [];
     get dependencies() {return this._dependencies;}
 
     private _isExecuting = false;

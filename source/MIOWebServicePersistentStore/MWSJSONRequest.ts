@@ -3,7 +3,7 @@ import { MIOLog } from "../MIOFoundation";
 
 export class MWSJSONRequest extends MWSRequest 
 {    
-    willStart() {        
+    protected willStart() {        
         this.setHeaderValue("application/json", "Content-Type");
         
         if (this.body != null) {
@@ -11,7 +11,7 @@ export class MWSJSONRequest extends MWSRequest
         }
     }
     
-    didFinish(){
+    protected didFinish(){
         if (this.resultData != null && this.resultData != "") {
             try {
                 this.resultData = JSON.parse(this.resultData.replace(/(\r\n|\n|\r)/gm, ""));    

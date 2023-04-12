@@ -1,13 +1,13 @@
 interface Array<T> {
     addObject(o: T): void;
     insertObjectAtIndex(object:any, index:number): void ;
-    removeObject  (object:any ): void ;
+    removeObject  (object:any): void ;
     removeObjectAtIndex  (index:number) : void ;
     indexOfObject  (object:any): number ;
     containsObject  (object:any): boolean ;
     objectAtIndex  (index:number): any ;
-    firstObject ( ) : T ;
-    lastObject  ( ) : T ;
+    firstObject () : T ;
+    lastObject  () : T ;
 }
 
 //For code completion the interface is defined in types/mio/index.d.ts

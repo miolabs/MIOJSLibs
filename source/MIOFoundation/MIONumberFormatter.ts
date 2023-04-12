@@ -1,5 +1,16 @@
 import { MIOFormatter } from "./MIOFormatter";
 import { MIOLocale } from "./MIOLocale";
+// import "./MIOFoundationJS.d.ts";
+
+declare global { 
+    interface Math {
+        sign(x: number): number;
+    }
+    interface String {
+        repeat(count: number): string
+    }
+}
+
 
 export enum MIONumberFormatterStyle {
     NoStyle,
@@ -43,11 +54,11 @@ export class MIONumberFormatter extends MIOFormatter {
         }
     }
 
-    getObjectValueForString(str:string) {
+    getObjectValueForString(str:string) : any {
         return this.numberFromString(str);
     }
 
-    numberFromString(str:string){
+    numberFromString(str:string) : number {
 
         if(str === null) return null;
         
@@ -76,8 +87,8 @@ export class MIONumberFormatter extends MIOFormatter {
     stringForObjectValue(value):string {
         
         let number = value as number;
-        if(!number) number = 0;
-        let str = number.toString();
+        if(!number) number = 0;        
+        let str = parseScientific(number.toString());
         let intValue = null;
         let floatValue = null;
         let array = str.split(".");
@@ -294,3 +305,36 @@ export class MIONumberFormatter extends MIOFormatter {
         return [true, parseString, numberString, type];
     }
 }
+
+function parseScientific(num: string): string {
+    // If the number is not in scientific notation return it as it is.
+    if (!/\d+\.?\d*e[+-]*\d+/i.test(num)) {
+      return num;
+    }
+  
+    // Remove the sign.
+    const numberSign = Math.sign(Number(num));
+    num = Math.abs(Number(num)).toString();
+  
+    // Parse into coefficient and exponent.
+    const [coefficient, exponent] = num.toLowerCase().split("e");
+    let zeros = Math.abs(Number(exponent));
+    const exponentSign = Math.sign(Number(exponent));
+    const [integer, decimals] = (coefficient.indexOf(".") != -1 ? coefficient : `${coefficient}.`).split(".");
+  
+    if (exponentSign === -1) {
+      zeros -= integer.length;
+      num =
+        zeros < 0
+          ? integer.slice(0, zeros) + "." + integer.slice(zeros) + decimals
+          : "0." + "0".repeat(zeros) + integer + decimals;
+    } else {
+      if (decimals) zeros -= decimals.length;
+      num =
+        zeros < 0
+          ? integer + decimals.slice(0, zeros) + "." + decimals.slice(zeros)
+          : integer + decimals + "0".repeat(zeros);
+    }
+  
+    return numberSign < 0 ? "-" + num : num;
+  }

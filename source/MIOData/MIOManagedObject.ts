@@ -1,11 +1,12 @@
-import { MIOObject } from "../MIOFoundation";
+import { MIOObject, MIOSet } from "../MIOFoundation";
 import { MIOManagedObjectID } from "./MIOManagedObjectID";
 import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOIncrementalStore } from "./MIOIncrementalStore";
 import { MIOAttributeDescription } from "./MIOAttributeDescription";
-import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIODeleteRule, MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectSet } from "./MIOManagedObjectSet";
+import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
 
 /**
  * Created by godshadow on 23/03/2017.
@@ -91,7 +92,7 @@ export class MIOManagedObject extends MIOObject {
         this.willChangeValue("hasChanges");
         this.willChangeValue("isDeleted");
         this._isDeleted = value;
-        this.deleteFromInverseRelationships();
+        this.deleteInverseRelationships();
         this.didChangeValue("isDeleted");
         this.didChangeValue("hasChanges");        
     }
@@ -266,7 +267,7 @@ export class MIOManagedObject extends MIOObject {
         return value;
     }
 
-    setValueForKey(value, key:string){
+    setValueForKey(value:any, key:string, visited:MIOSet = new MIOSet()){
         let property = this.entity.propertiesByName[key];
 
         if (property == null) {
@@ -276,20 +277,20 @@ export class MIOManagedObject extends MIOObject {
 
         this.willChangeValueForKey(key);
 
-        if (value == null) {
-            this._changedValues[key] = null;
-        }
-        else if (property instanceof MIORelationshipDescription){
+        if (property instanceof MIORelationshipDescription){
             let relationship = property as MIORelationshipDescription;
+                        
             if (relationship.isToMany == false){
-                let obj = value as MIOManagedObject;
-                this._changedValues[key] = obj.objectID;
-            }            
+                let currentValue = this.valueForKey(key);
+                
+                let objID = value != null ? (value as MIOManagedObject).objectID : null;
+                this._changedValues[key] = objID;
             
-            let inverseRelationship = relationship.inverseRelationship;
-            if (inverseRelationship != null) {
-                // TODO:
+                this._setInverseRelationshipValue(currentValue, value, relationship, visited);
             }
+            else {
+                // TODO: We don't support adding a set value yet.
+            }            
         }
         else {
             this._changedValues[key] = value;
@@ -374,7 +375,7 @@ export class MIOManagedObject extends MIOObject {
     //
 
 
-    _addObjectForKey(object, key:string){
+    _addObjectForKey(object:MIOManagedObject, key:string, visited:MIOSet = new MIOSet()){
         let set:MIOManagedObjectSet = this._changedValues[key];
         
         if (set == null) {
@@ -383,17 +384,19 @@ export class MIOManagedObject extends MIOObject {
             set = storedSet != null ? storedSet.copy() : null;
         }
 
-        if (set == null) {
-            let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
-            set = MIOManagedObjectSet._setWithManagedObject(this, rel);
+        let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
+        if (set == null) {            
+            set = MIOManagedObjectSet._setWithManagedObject(this, rel);            
         }
 
         set.addObject(object);
         this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
+
+        this._setInverseRelationshipValue(null, object, rel, visited);
     }
 
-    _removeObjectForKey(object, key:string){        
+    _removeObjectForKey(object, key:string, visited:MIOSet = new MIOSet()){
         let set:MIOManagedObjectSet = this._changedValues[key];
         
         if (set == null) {
@@ -402,20 +405,48 @@ export class MIOManagedObject extends MIOObject {
             set = storedSet != null ? storedSet.copy() : null;
         }
 
-        if (set == null) {
-            let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
+        let rel:MIORelationshipDescription = this.entity.relationshipsByName[key];
+        if (set == null) {            
             set = MIOManagedObjectSet._setWithManagedObject(this, rel);
         }
 
         set.removeObject(object);
         this._changedValues[key] = set;
         this.managedObjectContext.updateObject(this);
+        
+        this._setInverseRelationshipValue(object, null, rel, visited);
     }
     
     _didCommit(){
         this._changedValues = {};
         this._storedValues = null;
         this._setIsFault(false);
+    }
+
+    private _setInverseRelationshipValue(oldValue:MIOManagedObject, newValue:MIOManagedObject, relationShip:MIORelationshipDescription, visited:MIOSet){
+        if (relationShip.inverseRelationship == null) return;
+        //if (oldValue == newValue) return;
+        visited.addObject(this.objectID.URIRepresentation.absoluteString);
+        
+        let relName = relationShip.inverseName;        
+        let relEntity = this.entity.managedObjectModel.entitiesByName[relationShip.inverseEntityName];
+        let rel = relEntity.relationshipsByName[relName] as MIORelationshipDescription;
+        if (rel.isToMany == false){
+            if (oldValue != null && !visited.containsObject(oldValue.objectID.URIRepresentation.absoluteString)) oldValue.setValueForKey(null, relName, visited);
+            // NOTE: This is to ensure, we update the graph correctly 
+            if (oldValue != null && newValue != null && oldValue.objectID.URIRepresentation.absoluteString == newValue.objectID.URIRepresentation.absoluteString) {
+                visited.removeObject(oldValue.objectID.URIRepresentation.absoluteString);
+            }
+            if (newValue != null && !visited.containsObject(newValue.objectID.URIRepresentation.absoluteString)) newValue.setValueForKey(this, relName, visited);
+        }
+        else {
+            if (oldValue != null && !visited.containsObject(oldValue.objectID.URIRepresentation.absoluteString)) oldValue._removeObjectForKey(this, relName, visited);
+            // NOTE: This is to ensure, we update the graph correctly
+            if (oldValue != null && newValue != null && oldValue.objectID.URIRepresentation.absoluteString == newValue.objectID.URIRepresentation.absoluteString) {
+                visited.removeObject(oldValue.objectID.URIRepresentation.absoluteString);
+            }
+            if (newValue != null && !visited.containsObject(newValue.objectID.URIRepresentation.absoluteString)) newValue._addObjectForKey(this, relName, visited);
+        }
     }
 
     private insertToInverseRelationships(){
@@ -438,29 +469,90 @@ export class MIOManagedObject extends MIOObject {
         }
     }
 
-
-    private deleteFromInverseRelationships(){
-
+    private deleteInverseRelationships() {
+        
         let relationships = this.entity.relationshipsByName;
         for (let relName in relationships) {
             let rel = relationships[relName] as MIORelationshipDescription;
-            if (rel.inverseRelationship != null) {
-                let value = this.valueForKey(relName);
-                if (value == null) return;
-                if (value instanceof MIOManagedObject) {
-                    let object = value as MIOManagedObject;
-                    let parentRelationship = object.entity.relationshipsByName[rel.inverseRelationship.name];
-                    if (parentRelationship.isToMany == false){
-                        object.setValueForKey(null, rel.inverseRelationship.name);
-                    }
-                    else {
-                        object._removeObjectForKey(this, rel.inverseRelationship.name);
-                    }
-                }
-                // else if (value instanceof MIOManagedObjectSet){
-                    
-                // }                
+            if (rel.inverseRelationship == null) continue;
+            
+            switch (rel.deleteRule) 
+            {
+                case MIODeleteRule.cascadeDeleteRule: this.deleteByCascade(rel); break;
+                case MIODeleteRule.nullifyDeleteRule: this.deleteByNullify(rel); break;
+                default: break
             }
         }
     }
+
+    private deleteByNullify(relationship: MIORelationshipDescription){
+        
+        let visited = new MIOSet();
+        visited.addObject(this);
+        if (relationship.isToMany == false) {
+            let obj = this.valueForKey(relationship.name) as MIOManagedObject;
+            if (obj == null || obj.isDeleted == false) return;
+            obj._nullify_inverse_relation(relationship.inverseRelationship, this, visited);
+        }
+        else {
+            let objects = this.valueForKey(relationship.name) as MIOManagedObjectSet;
+            for (let index = 0; index < objects.count; index++){
+                let obj = objects.objectAtIndex(index);
+                if (obj.isDeleted == false) obj._nullify_inverse_relation(relationship.inverseRelationship, this, visited);
+            }
+        }
+    }
+    
+    private _nullify_inverse_relation (relationship: MIORelationshipDescription, obj: MIOManagedObject, visited: MIOSet) {
+        if (relationship.isToMany == false) {            
+            this.setValueForKey(null, relationship.name, visited);
+        }
+        else {
+            this._removeObjectForKey(obj, relationship.name, visited);
+        }
+    }
+
+    
+    private deleteByCascade(relationship: MIORelationshipDescription) {
+
+        if (relationship.isToMany == false) {
+            let obj = this.valueForKey(relationship.name) as MIOManagedObject;
+            if (obj == null || obj.isDeleted == false) return;
+            this.managedObjectContext.deleteObject(obj);
+        }
+        else {
+            let objects = this.valueForKey(relationship.name) as MIOManagedObjectSet;
+            for (let index = 0; index < objects.count; index++){
+                let obj = objects.objectAtIndex(index);
+                if (obj.isDeleted == false) this.managedObjectContext.deleteObject(obj);
+                this._removeObjectForKey(obj, relationship.name)
+            }
+        }
+    }
+    
+
+    // private deleteFromInverseRelationships(){
+
+    //     let relationships = this.entity.relationshipsByName;
+    //     for (let relName in relationships) {
+    //         let rel = relationships[relName] as MIORelationshipDescription;
+    //         if (rel.inverseRelationship != null) {
+    //             let value = this.valueForKey(relName);
+    //             if (value == null) return;
+    //             if (value instanceof MIOManagedObject) {
+    //                 let object = value as MIOManagedObject;
+    //                 let parentRelationship = object.entity.relationshipsByName[rel.inverseRelationship.name];
+    //                 if (parentRelationship.isToMany == false){
+    //                     object.setValueForKey(null, rel.inverseRelationship.name);
+    //                 }
+    //                 else {
+    //                     object._removeObjectForKey(this, rel.inverseRelationship.name);
+    //                 }
+    //             }
+    //             // else if (value instanceof MIOManagedObjectSet){
+                    
+    //             // }                
+    //         }
+    //     }
+    // }
 }

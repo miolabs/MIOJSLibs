@@ -20,5 +20,6 @@
       "miojs_internal",
       "node"
     ]
-  }
+  },
+    "exclude": ["source/MIOFoundation/MIOFoundationJS.d.ts"]
 }

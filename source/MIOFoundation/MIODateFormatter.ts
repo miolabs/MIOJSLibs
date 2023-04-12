@@ -93,12 +93,13 @@ export class MIODateFormatter extends MIOFormatter {
     private _parse(str:string):[boolean, string, string]{
 
         let result, newStr, value, offset;
-        var dateString = "";
+        let dateString = "";
+        let newDateString = "";
 
         if (this.dateStyle != MIODateFormatterStyle.NoStyle) {
             [result, newStr, value, offset] = this._parseDate(str);   
-            if (result == false) 
-                return [result, newStr, value];   
+            newDateString = newStr;
+            if (result == false) return [result, newDateString, value];
             dateString = value;         
         }
         else {
@@ -110,13 +111,12 @@ export class MIODateFormatter extends MIOFormatter {
             let timeString = str;
             if (offset > 0) timeString = str.substr(offset, str.length - offset);
             [result, newStr, value] = this._parseTime(timeString);
-            if (result == false) {
-                return [result, newStr, value];
-            }
+            newDateString += " " + newStr;
+            if (result == false) return [result, newDateString.trim(), value];
             dateString += " " + value;
         }
         
-        return [result, newStr, dateString];
+        return [result, newDateString.trim(), dateString.trim()];
     }
 
     private _parseDate(str:string):[boolean, string, string, number]{
@@ -176,34 +176,34 @@ export class MIODateFormatter extends MIOFormatter {
         if (yy.length > 0) result = result && this._validateYear(yy);
         if (result == false) return [false, parseString, null, chIndex];
         
-        var dateString = (yy[3]? yy : ("20" + yy)) + this.browserDateSeparatorSymbol + (mm[1]?mm:"0"+mm) + this.browserDateSeparatorSymbol + (dd[1]?dd:"0"+dd);
+        let dateString = (yy[3]? yy : ("20" + yy)) + this.browserDateSeparatorSymbol + (mm[1]?mm:"0"+mm) + this.browserDateSeparatorSymbol + (dd[1]?dd:"0"+dd);
         return [true, parseString, dateString, chIndex];
     }
 
     private _parseDay(ch, dd):[boolean, string] {
 
-        var c = parseInt(ch);
+        let c = parseInt(ch);
         if (isNaN(c)) return [false, dd];
-        var v = parseInt(dd + ch);
+        let v = parseInt(dd + ch);
         return [true, dd + ch];
     }
 
     private _validateDay(dd):boolean {
-        var v = parseInt(dd);
+        let v = parseInt(dd);
         if (isNaN(v)) return false;
         if (dd < 1 || dd > 31) return false;
         return true;
     }
     
     private _parseMonth(ch, mm):[boolean, string] {
-        var c = parseInt(ch);
+        let c = parseInt(ch);
         if (isNaN(c)) return [false, mm];
-        var v = parseInt(mm + ch);        
+        let v = parseInt(mm + ch);        
         return [true, mm + ch];
     }
 
     private _validateMonth(mm):boolean {
-        var v = parseInt(mm);
+        let v = parseInt(mm);
         if (isNaN(v)) return false;
         if (v < 1 || v > 12) return false;
         return true;
@@ -211,14 +211,14 @@ export class MIODateFormatter extends MIOFormatter {
 
     private _parseYear(ch, yy):[boolean, string]{
 
-        var c = parseInt(ch);
+        let c = parseInt(ch);
         if (isNaN(c)) return [false, yy];
-        var v = parseInt(yy + ch);
+        let v = parseInt(yy + ch);
         return [true, yy + ch];
     }
 
     private _validateYear(yy):boolean{
-        var v = parseInt(yy);
+        let v = parseInt(yy);
         if (isNaN(yy) == true) return false;
         if (v > 3000) return false;
         return true;        
@@ -246,8 +246,8 @@ export class MIODateFormatter extends MIOFormatter {
 
     private _fullDateStyle(date:Date){
 
-        var day = _MIODateFormatterStringDays[date.getDay()];
-        var month = _MIODateFormatterStringMonths[date.getMonth()];
+        let day = _MIODateFormatterStringDays[date.getDay()];
+        let month = _MIODateFormatterStringMonths[date.getMonth()];
 
         return day + ", " + month + " " + date.getDate() + ", " + date.getFullYear();
     }
@@ -262,17 +262,18 @@ export class MIODateFormatter extends MIOFormatter {
         let ss = "";
 
         // Check dd-mm-yy or dd-mm-yyyy
+        let numbers = [0,1,2,3,4,5,6,7,8,9];
         for (let index = 0; index < str.length; index++) {
             let ch = str[index];
 
-            if (ch == ":" || ch == ".")
+            if (ch == ":")
             {
                 // Next step
-                if (parseString.length == 0) return [false, parseString, ""];
+                // if (parseString.length == 0) return [false, parseString, ""];
                 parseString += ":";
                 step++;
             }
-            else 
+            else if (ch in numbers)
             {
                 let result, value;
                 
@@ -293,12 +294,16 @@ export class MIODateFormatter extends MIOFormatter {
 
                 if (result == true)
                     parseString += ch;
-                else 
-                    return [false, parseString, ""];
-            }            
+                // else 
+                //     return [false, parseString, ""];
+            }  
+            else {
+                return [false, parseString, ""];
+            }          
         }
 
-        var hourString = (hh[1]? hh : ("0" + hh));
+        let hourString = "";
+        if (hh.length > 0) hourString += (hh[1]? hh : ("0" + hh));
         if (mm.length > 0)
             hourString += ":" + (mm[1]?mm:("0"+mm));
         else 
@@ -314,27 +319,30 @@ export class MIODateFormatter extends MIOFormatter {
 
     private _parseHour(ch, hh):[boolean, string] {
 
-        var c = parseInt(ch);
+        let c = parseInt(ch);
         if (isNaN(c)) return [false, hh];
-        var v = parseInt(hh + ch);
+        if ((hh + ch).length > 2) return [false, hh];
+        let v = parseInt(hh + ch);        
         if (v < 0 || v > 23) return [false, hh];
         return [true, hh + ch];
     }
 
     private _parseMinute(ch, mm):[boolean, string] {
 
-        var c = parseInt(ch);
+        let c = parseInt(ch);
         if (isNaN(c)) return [false, mm];
-        var v = parseInt(mm + ch);
+        if ((mm + ch).length > 2) return [false, mm];
+        let v = parseInt(mm + ch);
         if (v < 0 || v > 59) return [false, mm];
         return [true, mm + ch];
     }
 
     private _parseSecond(ch, ss):[boolean, string] {
 
-        var c = parseInt(ch);
+        let c = parseInt(ch);
         if (isNaN(c)) return [false, ss];
-        var v = parseInt(ss + ch);
+        if ((ss + ch).length > 2) return [false, ss];
+        let v = parseInt(ss + ch);
         if (v < 0 || v > 59) return [false, ss];
         return [true, ss + ch];
     }
@@ -350,8 +358,8 @@ export class MIODateFormatter extends MIOFormatter {
 
     private _shortTimeStyle(date:Date) {
 
-        var h = date.getHours().toString();
-        var m = date.getMinutes().toString();
+        let h = date.getHours().toString();
+        let m = date.getMinutes().toString();
 
         return (h[1]?h:"0"+h) + ":" + (m[1]?m:"0"+m);
     }

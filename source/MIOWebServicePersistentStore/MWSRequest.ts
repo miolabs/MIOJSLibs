@@ -1,4 +1,4 @@
-import { MIOObject, MIOURL, MIOURLRequest, MIOURLConnection, MIONotificationCenter } from "../MIOFoundation";
+import { MIOObject, MIOURL, MIOURLRequest, MIOURLConnection, MIONotificationCenter, MIOUUID } from "../MIOFoundation";
 
 export enum MWSRequestType {
     Fetch,
@@ -7,7 +7,7 @@ export enum MWSRequestType {
 
 export class MWSRequest extends MIOObject
 {
-    url:MIOURL = null;
+    url:MIOURL|null = null;
     httpMethod = "GET"
     body = null;
     bodyData = null;    
@@ -17,7 +17,10 @@ export class MWSRequest extends MIOObject
 
     type = MWSRequestType.Fetch;
     
-    private urlRequest:MIOURLRequest = null;
+    transaction:string = MIOUUID.UUID().UUIDString;
+    schema:string|null = null;
+    
+    private urlRequest:MIOURLRequest|null = null;
     initWithURL(url:MIOURL, body?, httpMethod?:string){
         
         this.url = url;
@@ -25,10 +28,10 @@ export class MWSRequest extends MIOObject
         if (httpMethod != null) this.httpMethod = httpMethod;
     }
 
-    private headers = {};
+    headers = {};
     setHeaderValue(value:string, key:string) {
         this.headers[key] = value;
-    }
+    }    
 
     // Completion block (Int, Any?) -> Void
     execute(target, completion?){
@@ -49,7 +52,9 @@ export class MWSRequest extends MIOObject
         let con = new MIOURLConnection();
         con.initWithRequestBlock(this.urlRequest, this, function(code, data, blob){
 
-            if (code < 200 || code >= 300) MIONotificationCenter.defaultCenter().postNotification("MWSRequestFetchError", this, {"Type" : this.type});
+            if (code < 200 || code >= 300) {
+                MIONotificationCenter.defaultCenter().postNotification("MWSRequestFetchError", this, {"Type" : this.type});
+            }
             this.resultCode = code;
             this.resultData = data;
 
@@ -64,6 +69,6 @@ export class MWSRequest extends MIOObject
     }
 
      // For subclasing
-    protected willStart(){}
+    protected willStart(){ this.bodyData = this.body; }
     protected didFinish(){}
 }

@@ -131,15 +131,16 @@ export class UITableViewCell extends MUIView
         this.accessoryView.initWithLayer(layer, owner);
 
         if (type == "checkmark") this.accessoryType = UITableViewCellAccessoryType.Checkmark;
+        else if (type == "disclosure") this.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator;
         else this.accessoryType = UITableViewCellAccessoryType.None;
 
         if (this.accessoryType != UITableViewCellAccessoryType.None) return;
         
-        this.accessoryView.layer.addEventListener("click", this.accessoryViewDidClick.bind(this));
+        // this.accessoryView.layer.addEventListener("click", this.accessoryViewDidClick.bind(this));
     }
 
     private accessoryViewDidClick(e:Event){
-        e.stopPropagation();
+        e.stopPropagation();        
         this._onAccessoryClickFn.call(this._target, this);
     }
 
@@ -269,22 +270,31 @@ export class UITableViewCell extends MUIView
         // if (type == UITableViewCellAccessoryType.None) this.accessoryView.setHidden(true);
         // else this.accessoryView.setHidden(false);
 
-        if (type == UITableViewCellAccessoryType.None) MUICoreLayerRemoveStyle(this.layer, "checked");
-        else MUICoreLayerAddStyle(this.layer, "checked");
+        if (type == UITableViewCellAccessoryType.None) {
+            MUICoreLayerRemoveStyle(this.layer, "checked");
+            this.accessoryView.hidden = true;
+        } 
+        else if (type == UITableViewCellAccessoryType.Checkmark) { 
+            this.accessoryView.hidden = false;
+            MUICoreLayerAddStyle(this.layer, "checked");
+        }
+        else if (type == UITableViewCellAccessoryType.DisclosureIndicator) { 
+            this.accessoryView.hidden = false;
+        }        
 
         this._accessoryType = type;
     }
 
     setPaddingIndex(value) {
 
-        var offset = (value + 1) * 10;
+        let offset = (value + 1) * 10;
         if (this.style == UITableViewCellStyle.Default) this.textLabel.setX(offset);
     }
 
     setHeight(h) {
         super.setHeight(h);
 
-        var offsetY = (h - 15) / 2;
+        let offsetY = (h - 15) / 2;
 
         if (this.accessoryView != null) {
             this.accessoryView.layer.style.top = offsetY + "px";

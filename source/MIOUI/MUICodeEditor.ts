@@ -12,6 +12,7 @@ import 'brace/mode/typescript';
 import 'brace/mode/json';
 import 'brace/theme/monokai';
 import 'brace/theme/xcode';
+import 'brace/ext/beautify';
 
 
 export enum MUICodeEditorLanguage {
@@ -43,7 +44,7 @@ export class MUICodeEditor extends MUIView
         this.editor.setTheme("ace/theme/xcode");
         this.editor.$blockScrolling = Infinity;
 
-        var editorInstance = this;
+        let editorInstance = this;
         this.editor.on("change", function(e) {
             if (editorInstance.editor.curOp && editorInstance.editor.curOp.command.name) console.log("user change");
             else {
@@ -115,6 +116,11 @@ export class MUICodeEditor extends MUIView
                 this.editor.session.setMode("ace/mode/plain_text");
                 break;
         }
+    }
+
+    beautify() {    
+        let b = ace.acequire("ace/ext/beautify");
+        b.beautify (this.editor.session);
     }
 
 }

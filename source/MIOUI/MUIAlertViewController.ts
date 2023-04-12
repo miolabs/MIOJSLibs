@@ -9,7 +9,7 @@ import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCore/platform";
 import { MUITableViewCell, MUITableViewCellSeparatorStyle, MUITableViewCellStyle } from "./MUITableViewCell";
 import { MUILabel } from "./MUILabel";
 import { MUIAnimationType, MUIClassListForAnimationType } from "./MIOUI_CoreAnimation";
-import { MUICoreLayerRemoveStyle } from ".";
+import { MUICoreLayerRemoveStyle, MUIWebApplication } from ".";
 import { MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 
 export enum MUIAlertViewStyle
@@ -217,6 +217,11 @@ export class MUIAlertViewController extends MUIViewController
     private _calculateContentSize(){
         let h = 80 + (this._items.length * 50) + 1;
         this._alertViewSize = new MIOSize(320, h);
+
+        let ad = MUIWebApplication.sharedInstance().delegate;
+        let w = ad.valueForKey("window") as MUIView;
+        let wh = w.getHeight();
+        if (wh < h) this._alertViewSize = new MIOSize(320, wh);
     }
 
     numberOfSections(tableview){
@@ -261,7 +266,7 @@ export class MUIAlertViewController extends MUIViewController
     {
         if (indexPath.row == 0) return false;
 
-        var item = this._items[indexPath.row - 1];
+        let item = this._items[indexPath.row - 1];
         if (item.type == MUIAlertItemType.Action) return true;
 
         return false;
@@ -269,7 +274,7 @@ export class MUIAlertViewController extends MUIViewController
 
     didSelectCellAtIndexPath(tableView, indexPath:MIOIndexPath)
     {
-        var item = this._items[indexPath.row - 1];
+        let item = this._items[indexPath.row - 1];
         if (item.type == MUIAlertItemType.Action) {
             
             if (item.target != null && item.completion != null)

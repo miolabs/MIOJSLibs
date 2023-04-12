@@ -265,7 +265,6 @@ export class MUITableView extends MUIScrollView {
     }
 
     reloadData() {
-
         this.reloadingData = true;
         // Remove all subviews
         for (let index = 0; index < this.rows.length; index++) {

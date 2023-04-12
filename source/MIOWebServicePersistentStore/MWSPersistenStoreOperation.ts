@@ -1,10 +1,10 @@
 import { MIOOperation } from "../MIOFoundation";
-import { MWSJSONRequest } from "./MWSJSONRequest";
+import { MWSRequest } from "./MWSRequest";
 
 export class MWSPersistenStoreOperation extends MIOOperation {
         
     saveCount = 0;
-    request:MWSJSONRequest = null;
+    request:MWSRequest|null = null;
     dependencyIDs = null;
 
     responseCode = null;
@@ -36,7 +36,7 @@ export class MWSPersistenStoreOperation extends MIOOperation {
 
         this.setUploading(true);
 
-        this.request.execute(this, function (code, data) {
+        this.request!.execute(this, function (code, data) {
             this.responseCode = code;
             this.responseJSON = data;            
 

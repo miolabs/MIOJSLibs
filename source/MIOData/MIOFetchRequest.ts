@@ -19,6 +19,7 @@ export class MIOFetchRequest extends MIOPersistentStoreRequest {
     fetchLimit = 0;
     fetchOffset = 0;
     relationshipKeyPathsForPrefetching = [];
+    userInfo = {};
 
     static fetchRequestWithEntityName(entityName:string) {
         var fetch = new MIOFetchRequest();

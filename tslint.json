@@ -71,7 +71,7 @@
     ],
     "no-invalid-template-strings": true,
     "no-misused-new": true,
-    "no-non-null-assertion": true,
+    "no-non-null-assertion": false,
     "no-parameter-reassignment": false, // This would be useful
     "no-shadowed-variable": true,
     "no-string-literal": false,

@@ -19,6 +19,7 @@ export class MUITextField extends MUIControl
 {
     placeHolder = null;
     private _inputLayer = null;
+    get inputLayer() { return this._inputLayer; }
     type = MUITextFieldType.NormalType;
 
     textChangeTarget = null;

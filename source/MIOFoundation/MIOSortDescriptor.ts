@@ -1,6 +1,5 @@
 import { MIOObject } from "./MIOObject";
 
-
 /**
  * Created by godshadow on 28/09/2016.
  */
@@ -12,7 +11,7 @@ export class MIOSortDescriptor extends MIOObject
 
     public static sortDescriptorWithKey(key, ascending)
     {
-        var sd = new MIOSortDescriptor();
+        let sd = new MIOSortDescriptor();
         sd.initWithKey(key, ascending);
         return sd;
     }
@@ -98,4 +97,16 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
     }
     else if (lv == null) return sd.ascending ? -1 : 1;    
     else if (rv == null) return sd.ascending ? 1 : -1;
+}
+
+declare global {
+    interface Array<T> {
+        sortedArrayUsingDescriptors(sortDescriptors:MIOSortDescriptor[]):any[];
+    }
+}    
+
+//For code completion the interface is defined in types/mio/index.d.ts
+
+Array.prototype.sortedArrayUsingDescriptors = function(sortDescriptors:MIOSortDescriptor[]){
+    return _MIOSortDescriptorSortObjects(this, sortDescriptors);
 }

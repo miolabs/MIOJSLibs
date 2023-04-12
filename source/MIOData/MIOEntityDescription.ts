@@ -1,7 +1,7 @@
 import { MIOObject } from "../MIOFoundation";
 import { MIOPropertyDescription } from "./MIOPropertyDescription";
 import { MIOClassFromString } from "../MIOCore/platform";
-import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIODeleteRule, MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
 import { MIOManagedObject } from "./MIOManagedObject";
 import { MIOAttributeType, MIOAttributeDescription } from "./MIOAttributeDescription";
@@ -96,11 +96,12 @@ export class MIOEntityDescription extends MIOObject {
         this.serverAttributes[name] = serverName ? serverName : name;
     }
 
-    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string, inverseName?:string, inverseEntityName?:string, optional?:boolean) {
+    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string, inverseName?:string, inverseEntityName?:string, optional?:boolean, deletionRule?:MIODeleteRule) {
 
         let rel = new MIORelationshipDescription();
         rel.initWithName(name, destinationEntityName, toMany, serverName, inverseName, inverseEntityName);
         if (optional != null) rel.optional = optional;
+        if (deletionRule != null) rel.deleteRule = deletionRule;
         this.relationships.push(rel);
         this.relationshipsByName[name] = rel;
         this._propertiesByName[name] = rel;

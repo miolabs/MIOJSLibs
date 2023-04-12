@@ -9,6 +9,7 @@ export class MIOURLRequest extends MIOObject
     headers = [];
     binary = false;
     download = false;
+    filename = null;
 
     static requestWithURL(url:MIOURL):MIOURLRequest
     {

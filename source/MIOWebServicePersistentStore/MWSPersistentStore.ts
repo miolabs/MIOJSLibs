@@ -11,11 +11,14 @@ import { MIOEntityDescription } from "../MIOData/MIOEntityDescription";
 import { MIOManagedObjectContext } from "../MIOData/MIOManagedObjectContext";
 import { MIOSaveChangesRequest } from "../MIOData/MIOSaveChangesRequest";
 import { MWSRequest, MWSRequestType } from "./MWSRequest";
+import { MWSJSONRequest } from "./MWSJSONRequest";
 import { MIOManagedObjectSet } from "../MIOData/MIOManagedObjectSet";
 import { MIOCoreObjectClone } from "../MIOCore"
+import { MWSCache } from "./MWSCache"
 
 export let MWSPersistentStoreDidChangeEntityStatus = "MWSPersistentStoreDidChangeEntityStatus";
 export let MWSPersistentStoreDidUpdateEntity = "MWSPersistentStoreDidUpdateEntity";
+export let MWSPersistentStoreSaveOperationError = "MWSPersistentStoreSaveOperationError";
 
 export enum MWSPersistentStoreFetchStatus{
     None,
@@ -151,14 +154,15 @@ export class MWSPersistentStore extends MIOIncrementalStore {
     managedObjectContextDidRegisterObjectsWithIDs(objectIDs){
     }
 
-    managedObjectContextDidUnregisterObjectsWithIDs(objectIDs){
+    managedObjectContextDidUnregisterObjectsWithIDs(objectIDs:MIOManagedObjectID[]){
         for (let index = 0; index < objectIDs.length; index++){
             let objID = objectIDs[index];
             let serverID = this.referenceObjectForObjectID(objID);
-            let referenceID = objID.entity.name + "://" + serverID;
-
-            if (referenceID == null) throw new Error("MWSPersistentStore: Asking objectID without referenceID");
-            delete this.nodesByReferenceID[referenceID];            
+            // if (referenceID == null) throw new Error("MWSPersistentStore: Asking objectID without referenceID");
+            // let referenceID = objID.entity.name + "://" + serverID;
+            // delete this.nodesByReferenceID[referenceID];            
+            
+            this.deleteNodeAtServerID(serverID, objID.entity);            
         }        
 
     }
@@ -218,6 +222,13 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let objects = [];
 
         request.execute(this, function (code, data) {
+            if (code != 200) {
+                if (target != null && completion != null){
+                    completion.call(target, [], "ERROR");
+                }
+                return;
+            }
+
             let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {                
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
@@ -226,7 +237,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
 
             if (target != null && completion != null){
-                completion.call(target, objects);
+                completion.call(target, objects, null);
             }
         });
 
@@ -278,13 +289,20 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         return objects;
     }
 
+    isEntityParentOf(entity:MIOEntityDescription, parent:MIOEntityDescription):boolean {
+        if (entity.superentity == null) return false;
+        if (entity.superentity.name == parent.name) return true;
+
+        return this.isEntityParentOf(entity.superentity, parent);
+    }
+
     private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID, relationshipNodes?) {
 
         // Check the objects inside values  
         if (values.length == 0) return;
               
-        let objectEntity = entity;            
-        let entityName = values["classname"];
+        let objectEntity = entity;
+        let entityName = values["classname"] || entity.name;
         if (entity.name != entityName) {
             objectEntity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
         }
@@ -307,7 +325,12 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
         else if (version > node.version){
             MIOLog("Update version: " + objectEntity.name + " (" + node.version + " -> " + version + ")");   
-            this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity);
+            if (this.isEntityParentOf(objectEntity, node.objectID.entity)) {
+                node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity, objectID);
+            }
+            else {
+                this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity);
+            }
             refresh = true;
         } 
 
@@ -342,7 +365,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         MIOLog("Inserting REFID: " + referenceID);
                 
         if (entity.superentity != null) {            
-            this._newNodeWithValuesAtServerID(serverID, values, version, entity.superentity, objID);
+            this._newNodeWithValuesAtServerID(serverID, parsedValues, version, entity.superentity, objID);
         }
 
         return node;
@@ -354,7 +377,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let referenceID = entity.name + "://" + serverID;
         
         let node = new MIOIncrementalStoreNode();
-        node.initWithObjectID(objectID, {}, version);
+        node.initWithObjectID(objectID, values, version);
         this.nodesByReferenceID[referenceID] = node;    
         MIOLog("Inserting REFID: " + referenceID);    
 
@@ -363,9 +386,26 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
     }
 
+    private isSuperEntity(fromEntity:MIOEntityDescription, toEntity:MIOEntityDescription) : boolean {
+        if (fromEntity.name == toEntity.name) return false;
+
+        let e = fromEntity.superentity;
+        while (e != null) {
+            if (e.name == toEntity.name) return true;
+            e = e.superentity;
+        }
+
+        return false;
+
+    }
+
     private updateNodeWithValuesAtServerID(serverID:string, values:any, version:number, entity:MIOEntityDescription){                
         let node = this.nodeWithServerID(serverID, entity);
 
+        // if (this.isSuperEntity(entity, node.objectID.entity)) {
+        //     this.deleteNodeAtServerID(serverID, node.objectID.entity);
+        //     node = this.newNodeWithValuesAtServerID(serverID, values, version, entity);
+        // } else
         if (node.objectID.entity.name != entity.name) {
             node = this.nodesByReferenceID[node.objectID.entity.name + "://" + node.objectID._getReferenceObject()];
         }
@@ -537,6 +577,29 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         this.saveCount++;
     }
 
+    // private cloneValues(values:any) {
+    //     let new_values = {};
+    //     for (let key in values) {
+    //         let v = values[key];
+    //         if (v instanceof Array) {
+    //             let array = [];
+    //             for (let index = 0; index < v.length; index++){
+    //                 let item = v[index];
+    //                 if (item instanceof Object) array.push(item["identifier"]);
+    //                 else array.push(item);
+    //             }
+    //         }
+    //         else if (v instanceof Object) {
+    //             new_values[key] = v["identifier"];
+    //         }
+    //         else new_values[key] = v;
+    //     }
+
+    //     return new_values;    
+    // }
+
+
+
     saveObjectsOnServer(insertedObjects: MIOManagedObjectSet, updatedObjects: MIOManagedObjectSet, deletedObjects: MIOManagedObjectSet){
         
         const items = [];
@@ -602,19 +665,38 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         //this.uploadToServer();
     }    
 
-    private saveBlockQueue = [];
-    private saveBlockOperationCount = 0;    
+    private saveBlockOperationCount = 0;
     addSaveBlockRequest(request:MWSRequest) {
-        this.saveBlockQueue.addObject(request);
-        this.checkSaveBlockRequests();
+        // this.saveBlockQueue.addObject(request);
+        MWSCache.sharedInstance().save(request, ()=> { 
+            this.checkSaveBlockRequests(request.schema);
+        });
     }
 
-    checkSaveBlockRequests() {
+    private checkSaveBlockRequests(schema:string) {
+        // check first if we have something pending to upload
+        MWSCache.sharedInstance().fetch(schema, (items:any[]) => {
+            if (items.length == 0) return;
+
+            let data = items[0];
+
+            let r = new MWSJSONRequest();
+            let url = MIOURL.urlWithString(data["url"]);//.replace("http://localhost:8090/","https://test.dual-link.com/"));
+            r.initWithURL(url, data["body"], data["method"]);
+            r.headers = data["headers"];
+            r.transaction = data["transaction"];
+            r.schema = data["schema"];
+
+            if (items.length > 0) this.executeSaveRequestOperation(r);
+        });      
+    };
+
+    executeSaveRequestOperation(request:MWSRequest) {
         if (this.saveBlockOperationCount > 0) return;
-        if (this.saveBlockQueue.length == 0) return;
+        // if (this.saveBlockQueue.length == 0) return;
 
         this.saveBlockOperationCount++;
-        const request = this.saveBlockQueue.firstObject();        
+        // const request = this.saveBlockQueue.firstObject();
 
         let op = new MWSPersistenStoreOperation();
         op.initWithDelegate(this);
@@ -628,10 +710,15 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("OPERATION: Did save");            
             // let [result, serverValues] = this.delegate.requestDidFinishForWebStore(this, null, op.responseCode, op.responseJSON);
             this.saveOperationDidRemove(op);
+            this.saveBlockOperationCount--;
             if (op.responseCode == 200) {
-                this.saveBlockOperationCount--;
-                this.saveBlockQueue.removeObjectAtIndex(0);
-                this.checkSaveBlockRequests();
+                // this.saveBlockQueue.removeObjectAtIndex(0);
+                MWSCache.sharedInstance().delete(request.schema, request.transaction, (status:boolean) => {
+                    if (status == true) this.checkSaveBlockRequests(request.schema);
+                });                
+            }
+            else {
+                MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreSaveOperationError, op.request!.transaction);
             }
         }  
         
@@ -872,6 +959,17 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         if (array.count == 0) return;
         array.removeObjectAtIndex(0);
         if (array.count == 0) delete this.uploadingOperations[serverID];
-    }    
+    }   
+    
+    deleteTransaction(schema:string, transaction:string, completion:any){
+        MWSCache.sharedInstance().delete(schema, transaction, () => {
+            this.checkSaveBlockRequests(schema);
+            completion();
+        });    
+    }
+
+    checkTransactions(schema:string, completion:any){
+        this.checkSaveBlockRequests(schema);
+    }
 
 }

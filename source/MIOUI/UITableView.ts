@@ -170,7 +170,12 @@ export class UITableView extends UIScrollView
 
     private addCell(indexPath:MIOIndexPath){
         let cell = this.dataSource.cellAtIndexPath(this, indexPath) as UITableViewCell;
-        let section = this.sections[indexPath.section];                
+        let section = this.sections[indexPath.section]; 
+        if (section == null) {
+            this.sections[indexPath.section] = [];
+            this.addSectionHeader(indexPath.section);
+            section = this.sections[indexPath.section]; 
+        }
                 
         let nextIP = this.nextIndexPath(indexPath);
         let currentCell = this.cellAtIndexPath(indexPath);
@@ -213,6 +218,7 @@ export class UITableView extends UIScrollView
 
     private removeCell(indexPath){        
         let section = this.sections[indexPath.section];
+        if (section.length == 0) return;
         let cell = section[indexPath.row];
         
         section.removeObjectAtIndex(indexPath.row);
@@ -232,16 +238,15 @@ export class UITableView extends UIScrollView
         sectionIndex++;        
         if (sectionIndex >= this.sections.length) return null;
         section = this.sections[sectionIndex];
-        if (section.length == 0) return null;
-
-        return MIOIndexPath.indexForRowInSection(0, sectionIndex);
+        if (section != null && section.length > 0) return MIOIndexPath.indexForRowInSection(0, sectionIndex);
+        return null;
     }
 
     private addSectionFooter(section){
 
     }
 
-    reloadData(){
+    reloadData(){        
         // Remove all subviews
         for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];

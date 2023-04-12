@@ -1,5 +1,5 @@
 import { MIOObject, MIOURL, MIOURLConnection, MIOXMLParser, MIOURLRequest, MIODateFromString, MIOLog, MIONotificationCenter, MIOBundle, MIOPropertyListSerialization } from "../MIOFoundation";
-import { MIORelationshipDescription } from "./MIORelationshipDescription";
+import { MIORelationshipDescription, MIODeleteRule } from "./MIORelationshipDescription";
 import { MIOEntityDescription } from "./MIOEntityDescription";
 import { MIOAttributeType } from "./MIOAttributeDescription";
 import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
@@ -108,7 +108,8 @@ export class MIOManagedObjectModel extends MIOObject
             let optional = attributes["optional"] != null ? attributes["optional"] : "YES";                                   
             let inverseName = attributes["inverseName"];
             let inverseEntity = attributes["inverseEntity"];            
-            this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity, optional);
+            let deleteRule = attributes["deletionRule"];
+            this._addRelationship(name, destinationEntityName, toMany, serverName, inverseName, inverseEntity, optional, deleteRule);
         }
         else if (element == "configuration") {
             this.currentConfigName = attributes["name"];
@@ -164,7 +165,7 @@ export class MIOManagedObjectModel extends MIOObject
         switch(type){
             case "Boolean":
                 attrType = MIOAttributeType.Boolean;
-                if (defaultValueString != null) defaultValue = defaultValueString.toLocaleLowerCase() == "true" ? true : false;
+                if (defaultValueString != null) defaultValue = (defaultValueString.toLocaleLowerCase() == "true" || defaultValueString.toLocaleLowerCase() == "yes") ? true : false;
                 break;
 
             case "Integer":
@@ -177,10 +178,12 @@ export class MIOManagedObjectModel extends MIOObject
                 break;
 
             case "Float":
+            case "Double":
+            case "Decimal":
                 attrType = MIOAttributeType.Float;
                 if (defaultValueString != null) defaultValue = parseFloat(defaultValueString);
                 break;
-
+        
             case "Number":
                 attrType = MIOAttributeType.Number;
                 if (defaultValueString != null) defaultValue = parseFloat(defaultValueString);
@@ -216,7 +219,7 @@ export class MIOManagedObjectModel extends MIOObject
         this.currentEntity.addAttribute(name, attrType, defaultValue, opt, serverName, sync);
     }
 
-    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string, optional:string){
+    private _addRelationship(name:string, destinationEntityName:string, toMany:string, serverName:string, inverseName:string, inverseEntity:string, optional:string, deletionRule:string){
 
         MIOLog((serverName != null ? serverName : name) + " (" + destinationEntityName + ", optional=" + optional + ", inverseEntity: " + inverseEntity + ", inverseName: "  + inverseName + ")");
 
@@ -228,7 +231,13 @@ export class MIOManagedObjectModel extends MIOObject
         let opt = true;
         if (optional != null && (optional.toLocaleLowerCase() == "no" || optional.toLocaleLowerCase() == "false")) opt = false;
 
-        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity, opt);
+        let del_rule = MIODeleteRule.noActionDeleteRule;
+        switch(deletionRule){
+            case "Nullify": del_rule = MIODeleteRule.nullifyDeleteRule; break;
+            case "Cascade": del_rule = MIODeleteRule.cascadeDeleteRule; break;
+        }
+
+        this.currentEntity.addRelationship(name, destinationEntityName, isToMany, serverName, inverseName, inverseEntity, opt, del_rule);
     }
 
     private _setEntityForConfiguration(entity, configuration:string) {

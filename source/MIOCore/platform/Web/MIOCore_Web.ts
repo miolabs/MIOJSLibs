@@ -152,13 +152,14 @@ export function MIOCoreIsMobile()
     return false;
 }
 
-export function MIOCoreLoadScript(url)
+export function MIOCoreLoadScriptURL(url)
 {
     // Adding the script tag to the head as suggested before
-    var head = document.getElementsByTagName('head')[0];
-    var script = document.createElement('script');
+    let head = document.getElementsByTagName('head')[0];
+    let script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = url;
+    script.async = true;
 
     // Then bind the event to the callback function.
     // There are several events for cross browser compatibility.
@@ -167,7 +168,27 @@ export function MIOCoreLoadScript(url)
 
     // Fire the loading
     head.appendChild(script);
+
+    return script;
 }
+
+export function MIOCoreLoadHeadContent(content:any, type:string) {
+    // Adding the script tag to the head as suggested before
+    let head = document.getElementsByTagName('head')[0];
+    let script = document.createElement(type);
+    script.innerHTML = content;
+
+    // Fire the loading
+    head.appendChild(script);
+
+    return script;
+
+}
+
+export function MIOCoreRemoveScript(script:any) {    
+    script.parentNode.removeChild(script);
+}
+
 
 var _stylesCache = {};
 

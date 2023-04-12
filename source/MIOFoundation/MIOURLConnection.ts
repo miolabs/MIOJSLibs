@@ -28,6 +28,6 @@ export class MIOURLConnection
     }
 
     start(){
-        MIOHTTPRequest(this, this.request.url.absoluteString, this.request.headers, this.request.httpMethod, this.request.httpBody, this.request.binary, this.delegate, this.blockTarget, this.blockFN, this.request.download);
+        MIOHTTPRequest(this, this.request.url.absoluteString, this.request.headers, this.request.httpMethod, this.request.httpBody, this.request.binary, this.delegate, this.blockTarget, this.blockFN, this.request.download, this.request.filename);
     }
 }

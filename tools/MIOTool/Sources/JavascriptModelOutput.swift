@@ -78,10 +78,9 @@ class JavascriptModelOutput : ModelOutputDelegate
             
         case "UUID":
             t += "string"
-            
-            
+                        
         case "Transformable":
-            t += "string"
+            t += "any"
             
         default:
             t += type

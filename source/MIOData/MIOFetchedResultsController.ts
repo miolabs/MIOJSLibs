@@ -43,6 +43,7 @@ export class MIOFetchedResultsController extends MIOObject
     sectionNameKeyPath = null;
     fetchEntity:MIOEntityDescription = null;
     
+    // private registerObjects = {};
     private registerObjects = {};
 
     initWithFetchRequest(request, managedObjectContext, sectionNameKeyPath?){
@@ -72,7 +73,7 @@ export class MIOFetchedResultsController extends MIOObject
                 let upd_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIOUpdatedObjectsKey]);
                 let del_objs = this.objectsFromEntitiesAndSubentities(entityName, notification.userInfo[MIODeletedObjectsKey]);
 
-                if ( ins_objs.length > 0 || upd_objs.length > 0 || del_objs.length > 0 )
+                if (ins_objs.length > 0 || upd_objs.length > 0 || del_objs.length > 0)
                      this.updateContent(ins_objs, upd_objs, del_objs);
             });
 
@@ -96,7 +97,6 @@ export class MIOFetchedResultsController extends MIOObject
     }
 
     private checkEntity(entityName:string, fetchEntityName:string) : boolean {
-
         if (entityName == fetchEntityName) return true;
 
         let entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, this.managedObjectContext);
@@ -126,7 +126,7 @@ export class MIOFetchedResultsController extends MIOObject
     }
 
     performFetch(){
-        this.registerObjects = [];
+        this.registerObjects = {};
         this.changeObjects = {};
         this.objects2sections = {};
 
@@ -176,6 +176,8 @@ export class MIOFetchedResultsController extends MIOObject
     private refreshObjects(objects:MIOSet){ 
         if (objects.count == 0) return;
 
+        this.changeObjects = {};
+
         this.checkObjects(objects);
         this.resultObjects = _MIOSortDescriptorSortObjects(this.resultObjects, this.fetchRequest.sortDescriptors);
         this._splitInSections();
@@ -202,8 +204,8 @@ export class MIOFetchedResultsController extends MIOObject
         //       in the fetched objects array
 
         // Process delete objects
-        for(let i = 0; i < deleted.length; i++) {
-            let o = deleted[i];
+        for(let i = 0; i < deleted.count; i++) {
+            let o = deleted.objectAtIndex(i);
             let index = this.resultObjects.indexOf(o);
             if (index != -1){
                 this.resultObjects.splice(index, 1);
@@ -237,7 +239,7 @@ export class MIOFetchedResultsController extends MIOObject
                     let indexPath = item["IndexPath"] as MIOIndexPath;
                     let newIndexPath = item["NewIndexPath"] as MIOIndexPath;
                     let changeType = item["ChangeType"] as MIOFetchedResultsChangeType;
-                    if (indexPath != null && newIndexPath != null && indexPath.isEqualToIndexPath(newIndexPath)) newIndexPath = null;
+                    if (indexPath != null && newIndexPath != null && indexPath.isEqualToIndexPath(newIndexPath)) newIndexPath = null;                    
                     this._delegate.controllerDidChangeObject(this, obj, indexPath, changeType, newIndexPath);
                 }
 
@@ -298,18 +300,18 @@ export class MIOFetchedResultsController extends MIOObject
             if (this.resultObjects.length == 0) return;
 
             // Set first object
-            let firstObj:MIOManagedObject = this.resultObjects[0];  
+            let firstObj:MIOManagedObject = this.resultObjects[0];
             currentSection = new MIOFetchSection();
             this.sections.push(currentSection);
             currentSectionKeyPathValue = firstObj.valueForKeyPath(this.sectionNameKeyPath); 
             // Cache to for checking updates
-            let reference = firstObj.objectID._getReferenceObject();
-            this.registerObjects[reference] = firstObj;
-            currentSection.objects.push(firstObj);
-            this.objects2sections[reference] = currentSection;
-            
-            for (let index = 1; index < this.resultObjects.length; index++){
-                let obj:MIOManagedObject = this.resultObjects[index];                
+            // let reference = firstObj.objectID._getReferenceObject();
+            // this.registerObjects[reference] = firstObj;
+            // currentSection.objects.push(firstObj);
+            // this.objects2sections[reference] = currentSection;
+            let rowIndex = 0;
+            for (let index = 0; index < this.resultObjects.length; index++){
+                let obj:MIOManagedObject = this.resultObjects[index];
                 // Cache to for checking updates
                 let ref = obj.objectID._getReferenceObject();
                 this.registerObjects[ref] = obj;
@@ -320,6 +322,7 @@ export class MIOFetchedResultsController extends MIOObject
                     currentSection = new MIOFetchSection();
                     this.sections.push(currentSection);
                     currentSectionKeyPathValue = value;
+                    rowIndex = 0;
                 }
 
                 currentSection.objects.push(obj);
@@ -328,9 +331,10 @@ export class MIOFetchedResultsController extends MIOObject
                 if (this.changeObjects[ref] != null) {
                     let item = this.changeObjects[ref];
                     let sectionIndex = this.sections.indexOf(currentSection);
-                    item["NewIndexPath"] = MIOIndexPath.indexForRowInSection(index, sectionIndex);
+                    item["NewIndexPath"] = MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
                 }
 
+                rowIndex++;
             }
         }
     }

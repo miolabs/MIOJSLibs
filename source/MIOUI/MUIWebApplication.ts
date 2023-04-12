@@ -105,13 +105,12 @@ export class MUIWebApplication {
             }
             let lang = MIOCoreGetBrowserLanguage();
             this.setLanguage(lang, this, function(){
-                this._run();
+                this._parse_options();
             });            
         });
     }
 
-    private _run() {        
-
+    private _parse_options() {
         let url = MIOCoreGetMainBundleURLString();
         let queryOptions = MIOCoreGetQueryOptions();
 
@@ -122,6 +121,21 @@ export class MUIWebApplication {
             const array = op.split("=");
             options[array[0]] = decodeURIComponent(array[1]);
         }
+
+        if (this._init_hook_callback != null) this._init_hook_callback.call(this, options, this, this._done_callback);
+        else this._run(options);
+    }
+
+    private _done_callback(options:any) {
+        this._run(options);
+    }
+
+    private _init_hook_callback = null;
+    _set_init_hook(callback:any){
+        this._init_hook_callback = callback;
+    }
+
+    private _run(options) {
 
         this.delegate.didFinishLaunching(options);
         
