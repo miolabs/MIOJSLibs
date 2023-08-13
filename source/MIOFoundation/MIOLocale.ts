@@ -49,7 +49,7 @@ export class MIOLocale extends MIOObject
         return null;
     }
 
-    private _calendar:NSCalendar = null; 
+    private _calendar:NSCalendar|null = null; 
     private calendar():NSCalendar {
         if (this._calendar != null) return this._calendar;
 

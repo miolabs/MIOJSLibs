@@ -23,6 +23,7 @@ export class MIOISO8601DateFormatter extends MIODateFormatter {
         if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari){
             dateString = str.split('-').join("/");
             if (dateString.length > 19) dateString = dateString.substr(0, 19);
+            dateString.replace("T", " ");
         }
         else 
             dateString = str;

@@ -9,7 +9,8 @@ import { MIOLocalizeString } from "../MIOCore";
 
 
 
-export enum MUITextFieldType {
+export enum MUITextFieldType 
+{
     NormalType,
     PasswordType,
     SearchType,    
@@ -32,7 +33,7 @@ export class MUITextField extends MUIControl
     keyPressTarget   = null;
     keyPressAction   = null;
 
-    formatter:MIOFormatter = null;
+    formatter:MIOFormatter|null = null;
 
     init(){
         super.init();

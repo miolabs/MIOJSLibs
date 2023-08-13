@@ -125,9 +125,14 @@ export class MIOPredicateItem {
             return (lValue > rValue);
         else if (this.comparator == MIOPredicateComparatorType.GreaterOrEqual)
             return (lValue >= rValue);        
-        else if (this.comparator == MIOPredicateComparatorType.Contains || this.comparator == MIOPredicateComparatorType.In) {
+        else if (this.comparator == MIOPredicateComparatorType.Contains) {
             if (lValue == null) return false;
             if (lValue.indexOf(rValue) > -1) return true;
+            return false;
+        }
+        else if (this.comparator == MIOPredicateComparatorType.In) {
+            if (rValue == null) return false;
+            if (rValue.indexOf(lValue) > -1) return true;
             return false;
         }
         else if (this.comparator == MIOPredicateComparatorType.NotContains || this.comparator == MIOPredicateComparatorType.NotIn) {
@@ -583,7 +588,7 @@ export class MIOPredicate extends MIOObject {
                 return [value, MIOPredicateItemValueType.String];
 
             case MIOPredicateTokenType.NumberValue:
-                return [token.value, MIOPredicateItemValueType.Number];                                
+                return [this.numberFromString(token.value), MIOPredicateItemValueType.Number];
 
             case MIOPredicateTokenType.BooleanValue:
                 return [this.booleanFromString(token.value), MIOPredicateItemValueType.Boolean];
@@ -657,6 +662,14 @@ export class MIOPredicate extends MIOObject {
 
         return nv;
     }
+
+    private numberFromString(value:string){
+
+        let v = Number(value)
+        if ( isNaN(v) ) throw new Error(`MIOPredicate: Error. Can't convert '${value}' to number`);
+        return v;
+    }
+
 }
 
 //
