@@ -1,6 +1,6 @@
 import { MUIWindow } from "./MUIWindow";
 import { MIOCoreGetLanguages, setMIOLocalizedStrings, MIOCoreAddLanguage } from "../MIOCore";
-import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput, MIOCoreGetQueryOptions, MIOCoreGetMainBundleURLString } from "../MIOCore/platform";
+import { MIOCoreGetBrowserLanguage, MIOCoreEventRegisterObserverForType, MIOCoreEventType, MIOCoreEvent, MIOCoreEventInput, MIOCoreGetQueryOptions, MIOCoreGetMainBundleURLString } from "../MIOCore/platform/Web";
 import { MIOURLRequest, MIOURL, MIOURLConnection, MIOPropertyListSerialization, _MIOBundleLoadBundles, MIOBundle } from "../MIOFoundation";
 
 /**
@@ -49,7 +49,7 @@ export class MUIWebApplication {
 
     private _windows = [];
     private _keyWindow:MUIWindow = null;
-    private _mainWindow = null;
+    private _mainWindow:MUIWindow = null;
 
     //TODO: Set language in the webworker also.
     private setLanguage(lang, target, completion){

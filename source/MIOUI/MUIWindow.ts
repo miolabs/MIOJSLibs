@@ -23,7 +23,7 @@ export class MUIWindow extends MUIView
         this.init();        
 
         this.rootViewController = vc;
-        this.addSubview(vc.view);        
+        this.addSubview(vc.view);
     }
 
     makeKey(){

@@ -4,7 +4,8 @@ import { MIOCoreLexer, MIOLocalizeString } from "../MIOCore";
  * Created by godshadow on 11/3/16.
  */
 
-export enum MIODateFirstWeekDay{
+export enum MIODateFirstWeekDay
+{
     Sunday,
     Monday
 }
@@ -64,62 +65,62 @@ export function MIODateGetYearFromDate(date:Date)
     return date.getFullYear();
 }
 
-export function MIODateGetDayStringFromDate(date) 
+export function MIODateGetDayStringFromDate(date:Date) 
 {
-    var day = MIODateGetDayFromDate(date);
+    let day = MIODateGetDayFromDate(date);
     return MIODateGetStringForDay(day);
 }
 
-export function MIODateGetString(date)
+export function MIODateGetString(date:Date)
 {
-    var d = MIODateGetDateString(date);
-    var t = MIODateGetTimeString(date);
+    let d = MIODateGetDateString(date);
+    let t = MIODateGetTimeString(date);
 
     return d + " " + t;
 }
 
-export function MIODateGetDateString(date)
+export function MIODateGetDateString(date:Date)
 {
-    var yyyy = date.getFullYear().toString();
-    var mm = (date.getMonth()+1).toString(); // getMonth() is zero-based
-    var dd  = date.getDate().toString();
+    let yyyy = date.getFullYear().toString();
+    let mm = (date.getMonth()+1).toString(); // getMonth() is zero-based
+    let dd  = date.getDate().toString();
     return yyyy + "-" +(mm[1]?mm:"0"+mm[0]) + "-" +  (dd[1]?dd:"0"+dd[0]); // padding
 }
 
 export function MIODateGetTimeString(date)
 {
-    var hh = date.getHours().toString();
-    var mm = date.getMinutes().toString();
+    let hh = date.getHours().toString();
+    let mm = date.getMinutes().toString();
     return (hh[1]?hh:"0"+hh[0]) + ":" + (mm[1]?mm:"0"+mm[0]);
 }
 
 export function MIODateGetUTCString(date)
 {
-    var d = MIODateGetUTCDateString(date);
-    var t = MIODateGetUTCTimeString(date);
+    let d = MIODateGetUTCDateString(date);
+    let t = MIODateGetUTCTimeString(date);
 
     return d + " " + t;
 }
 
 export function MIODateGetUTCDateString(date)
 {
-    var yyyy = date.getUTCFullYear().toString();
-    var mm = (date.getUTCMonth()+1).toString(); // getMonth() is zero-based
-    var dd  = date.getUTCDate().toString();
+    let yyyy = date.getUTCFullYear().toString();
+    let mm = (date.getUTCMonth()+1).toString(); // getMonth() is zero-based
+    let dd  = date.getUTCDate().toString();
     return yyyy + "-" +(mm[1]?mm:"0"+mm[0]) + "-" +  (dd[1]?dd:"0"+dd[0]); // padding
 }
 
 export function MIODateGetUTCTimeString(date)
 {
-    var hh = date.getUTCHours().toString();
-    var mm = date.getUTCMinutes().toString();
-    var ss = date.getUTCSeconds().toString();
+    let hh = date.getUTCHours().toString();
+    let mm = date.getUTCMinutes().toString();
+    let ss = date.getUTCSeconds().toString();
     return (hh[1]?hh:"0" + hh[0]) + ":" + (mm[1]?mm:"0" + mm[0]) + ":" + (ss[1]?ss:"0" + ss[0]);
 }
 
-export function MIODateFromString(string)
+export function MIODateFromString(string:string)
 {
-    var lexer:MIOCoreLexer = new MIOCoreLexer(string);
+    let lexer:MIOCoreLexer = new MIOCoreLexer(string);
     
     // Values    
     // lexer.addTokenType(0, /^([0-9]{2,4})-/i); // Year

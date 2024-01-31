@@ -241,7 +241,7 @@ export class MUIReportTableView extends MUIScrollView {
 
         if (this.columnHeaderPrototype != null) {
             let className = this.columnHeaderPrototype["class"];
-            let header = Object.create(window[className].prototype);
+            let header = Object.create((window[className] as any).prototype);
             header.constructor.apply(header);
     
             //cell.init();
@@ -281,7 +281,7 @@ export class MUIReportTableView extends MUIScrollView {
 
         //instance creation here
         let className = item["class"];
-        let cell = Object.create(window[className].prototype);
+        let cell = Object.create( (window[className] as any).prototype);
         cell.constructor.apply(cell);
 
         //cell.init();

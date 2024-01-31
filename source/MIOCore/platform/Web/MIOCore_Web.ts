@@ -20,6 +20,11 @@ interface Navigator
     userLanguage;
 }
 
+interface Window 
+{
+    prototype;
+}
+
 export enum MIOCoreBrowserType
 {
     Safari,
@@ -265,7 +270,7 @@ export function MIOCoreLoadStyle(url, media, target?, completion?)
 
 export function MIOClassFromString(className)
 {
-    let classObject = window[className];
+    let classObject:any = window[className];
     if (classObject == null) classObject = MIOCoreClassByName(className);
 
     if (classObject == null) throw new Error("MIOClassFromString: class '" + className + "' didn't register.");

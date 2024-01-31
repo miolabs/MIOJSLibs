@@ -6,17 +6,17 @@ import { MIOObject } from "./MIOObject";
 
 export class MIOSortDescriptor extends MIOObject
 {
-    key = null;
+    key:string;
     ascending = false;
 
-    public static sortDescriptorWithKey(key, ascending)
+    public static sortDescriptorWithKey(key:string, ascending:boolean)
     {
         let sd = new MIOSortDescriptor();
         sd.initWithKey(key, ascending);
         return sd;
     }
 
-    initWithKey(key, ascending)
+    initWithKey(key:string, ascending:boolean)
     {
         this.key = key;
         this.ascending = ascending;
@@ -27,9 +27,9 @@ export class MIOSortDescriptor extends MIOObject
 // For internal purposes: Don't use it, could change
 //
 
-export function _MIOSortDescriptorSortObjects(objs, sortDescriptors)
+export function _MIOSortDescriptorSortObjects( objs:any, sortDescriptors:MIOSortDescriptor[] ) : any[]
 {
-    let resultObjects = null;
+    let resultObjects:any[];
     
     if (objs.length == 0 || sortDescriptors == null) {
         resultObjects = objs.slice(0);        
@@ -39,7 +39,7 @@ export function _MIOSortDescriptorSortObjects(objs, sortDescriptors)
         if (sortDescriptors == null) return objs;
         if (objs.length == 0) return objs;
 
-        resultObjects = objs.sort(function(a, b){
+        resultObjects = objs.sort(function(a:any, b:any){
 
             return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, 0);
             //return instance._MIOSortDescriptorSortObjects2(a, b, sortDescriptors, 0);
@@ -49,10 +49,9 @@ export function _MIOSortDescriptorSortObjects(objs, sortDescriptors)
     return resultObjects;
 }
 
-function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
+export function _MIOSortDescriptorSortObjects2(a:any, b:any, sortDescriptors:MIOSortDescriptor[], index:number)
 {
-    if (index >= sortDescriptors.length)
-        return 0;
+    if (index >= sortDescriptors.length) return 0;
 
     let sd = sortDescriptors[index];
     let key = sd.key;
@@ -97,16 +96,7 @@ function _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, index)
     }
     else if (lv == null) return sd.ascending ? -1 : 1;    
     else if (rv == null) return sd.ascending ? 1 : -1;
+
+    return 0;
 }
 
-declare global {
-    interface Array<T> {
-        sortedArrayUsingDescriptors(sortDescriptors:MIOSortDescriptor[]):any[];
-    }
-}    
-
-//For code completion the interface is defined in types/mio/index.d.ts
-
-Array.prototype.sortedArrayUsingDescriptors = function(sortDescriptors:MIOSortDescriptor[]){
-    return _MIOSortDescriptorSortObjects(this, sortDescriptors);
-}

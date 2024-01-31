@@ -1,10 +1,10 @@
 import { MIOObject, MIORect, MIOSize } from "../MIOFoundation";
 import { MUIViewController } from "./MUIViewController";
-import { MIOCoreIsPhone, MIOCoreIsMobile } from "../MIOCore/platform";
+import { MIOCoreIsPhone, MIOCoreIsMobile } from "../MIOCore/platform/Web";
 import { MUIWindowSize } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
-import { MUICoreLayerAddStyle } from ".";
+import { MUICoreLayerAddStyle, MUIWebApplication } from ".";
 
 /**
  * Created by godshadow on 06/12/2016.

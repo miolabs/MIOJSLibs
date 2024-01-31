@@ -162,7 +162,7 @@ export class MUICollectionView extends MUIView
 
         //instance creation here
         let className = item["class"];
-        let cell = Object.create(window[className].prototype);
+        let cell = Object.create(( window[className] as any ).prototype);
         cell.constructor.apply(cell);
 
         //cell.init();
@@ -195,7 +195,7 @@ export class MUICollectionView extends MUIView
 
         //instance creation here
         var className = item["class"];
-        var view = Object.create(window[className].prototype);
+        var view = Object.create((window[className] as any).prototype);
         view.constructor.apply(view);
 
         //view.init();

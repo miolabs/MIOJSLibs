@@ -225,6 +225,7 @@ export class MIONumberFormatter extends MIOFormatter {
             }
         }
 
+        if (inc == 1) roundedInt = "1" + roundedInt;
         return [roundedInt, roundedFloat];        
     }
 

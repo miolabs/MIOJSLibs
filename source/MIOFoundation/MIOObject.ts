@@ -2,7 +2,7 @@
  * Created by godshadow on 26/3/16.
  */
 
-import { MIOClassFromString } from "../MIOCore/platform";
+import { MIOClassFromString } from "../MIOCore/platform/Web";
 
 
 export class MIOObject

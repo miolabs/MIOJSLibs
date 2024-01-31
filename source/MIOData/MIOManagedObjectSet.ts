@@ -50,8 +50,18 @@ export class MIOManagedObjectSet<T = any> extends MIOObject {
         this.objectIDs = [];
     }
 
-    indexOfObject(object:MIOManagedObject) {
-        return this.objectIDs.indexOfObject(object.objectID);
+    indexOfObject(object:MIOManagedObject|string|Array<string>) {
+        if (object instanceof MIOManagedObject) return this.objectIDs.indexOfObject(object.objectID);
+        let ids = this.allObjects.map( function(e){ return e.objectID._getReferenceObject(); } );
+        
+        if ( typeof( object ) === "string" ){
+            return ids.indexOfObject( object );
+        }
+
+        for (let id of ids) {
+            if ( object.containsObject(id) ) return 0;
+        }
+        return -1;
     }
 
     containsObject(object:MIOManagedObject){
@@ -59,7 +69,7 @@ export class MIOManagedObjectSet<T = any> extends MIOObject {
     }
 
     objectAtIndex(index){
-        var objects = this.allObjects;
+        let objects = this.allObjects;
         return objects.objectAtIndex(index);
     }
 
@@ -155,4 +165,5 @@ export class MIOManagedObjectSet<T = any> extends MIOObject {
         return set;
 
     }
+
 }

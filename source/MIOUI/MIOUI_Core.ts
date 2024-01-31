@@ -1,6 +1,6 @@
 import { MUIView, MUILayerSearchElementByID } from "./MUIView";
 import { MUIViewController } from "./MUIViewController";
-import { MIOClassFromString, MIOCoreIsPhone } from "../MIOCore/platform";
+import { MIOClassFromString, MIOCoreIsPhone } from "../MIOCore/platform/Web";
 import { MUIModalPresentationStyle, MUIPresentationController } from "./MUIViewController_PresentationController";
 import { _MUIAnimationStart } from "./MIOUI_CoreAnimation";
 import { MIOSize } from "../MIOFoundation";
@@ -121,7 +121,7 @@ export function _MIUShowViewController(fromVC:MUIViewController, toVC:MUIViewCon
 
     let layer = view.layer;
             
-    _MUIAnimationStart(layer, ac, animationContext, this, function () {
+    _MUIAnimationStart(layer, ac, animationContext, () => {
         _MUIAnimationDidStart(fromVC, toVC, pc, target, completion);
     });
 
@@ -190,7 +190,7 @@ export function _MUIHideViewController(fromVC:MUIViewController, toVC:MUIViewCon
     if (pc != null)
         pc.dismissalTransitionWillBegin();
 
-    _MUIAnimationStart(layer, ac, animationContext, this, function () {
+    _MUIAnimationStart(layer, ac, animationContext, () => {
 
         if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.FullScreen
             || fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext) {
@@ -239,7 +239,7 @@ export function _MUITransitionFromViewControllerToViewController(fromVC, toVC, s
 
     let layer = toVC.view.layer;
 
-    _MUIAnimationStart(layer, ac, animationContext, this, function () {
+    _MUIAnimationStart(layer, ac, animationContext, () => {
 
         toVC.viewDidAppear();
         //toVC._childControllersDidAppear();

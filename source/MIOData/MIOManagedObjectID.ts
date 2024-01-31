@@ -26,13 +26,13 @@ export class MIOManagedObjectID extends MIOObject {
     // #region Private methods    
 
     static _objectIDWithEntity(entity:MIOEntityDescription, referenceObject?:string) {
-        var objID = new MIOManagedObjectID();
+        let objID = new MIOManagedObjectID();
         objID._initWithEntity(entity, referenceObject);
         return objID;
     }
 
     static _objectIDWithURIRepresentation(url:MIOURL){
-        var objID = new MIOManagedObjectID();
+        let objID = new MIOManagedObjectID();
         objID._initWithURIRepresentation(url);
         return objID;
     }

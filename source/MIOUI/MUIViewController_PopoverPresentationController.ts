@@ -3,7 +3,7 @@ import { MIOObject, MIORect } from "../MIOFoundation";
 import { MUIView } from "./MUIView";
 import { MUIClassListForAnimationType, MUIAnimationType } from "./MIOUI_CoreAnimation";
 import { MUICoreLayerAddStyle } from ".";
-import { MIOCoreIsPhone } from "../MIOCore/platform";
+import { MIOCoreIsPhone } from "../MIOCore/platform/Web";
 
 /**
  * Created by godshadow on 11/11/2016.

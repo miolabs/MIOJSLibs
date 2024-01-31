@@ -2,24 +2,35 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "sourceMap": true,
-    "declaration": true,
-    "outDir": "types",
-    "strict": false,
+    "outDir": "./dist",
     "noImplicitThis": false,
     "removeComments": true,
     "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "moduleResolution": "node",    
+    "allowJs": true,
+    "strict": false,
+    "lib": [ "webworker", "esnext", "dom" ],
+    // "noUnusedLocals": false,
+    // "noUnusedParameters": false,
     "typeRoots": [
       "node_modules/@types/",
-      "types/"
+      // "types/"
     ],
-    "types": [
-      "miojs",
-      "miojs_internal",
-      "node"
-    ]
-  },
-    "exclude": ["source/MIOFoundation/MIOFoundationJS.d.ts"]
+    // "types": [
+    //   "miojs",
+    //   "miojs_internal",
+    //   "node"
+    // ]
+  },  
+   "exclude": [
+    "./node_modules",
+    "dist"
+  //   "tutorials",
+  //   "tools",
+  //   "tests",
+  //   "templates",
+  //   "packages",
+  //   "source/MIOWebWorker",
+  //   "types",    
+  ]
 }

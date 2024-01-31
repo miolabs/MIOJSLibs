@@ -1,15 +1,16 @@
-interface Array<T> {
-    addObject(o: T): void;
-    insertObjectAtIndex(object:any, index:number): void ;
-    removeObject  (object:any): void ;
-    removeObjectAtIndex  (index:number) : void ;
-    indexOfObject  (object:any): number ;
-    containsObject  (object:any): boolean ;
-    objectAtIndex  (index:number): any ;
-    firstObject () : T ;
-    lastObject  () : T ;
+declare global {
+    interface Array<T> {
+        addObject(o: T): void;
+        insertObjectAtIndex(object:any, index:number): void ;
+        removeObject  (object:any): void ;
+        removeObjectAtIndex  (index:number) : void ;
+        indexOfObject  (object:any): number ;
+        containsObject  (object:any): boolean ;
+        objectAtIndex  (index:number): any ;
+        firstObject () : T ;
+        lastObject  () : T ;        
+    }
 }
-
 //For code completion the interface is defined in types/mio/index.d.ts
 
 Array.prototype.addObject = function(object:any){
@@ -59,3 +60,5 @@ Array.prototype.firstObject = function(){
 Array.prototype.lastObject = function(){
     return this[this.count - 1];
 }
+
+export {}

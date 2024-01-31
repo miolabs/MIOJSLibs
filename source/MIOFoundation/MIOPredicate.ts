@@ -1,7 +1,6 @@
 import { MIOCoreLexer } from "../MIOCore";
 import { MIOObject } from "./MIOObject";
 import { MIOISO8601DateFormatter } from "./MIOISO8601DateFormatter";
-import { MIOLog } from "./MIOLog";
 
 /**
  * Created by godshadow on 1/5/16.
@@ -131,14 +130,12 @@ export class MIOPredicateItem {
             return false;
         }
         else if (this.comparator == MIOPredicateComparatorType.In) {
-            if (rValue == null) return false;
-            if (rValue.indexOf(lValue) > -1) return true;
-            return false;
+            if (lValue == null || rValue == null) return false;
+            return ( rValue.indexOfObject(lValue) > -1 );
         }
         else if (this.comparator == MIOPredicateComparatorType.NotContains || this.comparator == MIOPredicateComparatorType.NotIn) {
-            if (lValue == null) return true;
-            if (lValue.indexOf(rValue) > -1) return false;
-            return true;
+            if (lValue == null || rValue == null) return true;
+            return !( rValue.indexOfObject(lValue) > -1 );
         }
     }
 

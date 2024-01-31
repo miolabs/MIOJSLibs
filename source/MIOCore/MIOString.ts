@@ -7,7 +7,18 @@ import {
     MIOCoreStringHasSuffix 
 } from ".";
 
-//For code completion the interface is defined in types/mio/index.d.ts
+
+declare global {
+    interface String {
+        lastPathComponent() : string ;
+        pathExtension() : string ;
+        stringByAppendingPathComponent( path: string) : string;
+        stringByDeletingLastPathComponent() : string;
+        hasPreffix( preffix: string ) : boolean;
+        hasSuffix( suffix: string ) : boolean;
+    }
+}
+
 
 String.prototype.lastPathComponent = function():string{
     return MIOCoreStringLastPathComponent(this);

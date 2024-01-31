@@ -41,7 +41,7 @@ export class MWSRequest extends MIOObject
 
         this.urlRequest = MIOURLRequest.requestWithURL(this.url);      
 
-        for (var key in this.headers) {
+        for (let key in this.headers) {
             let value = this.headers[key];
             this.urlRequest.setHeaderField(key, value);
         }    

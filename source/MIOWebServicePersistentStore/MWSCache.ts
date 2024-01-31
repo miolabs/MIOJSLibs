@@ -1,5 +1,5 @@
-import { MIOObject, MIOSortDescriptor } from "../MIOFoundation"
-import { MWSRequest, MWSRequestType } from "./MWSRequest";
+import { MIOObject, MIOSortDescriptor, _MIOSortDescriptorSortObjects } from "../MIOFoundation"
+import { MWSRequest } from "./MWSRequest";
 
 export class MWSCache extends MIOObject
 {
@@ -77,7 +77,7 @@ export class MWSCache extends MIOObject
                 }
                 else {
                     // No more entries
-                    completion(items.sortedArrayUsingDescriptors([MIOSortDescriptor.sortDescriptorWithKey("index", true)]));
+                    completion( _MIOSortDescriptorSortObjects(items, [MIOSortDescriptor.sortDescriptorWithKey("index", true)]));
                 }
             });                    
         });

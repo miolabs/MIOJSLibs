@@ -2,7 +2,7 @@ import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIView } from "./MUIView";
 import { MUIViewController } from "./MUIViewController";
 import { MUICoreLayerAddStyle } from ".";
-import { MIOCoreIsPhone } from "../MIOCore/platform";
+import { MIOCoreIsPhone } from "../MIOCore/platform/Web";
 import { MIOObject } from "../MIOFoundation";
 import { MUIAnimationType } from "../MIOUI";
 import { MUIClassListForAnimationType } from "./MIOUI_CoreAnimation";

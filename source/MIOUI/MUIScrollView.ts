@@ -1,7 +1,7 @@
 import { MUIView } from "./MUIView";
 import { MIOTimer, MIOPoint, MIORect, MIOSize, MIOLog } from "../MIOFoundation";
 import { MUICoreLayerCreate, MUICoreLayerRemoveSublayer, MUICoreLayerAddSublayer, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
-import { MIOCoreDeviceOSString } from "../MIOCore/platform";
+import { MIOCoreDeviceOSString } from "../MIOCore/platform/Web";
 
 /**
  * Created by godshadow on 01/09/16.

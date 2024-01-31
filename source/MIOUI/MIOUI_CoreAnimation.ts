@@ -143,12 +143,11 @@ export function _MUIRemoveAnimations(layer, animations)
         layer.classList.remove(animations[index]);
 }
 
-export function _MUIAnimationStart(layer, animationController, animationContext, target?, completion?)
+export function _MUIAnimationStart(layer, animationController, animationContext, completion?:any)
 {
     if (animationController == null)
     {
-        if (target != null && completion != null)
-                completion.call(target);        
+        if (completion != null) completion();
         return;
     }
 
@@ -162,8 +161,7 @@ export function _MUIAnimationStart(layer, animationController, animationContext,
         // NO animation
         animationController.animationEnded(true);
 
-        if (target != null && completion != null)
-            completion.call(target);
+        if (completion != null) completion();
 
         return;
     }
@@ -175,8 +173,8 @@ export function _MUIAnimationStart(layer, animationController, animationContext,
     layer.animationParams["animationController"] = animationController;
     layer.animationParams["animations"] = animations;
 
-    if (target != null)
-        layer.animationParams["target"] = target;
+    // if (target != null)
+    //     layer.animationParams["target"] = target;
     if (completion != null)
         layer.animationParams["completion"] = completion;
 
@@ -187,7 +185,7 @@ export function _MUIAnimationDidFinish(event)
 {
     let animationController = event.target.animationParams["animationController"];
     let animations = event.target.animationParams["animations"];
-    let target = event.target.animationParams["target"];
+    // let target = event.target.animationParams["target"];
     let completion = event.target.animationParams["completion"];
     let layer = event.target;
 
@@ -195,6 +193,5 @@ export function _MUIAnimationDidFinish(event)
     layer.removeEventListener("animationend", _MUIAnimationDidFinish);
     animationController.animationEnded(true);
 
-    if (target != null && completion != null)
-        completion.call(target);
+    if (completion != null) completion();
 }

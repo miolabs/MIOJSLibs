@@ -1,6 +1,6 @@
-import { MIOCoreLoadFileFromURL } from "../../MIOCore/platform/WebWorker/MIOCore_WebWorker";
-import { setMIOLocalizedStrings, MIOLocalizeString } from "../../MIOCore/MIOCoreString";
-import { MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../../MIOCore";
+import { MIOCoreLoadFileFromURL } from "../MIOCore/platform/WebWorker/MIOCore_WebWorker";
+import { setMIOLocalizedStrings, MIOLocalizeString } from "../MIOCore/MIOCoreString";
+import { MIOCoreHTMLParser, MIOCoreHTMLParserDelegate } from "../MIOCore";
 
 var ww = (self as DedicatedWorkerGlobalScope)
 var _languageStrings = null;

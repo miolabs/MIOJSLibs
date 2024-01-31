@@ -3,7 +3,7 @@ import { MIOOperation } from "./MIOOperation";
 
 export class MIOOperationQueue extends MIOObject {
 
-    private _operations = [];
+    private _operations:MIOOperation[] = [];
 
     maxConcurrentOperationCount = -1; //NSOperationQueueDefaultMaxConcurrentOperationCount
 
@@ -46,7 +46,7 @@ export class MIOOperationQueue extends MIOObject {
     }
 
     get operationCount(){
-        return this._operations.count;
+        return this._operations.length;
     }
 
     private _suspended = false;

@@ -1,4 +1,4 @@
-import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCore/platform";
+import { MIOCoreGetBrowser, MIOCoreBrowserType } from "../MIOCore/platform/Web";
 import { MIODateFormatter, MIODateFormatterStyle } from "./MIODateFormatter";
 
 export class MIOISO8601DateFormatter extends MIODateFormatter {
@@ -19,14 +19,12 @@ export class MIOISO8601DateFormatter extends MIODateFormatter {
     dateFromString(str:string):Date {
 
         if (str == null) return null;
-        let dateString:string = null;
-        if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari){
-            dateString = str.split('-').join("/");
-            if (dateString.length > 19) dateString = dateString.substr(0, 19);
-            dateString.replace("T", " ");
-        }
-        else 
-            dateString = str;
+        let dateString:string = str.replace("T", " ");
+        if (dateString.length > 19) dateString = dateString.substr(0, 19);
+        
+        // if (MIOCoreGetBrowser() == MIOCoreBrowserType.Safari){
+        //     dateString = str.split('-').join("/");                        
+        // }
 
         let timestamp = Date.parse(dateString);
         let d = null;

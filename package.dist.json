@@ -1,0 +1,7 @@
+{
+    "name": "miojslibs",
+    "version": "0.9.56",
+    "description": "MIOJSLibs from web developemnt using Apple like Frameworks",
+    "main": "miojslibs.js",
+    "types": "miojslibs.d.ts"
+}

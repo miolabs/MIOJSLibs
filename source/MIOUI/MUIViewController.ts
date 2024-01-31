@@ -9,7 +9,8 @@ import { _MIUShowViewController, _MUIHideViewController } from "./MIOUI_Core";
 import { MUIWindow } from "./MUIWindow";
 import { MIOLocalizeString } from "../MIOCore";
 import { MUISplitViewController } from "./MUISplitViewController";
-import { MIOCoreIsPhone, MIOCoreIsPad } from "../MIOCore/platform";
+import { MIOCoreIsPhone, MIOCoreIsPad } from "../MIOCore/platform/Web";
+import { MUIWebApplication } from "./MUIWebApplication";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -319,7 +320,7 @@ export class MUIViewController extends MIOObject
 
         vc.onLoadView(this, function () {
 
-            if (vc.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext){
+            if ( vc.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext ){
                 this.view.addSubview(vc.presentationController.presentedView);
                 this.addChildViewController(vc);
                 _MIUShowViewController(this, vc, null, animated, this, function () {
@@ -335,7 +336,7 @@ export class MUIViewController extends MIOObject
                     w.layer.style.background = "";
                     w.rootViewController = vc;
                     w.addSubview(pc.presentedView);
-                    pc.window = w;                                        
+                    pc.window = w;
                 }
                 w.setHidden(false);
 
@@ -359,13 +360,13 @@ export class MUIViewController extends MIOObject
 
         _MUIHideViewController(fromVC, toVC, null, this, function () {
 
-            if (fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext){
+            if ( fromVC.modalPresentationStyle == MUIModalPresentationStyle.CurrentContext ){
                 toVC.removeChildViewController(fromVC);
                 let pc1 = fromVC.presentationController;
                 let view = pc1.presentedView;
                 view.removeFromSuperview();
             }
-            else{
+            else {
                 // It's a window instead of a view
                 let pc1 = fromVC.presentationController;
                 let w = pc1.window as MUIWindow;

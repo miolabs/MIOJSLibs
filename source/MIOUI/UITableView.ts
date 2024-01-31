@@ -1,6 +1,6 @@
 import { MUIView , UITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from ".";
 import { MIOUUID, MIOIndexPath, MIOIndexPathEqual } from "../MIOFoundation";
-import { MIOClassFromString } from "../MIOCore/platform";
+import { MIOClassFromString } from "../MIOCore/platform/Web";
 import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
 import { MUICoreLayerRemoveStyle, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MUILabel } from "./MUILabel";

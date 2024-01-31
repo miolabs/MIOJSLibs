@@ -1,6 +1,6 @@
 import { MIOObject } from "../MIOFoundation";
 import { MIOPropertyDescription } from "./MIOPropertyDescription";
-import { MIOClassFromString } from "../MIOCore/platform";
+import { MIOClassFromString } from "../MIOCore/platform/Web";
 import { MIODeleteRule, MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
 import { MIOManagedObject } from "./MIOManagedObject";

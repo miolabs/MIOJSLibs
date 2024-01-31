@@ -6,21 +6,21 @@ But it is supressed with `// @ts-ignore`.
 */
 
 /// #if TARGET === 'ios'
-    export * from './iOS/MIOCore_iOS'
+    // export * from './iOS/MIOCore_iOS'
 /// #endif
 /// #if TARGET === 'webapp'
-    export * from './Web/MIOCore_Web'
-    export * from './Web/MIOCoreBundle'
-    export * from './Web/MIOCoreEvents'
-    export * from './Web/MIOHTTPRequest'
+    export * from './MIOCore_Web'
+    export * from './MIOCoreBundle'
+    export * from './MIOCoreEvents'
+    export * from './MIOHTTPRequest'
 /// #endif
 /// #if TARGET === 'node'
     // @ts-ignore: ifdef loader takes care of it
-    export * from './Node/MIOCore'
+    // export * from './Node/MIOCore'
     // @ts-ignore: ifdef loader takes care of it
-    export * from './Node/MIOHTTPRequest'
+    // export * from './Node/MIOHTTPRequest'
 /// #endif
 /// #if TARGET === 'webworker'
     // @ts-ignore: ifdef loader takes care of it
-    export * from './WebWorker/MIOCore_WebWorker'
+    // export * from './WebWorker/MIOCore_WebWorker'
 /// #endif
