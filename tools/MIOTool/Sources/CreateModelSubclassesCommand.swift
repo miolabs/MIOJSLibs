@@ -13,6 +13,7 @@ enum ModelSubClassType
 {
     case swift
     case javascript
+    case typescript
 }
 
 protocol ModelOutputDelegate
@@ -29,7 +30,10 @@ func CreateModelSubClasses() -> Command? {
     
     var path:String = CurrentPath()
     
-    let fileName:String = NextArg() ?? "\(CurrentPath())/datamodel.xml"
+    let fileName:String = NextArg() ?? "\(CurrentPath())/datamodel.xml"  
+    if (fileName.hasPrefix("--")){ // bug? fileName cannot be empty if there will be additional params (output-code, namespace...)
+        print("As you are using optional params you must supply a filename: miotool create model subclasses filename optionals")
+    }
     
     var type:ModelSubClassType = .javascript
     var entity:String?
@@ -65,7 +69,10 @@ func parseOutputCode() -> ModelSubClassType {
     switch code {
     case "swift":       return .swift
     case "javascript":  return .javascript
-    default:            return .javascript
+    case "typescript":  return .typescript
+    default:
+        print("Unexpected output code. Expected 'swift', 'javascript' or 'typescript'. Defaulting to javascript")
+        return .javascript
     }
 }
 
@@ -94,7 +101,8 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         switch type {
         case .javascript:   outputDelegate = JavascriptModelOutput()
         case .swift:        outputDelegate = SwiftModelOutput()
-        }                
+        case .typescript:   outputDelegate = TypescriptModelOutput()
+        }
     }
     
     func parserDidStartDocument(_ parser: XMLParser) {
@@ -122,6 +130,9 @@ class CreateModelSubClassesCommand : Command, XMLParserDelegate {
         if (parser != nil) {
             parser!.delegate = self;
             parser!.parse();
+        }
+        else {
+            print("Error creating parser\n")
         }
     }
     

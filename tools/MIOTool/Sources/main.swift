@@ -8,15 +8,22 @@
 
 import Foundation
 
+print("MIOTool v1.3 \n");
+
 if (ArgsCount() == 1) {
-    print("MIOTool v1.2\n");
     print("Not enough params!\n");
+    /*
+    print("Usage:");
+    print("miotool create model template | subclasses ...")
+    print("miotool create project .... ")
+    print("miotool deploy ...")
+    */
 }
 
 var cmd:Command? = nil;
 
 while let token = NextArg() {
-    
+
     switch (token) {
         
         case "create":
@@ -33,7 +40,7 @@ while let token = NextArg() {
                 }
             }
             else {
-                print("Argument not implemented!!")
+                print("Argument not implemented!! \(token)")
         }
     }
 }
