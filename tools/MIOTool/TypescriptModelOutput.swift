@@ -35,7 +35,7 @@ class TypescriptModelOutput : ModelOutputDelegate
         self.currentClassEntityName = cn;
         self.currentClassName = classname;
         
-        parentObject = parentName ?? "ManagedObject"
+        parentObject = parentName ?? "NSManagedObject"
         
         importsDependencies = []
         
@@ -149,9 +149,9 @@ class TypescriptModelOutput : ModelOutputDelegate
             
             fileContent += "    // Relationship: \(name)\n";
             // Var
-            fileContent += "    protected _\(name):ManagedObjectSet = null;\n";
+            fileContent += "    protected _\(name) : NSManagedObjectSet = null;\n";
             // Getter
-            fileContent += "    get \(name)():ManagedObjectSet {\n";
+            fileContent += "    get \(name)() : NSManagedObjectSet {\n";
             fileContent += "        return this.valueForKey('\(name)');\n";
             fileContent += "    }\n";
             // Add
@@ -169,8 +169,8 @@ class TypescriptModelOutput : ModelOutputDelegate
         var str = "// miotool generated class \(currentClassEntityName). Dont edit this file\n\n";
         
         //str += "import { ManagedObject, ManagedObjectSet } from \"coredata\" ";
-        str += "import { ManagedObject, ManagedObjectSet } from \"./Dummy_CoreData\"\n";
-        if parentObject != "ManagedObject" {
+        str += "import { NSManagedObject, NSManagedObjectSet } from \"coredata\"\n";
+        if parentObject != "NSManagedObject" {
             str += "import { \(parentObject) } from \"./\(parentObject)\" \n" 
         }
         for dependency in importsDependencies.sorted() {
