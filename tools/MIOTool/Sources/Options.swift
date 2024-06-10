@@ -17,6 +17,9 @@ func Option(key:String) ->String? {
 
 func SetOption(token:String, value:String) {
     
-    let key = token.substring(from: token.index(token.startIndex, offsetBy: 2));
+    //let key = token.substring(from: token.index(token.startIndex, offsetBy: 2));
+    let substring = token[token.index(token.startIndex, offsetBy: 2)...]
+    let key = String(substring)
+
     _CommandOptions[key] = value;
 }
