@@ -59,6 +59,8 @@ export class UIPageControl extends MUIControl {
 
     private _currentPage = -1;
     setCurrentPage(index:number){
+        if ( this.dotButtons.length == 0 ) return;
+
         if (this._currentPage == index) return;
 
         if (this._currentPage > -1){

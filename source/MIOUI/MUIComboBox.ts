@@ -63,7 +63,7 @@ export class MUIComboBox extends MUIControl
 
     addItem(text, value?)
     {
-        var option = document.createElement("option");
+        let option = document.createElement("option");
         option.innerHTML = text;
         if (value != null)
             option.value = value;
@@ -72,16 +72,16 @@ export class MUIComboBox extends MUIControl
 
     addItems(items)
     {
-        for (var count = 0; count < items.length; count++)
+        for (let count = 0; count < items.length; count++)
         {
-            var text = items[count];
+            let text = items[count];
             this.addItem(text);
         }
     }
 
     removeAllItems()
     {
-        var node = this._selectLayer;
+        let node = this._selectLayer;
 
         while (this._selectLayer.hasChildNodes()) {              // selected elem has children
 
@@ -100,7 +100,7 @@ export class MUIComboBox extends MUIControl
         if (this._selectLayer.childNodes.length == 0)
             return null;
 
-        var option = this._selectLayer.childNodes[index];
+        let option = this._selectLayer.childNodes[index];
         return option.innerHTML;
     }
 
@@ -111,9 +111,9 @@ export class MUIComboBox extends MUIControl
 
     getSelectedItemText()
     {
-        for (var index = 0; index < this._selectLayer.childNodes.length; index++)
+        for (let index = 0; index < this._selectLayer.childNodes.length; index++)
         {
-            var option = this._selectLayer.childNodes[index];
+            let option = this._selectLayer.childNodes[index];
             if (this._selectLayer.value == option.value)
                 return option.innerHTML;
         }
@@ -127,7 +127,7 @@ export class MUIComboBox extends MUIControl
     {
         this.target = target;
         this.action = action;
-        var instance = this;
+        let instance = this;
 
         this._selectLayer.onchange = function()
         {
