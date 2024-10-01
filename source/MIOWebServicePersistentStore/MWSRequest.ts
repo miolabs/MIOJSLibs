@@ -1,4 +1,5 @@
 import { MIOObject, MIOURL, MIOURLRequest, MIOURLConnection, MIONotificationCenter, MIOUUID } from "../MIOFoundation";
+import { MWSPersistentStoreResultType } from "./MWSPersistentStore";
 
 export enum MWSRequestType {
     Fetch,
@@ -50,7 +51,10 @@ export class MWSRequest extends MIOObject
         this.urlRequest.httpBody = this.bodyData;
         
         let con = new MIOURLConnection();
-        con.initWithRequestBlock(this.urlRequest, this, function(code, data, blob){
+        con.initWithRequestBlock(this.urlRequest, this, function(code, data, blob, responseHeaders){
+
+            let headers = responseHeaders || {};
+            let resultType = headers["result-type"] == "flat" ? MWSPersistentStoreResultType.Flat : MWSPersistentStoreResultType.Nested;
 
             if (code < 200 || code >= 300) {
                 MIONotificationCenter.defaultCenter().postNotification("MWSRequestFetchError", this, {"Type" : this.type});
@@ -61,7 +65,7 @@ export class MWSRequest extends MIOObject
             this.didFinish();
 
             if (completion != null){
-                completion.call(target, code, this.resultData);
+                completion.call(target, code, this.resultData, resultType);
             }
 
             MIONotificationCenter.defaultCenter().postNotification("MWSRequestReceivedFetch", this);

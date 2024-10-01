@@ -72,7 +72,8 @@ export enum MIOPredicateItemValueType {
     Array
 }
 
-export class MIOPredicateItem {
+export class MIOPredicateItem 
+{
     relationshipOperation:MIOPredicateRelationshipOperatorType|null = null;
     bitwiseOperation:MIOPredicateBitwiseOperatorType|null = null;
     bitwiseKey:string|null = null;
@@ -82,8 +83,8 @@ export class MIOPredicateItem {
     value:any|null = null;
     valueType = MIOPredicateItemValueType.Undefined;
 
-    evaluateObject(object, key?, lvalue?) {
-
+    evaluateObject(object, key?, lvalue?) 
+    {
         let lValue = lvalue;        
         if (lvalue == null) {
             let k = key != null ? key : this.key;            
@@ -95,9 +96,9 @@ export class MIOPredicateItem {
             }
             
             if (lValue instanceof Date) {
-                let sdf = new MIOISO8601DateFormatter();
-                sdf.init();
-                lValue = sdf.stringFromDate(lValue);
+                let df = new MIOISO8601DateFormatter();
+                df.init();
+                lValue = df.stringFromDate(lValue);
             }
             else if (typeof lValue === "string") {
                 lValue = lValue.toLocaleLowerCase();
@@ -129,9 +130,11 @@ export class MIOPredicateItem {
             if (lValue.indexOf(rValue) > -1) return true;
             return false;
         }
-        else if (this.comparator == MIOPredicateComparatorType.In) {
+        else if (this.comparator == MIOPredicateComparatorType.In) 
+        {
             if (lValue == null || rValue == null) return false;
-            return ( rValue.indexOfObject(lValue) > -1 );
+            const array = rValue.map ( ( item:any ) => typeof item === "string" ? item.toLocaleLowerCase() : item );
+            return ( array.indexOfObject(lValue) > -1 );
         }
         else if (this.comparator == MIOPredicateComparatorType.NotContains || this.comparator == MIOPredicateComparatorType.NotIn) {
             if (lValue == null || rValue == null) return true;

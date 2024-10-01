@@ -35,7 +35,7 @@ export class MIOPersistentStoreCoordinator extends MIOObject
         let className = MIOPersistentStoreCoordinator._storeClasses[type];
         if (className == null) throw new Error("MIOPersistentStoreCoordinator: Unkown persistent store type.");
         
-        var ps:MIOPersistentStore = MIOClassFromString(className);
+        let ps:MIOPersistentStore = MIOClassFromString(className);
         ps.initWithPersistentStoreCoordinator(this, configuration, url, options);
         
         this._storesByIdentifier[ps.identifier] = ps;

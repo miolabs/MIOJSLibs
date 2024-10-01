@@ -6,14 +6,29 @@ export function MIOHTTPRequest(instance, urlString, headers, method, body, binar
 
     xhr.onload = function () {
 
+        const response_headers = xhr.getAllResponseHeaders();
+
+        // Convert the header string into an array
+        // of individual headers
+        const arr = response_headers.trim().split(/[\r\n]+/);
+    
+        // Create a map of header names to values
+        const headerMap = {};
+        arr.forEach((line) => {
+          const parts = line.split(": ");
+          const header = parts.shift();
+          const value = parts.join(": ");
+          headerMap[header] = value;
+        });
+
         if (this.status >= 200 && this.status <= 300) {
             // success!
             if (delegate != null)
                 delegate.connectionDidReceiveText(instance, this.responseText);
             else if (binary == false || download == false) {
-                completion.call(target, this.status, this.responseText);
+                completion.call(target, this.status, this.responseText, null, headerMap);
             }
-            else if (target != null) {
+            else if (target != null) {                
                 let type_response = xhr.getResponseHeader('Content-Type');
                 let type = type_response != null ? type_response.split(';')[0] : null;
                 if (type != null && type != 'application/json' && type != 'text/html') {
@@ -67,7 +82,7 @@ export function MIOHTTPRequest(instance, urlString, headers, method, body, binar
                             }
 
                             setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
-                            completion.call(target, this.status, null, null);
+                            completion.call(target, this.status, null, null, headerMap);
                         }
                         /// #endif
                     }
@@ -89,7 +104,7 @@ export function MIOHTTPRequest(instance, urlString, headers, method, body, binar
             if (delegate != null)
                 delegate.connectionDidFail(instance);
             else if (target != null)
-                completion.call(target, this.status, this.responseText);
+                completion.call(target, this.status, this.responseText, null, headerMap);
         }
     };
 
@@ -98,7 +113,7 @@ export function MIOHTTPRequest(instance, urlString, headers, method, body, binar
         if (delegate != null)
             delegate.connectionDidFail(instance);
         else if (target != null)
-            completion.call(target, this.status, this.responseText);
+            completion.call(target, this.status, this.responseText, null);
     }
 
     xhr.open(method, urlString);

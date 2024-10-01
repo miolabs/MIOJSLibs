@@ -38,6 +38,11 @@ export enum MWSPersistentStoreError {
     InvalidRequest
 }
 
+export enum MWSPersistentStoreResultType {
+    Nested,
+    Flat
+}
+
 export class MWSPersistentStore extends MIOIncrementalStore {
     static get type(): string { return "MWSPersistentStore"; }
     get type(): string { return MWSPersistentStore.type; }
@@ -191,14 +196,14 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloading});
 
-        request.execute(this, function (code, data) {
+        request.execute(this, function (code, data, resultType:MWSPersistentStoreResultType) {
             let [result, values] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             
             MIOLog("Downloaded REFID: " + serverID);
             delete this.fetchingObjects[serverID];
             
             if (result === true && values.length > 0) {
-                this.updateObjectInContext(values[0], fetchRequest.entity, context);                
+                this.updateObjectInContext(values[0], fetchRequest.entity, context, resultType);
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
         });
@@ -221,7 +226,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let objects = [];
 
-        request.execute(this, function (code, data) {
+        request.execute(this, function (code, data, resultType:MWSPersistentStoreResultType) {
             if (code != 200) {
                 if (target != null && completion != null){
                     completion.call(target, [], "ERROR");
@@ -232,7 +237,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {                
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
-                objects = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships);
+                objects = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships, resultType);
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
 
@@ -265,7 +270,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
     }
 
-    updateObjectsInContext(items, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships) {
+    updateObjectsInContext(items, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships, resultType = MWSPersistentStoreResultType.Nested) {
 
         if (context == null) return;
         if (items == null) return;
@@ -277,10 +282,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         context.performBlockAndWait(this, function () {
 
-            for (var index = 0; index < items.length; index++) {
+            for (let index = 0; index < items.length; index++) {
 
                 let objectValues = items[index];
-                let obj = this.updateObjectInContext(objectValues, entity, context, null, relationShipNodes);
+                let obj = this.updateObjectInContext(objectValues, entity, context, null, relationShipNodes, resultType);
                                         
                 objects.addObject(obj);
             }
@@ -296,18 +301,21 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         return this.isEntityParentOf(entity.superentity, parent);
     }
 
-    private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID, relationshipNodes?) {
+    private updateObjectInContext(values, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID?:MIOManagedObjectID, relationshipNodes?, resultType = MWSPersistentStoreResultType.Nested) {
 
         // Check the objects inside values  
         if (values.length == 0) return;
               
         let objectEntity = entity;
-        let entityName = values["classname"] || entity.name;
+        let entityName = values["classname"] // || entity.name;
         if (entity.name != entityName) {
             objectEntity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
         }
 
-        let parsedValues = this.checkRelationships(values, objectEntity, context, relationshipNodes);
+        let parsedValues = values;
+        if (resultType == MWSPersistentStoreResultType.Nested) {
+            parsedValues = this.checkRelationships(values, objectEntity, context, relationshipNodes);
+        }
 
         let serverID = this.delegate.serverIDForItem(this, parsedValues, objectEntity.name);
         if (serverID == null) {

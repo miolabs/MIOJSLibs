@@ -146,6 +146,7 @@ export class UITableViewCell extends MUIView
 
     private editingAccessoryInsertView:MUIView = null;
     editingAccessoryDeleteView:MUIView = null; //TODO: Make this public!! Rigth I didn't figure out how without breaking the uitableviewcell gesture click
+    
     private addEditingAccessoryView(layer, owner) {
 
         let type = layer.getAttribute("data-editing-accessory-view");

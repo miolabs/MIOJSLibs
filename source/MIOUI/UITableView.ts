@@ -214,6 +214,11 @@ export class UITableView extends UIScrollView
         }   
         
         if (cell.selected == true) this.indexPathForSelectedRow = indexPath;
+        
+        if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
+            let editingStyle = this.delegate.editingStyleForRowAtIndexPath(this, indexPath);        
+            cell.setEditingAccessoryType(editingStyle);
+        }
     }
 
     private removeCell(indexPath){        

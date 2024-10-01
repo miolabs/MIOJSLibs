@@ -14,7 +14,7 @@ export class MWSJSONRequest extends MWSRequest
     protected didFinish(){
         if (this.resultData != null && this.resultData != "") {
             try {
-                this.resultData = JSON.parse(this.resultData.replace(/(\r\n|\n|\r)/gm, ""));    
+                this.resultData = JSON.parse(this.resultData.replace(/(\r\n|\n|\r)/gm, ""));
             } catch (error) {
                 MIOLog("JSON PARSER ERROR: BODY -> " + this.bodyData);
                 MIOLog("JSON PARSER ERROR: RESULT -> " + this.resultData);
