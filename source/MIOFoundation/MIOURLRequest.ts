@@ -13,7 +13,7 @@ export class MIOURLRequest extends MIOObject
 
     static requestWithURL(url:MIOURL):MIOURLRequest
     {
-        var request = new MIOURLRequest();
+        let request = new MIOURLRequest();
         request.initWithURL(url);
 
         return request;
