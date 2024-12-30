@@ -1,17 +1,34 @@
-import { MUIView , UITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState} from ".";
+import { MUIView , UITableViewCell, MUIGestureRecognizer, MUITapGestureRecognizer, MUIGestureRecognizerState, UITableViewCellEditingStyle} from ".";
 import { MIOUUID, MIOIndexPath, MIOIndexPathEqual } from "../MIOFoundation";
 import { MIOClassFromString } from "../MIOCore/platform/Web";
 import { MUILayerGetFirstElementWithTag, MUILayerSearchElementByAttribute } from "./MUIView";
 import { MUICoreLayerRemoveStyle, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MUILabel } from "./MUILabel";
-import { UIScrollView } from "./UIScrollView";
+import { UIScrollView, UIScrollViewDelegate } from "./UIScrollView";
 import { UIEdgeInsets } from "./UIEdgeInsets";
 
 
+export interface UITableViewDelegate extends UIScrollViewDelegate
+{
+    heightForRowAtIndexPath?(tableView:UITableView, indexPath:MIOIndexPath):number;
+    heightForHeaderInSection?(tableView:UITableView, section:number):number;
+    heightForFooterInSection?(tableView:UITableView, section:number):number;
+
+    viewForHeaderInSection?(tableView:UITableView, section:number):MUIView;
+    viewForFooterInSection?(tableView:UITableView, section:number):MUIView;
+
+    didSelectCellAtIndexPath?(tableView:UITableView, indexPath:MIOIndexPath);
+    didDeselectCellAtIndexPath?(tableView:UITableView, indexPath:MIOIndexPath);
+
+    canSelectCellAtIndexPath?(tableView:UITableView, indexPath:MIOIndexPath):boolean;
+
+    editingStyleForRowAtIndexPath?(tableView:UITableView, indexPath:MIOIndexPath):UITableViewCellEditingStyle;
+    commitEditingStyleForRowAtIndexPath?(tableView:UITableView, editingStyle:UITableViewCellEditingStyle, indexPath:MIOIndexPath);
+}
+
 export class UITableView extends UIScrollView
 {
-    dataSource = null;
-    delegate = null;
+    dataSource = null;    
 
     allowsMultipleSelection = false;
     indexPathForSelectedRow = null;
@@ -110,6 +127,10 @@ export class UITableView extends UIScrollView
         item["layer"] = layer;
         this.footerLayer = item;
     }    
+
+    protected _delegate: UITableViewDelegate|null = null;
+    set delegate(value: UITableViewDelegate|null) { this.setDelegate(value); }
+    get delegate(): UITableViewDelegate|null { return this._delegate; }
 
     dequeueReusableCellWithIdentifier(identifier:string): UITableViewCell {
         let item = this.cellPrototypes[identifier];

@@ -18,8 +18,8 @@ export enum UITableViewCellAccessoryType {
     Checkmark
 }
 
-export enum UITableViewCellEditingStyle {
-
+export enum UITableViewCellEditingStyle 
+{
     None,
     Delete,
     Insert

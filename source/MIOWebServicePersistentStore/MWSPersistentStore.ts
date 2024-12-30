@@ -241,7 +241,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
             
-            let objs = objects.filter((obj) => { return obj.entity == fetchRequest.entity || this.isEntityParentOf(fetchRequest.entity, obj.entity); } );
+            let objs = objects.filter((obj) => { return obj.entity == fetchRequest.entity || this.isEntityParentOf(obj.entity, fetchRequest.entity); } );
 
             if (target != null && completion != null){
                 completion.call(target, objs, null);
