@@ -202,8 +202,9 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             MIOLog("Downloaded REFID: " + serverID);
             delete this.fetchingObjects[serverID];
             
-            if (result === true && values.length > 0) {
-                this.updateObjectInContext(values[0], fetchRequest.entity, context, null, null, resultType);
+            let v = MWSPersistentStoreResultType.Flat ? values["entities"] : values
+            if (result == true && v.length > 0) {                
+                this.updateObjectInContext( v[0], fetchRequest.entity, context, null, null, resultType);
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
         });
@@ -237,7 +238,12 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
             if (result == true) {                
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
-                objects = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships, resultType);
+                if (resultType == MWSPersistentStoreResultType.Flat) {
+                    objects = this.updateObjectsInContext(items["entities"], fetchRequest.entity, context, relationships, resultType);
+                    this.updateObjectsInContext(items["relationShipEntities"], fetchRequest.entity, context, relationships, resultType);
+                } else {
+                    objects = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships, resultType);
+                }
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
             
