@@ -204,7 +204,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             
             let v = MWSPersistentStoreResultType.Flat ? values["entities"] : values
             if (result == true && v.length > 0) {                
-                this.updateObjectInContext( v[0], fetchRequest.entity, context, null, null, resultType);
+                let [obj, refresh] = this.updateObjectInContext( v[0], fetchRequest.entity, context, null, null, resultType);
+                if (refresh != null) context.refreshObject(obj, true);
             }
             MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
         });
@@ -236,21 +237,35 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             }
 
             let [result, items] = this.delegate.requestDidFinishForWebStore(this, fetchRequest, code, data);
+
+            let refresh_objects = [];
+
             if (result == true) {                
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
                 if (resultType == MWSPersistentStoreResultType.Flat) {
-                    objects = this.updateObjectsInContext(items["entities"], fetchRequest.entity, context, relationships, resultType);
-                    this.updateObjectsInContext(items["relationShipEntities"], fetchRequest.entity, context, relationships, resultType);
+                    let [objs, refresh] = this.updateObjectsInContext(items["entities"], fetchRequest.entity, context, relationships, resultType);
+                    let [_, refresh2] = this.updateObjectsInContext(items["relationShipEntities"], fetchRequest.entity, context, relationships, resultType);
+                    refresh_objects = refresh.concat( refresh2 );
+                    objects = objs;
+
                 } else {
-                    objects = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships, resultType);
+                    let [objs, refresh] = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships, resultType);
+                    objs = objs.filter((obj) => { return obj.entity == fetchRequest.entity || this.isEntityParentOf(obj.entity, fetchRequest.entity); } );
+                    refresh_objects = refresh;
+                    objects = objs;
                 }
             }
-            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});            
-            
-            let objs = objects.filter((obj) => { return obj.entity == fetchRequest.entity || this.isEntityParentOf(obj.entity, fetchRequest.entity); } );
 
+            context.performBlockAndWait(this, function () {
+                for (let obj of refresh_objects) {
+                    context.refreshObject(obj, true);
+                }
+            });
+
+            MIONotificationCenter.defaultCenter().postNotification(MWSPersistentStoreDidChangeEntityStatus, entityName, {"Status" : MWSPersistentStoreFetchStatus.Downloaded});
+                        
             if (target != null && completion != null){
-                completion.call(target, objs, null);
+                completion.call(target, objects, null);
             }
         });
 
@@ -278,28 +293,26 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
     }
 
-    updateObjectsInContext(items:any, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships:any, resultType = MWSPersistentStoreResultType.Nested) {
+    updateObjectsInContext(items:any, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships:any, resultType = MWSPersistentStoreResultType.Nested) : [MIOManagedObject[], MIOManagedObject[]] {
 
         if (context == null) return;
         if (items == null) return;
 
         let objects = [];
+        let refresh_objects = [];
         let relationShipNodes = {};
         this.relationShipsNodes(relationships, relationShipNodes);
+                
+        for (let index = 0; index < items.length; index++) {
+
+            let objectValues = items[index];
+            let [obj, refresh] = this.updateObjectInContext(objectValues, entity, context, null, relationShipNodes, resultType);
+                                    
+            objects.addObject(obj);
+            if (refresh != null) refresh_objects.addObject(refresh);
+        }
         
-
-        context.performBlockAndWait(this, function () {
-
-            for (let index = 0; index < items.length; index++) {
-
-                let objectValues = items[index];
-                let obj = this.updateObjectInContext(objectValues, entity, context, null, relationShipNodes, resultType);
-                                        
-                objects.addObject(obj);
-            }
-        });
-
-        return objects;
+        return [objects, refresh_objects];
     }
 
     isEntityParentOf(entity:MIOEntityDescription, parent:MIOEntityDescription):boolean {
@@ -309,8 +322,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         return this.isEntityParentOf(entity.superentity, parent);
     }
 
-    private updateObjectInContext(values:any, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID:MIOManagedObjectID | null, relationshipNodes:any, resultType = MWSPersistentStoreResultType.Nested) {
-
+    private updateObjectInContext(values:any, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID:MIOManagedObjectID | null, relationshipNodes:any, resultType = MWSPersistentStoreResultType.Nested) : [MIOManagedObject, MIOManagedObject|null]
+    {
         // Check the objects inside values  
         if (values.length == 0) return;
               
@@ -346,16 +359,15 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             }
             else {
                 this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity);
-            }
-            refresh = true;
+            }            
         } 
 
         let obj = context.existingObjectWithID(node.objectID);
-        if (refresh == true) {            
-            if (obj != null) context.refreshObject(obj, true);                            
-        }
+        // if (refresh == true) {            
+        //     if (obj != null) context.refreshObject(obj, true);
+        // }
 
-        return obj;
+        return [ obj, refresh ? obj : null ];
     }
 
     private nodeWithServerID(serverID:string, entity:MIOEntityDescription){    
