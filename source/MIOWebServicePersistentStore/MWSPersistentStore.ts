@@ -243,13 +243,13 @@ export class MWSPersistentStore extends MIOIncrementalStore {
             if (result == true) {                
                 let relationships = fetchRequest.relationshipKeyPathsForPrefetching;
                 if (resultType == MWSPersistentStoreResultType.Flat) {
-                    let [objs, refresh] = this.updateObjectsInContext(items["entities"], fetchRequest.entity, context, relationships, resultType);
-                    let [_, refresh2] = this.updateObjectsInContext(items["relationShipEntities"], fetchRequest.entity, context, relationships, resultType);
+                    let [objs, refresh] = this.updateObjectsInContext(items["entities"], context, relationships, resultType);
+                    let [_, refresh2] = this.updateObjectsInContext(items["relationShipEntities"], context, relationships, resultType);
                     refresh_objects = refresh.concat( refresh2 );
                     objects = objs;
 
                 } else {
-                    let [objs, refresh] = this.updateObjectsInContext(items, fetchRequest.entity, context, relationships, resultType);
+                    let [objs, refresh] = this.updateObjectsInContext(items, context, relationships, resultType);
                     objs = objs.filter((obj) => { return obj.entity == fetchRequest.entity || this.isEntityParentOf(obj.entity, fetchRequest.entity); } );
                     refresh_objects = refresh;
                     objects = objs;
@@ -293,7 +293,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         }
     }
 
-    updateObjectsInContext(items:any, entity: MIOEntityDescription, context: MIOManagedObjectContext, relationships:any, resultType = MWSPersistentStoreResultType.Nested) : [MIOManagedObject[], MIOManagedObject[]] {
+    updateObjectsInContext(items:any, context: MIOManagedObjectContext, relationships:any, resultType = MWSPersistentStoreResultType.Nested) : [MIOManagedObject[], MIOManagedObject[]] {
 
         if (context == null) return;
         if (items == null) return;
@@ -306,7 +306,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         for (let index = 0; index < items.length; index++) {
 
             let objectValues = items[index];
-            let [obj, refresh] = this.updateObjectInContext(objectValues, entity, context, null, relationShipNodes, resultType);
+            let [obj, refresh] = this.updateObjectInContext(objectValues, context, null, relationShipNodes, resultType);
                                     
             objects.addObject(obj);
             if (refresh != null) refresh_objects.addObject(refresh);
@@ -322,44 +322,43 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         return this.isEntityParentOf(entity.superentity, parent);
     }
 
-    private updateObjectInContext(values:any, entity: MIOEntityDescription, context: MIOManagedObjectContext, objectID:MIOManagedObjectID | null, relationshipNodes:any, resultType = MWSPersistentStoreResultType.Nested) : [MIOManagedObject, MIOManagedObject|null]
+    private updateObjectInContext(values:any, context: MIOManagedObjectContext, objectID:MIOManagedObjectID | null, relationshipNodes:any, resultType = MWSPersistentStoreResultType.Nested) : [MIOManagedObject, MIOManagedObject|null]
     {
         // Check the objects inside values  
         if (values.length == 0) return;
-              
-        let objectEntity = entity;
-        let entityName = values["classname"] // || entity.name;
-        if (entity.name != entityName) {
-            objectEntity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
-        }
+                      
+        let entityName = values["classname"]
+        let entity = MIOEntityDescription.entityForNameInManagedObjectContext(entityName, context);
 
         let parsedValues = values;
         if (resultType == MWSPersistentStoreResultType.Nested) {
-            parsedValues = this.checkRelationships(values, objectEntity, context, relationshipNodes, resultType);
+            parsedValues = this.checkRelationships(values, entity, context, relationshipNodes, resultType);
         }
 
-        let serverID = this.delegate.serverIDForItem(this, parsedValues, objectEntity.name);
+        let serverID = this.delegate.serverIDForItem(this, parsedValues, entity.name);
         if (serverID == null) {
-            throw new Error("MWSPersistentStore: SERVER ID CAN NOT BE NULL. (" + objectEntity.name + ")");
+            throw new Error("MWSPersistentStore: SERVER ID CAN NOT BE NULL. (" + entity.name + ")");
         }
         
-        let version = this.delegate.serverVersionNumberForItem(this, parsedValues, objectEntity.name);        
+        let version = this.delegate.serverVersionNumberForItem(this, parsedValues, entity.name);        
 
         let refresh = false;
-        let node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, objectEntity);
+        let node:MIOIncrementalStoreNode = this.nodeWithServerID(serverID, entity);
         if (node == null) {
             MIOLog("New version: " + entityName + " (" + version + ")");
-            node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity, objectID);
+            node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, entity, objectID);
             refresh = true;
         }
         else if (version > node.version){
-            MIOLog("Update version: " + objectEntity.name + " (" + node.version + " -> " + version + ")");   
-            if (this.isEntityParentOf(objectEntity, node.objectID.entity)) {
-                node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity, objectID);
-            }
-            else {
-                this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity);
-            }            
+            MIOLog("Update version: " + entity.name + " (" + node.version + " -> " + version + ")");   
+            this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, entity);
+            // if (this.isEntityParentOf(objectEntity, node.objectID.entity)) {
+            //     node = this.newNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity, objectID);
+            // }
+            // else {
+            //     this.updateNodeWithValuesAtServerID(serverID, parsedValues, version, objectEntity);
+            // }
+            refresh = true;
         } 
 
         let obj = context.existingObjectWithID(node.objectID);
@@ -392,7 +391,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         let parsedValues = this.updateNodeWithValuesAtServerID(serverID, values, version, entity);
         MIOLog("Inserting REFID: " + referenceID);
                 
-        if (entity.superentity != null) {            
+        if (entity.superentity != null) {
             this._newNodeWithValuesAtServerID(serverID, parsedValues, version, entity.superentity, objID);
         }
 
@@ -404,7 +403,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
 
         let referenceID = entity.name + "://" + serverID;
         
-        let node = new MIOIncrementalStoreNode();
+        let node = this.nodeWithServerID(serverID, entity);
+        if (node != null && node.version >= version) return;
+        
+        node = new MIOIncrementalStoreNode();
         node.initWithObjectID(objectID, values, version);
         this.nodesByReferenceID[referenceID] = node;    
         MIOLog("Inserting REFID: " + referenceID);    
@@ -435,7 +437,10 @@ export class MWSPersistentStore extends MIOIncrementalStore {
         //     node = this.newNodeWithValuesAtServerID(serverID, values, version, entity);
         // } else
         if (node.objectID.entity.name != entity.name) {
-            node = this.nodesByReferenceID[node.objectID.entity.name + "://" + node.objectID._getReferenceObject()];
+            this.deleteNodeAtServerID(serverID, node.objectID.entity);
+            let objID = this.newObjectIDForEntity(entity, serverID);
+            this._newNodeWithValuesAtServerID(serverID, values, version, entity, objID);
+            // node = this.nodesByReferenceID[node.objectID.entity.name + "://" + node.objectID._getReferenceObject()];            
         }
         
         if (this.useSaveBlocks) {
@@ -516,8 +521,8 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 }
                 else {
                     let relKeyPathNode = relationshipNodes[key]; 
-                    this.updateObjectInContext(value, relEntity.destinationEntity, context, null, relKeyPathNode, resultType);
-                    let serverID = this.delegate.serverIDForItem(this, value, relEntity.destinationEntity.name);                                
+                    this.updateObjectInContext(value, context, null, relKeyPathNode, resultType);
+                    let serverID = this.delegate.serverIDForItem(this, value, relEntity.destinationEntity.name);
                     parsedValues[serverRelName] = serverID;
                 }
             }
@@ -526,7 +531,7 @@ export class MWSPersistentStore extends MIOIncrementalStore {
                 let relKeyPathNode = relationshipNodes[key]; 
                 for (let count = 0; count < value.length; count++){
                     let serverValues = value[count];
-                    this.updateObjectInContext(serverValues, relEntity.destinationEntity, context, null, relKeyPathNode);
+                    this.updateObjectInContext(serverValues, context, null, relKeyPathNode);
                     let serverID = this.delegate.serverIDForItem(this, serverValues, relEntity.destinationEntityName);                
                     array.addObject(serverID);
                 }
