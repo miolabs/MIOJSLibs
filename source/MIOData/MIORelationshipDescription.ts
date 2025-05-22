@@ -10,26 +10,26 @@ export enum MIODeleteRule {
 
 export class MIORelationshipDescription extends MIOPropertyDescription
 {
-    destinationEntityName:string = null;
-    destinationEntity:MIOEntityDescription = null;
-    inverseRelationship:MIORelationshipDescription = null;
+    destinationEntityName:string;
+    destinationEntity:MIOEntityDescription|null = null;
+    inverseRelationship:MIORelationshipDescription|null = null;
     isToMany = false;
     deleteRule = MIODeleteRule.noActionDeleteRule;
 
-    private _serverName:string = null;
+    private _serverName:string|null = null;
 
-    inverseName:string = null;
-    inverseEntityName:string = null;
+    inverseName:string|null = null;
+    inverseEntityName:string|null = null;
 
-    initWithName(name:string, destinationEntityName:string, isToMany:boolean, serverName?:string, inverseName?:string, inverseEntityName?:string){
+    initWithName(name:string, destinationEntityName:string, isToMany:boolean, serverName?:string|null, inverseName?:string|null, inverseEntityName?:string|null){
 
         this.init();
         this.name = name;
         this.destinationEntityName = destinationEntityName;
         this.isToMany = isToMany;        
-        this._serverName = serverName;
-        this.inverseName = inverseName;
-        this.inverseEntityName = inverseEntityName;
+        this._serverName = serverName ?? null;
+        this.inverseName = inverseName ?? null;
+        this.inverseEntityName = inverseEntityName ?? null;
         // if (inverseName != null && inverseEntityName != null){
         //     let ir = new MIORelationshipDescription();
         //     ir.initWithName(inverseName, inverseEntityName, false); 

@@ -3,9 +3,9 @@ import { MWSRequest } from "./MWSRequest";
 
 export class MWSCache extends MIOObject
 {
-    private static _sharedInstance: MWSCache = null;
+    private static _sharedInstance: MWSCache|null = null;
     
-    private db:IDBDatabase = null;
+    private db:IDBDatabase|null = null;
     private dbName = "dl_manager";
     private dbTableName = "save_blocks";
     
@@ -64,11 +64,11 @@ export class MWSCache extends MIOObject
         this.open((status:boolean) => {
             if (status != true) { completion([]); return; }
 
-            const objectStore = this.db.transaction(this.dbTableName).objectStore(this.dbTableName);
+            const objectStore = this.db!.transaction(this.dbTableName).objectStore(this.dbTableName);
 
             let items = []
             objectStore.openCursor().addEventListener('success', (e) => {
-                const cursor = e!.target["result"];
+                const cursor = e!.target!["result"];
     
                 if(cursor){
                     let i = cursor.value;
@@ -103,7 +103,7 @@ export class MWSCache extends MIOObject
 
             let item = { "schema": schema, "transaction": tx, "url": url, "method": method, "body": body, "headers": headers };
 
-            const transaction = this.db.transaction(this.dbTableName, 'readwrite');
+            const transaction = this.db!.transaction(this.dbTableName, 'readwrite');
             // report on the success of the transaction completing, when everything is done
             transaction.oncomplete = () => {                
                 // update the display of data to show the newly added item, by running displayData() again.                
@@ -133,7 +133,7 @@ export class MWSCache extends MIOObject
                 let tx = i["transaction"];
                 if (tx != transaction) continue;
 
-                const request = this.db.transaction(this.dbTableName, "readwrite").objectStore(this.dbTableName).delete(i["index"]);
+                const request = this.db!.transaction(this.dbTableName, "readwrite").objectStore(this.dbTableName).delete(i["index"]);
                 request.onsuccess = (event) => {
                     // It's gone!
                     completion(true);

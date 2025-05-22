@@ -90,15 +90,14 @@ export class MIOManagedObjectContext extends MIOObject {
         }        
     }
 
-    private _registerObjectForEntity(object:MIOManagedObject, entity:MIOEntityDescription) {        
+    private _registerObjectForEntity(object:MIOManagedObject, entity:MIOEntityDescription) {
+        if (entity.isAbstract == true) return;
+
         let entityName = entity.name;
-        let array = this.objectsByEntity[entityName];
-        if (array == null) {
-            array = [];
-            this.objectsByEntity[entityName] = array;
-        }
+        let array = this.objectsByEntity[entityName] ?? [];
         array.addObject(object);
-        
+        this.objectsByEntity[entityName] = array;
+
         if (entity.superentity != null) this._registerObjectForEntity(object, entity.superentity);
     }
 
@@ -110,7 +109,8 @@ export class MIOManagedObjectContext extends MIOObject {
         let array = this.objectsByEntity[entityName];
         if (array != null) {
             array.removeObject(object);
-        }        
+        }
+        this.objectsByEntity[entityName] = array;
 
         if (object.objectID.persistentStore instanceof MIOIncrementalStore){
             let is = object.objectID.persistentStore as MIOIncrementalStore;
@@ -144,8 +144,7 @@ export class MIOManagedObjectContext extends MIOObject {
     }
 
     deleteObject(object: MIOManagedObject) {
-        if (this.deletedObjects.containsObject(object)) { return; }
-        if (this.updatedObjects.containsObject(object)) { this.updatedObjects.removeObject(object); }
+        if (this.deletedObjects.containsObject(object)) { return; }        
         
         this.insertedObjects.removeObject(object);
         object._setIsInserted(false);
@@ -216,6 +215,24 @@ export class MIOManagedObjectContext extends MIOObject {
 
         set.addObject(object);
 
+        // fault all relations
+        // Review this code. It's obsolete
+        /*
+        for (let rel of object.entity.relationships) {
+            if (rel.isToMany == false) {
+                let o = object.valueForKey( rel.name );
+                o?.faultRelationships();
+            }
+            else {
+                let set = object.valueForKey( rel.name );
+                if (set != null) for (let index = 0; index < set.count; index++) {
+                    let o = set.objectAtIndex(index);
+                    o.faultRelationships();
+                }
+            }
+        }
+        */
+
         if (this.blockChanges == null) {
             //this.persistentStoreCoordinator.updateObjectWithObjectID(object.objectID, this); 
             //object.isFault = false;           
@@ -266,8 +283,9 @@ export class MIOManagedObjectContext extends MIOObject {
 
         if (request instanceof MIOFetchRequest) {
             let fetchRequest = request as MIOFetchRequest;
-            let objects = _MIOPredicateFilterObjects(this.objectsByEntity[entityName], fetchRequest.predicate);
-            objects = _MIOSortDescriptorSortObjects(objects, fetchRequest.sortDescriptors);
+            let objs = this.objectsByEntity[entityName];//?.filter( (o:MIOManagedObject) => o.isFault == false);
+            let objects = _MIOPredicateFilterObjects(objs, fetchRequest.predicate);
+            objects = _MIOSortDescriptorSortObjects(objects, fetchRequest.sortDescriptors ?? []);
             return objects;
         }
 
@@ -306,6 +324,7 @@ export class MIOManagedObjectContext extends MIOObject {
                 deletedObjectsByEntityName[entityName] = array;
             }
             array.addObject(delObj);
+            delObj.faultRelationships
         }
 
         // Inserted objects
@@ -361,7 +380,7 @@ export class MIOManagedObjectContext extends MIOObject {
 
             for (let index = 0; index < this.deletedObjects.count; index++) {
                 let obj: MIOManagedObject = this.deletedObjects.objectAtIndex(index);
-                obj._didCommit();
+                obj._didCommit();                
                 this._unregisterObject(obj);
             }
 

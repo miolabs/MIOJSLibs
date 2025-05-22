@@ -34,7 +34,7 @@ export class MIOPersistentStore extends MIOObject
     private _identifier:string = null;
     get identifier(){return this._identifier;}
 
-    protected metadata = null;
+    protected metadata:any;
 
     initWithPersistentStoreCoordinator(root:MIOPersistentStoreCoordinator, configurationName:string, url:MIOURL, options?) {
 

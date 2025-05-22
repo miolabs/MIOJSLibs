@@ -1,4 +1,4 @@
-import { MIOCoreUUIDcreate } from "./MIOCoreUUID";
+import { MIOCoreUUID } from "./MIOCoreUUID";
 
 
 export enum MIOCoreDebugOption {
@@ -58,8 +58,13 @@ export function MIOCoreGetLanguages(){
     return _miocore_languages;
 }
 
-let _miocore_device_uuid = MIOCoreUUIDcreate();
+let _miocore_device_uuid:string|null = null;
 export function MIOCoreGetDeviceUUID(){
+    if (_miocore_device_uuid == null) {
+        let uuid = new MIOCoreUUID();
+        uuid.init();
+        _miocore_device_uuid = uuid.UUIDString();
+    }
     return _miocore_device_uuid;
 }
 

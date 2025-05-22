@@ -16,7 +16,7 @@ export class MIOAttributeDescription extends MIOPropertyDescription
 {    
     private _attributeType = MIOAttributeType.Undefined;
     private _defaultValue = null;
-    private _serverName:string = null;
+    private _serverName:string|null = null;
     private _syncable = true;
 
     initWithName(name:string, type:MIOAttributeType, defaultValue, optional:boolean, serverName?:string, syncable?:boolean){
@@ -26,7 +26,7 @@ export class MIOAttributeDescription extends MIOPropertyDescription
         this.name = name;
         this._attributeType = type;
         this._defaultValue = defaultValue;
-        this._serverName = serverName;
+        this._serverName = serverName ?? null;
         this.optional = optional;
         if (syncable == false) this._syncable = false;
     }

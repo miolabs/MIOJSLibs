@@ -46,7 +46,7 @@ export class MIOManagedObjectID extends MIOObject {
         }
         else {
             this._setReferenceObject(referenceObject);
-            MIOLog("ManagedObjectID create " + entity.name + "/" + referenceObject);
+            MIOLog("ManagedObjectID create " + entity.name + "://" + referenceObject);
         }
     }
 
@@ -61,9 +61,9 @@ export class MIOManagedObjectID extends MIOObject {
     
     _setPersistentStore(persistentStore:MIOPersistentStore){this._persistentStore = persistentStore;}
     
-    private _referenceObject = null;
-    _getReferenceObject(){return this._referenceObject;}
-    _setReferenceObject(object){
+    private _referenceObject:string;
+    _getReferenceObject():string { return this._referenceObject; }
+    _setReferenceObject(object:string){
         this._isTemporaryID = false;
         this._referenceObject = object;
 

@@ -7,6 +7,7 @@ import { MIOAttributeDescription } from "./MIOAttributeDescription";
 import { MIODeleteRule, MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectSet } from "./MIOManagedObjectSet";
 import { MIOManagedObjectModel } from "./MIOManagedObjectModel";
+import { MIOPersistentStore } from "./MIOPersistentStore";
 
 /**
  * Created by godshadow on 23/03/2017.
@@ -25,7 +26,6 @@ export class MIOManagedObject extends MIOObject {
         this._objectID = objectID;
         this._managedObjectContext = context;
         this._isFault = true;
-        this._storedValues = null;
 
         this.awakeFromFetch();
 
@@ -57,12 +57,12 @@ export class MIOManagedObject extends MIOObject {
         }
     }
     
-    private _objectID:MIOManagedObjectID = null;    
-    get objectID():MIOManagedObjectID {return this._objectID;}
+    private _objectID:MIOManagedObjectID|null = null;    
+    get objectID():MIOManagedObjectID {return this._objectID!;}
     get entity():MIOEntityDescription {return this.objectID.entity;}
 
-    private _managedObjectContext:MIOManagedObjectContext = null;
-    get managedObjectContext():MIOManagedObjectContext {return this._managedObjectContext;}
+    private _managedObjectContext:MIOManagedObjectContext|null = null;
+    get managedObjectContext():MIOManagedObjectContext {return this._managedObjectContext!;}
 
     get hasChanges():boolean {return (this._isInserted || this._isUpdated || this._isDeleted);}
 
@@ -104,10 +104,13 @@ export class MIOManagedObject extends MIOObject {
         this.willChangeValue("hasChanges");
         this.willChangeValue("isFault");
         this._isFault = value;
-        if (value == true) this._storedValues = null;
+        if (value == true) {
+            this._storedValues = {};
+            this.relationShipsNamedNotFault = new MIOSet();
+        }
         this.didChangeValue("isFault");
         this.didChangeValue("hasChanges");
-    }    
+    }
         
     awakeFromInsert() {}
     awakeFromFetch() {}
@@ -115,82 +118,84 @@ export class MIOManagedObject extends MIOObject {
     private _changedValues = {}; 
     get changedValues() {return this._changedValues;} 
 
-    private _storedValues = null;
-    private committedValues(){
-        if (this.objectID.isTemporaryID == true) return {};
-        // if (this.objectID.isTemporaryID == true && this._storedValues == null) {
-        //     this._storedValues = {};
-        //     return this._storedValues;
-        // }
-
-        if (this._storedValues == null) {
-            // Get from the store
-            if (this.objectID.persistentStore instanceof MIOIncrementalStore) {
-                this._storedValues = this.storeValuesFromIncrementalStore(this.objectID.persistentStore);
-            }
-            else{
-                throw new Error("MIOManagedObject: Only Incremental store is supported.");
-            }
-            this._setIsFault(false);
-        }
-
+    private _storedValues = {};
+    get storedValues() {
+        if (this.objectID.isTemporaryID == true) { return {}; }
+        if (this.objectID.persistentStore == null) { return {}; }
+        
+        if (this._isFault == false) { return this._storedValues; }
+        
+        this.unfaultAttributesFromStore( this.objectID.persistentStore! );
         return this._storedValues;
     }
 
-    private storeValuesFromIncrementalStore(store:MIOIncrementalStore){        
-        let storedValues = {};        
-        let properties = this.entity.properties;
-        
-        for(let index = 0; index < properties.length; index++){
-            let property = properties[index];
-            if (property instanceof MIOAttributeDescription) {
-                let attribute = property as MIOAttributeDescription;
-                let node = store.newValuesForObjectWithID(this.objectID, this.managedObjectContext);
-                if (node == null) continue;
-                let value = node.valueForPropertyDescription(attribute);                
-                storedValues[attribute.name] = value;
+    private unfaultAttributesFromStore(store:MIOPersistentStore){
+        if (this.objectID.isTemporaryID == true) { return; }
+
+        if (store instanceof MIOIncrementalStore) { 
+            let node = store.newValuesForObjectWithID( this.objectID, this.managedObjectContext );
+            if (node == null) { return }
+            
+            for ( let attr of this.entity.attributes ) {
+                let value = node.valueForPropertyDescription(attr);
+                this._storedValues[attr.name] = value;
             }
-            else if (property instanceof MIORelationshipDescription) {
-                let relationship = property as MIORelationshipDescription;                
-                
-                if (relationship.isToMany == false) {                    
-                    let objectID = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
-                    if (objectID != null){
-                        storedValues[relationship.name] = objectID;
-                    }                        
-                }
-                else {                  
-                    // Tick. I store the value in a private property when the object is temporary                      
-                    let set:MIOManagedObjectSet = MIOManagedObjectSet._setWithManagedObject(this, relationship);
-                    //storedValues[relationship.name] = set;
-                    
-                    let objectIDs = store.newValueForRelationship(relationship, this.objectID, this.managedObjectContext);
-                    if (objectIDs == null) continue;
-                    
-                    for(let count = 0; count < objectIDs.length; count++){
-                        let objID = objectIDs[count];
-                        set._addObjectID(objID);
-                    }  
-                    
-                    this["_" + relationship.name] = set;                    
-                }
-            }
-        }         
-        
-        return storedValues;
+        }
+        else {
+            throw new Error("MIOManagedObject: Only Incremental store is supported.");
+        }
+        this._setIsFault(false);
     }
 
-    committedValuesForKeys(keys){
-        let values = this.committedValues();
-        if (keys == null) return values;
+    private relationShipsNamedNotFault = new MIOSet();
+    hasFaultForRelationshipNamed( key: String ) : Boolean { 
+        return !this.relationShipsNamedNotFault.containsObject(key);
+    }
+    faultRelationships() { this.relationShipsNamedNotFault = new MIOSet(); }
 
-        let result = {};
-        for (let key in keys){
-            let obj = values[key];
-            result[key] = obj;
+    private unfaultRelationshipNamed( key:string, store:MIOPersistentStore|null) {
+        if (store == null) { return null; }
+        if (this.objectID.isTemporaryID == true) { return null; }
+
+        let relation = this.entity.relationshipsByName[key];
+        if (relation == null) { return }        
+
+        if (this.isFault) { this.unfaultAttributesFromStore( store! ) }
+        
+        if (store instanceof MIOIncrementalStore == false) { return } 
+
+        this.relationShipsNamedNotFault.addObject(key);        
+        if (relation.isToMany == false) {                    
+            let objectID = ( store as MIOIncrementalStore).newValueForRelationship(relation, this.objectID, this.managedObjectContext);
+            if (objectID != null){
+                this._storedValues[relation.name] = objectID;
+            }                        
+        }
+        else {                  
+            let set:MIOManagedObjectSet = MIOManagedObjectSet._setWithManagedObject(this, relation);            
+            let objectIDs = ( store as MIOIncrementalStore ).newValueForRelationship(relation, this.objectID, this.managedObjectContext);
+            
+            for(let count = 0; count < objectIDs?.length; count++){
+                let objID = objectIDs[count];
+                set._addObjectID(objID);
+            }              
+            this._storedValues[relation.name] = set;
+        }
+    }
+
+    committedValuesForKeys(keys:string[]|null) : any {
+        if (keys == null) { return this.storedValues }
+        
+        let values = {};
+        for (let k of keys) {
+            let p = this.entity.propertiesByName[k];
+            if (p instanceof MIORelationshipDescription && this.hasFaultForRelationshipNamed(k)) {
+                this.unfaultRelationshipNamed(k, this.objectID.persistentStore);                
+            }            
+            values[ k ] = this.storedValues[ k ];            
         }
 
-        return result;
+        return values;
     }
 
     willSave() {}
@@ -219,15 +224,14 @@ export class MIOManagedObject extends MIOObject {
     //     return object.valueForKeyPath(newKeyPath);
     // }
 
-    valueForKey(key:string){
-        if (key == null) return null;
 
-        let property = this.entity.propertiesByName[key];
+/*        let property = this.entity.propertiesByName[key];
         if (property == null) {      
             return super.valueForKey(key);
         }      
+
         
-        this.willAccessValueForKey(key);
+        
 
         let value = null;
 
@@ -265,9 +269,41 @@ export class MIOManagedObject extends MIOObject {
         this.didAccessValueForKey(key);
         
         return value;
+    }*/
+
+    valueForKey(key:string){
+        if (key == null) return null;
+        this.willAccessValueForKey(key);
+        let v = this.primitiveValueForKey(key);
+        this.didAccessValueForKey(key);
+        return v;
     }
 
-    setValueForKey(value:any, key:string, visited:MIOSet = new MIOSet()){
+    primitiveValueForKey(key:string){
+        if (key == null) return null;
+
+        let property = this.entity.propertiesByName[key];
+        if (property == null) { return super.valueForKey(key); }
+
+        
+        if (property instanceof MIOAttributeDescription) {
+            return ( key in this._changedValues ) ? this._changedValues[key] : this.storedValues[key];
+        }
+        else if (property instanceof MIORelationshipDescription){
+            let relationship = property as MIORelationshipDescription;
+            let v = ( key in this._changedValues ) ? this._changedValues[key] : this.committedValuesForKeys([key])[ key ];
+            if ( relationship.isToMany == false )return  v != null ? this.managedObjectContext.objectWithID(v) : null;
+            else return v;
+        }  
+    }
+
+    setValueForKey(value:any, key:string, visited:MIOSet = new MIOSet()) {
+        this.willChangeValueForKey(key);
+        this.setPrimitiveValueForKey(value, key, visited);
+        this.didChangeValueForKey(key);        
+    }
+
+    setPrimitiveValueForKey(value:any, key:string, visited:MIOSet = new MIOSet()){
         let property = this.entity.propertiesByName[key];
 
         if (property == null) {
@@ -275,9 +311,10 @@ export class MIOManagedObject extends MIOObject {
             return;
         }
 
-        this.willChangeValueForKey(key);
-
-        if (property instanceof MIORelationshipDescription){
+        if (property instanceof MIOAttributeDescription){
+            this._changedValues[key] = value;
+        }
+        else if (property instanceof MIORelationshipDescription){
             let relationship = property as MIORelationshipDescription;
                         
             if (relationship.isToMany == false){
@@ -292,83 +329,9 @@ export class MIOManagedObject extends MIOObject {
                 // TODO: We don't support adding a set value yet.
             }            
         }
-        else {
-            this._changedValues[key] = value;
-        }
-
-        this.didChangeValueForKey(key);        
 
         this.managedObjectContext.updateObject(this);
     }
-
-    primitiveValueForKey(key:string){
-        
-        let property = this.entity.propertiesByName[key];
-
-        let committedValues = this.committedValues();
-        
-        if (property instanceof MIORelationshipDescription){
-            let relationship = property as MIORelationshipDescription;
-            if (relationship.isToMany == false){                
-                let objID:MIOManagedObjectID = committedValues[key];
-                if (objID == null) return null;
-                let obj = this.managedObjectContext.objectWithID(objID);
-                return obj;
-            }
-            else {                
-                // Trick. I store the value in a private property when the object is temporary
-                let set:MIOManagedObjectSet = this["_" + relationship.name];
-                if (set == null) {
-                    set = MIOManagedObjectSet._setWithManagedObject(this, relationship);
-                    this["_" + relationship.name] = set;
-                }
-                return set;
-            }
-        }
-        
-        // Return attribute property
-        return committedValues[key];
-    }
-
-    setPrimitiveValueForKey(value, key:string){
-        
-        let property = this.entity.propertiesByName[key];
-        
-        let committedValues = this.committedValues(); 
-
-        if (value == null) {
-            committedValues[key] = null;
-        }
-        else if (property instanceof MIORelationshipDescription){
-            let relationship = property as MIORelationshipDescription;
-            if (relationship.isToMany == false){
-                let obj = value as MIOManagedObject;
-                committedValues[key] = obj.objectID;
-            }            
-            else {
-                if (value == null){
-                    this["_" + relationship.name] = MIOManagedObjectSet._setWithManagedObject(this, relationship);
-                }
-                else {
-                    if ((value instanceof MIOManagedObjectSet) == false) throw new Error("MIOManagedObject: Trying to set a value in relation ships that is not a set.");
-                    this["_" + relationship.name] = value;
-                }
-            }
-            
-            let inverseRelationship = relationship.inverseRelationship;
-            if (inverseRelationship != null) {
-                // TODO:
-            }
-        }
-        else {
-            committedValues[key] = value;
-        }
-
-    }
-
-    // hasFaultForRelationshipNamed(relationsipName:string){
-    //     return this.relationshipNamesFaults.containsObject(relationsipName);
-    // }
 
     //
     // PRIVATE 
@@ -419,16 +382,18 @@ export class MIOManagedObject extends MIOObject {
     
     _didCommit(){
         this._changedValues = {};
-        this._storedValues = null;
-        this._setIsFault(false);
+        this._setIsFault(true);
     }
 
-    private _setInverseRelationshipValue(oldValue:MIOManagedObject, newValue:MIOManagedObject, relationShip:MIORelationshipDescription, visited:MIOSet){
+    private _setInverseRelationshipValue(oldValue:MIOManagedObject|null, newValue:MIOManagedObject|null, relationShip:MIORelationshipDescription, visited:MIOSet){
         if (relationShip.inverseRelationship == null) return;
         //if (oldValue == newValue) return;
         visited.addObject(this.objectID.URIRepresentation.absoluteString);
         
-        let relName = relationShip.inverseName;        
+        let relName = relationShip.inverseName;    
+        if (relName == null) return;
+        if (relationShip.inverseEntityName == null) return;
+
         let relEntity = this.entity.managedObjectModel.entitiesByName[relationShip.inverseEntityName];
         let rel = relEntity.relationshipsByName[relName] as MIORelationshipDescription;
         if (rel.isToMany == false){
@@ -491,7 +456,7 @@ export class MIOManagedObject extends MIOObject {
         visited.addObject(this);
         if (relationship.isToMany == false) {
             let obj = this.valueForKey(relationship.name) as MIOManagedObject;
-            if (obj == null || obj.isDeleted == false) return;
+            if (obj == null || obj.isDeleted == true) return;
             obj._nullify_inverse_relation(relationship.inverseRelationship, this, visited);
         }
         else {
@@ -503,7 +468,8 @@ export class MIOManagedObject extends MIOObject {
         }
     }
     
-    private _nullify_inverse_relation (relationship: MIORelationshipDescription, obj: MIOManagedObject, visited: MIOSet) {
+    private _nullify_inverse_relation (relationship: MIORelationshipDescription|null, obj: MIOManagedObject, visited: MIOSet) {
+        if (relationship == null) return;
         if (relationship.isToMany == false) {            
             this.setValueForKey(null, relationship.name, visited);
         }

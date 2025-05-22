@@ -38,16 +38,16 @@ export class MIOIncrementalStore extends MIOPersistentStore {
         return [];
     }
 
-    newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode {
+    newValuesForObjectWithID(objectID: MIOManagedObjectID, context: MIOManagedObjectContext): MIOIncrementalStoreNode|null {
         return null;
     }
 
-    newValueForRelationship(relationship: MIORelationshipDescription, objectID: MIOManagedObjectID, context?: MIOManagedObjectContext) {
+    newValueForRelationship(relationship: MIORelationshipDescription, objectID: MIOManagedObjectID, context?: MIOManagedObjectContext) : any|null {
         return null;
     } 
 
-    obtainPermanentIDsForObjects(objects){        
-        var array = [];
+    obtainPermanentIDsForObjects(objects:MIOManagedObject[]){
+        var array:MIOManagedObjectID[] = [];
         for(var index = 0; index < objects.length; index++){
             let obj = objects[index];
             array.addObject(obj.objectID);
@@ -71,11 +71,11 @@ export class MIOIncrementalStore extends MIOPersistentStore {
         return this.obtainPermanentIDsForObjects([object])[0];
     }
 
-    _nodeForObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext):MIOIncrementalStoreNode {
+    _nodeForObjectID(objectID:MIOManagedObjectID, context:MIOManagedObjectContext):MIOIncrementalStoreNode|null {
         return this.newValuesForObjectWithID(objectID, context);        
     }
 
-    _objectIDForEntity(entity:MIOEntityDescription, referenceObject:string){
+    _objectIDForEntity(entity:MIOEntityDescription, referenceObject:string) : any|null{
         // TODO:Check if already exits
         return this.newObjectIDForEntity(entity, referenceObject);
     }

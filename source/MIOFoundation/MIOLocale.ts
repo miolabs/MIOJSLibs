@@ -78,7 +78,8 @@ export class MIOLocale extends MIOObject
             case "PH":  
             case "GQ":
             case "AW":
-            case "NG":                                        
+            case "NG":
+            case "SA":
                 ds =  ".";
                 break;
         }
@@ -96,7 +97,7 @@ export class MIOLocale extends MIOObject
             case "DE":
             case "FR":
             case "IT":
-            case "NL":
+            case "NL":            
                 cs = "€";
                 break;
 
@@ -130,6 +131,7 @@ export class MIOLocale extends MIOObject
             case "GQ": cc = "FCFA"; break;
             case "AW": cc = "AWG"; break;
             case "NG": cc = "NGN"; break;
+            case "SA": cc = "SAR"; break;
         }
 
         return cc;
@@ -155,6 +157,7 @@ export class MIOLocale extends MIOObject
             case "GQ":
             case "AW":
             case "NG":
+            case "SA":
                 gs = ",";
                 break;
         }

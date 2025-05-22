@@ -83,7 +83,7 @@ export class MIOPredicateItem
     value:any|null = null;
     valueType = MIOPredicateItemValueType.Undefined;
 
-    evaluateObject(object, key?, lvalue?) 
+    evaluateObject(object, key?, lvalue?) : boolean
     {
         let lValue = lvalue;        
         if (lvalue == null) {
@@ -139,6 +139,9 @@ export class MIOPredicateItem
         else if (this.comparator == MIOPredicateComparatorType.NotContains || this.comparator == MIOPredicateComparatorType.NotIn) {
             if (lValue == null || rValue == null) return true;
             return !( rValue.indexOfObject(lValue) > -1 );
+        }
+        else {
+            throw new Error(`MIOPredicate: Error. Unexpected comparator. (${this.comparator})`);
         }
     }
 
@@ -676,11 +679,11 @@ export class MIOPredicate extends MIOObject {
 // For internal purposes: Don't use it, could change
 //
 
-export function _MIOPredicateFilterObjects(objs, predicate)
+export function _MIOPredicateFilterObjects(objs:any[], predicate:MIOPredicate) : any[] | null
 {
     if (objs == null) return [];
 
-    let resultObjects = null;    
+    let resultObjects:any[]|null = null;    
 
     if (objs.length == 0 || predicate == null) {
         resultObjects = objs.slice(0);        
@@ -688,10 +691,8 @@ export function _MIOPredicateFilterObjects(objs, predicate)
     else {    
         
         resultObjects = objs.filter(function(obj){
-
             let result = predicate.evaluateObject(obj);
-            if (result)
-                return obj;
+            if (result) return obj;
         });
     }
 

@@ -54,6 +54,7 @@ export class MWSRequest extends MIOObject
         con.initWithRequestBlock(this.urlRequest, this, function(code, data, blob, responseHeaders){
 
             let headers = responseHeaders || {};
+            // let resultType = MWSPersistentStoreResultType.Nested;
             let resultType = headers["result-type"] == "flat" ? MWSPersistentStoreResultType.Flat : MWSPersistentStoreResultType.Nested;
 
             if (code < 200 || code >= 300) {

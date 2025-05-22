@@ -9,18 +9,20 @@ import { MIOManagedObjectContext } from "./MIOManagedObjectContext";
 
 export class MIOEntityDescription extends MIOObject {
     
-    name:string = null;
-    attributes = [];
+    name:string;
+    attributes:MIOAttributeDescription[] = [];
     attributesByName = {};
 
-    relationships = [];
+    relationships:MIORelationshipDescription[] = [];
     relationshipsByName = {};
 
-    superentity:MIOEntityDescription = null;
+    superentity:MIOEntityDescription|null = null;
+    subentities:MIOEntityDescription[] = [];
+    subentitiesByName = {};
 
     isAbstract = false;
 
-    private _properties = [];
+    private _properties:MIOPropertyDescription[] = [];
     private _propertiesByName = {};
 
     private serverAttributes = {};
@@ -29,7 +31,7 @@ export class MIOEntityDescription extends MIOObject {
     private _managedObjectClassName = "MIOEntityDescription";
     get managedObjectClassName():string {return this._managedObjectClassName;}
 
-    managedObjectModel:MIOManagedObjectModel = null;
+    managedObjectModel:MIOManagedObjectModel;
 
     public static entityForNameInManagedObjectContext(entityName:string, context:MIOManagedObjectContext):MIOEntityDescription {
         let entity = MIOManagedObjectModel.entityForNameInManagedObjectContext(entityName, context);
@@ -46,7 +48,7 @@ export class MIOEntityDescription extends MIOObject {
         return obj;
     }
 
-    initWithEntityName(entityName:string, superEntity:MIOEntityDescription, model:MIOManagedObjectModel, classname:string = null) {
+    initWithEntityName(entityName:string, superEntity:MIOEntityDescription, model:MIOManagedObjectModel, classname:string|null = null) {
         super.init();
         this.name = entityName;
         this._managedObjectClassName = classname != null ? classname : entityName;
@@ -96,7 +98,7 @@ export class MIOEntityDescription extends MIOObject {
         this.serverAttributes[name] = serverName ? serverName : name;
     }
 
-    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string, inverseName?:string, inverseEntityName?:string, optional?:boolean, deletionRule?:MIODeleteRule) {
+    addRelationship(name:string, destinationEntityName:string, toMany:boolean, serverName?:string|null, inverseName?:string|null, inverseEntityName?:string|null, optional?:boolean, deletionRule?:MIODeleteRule) {
 
         let rel = new MIORelationshipDescription();
         rel.initWithName(name, destinationEntityName, toMany, serverName, inverseName, inverseEntityName);
@@ -119,7 +121,7 @@ export class MIOEntityDescription extends MIOObject {
         return this.serverRelationships[name];
     }
 
-    parentEntityName:string = null;
+    parentEntityName:string|null = null;
     private isBuilt = false;
     build() {
 
