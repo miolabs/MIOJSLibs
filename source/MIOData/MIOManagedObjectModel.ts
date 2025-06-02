@@ -16,7 +16,7 @@ export class MIOManagedObjectModel extends MIOObject
         let entity = mom.entitiesByName[entityName];
         
         if (entity == null) {
-            throw new Error(`MIOManagedObjectModel: Unkown entity (${entityName})`);
+            throw new Error(`MIOManagedObjectModel: Unknown entity (${entityName})`);
         }
         
         return entity;
