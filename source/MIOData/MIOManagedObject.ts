@@ -387,8 +387,6 @@ export class MIOManagedObject extends MIOObject {
 
     private _setInverseRelationshipValue(oldValue:MIOManagedObject|null, newValue:MIOManagedObject|null, relationShip:MIORelationshipDescription, visited:MIOSet){
         if (relationShip.inverseRelationship == null) return;
-        //if (oldValue == newValue) return;
-        if (visited.containsObject(this.objectID.URIRepresentation.absoluteString)) return;
         visited.addObject(this.objectID.URIRepresentation.absoluteString);
         
         let relName = relationShip.inverseName;    

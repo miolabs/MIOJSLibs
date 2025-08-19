@@ -3,6 +3,8 @@ import { MUIWindow } from "./MUIWindow";
 import { MUICoreLayerIDFromObject, MUICoreLayerCreate, MUICoreLayerAddStyle } from "./MIOUI_CoreLayer";
 import { MIOClassFromString } from "../MIOCore/platform/Web";
 import { MUIGestureRecognizer, MUIEvent, MUIGestureRecognizerState } from ".";
+// Import array extensions for addObject, removeObject, etc.
+import "../MIOCore";
 
 /**
  * Created by godshadow on 11/3/16.
@@ -643,68 +645,214 @@ export class MUIView extends MIOObject
         MUIView.animationsViews = [];
         MUIView.animationTarget = target;
         MUIView.animationCompletion = completion;
-        animations.call(target);                
+        animations.call(target);
+
+        // Group animations by view to handle multiple properties per view
+        let viewAnimations = {};
 
         for (let index = 0; index < MUIView.animationsChanges.length; index++){
             let anim = MUIView.animationsChanges[index];
             let view = anim["View"];
             let key = anim["Key"];
-            let value = anim["EndValue"];            
-            
-            view.layer.style.transition = key + " " + duration + "s";
-            switch(key){
-                case "opacity":
-                view.layer.style.opacity = value;                
-                break;
+            let value = anim["EndValue"];
 
-                case "x":
-                view.layer.style.left = value;
-                break;
-
-                case "y":
-                view.layer.style.top = value;
-                break;
-
-                case "width":
-                view.layer.style.width = value;
-                break;
-
-                case "height":
-                view.layer.style.height = value;
-                break;
+            if (!viewAnimations[view.layerID]) {
+                viewAnimations[view.layerID] = {
+                    view: view,
+                    properties: [],
+                    values: {}
+                };
             }
 
+            viewAnimations[view.layerID].properties.push(key);
+            viewAnimations[view.layerID].values[key] = value;
+        }
+
+        // Apply animations to each view
+        for (let viewID in viewAnimations) {
+            let viewAnim = viewAnimations[viewID];
+            let view = viewAnim.view;
+
+            console.log("Setting up animation for view:", view.layerID);
+            console.log("Properties to animate:", viewAnim.properties);
+            console.log("Values:", viewAnim.values);
+
+            // Set up transition for all properties at once
+            let transitionProperties = viewAnim.properties.join(", ");
+            let transitionCSS = transitionProperties + " " + duration + "s";
+            view.layer.style.transition = transitionCSS;
+
+            console.log("Applied transition CSS:", transitionCSS);
+
+            // Add tracking before applying changes
             MUIView.addTrackingAnimationView(view);
-        }   
-        MUIView.animationsChanges = null;                             
+
+            // Use requestAnimationFrame to ensure proper timing
+            requestAnimationFrame(() => {
+                console.log("Applying changes in next animation frame");
+
+                // Apply all property changes in the next frame
+                for (let prop of viewAnim.properties) {
+                    let value = viewAnim.values[prop];
+
+                    // Check current value before applying
+                    let currentValue = getComputedStyle(view.layer)[prop];
+                    console.log("Property:", prop, "current:", currentValue, "→ new:", value);
+
+                    // Check if there's actually a change
+                    if (currentValue === value) {
+                        console.warn("No change detected for", prop, "- transition may not fire");
+                    }
+
+                    switch(prop){
+                        case "opacity":
+                            view.layer.style.opacity = value;
+                            break;
+                        case "left":
+                        case "x":
+                            view.layer.style.left = value;
+                            break;
+                        case "top":
+                        case "y":
+                            view.layer.style.top = value;
+                            break;
+                        case "width":
+                            view.layer.style.width = value;
+                            break;
+                        case "height":
+                            view.layer.style.height = value;
+                            break;
+                        default:
+                            console.warn("Unknown animation property:", prop);
+                            break;
+                    }
+
+                    // Verify the change was applied
+                    let newComputedValue = getComputedStyle(view.layer)[prop];
+                    console.log("After applying:", prop, "computed value:", newComputedValue);
+                }
+
+                console.log("Final computed style transition:", getComputedStyle(view.layer).transition);
+            });
+        }
+
+        MUIView.animationsChanges = null;
+
+        // Fallback timeout in case transition events don't fire
+        if (MUIView.animationsViews && MUIView.animationsViews.length > 0) {
+            console.log("Setting up fallback timeout for", duration * 1000 + 100, "ms");
+            setTimeout(() => {
+                if (MUIView.animationsViews && MUIView.animationsViews.length > 0) {
+                    console.warn("Animation events didn't fire, using fallback completion");
+                    // Force completion
+                    MUIView.animationsViews = [];
+                    if (MUIView.animationTarget != null && MUIView.animationCompletion != null) {
+                        MUIView.animationCompletion.call(MUIView.animationTarget);
+                    }
+                    MUIView.animationTarget = null;
+                    MUIView.animationCompletion = null;
+                }
+            }, duration * 1000 + 100); // Add 100ms buffer
+        }
     }
 
     private static addTrackingAnimationView(view:MUIView){
-        let index = MUIView.animationsViews.indexOf(view);
-        if (index > -1) return;
+        // let index = MUIView.animationsViews.indexOf(view);
+        // if (index > -1) return;
+        console.log("Adding animation tracking for view:", view.layerID);
         MUIView.animationsViews.addObject(view);
         view.layer.animationParams = {"View" : view};
+
+        // Listen for multiple transition end events for cross-browser compatibility
+        view.layer.addEventListener("transitionend", MUIView.animationDidFinish);
         view.layer.addEventListener("webkitTransitionEnd", MUIView.animationDidFinish);
+        view.layer.addEventListener("oTransitionEnd", MUIView.animationDidFinish);
+        view.layer.addEventListener("MSTransitionEnd", MUIView.animationDidFinish);
+
+        // Add a test listener to see if ANY transition events fire
+        const testListener = (e) => {
+            console.log("🔥 TRANSITION EVENT DETECTED:", e.type, "property:", e.propertyName, "target:", e.target);
+        };
+        view.layer.addEventListener("transitionstart", testListener);
+        view.layer.addEventListener("transitionrun", testListener);
+        view.layer.addEventListener("transitionend", testListener);
+        view.layer.addEventListener("webkitTransitionEnd", testListener);
+
+        console.log("Event listeners added for view:", view.layerID);
     }
 
     private static removeTrackingAnimationView(view:MUIView){
-        let index = MUIView.animationsViews.indexOf(view);
-        if (index == -1) return;
-        MUIView.animationsViews.removeObject(view);                
-        view.layer.removeEventListener("webkitTransitionEnd", MUIView.animationDidFinish);            
+        // let index = MUIView.animationsViews.indexOf(view);
+        // if (index == -1) return;
+        MUIView.animationsViews.removeObject(view);
+
+        // Remove all transition end event listeners for cross-browser compatibility
+        view.layer.removeEventListener("transitionend", MUIView.animationDidFinish);
+        view.layer.removeEventListener("webkitTransitionEnd", MUIView.animationDidFinish);
+        view.layer.removeEventListener("oTransitionEnd", MUIView.animationDidFinish);
+        view.layer.removeEventListener("MSTransitionEnd", MUIView.animationDidFinish);
+
+        // Reset animation flags and timeout
+        if (view.layer.animationParams) {
+            if (view.layer.animationTimeout) {
+                clearTimeout(view.layer.animationTimeout);
+                delete view.layer.animationTimeout;
+            }
+            delete view.layer.animationHandled;
+            delete view.layer.animationParams;
+        }
+
         view.layer.style.transition = "none";
         view.setNeedsDisplay();
     }
 
     private static animationDidFinish(event){
+        console.log("Animation event fired:", event.type, event.propertyName);
+
+        // Prevent multiple calls for the same transition from different event types
+        if (!event.target || !event.target.animationParams) {
+            console.log("No animation params found");
+            return;
+        }
+
         let view = event.target.animationParams["View"];
-        MUIView.removeTrackingAnimationView(view);        
-        if (MUIView.animationsViews.length > 0) return;
-        MUIView.animationsChanges = null;
-        MUIView.animationsViews = null;
-        if (MUIView.animationTarget != null && MUIView.animationCompletion != null) MUIView.animationCompletion.call(MUIView.animationTarget);
-        MUIView.animationTarget = null;
-        MUIView.animationCompletion = null;
+        if (!view) {
+            console.log("No view found in animation params");
+            return;
+        }
+
+        console.log("Animation finished for view:", view.layerID, "property:", event.propertyName);
+
+        // For multiple properties transitioning, we only want to handle this once
+        // Use a timeout to ensure all transition events have fired
+        if (event.target.animationTimeout) {
+            clearTimeout(event.target.animationTimeout);
+        }
+
+        event.target.animationTimeout = setTimeout(() => {
+            console.log("Processing animation completion for view:", view.layerID);
+
+            // Check if this view is still being tracked (use containsObject instead of indexOfObject)
+            if (!MUIView.animationsViews || !MUIView.animationsViews.containsObject(view)) {
+                console.log("View no longer tracked");
+                return;
+            }
+
+            MUIView.removeTrackingAnimationView(view);
+            console.log("Remaining animated views:", MUIView.animationsViews ? MUIView.animationsViews.length : 0);
+
+            if (MUIView.animationsViews && MUIView.animationsViews.length > 0) return;
+
+            // All animations finished, call completion
+            console.log("All animations finished, calling completion");
+            MUIView.animationsChanges = null;
+            MUIView.animationsViews = null;
+            if (MUIView.animationTarget != null && MUIView.animationCompletion != null) {
+                MUIView.animationCompletion.call(MUIView.animationTarget);
+            }
+            MUIView.animationTarget = null;
+            MUIView.animationCompletion = null;
+        }, 10); // Small delay to collect all transition events
     }
 
 }

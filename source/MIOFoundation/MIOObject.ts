@@ -141,7 +141,7 @@ export class MIOObject
         return this[key];
     }
 
-    valueForKeyPath(keyPath:string) {
+    valueForKeyPath(keyPath:string): any {
 
         let [key, offset] = this._keyFromKeypath(keyPath);
         

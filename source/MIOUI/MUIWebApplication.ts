@@ -52,19 +52,26 @@ export class MUIWebApplication {
     private _mainWindow:MUIWindow = null;
 
     //TODO: Set language in the webworker also.
-    private setLanguage(lang, target, completion){
+    private setLanguage(lang:string, defaultLanguage:string, target, completion){
         let languages = MIOCoreGetLanguages();
         if (languages == null) {
             completion.call(target);
+            return;
         }
 
-        let url = languages[lang];
-        if (url == null){
-            url = languages[ Object.keys( languages )[ 0 ] ];
+        let url = languages[ lang ];
+        if (url == null && defaultLanguage != null){
+            url = languages[ defaultLanguage ];
+        }
+
+        if (url == null) {
+            url = Object.values(languages)[0];
         }
         
-        if ( !url ) {
-          console.error( "NO LANGUAGE found for ", lang ) ;
+        if ( url == null ) {
+            console.error( "NO LANGUAGE found for ", lang ) ;
+            completion.call(target);
+            return;
         }
 
         let request = MIOURLRequest.requestWithURL(MIOURL.urlWithString(url));
@@ -104,7 +111,7 @@ export class MUIWebApplication {
                 MIOCoreAddLanguage(key, url);
             }
             let lang = MIOCoreGetBrowserLanguage();
-            this.setLanguage(lang, this, function(){
+            this.setLanguage(lang, config["DefaultLanguage"], this, function(){
                 this._parse_options();
             });            
         });

@@ -2,6 +2,7 @@ import { MIOObject, MIOPredicate, _MIOPredicateFilterObjects, _MIOSortDescriptor
 import { MIORelationshipDescription } from "./MIORelationshipDescription";
 import { MIOManagedObjectID } from "./MIOManagedObjectID";
 import { MIOManagedObject } from "./MIOManagedObject";
+import { MIOSortDescriptor } from "../MIOFoundation";
 
 export class MIOManagedObjectSet<T = any> extends MIOObject {
 
@@ -104,7 +105,7 @@ export class MIOManagedObjectSet<T = any> extends MIOObject {
         return objs;
     }
 
-    sortedArrayUsingDescriptors(sortDescriptors){
+    sortedArrayUsingDescriptors(sortDescriptors:MIOSortDescriptor[]){
         let objs = _MIOSortDescriptorSortObjects(this.allObjects, sortDescriptors);
         return objs;
     }
