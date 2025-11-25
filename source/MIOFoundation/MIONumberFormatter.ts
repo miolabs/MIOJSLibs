@@ -48,6 +48,7 @@ export class MIONumberFormatter extends MIOFormatter {
 
         switch(this.locale.countryCode){            
             case "US":
+            case "CA":
             this.currencyHasSpaces = false;
             this.currencyIsRight = false;
             break;

@@ -66,12 +66,15 @@ export class MIOLocale extends MIOObject
         switch (this.countryCode) {
 
             case "ES":
-            case "NL":
+            case "DE":
             case "FR":
+            case "IT":
+            case "NL":            
                 ds =  ",";
                 break;
 
             case "US":
+            case "CA":
             case "UK":
             case "AE":
             case "QA":
@@ -102,6 +105,7 @@ export class MIOLocale extends MIOObject
                 break;
 
             case "US": cs = "$"; break;
+            case "CA": cs = "$"; break;
             case "UK": cs = "£"; break;
             case "PH": cs = "₱"; break;
             case "AW": cs = "ƒ"; break;
@@ -124,6 +128,7 @@ export class MIOLocale extends MIOObject
                 break;
 
             case "US": cc = "USD"; break;
+            case "CA": cc = "CAD"; break;
             case "UK": cc = "GBP"; break;
             case "AE": cc = "AED"; break;            
             case "QA": cc = "QAR"; break;
@@ -144,12 +149,15 @@ export class MIOLocale extends MIOObject
         switch(this.countryCode){
 
             case "ES":
-            case "NL":
+            case "DE":
             case "FR":
+            case "IT":
+            case "NL":            
                 gs = ".";
                 break;
 
             case "US":
+            case "CA":
             case "UK":
             case "AE":
             case "QA":
