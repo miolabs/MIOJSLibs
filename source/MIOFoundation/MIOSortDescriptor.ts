@@ -88,6 +88,9 @@ export function _MIOSortDescriptorSortObjects2(a:any, b:any, sortDescriptors:MIO
         else
             return sd.ascending ? 1 : -1;            
     }
+    else if (lv instanceof Date && rv instanceof Date && lv.valueOf() === rv.valueOf()) {
+        return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);
+    }
     else if (lv == rv)
         return _MIOSortDescriptorSortObjects2(a, b, sortDescriptors, ++index);
     else if (lv != null && rv != null) {

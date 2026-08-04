@@ -10,5 +10,6 @@ rm -rf dist
 TARGET=web npx webpack $webpack_env
 TARGET=webworker npx webpack $webpack_env
 npx tsc source/index.web.ts --declaration --emitDeclarationOnly --outfile dist/miojslibs.d.ts
+node tools/generate_global_dts.js
 cp package.dist.json dist/package.json
 

@@ -58,6 +58,7 @@ class JavascriptModelOutput : ModelOutputDelegate
         switch type {
         case "Integer",
              "Float",
+             "Double",
              "Number",
              "Integer 16",
              "Integer 8",

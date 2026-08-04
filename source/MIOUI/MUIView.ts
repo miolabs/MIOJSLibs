@@ -133,6 +133,9 @@ export class MUIView extends MIOObject
     }
 
     _window:MUIWindow = null;
+    get window():MUIWindow {
+        return this._window;
+    }
 
     _outlets = {};
 

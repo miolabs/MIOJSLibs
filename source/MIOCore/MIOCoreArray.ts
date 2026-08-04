@@ -1,5 +1,6 @@
 declare global {
     interface Array<T> {
+        readonly count: number;
         addObject(o: T): void;
         insertObjectAtIndex(object:any, index:number): void ;
         removeObject  (object:any): void ;

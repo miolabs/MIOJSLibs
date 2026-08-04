@@ -8,4 +8,4 @@ export * from "./MIOFoundation";
 export * from "./MIOData";
 export * from "./MIOUI";
 export * from "./MIOWebServicePersistentStore";
-// export * from "./MIORemoteNotificationServer";
+export * from "./MIORemoteNotificationServer";

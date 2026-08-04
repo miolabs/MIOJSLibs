@@ -281,6 +281,8 @@ export class MIOManagedObjectContext extends MIOObject {
             this._registerObject(o);
         }
 
+        // return objs;
+
         if (request instanceof MIOFetchRequest) {
             let fetchRequest = request as MIOFetchRequest;
             let objs = this.objectsByEntity[entityName];//?.filter( (o:MIOManagedObject) => o.isFault == false);

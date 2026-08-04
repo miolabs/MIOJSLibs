@@ -9,6 +9,7 @@ export enum MIOFileHandlingPanel
 export class MUIOpenPanel extends MUIWindow
 {
     files = [];
+    allowedFileTypes:string[] = null;
 
     static openPanel():MUIOpenPanel {
         let op = new MUIOpenPanel();
@@ -29,7 +30,10 @@ export class MUIOpenPanel extends MUIWindow
 
         this._inputLayer = document.createElement("INPUT");
         this._inputLayer.setAttribute("type", "file");
-        this._inputLayer.style.display = "none";        
+        if (this.allowedFileTypes != null && this.allowedFileTypes.length > 0) {
+            this._inputLayer.setAttribute("accept", this.allowedFileTypes.map(function(t){ return "." + t; }).join(","));
+        }
+        this._inputLayer.style.display = "none";
         this._inputLayer.addEventListener('change', function(ev){
             let files = ev.target.files; // FileList object
             instance.filesDidSelect(files);
