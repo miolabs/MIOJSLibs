@@ -567,7 +567,11 @@ export class UITableView extends UIScrollView
         ghost.style.opacity = "0.9";
         ghost.style.pointerEvents = "none";
         ghost.style.boxShadow = "0 4px 14px rgba(0,0,0,0.25)";
-        document.body.appendChild(ghost);
+        // The ghost must live inside the table, not on document.body: cell
+        // styling is usually scoped to the page (e.g. #page-id .cell), so a
+        // body-level clone loses all of it and renders unstyled. position:fixed
+        // keeps it viewport-anchored regardless of the parent.
+        this.layer.appendChild(ghost);
         this.reorderGhostLayer = ghost;
 
         MUICoreLayerAddStyle(cell.layer, "reorder-placeholder");
