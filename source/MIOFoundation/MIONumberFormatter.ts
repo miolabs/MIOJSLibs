@@ -281,6 +281,12 @@ export class MIONumberFormatter extends MIOFormatter {
                 numberString += ".";
                 type = _MIONumberFormatterType.Decimal;
             }
+            else if (ch == (this.groupingSeparator ?? this.locale.groupingSeparator)
+                     && type != _MIONumberFormatterType.Decimal
+                     && numberString.length > (minusSymbol ? 1 : 0)) {
+                // Thousands separator: keep it in the parse string but not in the number
+                parseString += ch;
+            }
             else if (ch == "-" && minusSymbol == false) {
                 parseString += ch;
                 numberString += ch;
