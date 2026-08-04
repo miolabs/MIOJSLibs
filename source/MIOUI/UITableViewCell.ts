@@ -116,6 +116,10 @@ export class UITableViewCell extends MUIView
                 if (subLayer.getAttribute("data-editing-accessory-view") != null) {
                     this.addEditingAccessoryView(subLayer, owner);
                 }
+
+                if (subLayer.getAttribute("data-reorder-accessory-view") != null) {
+                    this.addReorderAccessoryView(subLayer, owner);
+                }
             }
         }
 
@@ -217,6 +221,64 @@ export class UITableViewCell extends MUIView
     private editingAccessoryViewDidClick(e:Event){
         e.stopPropagation();
         this._onEditingAccessoryClickFn.call(this._target, this);
+    }
+
+    //data-reorder-accessory-view="true"
+
+    reorderAccessoryView:MUIView = null;
+    _reorderHandleLayer = null;
+    _onReorderPointerDownFn = null;
+    private _reorderControlVisible = false;
+
+    private addReorderAccessoryView(layer, owner) {
+        this.reorderAccessoryView = new MUIView();
+        this.reorderAccessoryView.initWithLayer(layer, owner);
+
+        this.setEditingAccessoryViewHidden(this.reorderAccessoryView, true);
+        this.hookReorderLayer(layer);
+    }
+
+    private hookReorderLayer(layer) {
+        this._reorderHandleLayer = layer;
+        layer.style.touchAction = "none";
+        layer.style.cursor = "grab";
+
+        let instance = this;
+        layer.addEventListener("pointerdown", function(ev){
+            if (instance._onReorderPointerDownFn != null) {
+                instance._onReorderPointerDownFn.call(instance._target, instance, ev);
+            }
+        });
+    }
+
+    _setReorderControlVisible(value:boolean){
+        if (this._reorderControlVisible == value) return;
+        this._reorderControlVisible = value;
+
+        if (value == true && this.reorderAccessoryView == null) {
+            let layer = document.createElement("div");
+            layer.classList.add("reorder-control");
+            layer.style.position = "absolute";
+            layer.style.right = "8px";
+            layer.style.top = "50%";
+            layer.style.transform = "translateY(-50%)";
+            layer.style.padding = "4px 6px";
+            layer.style.fontSize = "18px";
+            layer.style.lineHeight = "1";
+            layer.style.color = "#999";
+            layer.style.userSelect = "none";
+            layer.innerHTML = "&#x2630;";
+
+            if (window.getComputedStyle(this.layer).position == "static") this.layer.style.position = "relative";
+
+            this.reorderAccessoryView = new MUIView("reorder_control");
+            this.reorderAccessoryView.initWithLayer(layer, null);
+            this.addSubview(this.reorderAccessoryView);
+            this.hookReorderLayer(layer);
+        }
+
+        if (this.reorderAccessoryView == null) return;
+        this.setEditingAccessoryViewHidden(this.reorderAccessoryView, !value);
     }
 
     private _setupLayer() {

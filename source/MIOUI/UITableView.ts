@@ -24,7 +24,13 @@ export interface UITableViewDelegate extends UIScrollViewDelegate
 
     editingStyleForRowAtIndexPath?(tableView:UITableView, indexPath:MIOIndexPath):UITableViewCellEditingStyle;
     commitEditingStyleForRowAtIndexPath?(tableView:UITableView, editingStyle:UITableViewCellEditingStyle, indexPath:MIOIndexPath);
+
+    targetIndexPathForMoveFromRowAtIndexPath?(tableView:UITableView, fromIndexPath:MIOIndexPath, proposedIndexPath:MIOIndexPath):MIOIndexPath;
 }
+
+// Reordering data source methods (optional, checked dynamically like the rest of the data source):
+//   canMoveRowAtIndexPath(tableView:UITableView, indexPath:MIOIndexPath):boolean
+//   moveRowAtIndexPath(tableView:UITableView, fromIndexPath:MIOIndexPath, toIndexPath:MIOIndexPath)
 
 export class UITableView extends UIScrollView
 {
@@ -160,12 +166,13 @@ export class UITableView extends UIScrollView
         //cell._onDblClickFn = this.cellOnDblClickFn;
         //cell._onAccessoryClickFn = this.cellOnAccessoryClickFn;
         cell._onEditingAccessoryClickFn = this.cellOnEditingAccessoryClickFn;
+        cell._onReorderPointerDownFn = this.cellOnReorderPointerDown;
 
         return cell;
     }
 
 
-    private rows = [];    
+    rows = [];
     private sections = [];
     private cells = [];
 
@@ -237,9 +244,11 @@ export class UITableView extends UIScrollView
         if (cell.selected == true) this.indexPathForSelectedRow = indexPath;
         
         if (this.delegate != null && typeof this.delegate.editingStyleForRowAtIndexPath === "function") {
-            let editingStyle = this.delegate.editingStyleForRowAtIndexPath(this, indexPath);        
+            let editingStyle = this.delegate.editingStyleForRowAtIndexPath(this, indexPath);
             cell.setEditingAccessoryType(editingStyle);
         }
+
+        if (this._editing == true) this._updateReorderControlForCell(cell, indexPath);
     }
 
     private removeCell(indexPath){        
@@ -272,7 +281,9 @@ export class UITableView extends UIScrollView
 
     }
 
-    reloadData(){        
+    reloadData(){
+        if (this.reorderCell != null) this.reorderCleanup(this.reorderCell);
+
         // Remove all subviews
         for (let index = 0; index < this.rows.length; index++) {
             let row = this.rows[index];
@@ -420,6 +431,293 @@ export class UITableView extends UIScrollView
             //TODO:
         }
 
+    }
+
+    //
+    // Editing & row reordering
+    //
+
+    private _editing = false;
+    get isEditing():boolean { return this._editing; }
+    set editing(value:boolean) { this.setEditing(value, false); }
+
+    setEditing(editing:boolean, animated?:boolean){
+        if (this._editing == editing) return;
+        this._editing = editing;
+
+        for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
+            let section = this.sections[sectionIndex];
+            for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
+                let ip = MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
+                this._updateReorderControlForCell(section[rowIndex], ip);
+            }
+        }
+    }
+
+    private _updateReorderControlForCell(cell:UITableViewCell, indexPath:MIOIndexPath){
+        let visible = false;
+        if (this._editing == true && this.dataSource != null && typeof this.dataSource.canMoveRowAtIndexPath === "function") {
+            visible = this.dataSource.canMoveRowAtIndexPath(this, indexPath);
+        }
+        if (visible == true && cell._onReorderPointerDownFn == null) {
+            // Cells not created through dequeueReusableCellWithIdentifier still get the callback
+            cell._target = this;
+            cell._onReorderPointerDownFn = this.cellOnReorderPointerDown;
+        }
+        cell._setReorderControlVisible(visible);
+    }
+
+    // Programmatic move. Like UIKit, it only updates the UI: the caller is responsible
+    // for keeping its model in sync. The interactive reorder calls the data source instead.
+    moveRowAtIndexPathToIndexPath(indexPath:MIOIndexPath, newIndexPath:MIOIndexPath){
+        let cell = this.cellAtIndexPath(indexPath);
+        if (cell == null) return;
+
+        let toSection = this.sections[newIndexPath.section];
+        if (toSection == null) return;
+
+        let maxRow = toSection.length;
+        if (newIndexPath.section == indexPath.section) maxRow--;
+        let row = newIndexPath.row;
+        if (row > maxRow) row = maxRow;
+        if (row < 0) row = 0;
+
+        this._moveCell(cell, indexPath, MIOIndexPath.indexForRowInSection(row, newIndexPath.section));
+    }
+
+    private _moveCell(cell:UITableViewCell, from:MIOIndexPath, to:MIOIndexPath){
+        let fromSection = this.sections[from.section];
+        fromSection.removeObjectAtIndex(from.row);
+        this.rows.removeObject(cell);
+
+        let toSection = this.sections[to.section];
+        if (to.row < toSection.length) {
+            let refCell = toSection[to.row];
+            this.layer.insertBefore(cell.layer, refCell.layer);
+            this.rows.splice(this.rows.indexOf(refCell), 0, cell);
+        }
+        else if (toSection.length > 0) {
+            let lastCell = toSection[toSection.length - 1];
+            this.layer.insertBefore(cell.layer, lastCell.layer.nextSibling);
+            this.rows.splice(this.rows.indexOf(lastCell) + 1, 0, cell);
+        }
+        else {
+            this.layer.appendChild(cell.layer);
+            this.rows.push(cell);
+        }
+        toSection.splice(to.row, 0, cell);
+        cell._section = toSection;
+
+        this._updateIndexPathForSelectedRow();
+    }
+
+    private _updateIndexPathForSelectedRow(){
+        if (this.indexPathForSelectedRow == null) return;
+        for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
+            let section = this.sections[sectionIndex];
+            for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
+                if (section[rowIndex].selected == true) {
+                    this.indexPathForSelectedRow = MIOIndexPath.indexForRowInSection(rowIndex, sectionIndex);
+                    return;
+                }
+            }
+        }
+    }
+
+    private reorderCell:UITableViewCell = null;
+    private reorderFromIndexPath:MIOIndexPath = null;
+    private reorderPointerId = null;
+    private reorderGhostLayer = null;
+    private reorderGrabOffsetY = 0;
+    private reorderLastClientY = 0;
+    private reorderScrollDirection = 0;
+    private reorderScrollTimer = null;
+    private reorderMoveFn = null;
+    private reorderUpFn = null;
+
+    private cellOnReorderPointerDown(cell:UITableViewCell, ev:PointerEvent){
+        if (this.reorderCell != null) return;
+
+        let indexPath = this.indexPathForCell(cell);
+        if (indexPath == null) return;
+        if (this.dataSource == null || typeof this.dataSource.canMoveRowAtIndexPath !== "function") return;
+        if (this.dataSource.canMoveRowAtIndexPath(this, indexPath) == false) return;
+
+        // Canceling the pointerdown also suppresses the compatibility mouse events,
+        // so the cell's tap gesture never fires for this interaction.
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        this.reorderCell = cell;
+        this.reorderFromIndexPath = indexPath;
+        this.reorderLastClientY = ev.clientY;
+
+        let rect = cell.layer.getBoundingClientRect();
+        this.reorderGrabOffsetY = ev.clientY - rect.top;
+
+        let ghost = cell.layer.cloneNode(true);
+        ghost.style.position = "fixed";
+        ghost.style.boxSizing = "border-box";
+        ghost.style.left = rect.left + "px";
+        ghost.style.top = rect.top + "px";
+        ghost.style.width = rect.width + "px";
+        ghost.style.height = rect.height + "px";
+        ghost.style.margin = "0";
+        ghost.style.zIndex = "10000";
+        ghost.style.opacity = "0.9";
+        ghost.style.pointerEvents = "none";
+        ghost.style.boxShadow = "0 4px 14px rgba(0,0,0,0.25)";
+        document.body.appendChild(ghost);
+        this.reorderGhostLayer = ghost;
+
+        MUICoreLayerAddStyle(cell.layer, "reorder-placeholder");
+        cell.layer.style.opacity = "0.35";
+
+        // Capture on the table layer, NOT the handle: the handle moves in the DOM
+        // on every live reorder (insertBefore), and reparenting a captured element
+        // makes the browser drop the pointer capture mid-drag.
+        this.reorderPointerId = ev.pointerId;
+        if (typeof this.layer.setPointerCapture === "function") {
+            try { this.layer.setPointerCapture(ev.pointerId); } catch (e) { }
+        }
+
+        // Window-level listeners so the drag survives regardless of capture support
+        this.reorderMoveFn = this.reorderPointerMove.bind(this);
+        this.reorderUpFn = this.reorderPointerUp.bind(this);
+        window.addEventListener("pointermove", this.reorderMoveFn, true);
+        window.addEventListener("pointerup", this.reorderUpFn, true);
+        window.addEventListener("pointercancel", this.reorderUpFn, true);
+
+        let instance = this;
+        this.reorderScrollTimer = window.setInterval(function(){
+            if (instance.reorderCell == null) return;
+            if (instance.reorderScrollDirection == 0) return;
+            instance.layer.scrollTop += instance.reorderScrollDirection * 8;
+            instance.reorderUpdateTarget();
+        }, 16);
+    }
+
+    private reorderPointerMove(ev:PointerEvent){
+        if (this.reorderCell == null) return;
+        if (ev.pointerId != this.reorderPointerId) return;
+        ev.preventDefault();
+
+        this.reorderLastClientY = ev.clientY;
+        this.reorderGhostLayer.style.top = (ev.clientY - this.reorderGrabOffsetY) + "px";
+
+        let rect = this.layer.getBoundingClientRect();
+        let zone = 40;
+        if (ev.clientY < rect.top + zone) this.reorderScrollDirection = -1;
+        else if (ev.clientY > rect.bottom - zone) this.reorderScrollDirection = 1;
+        else this.reorderScrollDirection = 0;
+
+        this.reorderUpdateTarget();
+    }
+
+    private reorderUpdateTarget(){
+        let cell = this.reorderCell;
+        if (cell == null) return;
+
+        let current = this.indexPathForCell(cell);
+        if (current == null) return;
+
+        let proposed = this.reorderProposedIndexPath(this.reorderLastClientY, current);
+        if (proposed == null) return;
+
+        if (this.delegate != null && typeof this.delegate.targetIndexPathForMoveFromRowAtIndexPath === "function") {
+            proposed = this.delegate.targetIndexPathForMoveFromRowAtIndexPath(this, this.reorderFromIndexPath, proposed);
+            if (proposed == null) return;
+        }
+
+        if (MIOIndexPathEqual(proposed, current) == true) return;
+        this._moveCell(cell, current, proposed);
+    }
+
+    // Returns the index path where the dragged cell would land, expressed in
+    // coordinates that assume the cell was removed from its current position first.
+    private reorderProposedIndexPath(clientY:number, current:MIOIndexPath):MIOIndexPath {
+        let dragCell = this.reorderCell;
+
+        for (let sectionIndex = 0; sectionIndex < this.sections.length; sectionIndex++) {
+            let section = this.sections[sectionIndex];
+            let adjustedRow = 0;
+            for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
+                let c = section[rowIndex];
+                if (c == dragCell) continue;
+                let rect = c.layer.getBoundingClientRect();
+                if (clientY < rect.top + rect.height / 2) {
+                    return MIOIndexPath.indexForRowInSection(adjustedRow, sectionIndex);
+                }
+                adjustedRow++;
+            }
+        }
+
+        // Below every row: append at the end of the last section that has rows
+        for (let sectionIndex = this.sections.length - 1; sectionIndex >= 0; sectionIndex--) {
+            let section = this.sections[sectionIndex];
+            let count = 0;
+            for (let rowIndex = 0; rowIndex < section.length; rowIndex++) {
+                if (section[rowIndex] != dragCell) count++;
+            }
+            if (count > 0 || sectionIndex == current.section) {
+                return MIOIndexPath.indexForRowInSection(count, sectionIndex);
+            }
+        }
+
+        return null;
+    }
+
+    private reorderPointerUp(ev:PointerEvent){
+        let cell = this.reorderCell;
+        if (cell == null) return;
+        if (ev.pointerId != this.reorderPointerId) return;
+
+        let from = this.reorderFromIndexPath;
+        this.reorderCleanup(cell);
+
+        let to = this.indexPathForCell(cell);
+        if (from == null || to == null) return;
+
+        if (ev.type == "pointercancel") {
+            if (MIOIndexPathEqual(from, to) == false) this._moveCell(cell, to, from);
+            return;
+        }
+
+        if (MIOIndexPathEqual(from, to) == true) return;
+
+        if (this.dataSource != null && typeof this.dataSource.moveRowAtIndexPath === "function") {
+            this.dataSource.moveRowAtIndexPath(this, from, to);
+        }
+    }
+
+    private reorderCleanup(cell:UITableViewCell){
+        window.removeEventListener("pointermove", this.reorderMoveFn, true);
+        window.removeEventListener("pointerup", this.reorderUpFn, true);
+        window.removeEventListener("pointercancel", this.reorderUpFn, true);
+
+        if (this.reorderPointerId != null && typeof this.layer.releasePointerCapture === "function") {
+            try { this.layer.releasePointerCapture(this.reorderPointerId); } catch (e) { }
+        }
+
+        if (this.reorderScrollTimer != null) {
+            window.clearInterval(this.reorderScrollTimer);
+            this.reorderScrollTimer = null;
+        }
+
+        if (this.reorderGhostLayer != null && this.reorderGhostLayer.parentNode != null) {
+            this.reorderGhostLayer.parentNode.removeChild(this.reorderGhostLayer);
+        }
+        this.reorderGhostLayer = null;
+
+        cell.layer.style.opacity = "";
+        MUICoreLayerRemoveStyle(cell.layer, "reorder-placeholder");
+
+        this.reorderCell = null;
+        this.reorderFromIndexPath = null;
+        this.reorderPointerId = null;
+        this.reorderScrollDirection = 0;
+        this.reorderMoveFn = null;
+        this.reorderUpFn = null;
     }
 
     private cellOnEditingAccessoryClickFn(cell:UITableViewCell) {
