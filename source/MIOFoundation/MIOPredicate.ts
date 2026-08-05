@@ -41,6 +41,10 @@ export enum MIOPredicateType {
     Operation
 }
 
+export function _MIOPredicateFoldDiacritics(value:string) : string {
+    return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 export class MIOPredicateOperator {
     type = null;
 
@@ -72,8 +76,11 @@ export enum MIOPredicateItemValueType {
     Array
 }
 
-export class MIOPredicateItem 
+export class MIOPredicateItem
 {
+    // Comparator modifiers: CONTAINS[c] (case insensitive), CONTAINS[d] (diacritic insensitive)
+    caseInsensitive = false;
+    diacriticInsensitive = false;
     relationshipOperation:MIOPredicateRelationshipOperatorType|null = null;
     bitwiseOperation:MIOPredicateBitwiseOperatorType|null = null;
     bitwiseKey:string|null = null;
@@ -127,6 +134,10 @@ export class MIOPredicateItem
             return (lValue >= rValue);        
         else if (this.comparator == MIOPredicateComparatorType.Contains) {
             if (lValue == null) return false;
+            // String contains is evaluated diacritic-insensitive to match the server behavior (contains[cd])
+            if (typeof lValue === "string" && typeof rValue === "string") {
+                return _MIOPredicateFoldDiacritics(lValue).indexOf(_MIOPredicateFoldDiacritics(rValue)) > -1;
+            }
             if (lValue.indexOf(rValue) > -1) return true;
             return false;
         }
@@ -349,8 +360,8 @@ export class MIOPredicate extends MIOObject {
         this.lexer.addTokenType(MIOPredicateTokenType.MajorComparator, /^>/);
         this.lexer.addTokenType(MIOPredicateTokenType.EqualComparator, /^==?/);
         this.lexer.addTokenType(MIOPredicateTokenType.DistinctComparator, /^!=/);
-        this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains /i);
-        this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.NotContainsComparator, /^not contains(\[[cd]{1,2}\])? /i);
+        this.lexer.addTokenType(MIOPredicateTokenType.ContainsComparator, /^contains(\[[cd]{1,2}\])? /i);
         this.lexer.addTokenType(MIOPredicateTokenType.InComparator, /^in /i);
         this.lexer.addTokenType(MIOPredicateTokenType.NotIntComparator, /^not in /i);
         // Bitwise operators
@@ -520,11 +531,13 @@ export class MIOPredicate extends MIOObject {
 
             case MIOPredicateTokenType.ContainsComparator:
                 item.comparator = MIOPredicateComparatorType.Contains;
+                this.parseComparatorModifiers(token.value, item);
                 break;
 
             case MIOPredicateTokenType.NotContainsComparator:
                 item.comparator = MIOPredicateComparatorType.NotContains;
-                break;                
+                this.parseComparatorModifiers(token.value, item);
+                break;
 
             case MIOPredicateTokenType.InComparator:
                 item.comparator = MIOPredicateComparatorType.In;
@@ -558,6 +571,16 @@ export class MIOPredicate extends MIOObject {
                 throw new Error(`MIOPredicate: Error. Unexpected comparator. (${token.value})`);                                
         }
 
+    }
+
+    // Parses "[cd]"-style modifiers from comparator tokens like "contains[cd] "
+    private parseComparatorModifiers(tokenValue:string, item:MIOPredicateItem) {
+        let start = tokenValue.indexOf("[");
+        if (start == -1) return;
+        let end = tokenValue.indexOf("]");
+        let modifiers = tokenValue.substring(start + 1, end).toLowerCase();
+        if (modifiers.indexOf("c") > -1) item.caseInsensitive = true;
+        if (modifiers.indexOf("d") > -1) item.diacriticInsensitive = true;
     }
 
     private value(item:MIOPredicateItem) {
