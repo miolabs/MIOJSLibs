@@ -192,6 +192,7 @@ export class MUIAlertViewController extends MUIViewController
 
     private _addItem(item:MUIAlertItem){
         this._items.push(item);
+        this._measureHeaderHeight();
         this._calculateContentSize();
     }
 
@@ -221,14 +222,19 @@ export class MUIAlertViewController extends MUIViewController
         this.completion = handler;
     }
 
-    private _calculateContentSize(){
-        let h = this._measureHeaderHeight() + (this._items.length * 50) + 1;
-        this._alertViewSize = new MIOSize(320, h);
+    private _calculateContentSize(notify:boolean = false){
+        let h = this._headerHeight + (this._items.length * 50) + 1;
+        let size = new MIOSize(320, h);
 
         let ad = MUIWebApplication.sharedInstance().delegate;
         let w = ad.valueForKey("window") as MUIView;
         let wh = w.getHeight();
-        if (wh < h) this._alertViewSize = new MIOSize(320, wh);
+        if (wh < h) size = new MIOSize(320, wh);
+
+        // once presented, the presentation controller follows preferredContentSize
+        if (notify) this.willChangeValue("preferredContentSize");
+        this._alertViewSize = size;
+        if (notify) this.didChangeValue("preferredContentSize");
     }
 
     numberOfSections(tableview){
@@ -264,46 +270,90 @@ export class MUIAlertViewController extends MUIViewController
 
     heightForRowAtIndexPath(tableView:MUITableView, indexPath:MIOIndexPath) {
         let h = 50;
-        if (indexPath.row == 0) h = this._measureHeaderHeight();
+        if (indexPath.row == 0) h = this._headerRowHeight();
         
         return h;
     }
 
+    // The header row's height: the natural height of the header cell once it sits in the
+    // alert (the alert's own styles apply there), else the estimate from a copy laid out off
+    // screen. When the real height differs from the estimate the sheet follows.
+    private _headerRowHeight():number {
+        let cell = this._headerCell;
+        if (cell != null && typeof document !== "undefined" && document.body.contains(cell.layer)) {
+            let h = this._naturalHeight(cell.layer);
+            if (h > 0 && h != this._headerHeight) {
+                this._headerHeight = h;
+                this._headerMeasuredFor = this._headerKey();
+                this._calculateContentSize(true);
+            }
+            return this._headerHeight;
+        }
+        return this._measureHeaderHeight();
+    }
+
+    private _headerKey():string {
+        return (this._title ?? "") + "\u0000" + (this._message ?? "") + "\u0000" + this._alertViewSize.width;
+    }
+
+    /// The height the layer takes with its content, never below the classic 80 px; 0 when it
+    /// cannot be measured.
+    private _naturalHeight(layer:HTMLElement):number {
+        let saved = layer.style.height;
+        layer.style.height = "";
+        let h = layer.offsetHeight;
+        layer.style.height = saved;
+        return h > 0 ? Math.max(80, Math.ceil(h)) : 0;
+    }
+
     private _measureHeaderHeight():number {
-        let key = (this._title ?? "") + "\u0000" + (this._message ?? "") + "\u0000" + this._alertViewSize.width;
+        let key = this._headerKey();
         if (this._headerMeasuredFor == key) return this._headerHeight;
 
         let h = 80;
         if (typeof document !== "undefined" && document.body != null) {
-            // The header cell as the alert renders it, inside the alert's own containers so the
-            // same styles apply, laid out off screen at the alert's width and left to its
-            // natural height.
+            // The header cell as the alert renders it, inside the alert's own containers (page,
+            // alert-container, alert-table) so the same styles apply, laid out off screen at the
+            // alert's width and left to its natural height.
+            let page = document.createElement("div");
+            MUICoreLayerAddStyle(page, "page");
+            page.style.position = "absolute";
+            page.style.left = "-100000px";
+            page.style.top = "0px";
+            page.style.width = this._alertViewSize.width + "px";
+            page.style.height = "auto";
+            page.style.display = "block";
+            page.style.overflow = "visible";
+            page.style.visibility = "hidden";
+            page.style.pointerEvents = "none";
+
             let container = document.createElement("div");
             MUICoreLayerAddStyle(container, "alert-container");
-            container.style.position = "absolute";
-            container.style.left = "-100000px";
-            container.style.top = "0px";
-            container.style.width = this._alertViewSize.width + "px";
+            container.style.position = "relative";
+            container.style.display = "block";
+            container.style.width = "100%";
             container.style.height = "auto";
-            container.style.visibility = "hidden";
-            container.style.pointerEvents = "none";
+            page.appendChild(container);
 
             let table = document.createElement("div");
             MUICoreLayerAddStyle(table, "alert-table");
             table.style.position = "relative";
+            table.style.display = "block";
             table.style.width = "100%";
             table.style.height = "auto";
             table.style.minHeight = "0";
+            table.style.overflow = "visible";
             container.appendChild(table);
 
+            let headerCell = this._headerCell;
             let cell = this._createHeaderCell();
-            cell.layer.style.height = "";
+            this._headerCell = headerCell;
             table.appendChild(cell.layer);
 
-            document.body.appendChild(container);
-            let measured = cell.layer.offsetHeight;
-            document.body.removeChild(container);
-            if (measured > h) h = Math.ceil(measured);
+            document.body.appendChild(page);
+            let measured = this._naturalHeight(cell.layer);
+            document.body.removeChild(page);
+            if (measured > h) h = measured;
         }
 
         this._headerHeight = h;
@@ -367,6 +417,7 @@ export class MUIAlertViewController extends MUIViewController
         
         //cell.layer.style.background = "transparent";
 
+        this._headerCell = cell;
         return cell;
     }
 
