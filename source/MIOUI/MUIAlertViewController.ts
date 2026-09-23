@@ -125,6 +125,13 @@ export class MUIAlertViewController extends MUIViewController
 
     private _alertViewSize = new MIOSize(320, 50);
 
+    // The header row holds the title and the message. Its height is the height of that
+    // content, measured with the alert's own styles at the alert's width (a message may run
+    // to several lines), never below the classic 80 px; the rows below and the sheet size
+    // follow it.
+    private _headerHeight = 80;
+    private _headerMeasuredFor:string = null;
+
     initWithTitle(title:string, message:string, style:MUIAlertViewStyle){
         super.init();
 
@@ -215,7 +222,7 @@ export class MUIAlertViewController extends MUIViewController
     }
 
     private _calculateContentSize(){
-        let h = 80 + (this._items.length * 50) + 1;
+        let h = this._measureHeaderHeight() + (this._items.length * 50) + 1;
         this._alertViewSize = new MIOSize(320, h);
 
         let ad = MUIWebApplication.sharedInstance().delegate;
@@ -257,8 +264,50 @@ export class MUIAlertViewController extends MUIViewController
 
     heightForRowAtIndexPath(tableView:MUITableView, indexPath:MIOIndexPath) {
         let h = 50;
-        if (indexPath.row == 0) h = 80;
+        if (indexPath.row == 0) h = this._measureHeaderHeight();
         
+        return h;
+    }
+
+    private _measureHeaderHeight():number {
+        let key = (this._title ?? "") + "\u0000" + (this._message ?? "") + "\u0000" + this._alertViewSize.width;
+        if (this._headerMeasuredFor == key) return this._headerHeight;
+
+        let h = 80;
+        if (typeof document !== "undefined" && document.body != null) {
+            // The header cell as the alert renders it, inside the alert's own containers so the
+            // same styles apply, laid out off screen at the alert's width and left to its
+            // natural height.
+            let container = document.createElement("div");
+            MUICoreLayerAddStyle(container, "alert-container");
+            container.style.position = "absolute";
+            container.style.left = "-100000px";
+            container.style.top = "0px";
+            container.style.width = this._alertViewSize.width + "px";
+            container.style.height = "auto";
+            container.style.visibility = "hidden";
+            container.style.pointerEvents = "none";
+
+            let table = document.createElement("div");
+            MUICoreLayerAddStyle(table, "alert-table");
+            table.style.position = "relative";
+            table.style.width = "100%";
+            table.style.height = "auto";
+            table.style.minHeight = "0";
+            container.appendChild(table);
+
+            let cell = this._createHeaderCell();
+            cell.layer.style.height = "";
+            table.appendChild(cell.layer);
+
+            document.body.appendChild(container);
+            let measured = cell.layer.offsetHeight;
+            document.body.removeChild(container);
+            if (measured > h) h = Math.ceil(measured);
+        }
+
+        this._headerHeight = h;
+        this._headerMeasuredFor = key;
         return h;
     }
 
