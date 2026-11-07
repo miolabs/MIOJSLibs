@@ -42,6 +42,10 @@ export class MUIChartView extends MUIView {
     // Bar charts write each bar's value, rounded (34k, 1,2M), above it
     showValueLabels = true;
 
+    // The value axis (y for bars and lines, x for horizontal bars) with its grid lines, one per
+    // step; off, the chart shows only the bars (and their value labels)
+    showValueAxis = true;
+
     // 34k, 1,2M, 950: short enough to sit above a bar
     static shortValue(value:number) : string {
         let v = Number(value);
@@ -133,6 +137,11 @@ export class MUIChartView extends MUIView {
 
         this.createCanvas();
         let isBar = type == MUIChartViewType.Bar || type == MUIChartViewType.HorizontalBar;
+        if (this.showValueAxis == false && type != MUIChartViewType.Pie) {
+            // values start at zero; the axis, its ticks and its grid lines are not drawn
+            let hidden = [ { display: false, gridLines: { display: false }, ticks: { beginAtZero: true } } ];
+            opts["scales"] = type == MUIChartViewType.HorizontalBar ? { xAxes: hidden } : { yAxes: hidden };
+        }
         let plugins = isBar && this.showValueLabels ? [ MUIChartView.valueLabelsPlugin(type == MUIChartViewType.HorizontalBar) ] : [];
         // room for the labels above (or after) the bars
         if (plugins.length > 0) opts["layout"] = { padding: type == MUIChartViewType.HorizontalBar ? { right: 36 } : { top: 18 } };
