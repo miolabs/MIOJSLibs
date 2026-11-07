@@ -39,6 +39,45 @@ export class MUIChartView extends MUIView {
     backgroundChartColors:string[] = null;
     borderChartColors:string[] = null;
 
+    // Bar charts write each bar's value, rounded (34k, 1,2M), above it
+    showValueLabels = true;
+
+    // 34k, 1,2M, 950: short enough to sit above a bar
+    static shortValue(value:number) : string {
+        let v = Number(value);
+        if (isNaN(v) || v == 0) return "";
+        let abs = Math.abs(v);
+        if (abs >= 1000000) return (v / 1000000).toFixed(1).replace(".", ",").replace(",0", "") + "M";
+        if (abs >= 1000) return Math.round(v / 1000) + "k";
+        return String(Math.round(v));
+    }
+
+    // Chart.js 2 plugin: draws the short value over (vertical bars) or after (horizontal bars) each bar
+    private static valueLabelsPlugin(horizontal:boolean) {
+        return {
+            afterDatasetsDraw: function (chart:any) {
+                let ctx = chart.ctx;
+                ctx.save();
+                ctx.font = "11px sans-serif";
+                ctx.fillStyle = "#4d4e60";
+                ctx.textAlign = horizontal ? "left" : "center";
+                ctx.textBaseline = horizontal ? "middle" : "bottom";
+                chart.data.datasets.forEach(function (dataset:any, d:number) {
+                    let meta = chart.getDatasetMeta(d);
+                    if (meta.hidden) return;
+                    meta.data.forEach(function (bar:any, i:number) {
+                        let text = MUIChartView.shortValue(dataset.data[i]);
+                        if (text.length == 0) return;
+                        let p = bar._model;
+                        if (horizontal) ctx.fillText(text, p.x + 4, p.y);
+                        else ctx.fillText(text, p.x, p.y - 3);
+                    });
+                });
+                ctx.restore();
+            }
+        };
+    }
+
     labels = null;
     values = null;
 
@@ -93,11 +132,16 @@ export class MUIChartView extends MUIView {
         this.clear();
 
         this.createCanvas();
+        let isBar = type == MUIChartViewType.Bar || type == MUIChartViewType.HorizontalBar;
+        let plugins = isBar && this.showValueLabels ? [ MUIChartView.valueLabelsPlugin(type == MUIChartViewType.HorizontalBar) ] : [];
+        // room for the labels above (or after) the bars
+        if (plugins.length > 0) opts["layout"] = { padding: type == MUIChartViewType.HorizontalBar ? { right: 36 } : { top: 18 } };
         this.chartLayer = new Chart(this.canvas, {
             type: typeName,
             data: data,
-            options: opts
-        });
+            options: opts,
+            plugins: plugins
+        } as any);
     }
 
     clear(){
