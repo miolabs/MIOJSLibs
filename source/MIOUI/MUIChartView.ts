@@ -12,19 +12,32 @@ export enum MUIChartViewType {
 export class MUIChartView extends MUIView {
 
     title = "";
-    backgroundChartColors = [
-        'rgba(0, 191, 191, 0.6)',
-        'rgba(255, 211, 88, 0.6)',
-        'rgba(75, 204, 255, 0.6)',
-        'rgba(255, 86, 113, 0.6)',
+
+    // One colour per value, from a palette of twelve (the four brand colours first): with more values
+    // the palette starts again from its first colour. Chart.js paints a value without a colour in
+    // its default grey, so the list always has one per value; a palette set in
+    // backgroundChartColors / borderChartColors is cycled the same way.
+    static readonly palette = [
+        "0, 191, 191", "255, 211, 88", "75, 204, 255", "255, 86, 113",
+        "140, 110, 230", "120, 200, 90", "255, 150, 60", "230, 110, 190",
+        "60, 130, 220", "190, 170, 60", "110, 120, 140", "240, 120, 90",
     ];
 
-    borderChartColors = [
-        'rgba(0, 191, 191, 0.6)',
-        'rgba(255, 211, 88, 0.6)',
-        'rgba(75, 204, 255, 0.6)',
-        'rgba(255, 86, 113, 0.6)',
-    ];
+    static colors(count:number, alpha:number) : string[] {
+        let base = MUIChartView.palette.map(c => "rgba(" + c + ", " + alpha + ")");
+        return MUIChartView.cycled(base, count);
+    }
+
+    // The colours repeated from the first until there is one per value
+    static cycled(colors:string[], count:number) : string[] {
+        if (colors == null || colors.length == 0) return [];
+        let list:string[] = [];
+        for (let i = 0; i < count; i++) list.push(colors[i % colors.length]);
+        return list;
+    }
+
+    backgroundChartColors:string[] = null;
+    borderChartColors:string[] = null;
 
     labels = null;
     values = null;
@@ -61,9 +74,10 @@ export class MUIChartView extends MUIView {
     renderWithType(type:MUIChartViewType) {
 
         let typeName = this.nameFromChartType(type);
-        let bgColors = this.backgroundChartColors;
-        let fgColors = this.borderChartColors;        
         let values = this.values;
+        let count = Math.max(1, values?.length ?? 0);
+        let bgColors = this.backgroundChartColors != null ? MUIChartView.cycled(this.backgroundChartColors, count) : MUIChartView.colors(count, 0.6);
+        let fgColors = this.borderChartColors != null ? MUIChartView.cycled(this.borderChartColors, count) : MUIChartView.colors(count, 0.9);
         let labels = this.labels;
         let opts = this.optionsForChartType(type, this.title);
         let data = {
