@@ -92,7 +92,10 @@ export class MUIChartView extends MUIView {
     // type Line on a bar chart is drawn as a line over the bars (dark, so it reads over any bar
     // colour), in front of them and without value labels. A null value leaves a gap (a line
     // stops there: months still to come).
-    series:{ title:string, values:number[], type?:MUIChartViewType }[] = null;
+    // style, for a line: "area" fills it down to zero, "forecast" is dashed in the colour of the
+    // series before it (its continuation), "strong" is dark.
+    // With series and the value axis shown, the axis has short values (34k) and a marked zero line.
+    series:{ title:string, values:number[], type?:MUIChartViewType, style?:string }[] = null;
 
     static readonly lineSeriesColor = "77, 78, 96";
 
@@ -145,33 +148,62 @@ export class MUIChartView extends MUIView {
             let seriesBg = this.backgroundChartColors != null ? MUIChartView.cycled(this.backgroundChartColors, this.series.length) : MUIChartView.colors(this.series.length, 0.6);
             let seriesFg = this.borderChartColors != null ? MUIChartView.cycled(this.borderChartColors, this.series.length) : MUIChartView.colors(this.series.length, 0.9);
             let isBarChart = type == MUIChartViewType.Bar;
+            let lineColors:string[] = [];
             datasets = this.series.map((s, i) => {
-                if (isBarChart && s.type == MUIChartViewType.Line) {
-                    let color = this.borderChartColors != null ? seriesFg[i] : "rgba(" + MUIChartView.lineSeriesColor + ", 1)";
+                let isLine = (isBarChart && s.type == MUIChartViewType.Line) || type == MUIChartViewType.Line;
+                if (!isLine) {
+                    lineColors.push(seriesFg[i]);
                     return {
-                        type: "line",
                         label: s.title,
                         data: s.values,
-                        borderColor: color,
-                        backgroundColor: color,
-                        pointBackgroundColor: color,
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        lineTension: 0.25,
+                        backgroundColor: seriesBg[i],
+                        borderColor: seriesFg[i],
+                        borderWidth: 1,
                         fill: false,
-                        order: 0          // drawn in front of the bars
+                        order: 1
                     };
                 }
-                return {
+                // a line over bars, or a "strong" one: dark; a forecast: the colour of the line before it
+                let rgb = MUIChartView.palette[i % MUIChartView.palette.length];
+                if (isBarChart || s.style == "strong") rgb = MUIChartView.lineSeriesColor;
+                let color = "rgba(" + rgb + ", 1)";
+                if (this.borderChartColors != null) color = seriesFg[i];
+                if (s.style == "forecast" && i > 0) color = lineColors[i - 1];
+                lineColors.push(color);
+                let dataset = {
+                    type: "line",
                     label: s.title,
                     data: s.values,
-                    backgroundColor: seriesBg[i],
-                    borderColor: seriesFg[i],
-                    borderWidth: 1,
+                    borderColor: color,
+                    backgroundColor: color,
+                    pointBackgroundColor: color,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    lineTension: isBarChart ? 0.25 : 0,
                     fill: false,
-                    order: 1
+                    order: 0          // drawn in front of the bars
                 };
+                if (s.style == "area") {
+                    dataset.fill = "origin" as any;
+                    dataset.backgroundColor = color.replace(/, 1\)$/, ", 0.12)");
+                }
+                if (s.style == "forecast") {
+                    (dataset as any).borderDash = [6, 4];
+                    dataset.pointBackgroundColor = "#fff";
+                }
+                return dataset;
             });
+            if (this.showValueAxis && type != MUIChartViewType.Pie) {
+                // short values on the axis (34k) and the zero line marked: above or below zero reads at once
+                let valueAxis = [ {
+                    ticks: { maxTicksLimit: 6, callback: (v:number) => v == 0 ? "0" : MUIChartView.shortValue(v) },
+                    gridLines: { color: "rgba(0, 0, 0, 0.06)", zeroLineColor: "rgba(0, 0, 0, 0.45)", zeroLineWidth: 1.5, drawBorder: false }
+                } ];
+                let categoryAxis = [ { gridLines: { display: false } } ];
+                opts["scales"] = type == MUIChartViewType.HorizontalBar ? { xAxes: valueAxis, yAxes: categoryAxis } : { xAxes: categoryAxis, yAxes: valueAxis };
+                opts["tooltips"] = { callbacks: { label: (item:any, d:any) =>
+                    d.datasets[item.datasetIndex].label + ": " + Number(item.yLabel).toLocaleString(undefined, { maximumFractionDigits: 0 }) } };
+            }
             // the legend in the series' order (the drawing order puts lines first otherwise)
             if (type != MUIChartViewType.Pie) opts["legend"] = { "display": true, "position": "top",
                 "labels": { "generateLabels": (chart:any) =>
