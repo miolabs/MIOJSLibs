@@ -69,6 +69,8 @@ export class MUIChartView extends MUIView {
                 chart.data.datasets.forEach(function (dataset:any, d:number) {
                     let meta = chart.getDatasetMeta(d);
                     if (meta.hidden) return;
+                    // a line series over the bars: its points carry no labels
+                    if (dataset.type == "line") return;
                     meta.data.forEach(function (bar:any, i:number) {
                         let text = MUIChartView.shortValue(dataset.data[i]);
                         if (text.length == 0) return;
@@ -86,8 +88,13 @@ export class MUIChartView extends MUIView {
     values = null;
 
     // Several values per label (due vs real...): one series each, with its title, drawn side by
-    // side in one colour per series and a legend. With it set, values is not used.
-    series:{ title:string, values:number[] }[] = null;
+    // side in one colour per series and a legend. With it set, values is not used. A series of
+    // type Line on a bar chart is drawn as a line over the bars (dark, so it reads over any bar
+    // colour), in front of them and without value labels. A null value leaves a gap (a line
+    // stops there: months still to come).
+    series:{ title:string, values:number[], type?:MUIChartViewType }[] = null;
+
+    static readonly lineSeriesColor = "77, 78, 96";
 
     private canvas = null;
     private chartLayer = null;
@@ -137,15 +144,38 @@ export class MUIChartView extends MUIView {
             // one colour per series (not per value), and the legend names them
             let seriesBg = this.backgroundChartColors != null ? MUIChartView.cycled(this.backgroundChartColors, this.series.length) : MUIChartView.colors(this.series.length, 0.6);
             let seriesFg = this.borderChartColors != null ? MUIChartView.cycled(this.borderChartColors, this.series.length) : MUIChartView.colors(this.series.length, 0.9);
-            datasets = this.series.map((s, i) => ({
-                label: s.title,
-                data: s.values,
-                backgroundColor: seriesBg[i],
-                borderColor: seriesFg[i],
-                borderWidth: 1,
-                fill: false
-            }));
-            if (type != MUIChartViewType.Pie) opts["legend"] = { "display": true, "position": "top" };
+            let isBarChart = type == MUIChartViewType.Bar;
+            datasets = this.series.map((s, i) => {
+                if (isBarChart && s.type == MUIChartViewType.Line) {
+                    let color = this.borderChartColors != null ? seriesFg[i] : "rgba(" + MUIChartView.lineSeriesColor + ", 1)";
+                    return {
+                        type: "line",
+                        label: s.title,
+                        data: s.values,
+                        borderColor: color,
+                        backgroundColor: color,
+                        pointBackgroundColor: color,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        lineTension: 0.25,
+                        fill: false,
+                        order: 0          // drawn in front of the bars
+                    };
+                }
+                return {
+                    label: s.title,
+                    data: s.values,
+                    backgroundColor: seriesBg[i],
+                    borderColor: seriesFg[i],
+                    borderWidth: 1,
+                    fill: false,
+                    order: 1
+                };
+            });
+            // the legend in the series' order (the drawing order puts lines first otherwise)
+            if (type != MUIChartViewType.Pie) opts["legend"] = { "display": true, "position": "top",
+                "labels": { "generateLabels": (chart:any) =>
+                    (Chart as any).defaults.global.legend.labels.generateLabels(chart).sort((a:any, b:any) => a.datasetIndex - b.datasetIndex) } };
         }
         let data = {
             labels: labels,
