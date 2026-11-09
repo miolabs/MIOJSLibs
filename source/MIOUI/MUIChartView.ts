@@ -85,6 +85,10 @@ export class MUIChartView extends MUIView {
     labels = null;
     values = null;
 
+    // Several values per label (due vs real...): one series each, with its title, drawn side by
+    // side in one colour per series and a legend. With it set, values is not used.
+    series:{ title:string, values:number[] }[] = null;
+
     private canvas = null;
     private chartLayer = null;
 
@@ -123,15 +127,30 @@ export class MUIChartView extends MUIView {
         let fgColors = this.borderChartColors != null ? MUIChartView.cycled(this.borderChartColors, count) : MUIChartView.colors(count, 0.9);
         let labels = this.labels;
         let opts = this.optionsForChartType(type, this.title);
+        let datasets:any[] = [{
+            data: values,
+            backgroundColor: bgColors,
+            borderColor: fgColors,
+            borderWidth: 1
+        }];
+        if (this.series != null && this.series.length > 0) {
+            // one colour per series (not per value), and the legend names them
+            let seriesBg = this.backgroundChartColors != null ? MUIChartView.cycled(this.backgroundChartColors, this.series.length) : MUIChartView.colors(this.series.length, 0.6);
+            let seriesFg = this.borderChartColors != null ? MUIChartView.cycled(this.borderChartColors, this.series.length) : MUIChartView.colors(this.series.length, 0.9);
+            datasets = this.series.map((s, i) => ({
+                label: s.title,
+                data: s.values,
+                backgroundColor: seriesBg[i],
+                borderColor: seriesFg[i],
+                borderWidth: 1,
+                fill: false
+            }));
+            if (type != MUIChartViewType.Pie) opts["legend"] = { "display": true, "position": "top" };
+        }
         let data = {
             labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: bgColors,
-                borderColor: fgColors,
-                borderWidth: 1
-                }]
-            }    
+            datasets: datasets
+            }
 
         this.clear();
 
