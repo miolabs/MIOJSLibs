@@ -234,17 +234,17 @@ export class MUIChartView extends MUIView {
             if (this.showValueAxis && type != MUIChartViewType.Pie) {
                 // short values on the axis (34k) and the zero line marked: above or below zero reads at once
                 let valueAxis = [ {
-                    ticks: { maxTicksLimit: 6, callback: (v:number) => v == 0 ? "0" : MUIChartView.shortValue(v) },
+                    ticks: { maxTicksLimit: 6, fontSize: 13, callback: (v:number) => v == 0 ? "0" : MUIChartView.shortValue(v) },
                     gridLines: { color: "rgba(0, 0, 0, 0.06)", zeroLineColor: "rgba(0, 0, 0, 0.45)", zeroLineWidth: 1.5, drawBorder: false }
                 } ];
-                let categoryAxis = [ { gridLines: { display: false } } ];
+                let categoryAxis = [ { gridLines: { display: false }, ticks: { fontSize: 13 } } ];
                 opts["scales"] = type == MUIChartViewType.HorizontalBar ? { xAxes: valueAxis, yAxes: categoryAxis } : { xAxes: categoryAxis, yAxes: valueAxis };
                 opts["tooltips"] = { callbacks: { label: (item:any, d:any) =>
                     d.datasets[item.datasetIndex].label + ": " + Number(item.yLabel).toLocaleString(undefined, { maximumFractionDigits: 0 }) } };
             }
             // the legend in the series' order (the drawing order puts lines first otherwise)
             if (type != MUIChartViewType.Pie) opts["legend"] = { "display": true, "position": "top",
-                "labels": { "generateLabels": (chart:any) =>
+                "labels": { "fontSize": 13, "boxWidth": 28, "padding": 14, "generateLabels": (chart:any) =>
                     (Chart as any).defaults.global.legend.labels.generateLabels(chart).map((item:any) => {
                         // a green/red line: its swatch in green (a gradient would read as noise there)
                         let ds = chart.data.datasets[item.datasetIndex];
@@ -322,7 +322,8 @@ export class MUIChartView extends MUIView {
 
         var op = {};
 
-        if (title != null){
+        // an empty title would still keep a blank line above the plot
+        if (title != null && title.length > 0){
             op["title"] = {"display": true, "text":title};
         }
 
