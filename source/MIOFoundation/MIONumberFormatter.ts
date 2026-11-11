@@ -162,42 +162,26 @@ export class MIONumberFormatter extends MIOFormatter {
         return res;
     }
 
+    // Rounds half up to maximumFractionDigits on the decimal digits as written. Only the first
+    // digit dropped decides (126.9048 → 126.90): rounding from the last digit and carrying
+    // (8 → 5 → 1) rounded twice and gave 126.91, 1.0049 → 1.01.
     private round(intValue:string, floatValue:string):[string, string]{                
         if (floatValue.length <= this.maximumFractionDigits) return[intValue, floatValue];
 
-        // Check float first        
-        let roundedFloat = floatValue   
-        //let d = parseInt(floatValue.substr(floatValue.length - 1, 1));
-        let inc = 0;//d < 5 ? 0 : 1;
-        let stopCount = floatValue.length;
-        
-        for (let index = floatValue.length - 1; index >= 0; index--){
-            //roundedFloat = roundedFloat.substr(0, index);
-            
-            // if (inc == 0) {
-            //     roundedFloat = floatValue.substring(0, index + 1) + roundedFloat;
-            // }
-
-            let digit = parseInt(roundedFloat.substr(index, 1)) + inc;
-            inc = digit < 5 ? 0 : 1;
-            if (index >= this.maximumFractionDigits){
-                roundedFloat = roundedFloat.substr(0, index);
-            }
-            else if (digit == 10){
-                inc = 1;
-                stopCount = 1;
-                roundedFloat = roundedFloat.substr(0, index) + "0" + roundedFloat.substr(index + 1);
+        let digits = floatValue.substr(0, this.maximumFractionDigits).split("");
+        let inc = parseInt(floatValue.charAt(this.maximumFractionDigits)) >= 5 ? 1 : 0;
+        for (let index = digits.length - 1; index >= 0 && inc == 1; index--){
+            let digit = parseInt(digits[index]) + 1;
+            if (digit == 10) {
+                digits[index] = "0";
             }
             else {
+                digits[index] = digit.toString();
                 inc = 0;
-                stopCount = 0;
-                roundedFloat = roundedFloat.substr(0, index) + digit + roundedFloat.substr(index + 1);
             }
-            
-            if (stopCount == 0) break;            
-            stopCount--;
         }
-        
+        let roundedFloat = digits.join("");
+
         // Removes Zeros
         let removeIndex = null;
         for (let index = roundedFloat.length - 1; index >= this.minimumFractionDigits; index--){
@@ -213,6 +197,12 @@ export class MIONumberFormatter extends MIOFormatter {
         
         let roundedInt = "";
         for (let index = intValue.length - 1; index >= 0; index--){
+            // the carry reaches the sign of a negative number: -9.996 → -10.00
+            if (intValue.charAt(index) == "-") {
+                roundedInt = "-1" + roundedInt;
+                inc = 0;
+                break;
+            }
             let digit = parseInt(intValue.substr(index, 1));
             let newDigit = digit + inc;
             if (newDigit == 10) {
